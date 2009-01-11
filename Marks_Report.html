@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>AddMarks</title>
+	<!-- Date: 2008-10-12 -->
+</head>
+<body>
+      <br/><B>
+      Jnana Prabodhini Prashala<p/>
+      510 Sadashiv Peth Pune 411030<p/>
+      Email: prashala@jnanaprabodhini.org<p/>
+
+      Certificate of School Based Evaluation<p/>
+      Part 1: General Information(Static and yearly info)<p/></B>
+	{% for row in student_data %}
+	      Name:{{row.FirstName}} {{row.LastName}}<p/>
+	      Address:student_addtional_info.Address<p/>
+	{% endfor %}
+      School attendance:<p/>
+	<table border="1" cellspacing="5" cellpadding="0">
+		<tr><th>Month</th> <th>Attendance</th><th>Working days</th></tr> 
+		<form action="" method="POST">
+			{% for row in attendance_data %}
+			<tr>
+				<td>{{ row.Month}}</td><td>{{ row.Attendance}}</td><td>{{ row.Working_days}}</td><p/>
+			</tr>
+			{% endfor %}
+		</form>
+	</table><p/><p/>
+      Principal Signature<p/>
+ 	<br/>
+	Part 2: Academic Information<p/>
+	<h2>{{ Mark_details }}</h2>
+	<table border="1" cellspacing="5" cellpadding="0">
+		<tr><th>Subject Name</th> <th>Test type</th>  <th>Marks</th> <th>Maximum Marks</th></tr> 
+	
+	
+		<form action="" method="POST">
+			{% for row in mark_data %}
+			<tr>
+				<td>{{ row.Subject_Name}}</td><td>{{ row.test_type}}</td><td>{{ row.MarksObtained}}</td>
+				<td>{{ row.MaximumMarks}}</td><p/>
+			</tr>
+			{% endfor %}
+		</form>
+	</table>
+</body>
+</html>
