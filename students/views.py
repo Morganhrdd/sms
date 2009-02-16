@@ -13,6 +13,7 @@ from reportlab.rl_config import defaultPageSize
 from reportlab.lib.units import inch
 from reportlab.lib import colors
 import os
+from django.contrib.auth.decorators import login_required
 
 PAGE_HEIGHT=defaultPageSize[1]; PAGE_WIDTH=defaultPageSize[0]
 styles = getSampleStyleSheet()
@@ -230,3 +231,6 @@ def fillLibraryReport(Story):
     Story.append(Spacer(1,4*inch))
     Story.append(Paragraph("Librarian Signature", style))
     Story.append(PageBreak())
+
+
+marks_add = login_required(marks_add)

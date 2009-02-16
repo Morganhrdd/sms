@@ -29,7 +29,7 @@ class TeacherAdmin(admin.ModelAdmin):
 class SubjectMasterAdmin(admin.ModelAdmin):
     list_display = ('Name', 'Standard',)
     ordering = ('Name', 'Standard',)
-    search_fields = ['SubjectName',]
+    search_fields = ['Name', 'Standard']
 
 class StudentYearlyInformationAdmin(admin.ModelAdmin):
     list_display = ('StudentBasicInfo', 'RollNo', 'ClassMaster')
@@ -40,7 +40,8 @@ class ClassMasterAdmin(admin.ModelAdmin):
     ordering = ('AcademicYear', 'Standard', 'Division',)
     
 class TestMappingAdmin(admin.ModelAdmin):
-    list_display = ('SubjectMaster', 'TestType', 'MaximumMarks', 'Teacher')
+    list_display = ('SubjectMaster', 'TestType', 'MaximumMarks', 'Teacher', 'AcademicYear')
+    search_fields = ['TestType']
     
 class StudentTestMarksAdmin(admin.ModelAdmin):
     list_display = ('StudentYearlyInformation', 'TestMapping', 'MarksObtained')

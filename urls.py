@@ -8,6 +8,6 @@ urlpatterns = patterns('',
     (r'^admin/(.*)', admin.site.root),
     (r'^marks_add/', views.marks_add),
     (r'^attendance_add/', views.attendance_add),
-    (r'^go/', views.go),
+    (r'^report/', views.report),
     # ... the rest of your URLs here ...
 )

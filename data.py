@@ -21,17 +21,95 @@ def reg_no():
         a.MothersName = ''
         a.save()
 
+def add_rollno():
+    yr = AcademicYear.objects.get(Year='2008-2009')
+    for xls,std,div in zip(["G10.xls"],[10],['G']):
+        print xls, std
+        book = xlrd.open_workbook(xls)
+        sh = book.sheet_by_index(0)
+        for rx in range(2, sh.nrows):
+            row = sh.row_values(rx)
+            regno = row[0]
+            try:
+                basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
+            except:
+                print rx, regno
+                sys.exit()
+            a = StudentYearlyInformation()
+            a.StudentBasicInfo = basicinfo
+            a.RollNo = row[1]
+            classobj = ClassMaster.objects.get(AcademicYear=yr, Standard=std, Division=div, Type='P')
+            a.ClassMaster = classobj
+            a.save()
+
+add_rollno()
+sys.exit()
 def add_b5():
     book = xlrd.open_workbook('B5.xls')
     sh = book.sheet_by_index(0)
     row = sh.row_values(0)
+    subjects = row[5:]
+    for subject in subjects:
+        try:
+            SubObj = SubjectMaster.objects.get(Standard=5, Name=subject[:3])
+        except:
+            SubObj = SubjectMaster()
+            SubObj.Name = subject[:3]
+            SubObj.Standard = 5
+            SubObj.save()
+            print 'Added new subject'
+    yr = AcademicYear.objects.get(Year='2008-2009')
+    row = sh.row_values(1)
+    teachers = row[5:]
+    row = sh.row_values(2)
+    max_marks = row[5:]
+    for teacher, subject, max_mark in zip(teachers, subjects, max_marks):
+        SubObj = SubjectMaster.objects.get(Standard=5, Name=subject[:3])
+        pass
+        try:
+            TeacherObj = Teacher.objects.get(Name=teacher)
+        except:
+            print teacher
+            sys.exit()
+        try:
+            testmapping = TestMapping.objects.get(SubjectMaster = SubObj, TestType = subject[3:], MaximumMarks = max_mark, Teacher = TeacherObj, AcademicYear = yr)
+            pass
+        except:
+            testmapping = TestMapping()
+            testmapping.SubjectMaster = SubObj
+            testmapping.TestType = subject[3:]
+            testmapping.MaximumMarks = max_mark
+            testmapping.Teacher = TeacherObj
+            testmapping.AcademicYear = yr
+            testmapping.save()
+            print subject, 'successfully added'
+    for rx in range(3, sh.nrows):
+        row = sh.row_values(rx)
+        regno = row[0]
+        marks = row[5:]
+        for subject, mark in zip(subjects,marks):
+            SubObj = SubjectMaster.objects.get(Standard=5, Name=subject[:3])
+            TeacherObj = Teacher.objects.get(Name=teacher)
+            testmapping = TestMapping.objects.get(TestType=subject[3:], SubjectMaster = SubObj, MaximumMarks = max_marks[i], Teacher = TeacherObj, AcademicYear = yr)
+            basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
+            classmaster = ClassMaster.objects.get(Standard=5, AcademicYear=yr,Division='B')
+            yrlyinfo = StudentYearlyInformation.objects.get(StudentBasicInfo=basicinfo, ClassMaster=classmaster)
+            a = StudentTestMarks()
+            a.StudentYearlyInformation = yrlyinfo
+            a.TestMapping = testmapping
+            if not marks[i]:
+                marks[i] = 0.5
+            a.MarksObtained = marks[i]
+        
+
+    sys.exit()
     x = 41
     y = 5
     tests = row[x:x+y]
     row = sh.row_values(1)
     max_marks = row[x:x+y]
     teachers = ['Mrudula Pathak']
-    yr = AcademicYear.objects.get(Year='2007-2008')
+    yr = AcademicYear.objects.get(Year='2008-2009')
     for i in range(len(tests)):
         test = tests[i]
         max_mark = max_marks[i]
@@ -92,12 +170,12 @@ def populate_subjects():
 
 
 def populate_teachers():
-    teachers = ['Vivek Ponkshe', 'Bhagyashree Harshe', 'Milind Naik', 'Shantala Kulkarni', 'Kalyani Keskar', 'Neha Abhyankar','Mrudula Pathak','Mukulika Thatte','Ragini Naik','Rohini Dhavale', 'Prashant Divekar','Kanchan Abhyankar', 'Ashwini Joshi', 'Sheetal Pasalkar', 'Laxmi Roshan', 'Anil Joshi', 'Rekha Paigude', 'Siddharth Dhomkar']
-    for teacher in teachers:
+    teachers = ['Vivek Ponkshe', 'Bhagyashree Harshe', 'Milind Naik', 'Shantala Kulkarni', 'Kalyani Keskar', 'Neha Abhyankar', 'Mrudula Pathak', 'Mukulika Thatte', 'Ragini Naik', 'Rohini Dhavale', 'Prashant Divekar', 'Kanchan Abhyankar', 'Ashwini Joshi', 'Sheetal Pasalkar', 'Laxmi Roshan', 'Anil Joshi', 'Rekha Paigude', 'Siddharth Dhomkar', 'Rahul Kokil']
+    for teacher in teachers.sort():
         a = Teacher()
         a.Name = teacher
-        a.Email = teacher.lower().replace(' ','.')+'@jnanaprabpdhini.org'
-        a.ResidenceNo = '+91204207000'
+        a.Email = teacher.lower().replace(' ','.')+'@jnanapraboadhini.org'
+        a.ResidenceNo = '+912024207000'
         a.MobileNo = '0'
         a.save()
 
