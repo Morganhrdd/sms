@@ -80,7 +80,6 @@ class StudentAdditionalInformation(models.Model):
     Mothers_Occupation = models.CharField(max_length=60)
     Mothers_Phone_No = models.PositiveIntegerField()
     Mothers_Email = models.EmailField()
-    Photo = models.CharField(max_length=10)
     Address = models.CharField(max_length=60)
 
 
