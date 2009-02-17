@@ -49,6 +49,25 @@ EXAM_CHOICES = (
     ('Y', 'Yearly'),
 )
 
+GRADE_CHOICES = (
+    ('O', 'Outstanding'),
+    ('E', 'Excellent'),
+    ('G', 'Good'),
+    ('S', 'Satisfactory'),
+    ('N', 'Needs Improvement'),
+    ('U', 'Unsatisfactory'),
+)
+
+PROJECT_TYPE_CHOICES = (
+    ('CC', 'Collection, Classification'),
+    ('MM', 'Model Making'),
+    ('IS', 'Investivation by Survey'),
+    ('I', 'Investigation'),
+    ('CP', 'Creative production'),
+    ('AC', 'Appreciation-criticism'),
+    ('O', 'Open ended exploration'),
+)
+
 class StudentBasicInfo(models.Model):
     RegistrationNo = models.PositiveIntegerField(primary_key=True)
     DateOfRegistration = models.DateField()
@@ -217,3 +236,34 @@ class Competition(models.Model):
     Guide = models.CharField(max_length=30)
     PublicComment = models.CharField(max_length=200)
     PrivateComment = models.CharField(max_length=200)
+
+class AbhivyaktiVikas(models.Model):
+    StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
+    MediumOfExpression = models.CharField(max_length=10)
+    Teacher = models.ForeignKey(Teacher)
+    Participation = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    ReadinessToLearn = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    ContinuityInWork = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    SkillDevelopment = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    Creativity = models.CharField(max_length=1, choices=GRADE_CHOICES)
+
+class Project(models.Model):
+    StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
+    Title = models.CharField(max_length=30)
+    Type = models.CharField(max_length=2, choices=PROJECT_TYPE_CHOICES)
+    Subject = models.CharField(max_length=30)
+    ProblemSelection = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    Review = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    Planning = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    Documentation = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    Communication = models.CharField(max_length=1, choices=GRADE_CHOICES)
+
+class Elocution(models.Model):
+    StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
+    Title = models.CharField(max_length=30)
+    Memory = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    Content = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    Understanding = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    Skill = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    Presentation = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    
