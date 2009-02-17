@@ -119,7 +119,7 @@ class StudentYearlyInformation(models.Model):
     StudentBasicInfo = models.ForeignKey(StudentBasicInfo)
     RollNo = models.PositiveIntegerField()
     ClassMaster = models.ForeignKey(ClassMaster)
-    photo = models.ImageField(upload_to='media')
+    Photo = models.ImageField(upload_to='media')
     def __unicode__(self):
         return "%s, %d, %s" % (self.StudentBasicInfo, self.RollNo, self.ClassMaster)
 
