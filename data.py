@@ -42,7 +42,29 @@ def add_rollno():
             a.ClassMaster = classobj
             a.save()
 
-add_rollno()
+def add_test():
+    yr = AcademicYear.objects.get(Year='2008-2009')
+    for xls, std, div in zip(["B6.xls"], [6], ['B']):
+        book = xlrd.open_workbook(xls)
+        sh = book.sheet_by_index(0)
+        row = sh.row_values(0)
+        tests = row[5:]
+        row = sh.row_values(1)
+        teachers = row[5:]
+        for test, teacher in zip(tests, teachers):
+            subject = test[:3]
+            test_type = test[3:]
+            try:
+                SubObj = SubjectMaster.objects.get(Standard=std, Name=subject)
+            except:
+                print 'unable to get subject. adding: '
+                print test, std
+                SubObj = SubjectMaster()
+                SubObj.Standard = std
+                SubObj.Name = subject[:3]
+                SubObj.save()
+
+add_test()
 sys.exit()
 def add_b5():
     book = xlrd.open_workbook('B5.xls')

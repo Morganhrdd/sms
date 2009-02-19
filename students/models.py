@@ -140,7 +140,7 @@ class StudentYearlyInformation(models.Model):
     ClassMaster = models.ForeignKey(ClassMaster)
     Photo = models.ImageField(upload_to='media')
     def __unicode__(self):
-        return "%s, %d, %s" % (self.StudentBasicInfo, self.RollNo, self.ClassMaster)
+        return "%s, %d, %s, %s" % (self.StudentBasicInfo, self.RollNo, self.ClassMaster, self.Photo)
 
 
 class TestMapping(models.Model):

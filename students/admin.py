@@ -33,7 +33,7 @@ class SubjectMasterAdmin(admin.ModelAdmin):
     search_fields = ['Name', 'Standard']
 
 class StudentYearlyInformationAdmin(admin.ModelAdmin):
-    list_display = ('StudentBasicInfo', 'RollNo', 'ClassMaster')
+    list_display = ('StudentBasicInfo', 'RollNo', 'ClassMaster', 'Photo')
     ordering = ('ClassMaster', 'RollNo',)
 
 class ClassMasterAdmin(admin.ModelAdmin):
