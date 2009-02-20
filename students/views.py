@@ -125,7 +125,7 @@ def report(request):
                                      'Grade':soc_act_data.Grade ,
                                      'PublicComment':soc_act_data.PublicComment})
         
-    return render_to_response('Marks_Report.html',Context({'student_data':student_data ,
+    return render_to_response('students/Marks_Report.html',Context({'student_data':student_data ,
                                                            'mark_data':mark_data ,
                                                            'attendance_data':attendance_data ,
                                                            'co_curricular_data':co_curricular_data,
@@ -176,7 +176,7 @@ def marks_add(request):
                 name = '%s %s' % (student_info.FirstName, student_info.LastName)
                 print name
 	        data.append({'id':student.id, 'name': name, 'rollno':student.RollNo })
-        return render_to_response('AddMarks.html',Context({'test_details': test_details,'test_id':test_id, 'data':data}))
+        return render_to_response('students/AddMarks.html',Context({'test_details': test_details,'test_id':test_id, 'data':data}))
 
 
 def attendance_add(request):
@@ -211,7 +211,7 @@ def attendance_add(request):
             student_info = StudentBasicInfo.objects.get(RegistrationNo = student.StudentBasicInfo.RegistrationNo)
             name = '%s %s' % (student_info.FirstName, student_info.LastName)
             data.append({'id':student.id,'roll_no':student.RollNo, 'name':name})
-        return render_to_response('AddAttendance.html',Context({'attendance_id':attendance_id, 'attendance_details':attendance.ClassMaster, 'data':data}))
+        return render_to_response('students/AddAttendance.html',Context({'attendance_id':attendance_id, 'attendance_details':attendance.ClassMaster, 'data':data}))
     return HttpResponse()
 
 	

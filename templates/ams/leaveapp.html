@@ -1,0 +1,64 @@
+<html>
+<script lannguage="javascript">
+function submitform()
+{
+ document.leave.applyforleave.value = 0;
+ document.leave.submit();
+}
+</script>
+<body>
+<div align="center">
+
+<h2>
+Leave Application Form
+</h2><br/>
+
+<form name="leave" action="/leave" method="get">
+<table>
+{{ form.as_table }}
+</table>
+<br/>{{ message }}<br/>
+<input type="submit" value="Submit"/>
+<input type="submit" value="Check Status" onClick="submitform()"/>
+<input type="hidden" name="applyforleave" value="1"/>
+</form>
+
+</div>
+<br/>
+
+<div align="center">
+<h2>
+Leave Status
+</h2><br/>
+	<table border="1" cellspacing="5" cellpadding="0">
+		<tr><th>Leave type</th> <th>Total</th> <th>Approve</th> <th>Pending</th> <th>Balance</th></tr>
+	
+			{% for row in data %}
+			<tr>
+				<td>{{ row.type}}</td><td>{{ row.total }}</td>
+				<td>{{ row.approve}}</td><td>{{ row.pending }}</td><td>{{ row.balance }}</td>
+			</tr>
+			{% endfor %}
+	</table>
+</div>
+<br><br>
+<div align="center">
+<table name="outer" border="1" cellspacing="5" cellpadding="0" width=200>
+<tr><td> Halfday </td> <td> {{ halfdays }}</td></tr>
+<tr><td> Late </td> <td> {{ latedays }}</td></tr>
+<tr><td> Absent </td> <td> {{ absentdays }}</td></tr>
+<tr>
+<td colspan=2 align="center">
+<table name="inner">
+	{% for row in abdays %}
+	<tr>
+		<td>{{ row.date}}</td>
+	</tr>
+	{% endfor %}
+</table>
+</td>
+</tr>
+</table>
+</div>
+</body>
+</html>
