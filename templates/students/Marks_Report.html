@@ -9,22 +9,26 @@
 </head>
 <body>
       <p align="center">
-      <br/><B>
+      Affiliation No: CBSE/A1/69/(G)12096/30.4.69(6737)<br/><B>
       <font size="4">Jnana Prabodhini Prashala</font></p>
       <p align="center"/>
       <font size="2">510 Sadashiv Peth Pune 411030</font><p align="center"/>
-      <font size="2">Email: prashala@jnanaprabodhini.org</font><p align="center"/>
+      <font size="2">Phone: (020) 24207000</font><p align="center"/>
+      <font size="2"><a href="http://www.prashala.jnanaprabodhini.org">
+      www.prashala.jnanaprabodhini.org</a> </font><p align="center"/>
+      <font size="2">Email: <a href="mailto:prashala@jnanaprabodhini.org">prashala@jnanaprabodhini.org</a> </font>
+      <p align="center"/>
+      &nbsp;<p align="center"/>
 
       Certificate of School Based Evaluation<hr><p align="center"/>
       Part 1: Basic Information<p/></B>
-	 Name:{{student_data.FirstName}} {{student_data.LastName}}<p/>
-	 RegistrationNo:{{student_data.RegistrationNo}}<p/>
-	 DateOfBirth:{{student_data.DateOfBirth}}<p/>
- 	 MothersName:{{student_data.MothersName}}<p/>
- 	 FathersName:{{student_data.FathersName}}<p/>
-	 Address:{{student_data.Address}}<p/>
-	 
-	  <hr><p align="center"/>
+	 Name: {{student_data.FirstName}} {{student_data.LastName}}<p/>
+	 Registration No: {{student_data.RegistrationNo}}<p/>
+	 Birth Date: {{student_data.DateOfBirth}}<p/>
+ 	 Mother&#39;s Name: {{student_data.MothersName}}<p/>
+ 	 Father&#39;s Name: {{student_data.FathersName}}<p/>
+	 Address: {{student_data.Address}}<p/>
+	 &nbsp;<hr><p align="center"/>
 	<u><b>Part 2: Academics</b></u><p/>
 	<b>School attendance:</b><p/>
 	<table border="1" cellspacing="5" cellpadding="0">
@@ -38,11 +42,8 @@
 			{% endfor %}
 		</form>
 	</table><p/><p/>
-      Principal Signature<p/>
- 	<br/>
 	<b>Academic Information</b><p/>
-	<h2>{{ Mark_details }}</h2>
-	<table border="1" cellspacing="5" cellpadding="0">
+		<table border="1" cellspacing="5" cellpadding="0">
 		<tr><th>Subject Name</th> <th>Test type</th>  <th>Marks</th> <th>Maximum Marks</th></tr> 
 	
 	
@@ -55,11 +56,11 @@
 			{% endfor %}
 		</form>
 	</table>
-    <p/>
-	&nbsp;<p/>
+      <p/>
 	<b>Co Curricular:</b><p/>
 	<table border="1" cellspacing="5" cellpadding="0">
-		<tr><th>Activity</th> <th>Objectives</th> <th>Date</th> <th>Guide</th> <th>Grade</th><th>PublicComment</th></tr> 
+		<tr><th>Activity</th> <th>Objectives</th> <th>Date</th> <th>Guide</th> <th>Grade</th><th>
+          Comment</th></tr> 
 		<form action="" method="POST">
 			{% for row in co_curricular_data %}
 			<tr>
@@ -91,7 +92,7 @@
 			{% endfor %}
 		</form>
 	</table>
-&nbsp;<p><b>Projects:</b></p>
+      <p><b>Projects:</b></p>
     <p/>
 <table border="1" cellspacing="5" cellpadding="0">
 		<tr><th>Title</th> <th>Type</th> <th>Subject</th> <th>ProblemSelection</th> <th>Review</th><th>Planning</th><th>Documentation</th><th>Communication</th></tr> 
@@ -110,7 +111,6 @@
 			{% endfor %}
 		</form>
 	</table>
-    <p>&nbsp;</p>
     <p>
 		<b>Elocution:</b></p>
     <p/>
@@ -129,35 +129,31 @@
 			{% endfor %}
 		</form>
 	</table>    <p>&nbsp;</p>
-    <p>&nbsp;</p>
     <hr>
 			<p>
 			<b>Physical fitness info:</b></p>
     <p/>
 	<table border="1" cellspacing="5" cellpadding="0">
-		<tr><th>Pathak</th> <th>Pratod</th> <th>Margadarshak</th> <th>SpecialSport</th> <th>Weight</th><th>Height</th>
+		<tr> <th>SpecialSport</th> <th>Weight</th><th>Height</th>
 		<th>FFB</th> <th>FBB</th> <th>SBJ</th> <th>VerticleJump</th> <th>BallThrow</th><th>ShuttleRun</th>
-		<th>SitUps</th> <th>Sprint</th> <th>Running400m</th> <th>ShortPutThrow</th><th>BodyMassIndex</th> <th>Balancing</th>
-		 <th>Grade</th><th>PublicComment</th></tr> 
+		<th>SitUps</th> <th>sprint</th> <th>400m</th> <th>ShortPut</th><th>BMI</th> <th>Balancing</th>
+		 <th>Grade</th><th>Comment</th></tr> 
 		<form action="" method="POST">
 			{% for row in physical_fit_info_data %}
 			<tr>
-				<td>{{row.Pathak}}</td>
-				<td>{{row.Pratod}}</td>
-				<td>{{row.Margadarshak}}</td>
 				<td>{{row.SpecialSport}}</td>
-				<td>{{row.Weight}}</td>
-				<td>{{row.Height}}</td>
-				<td>{{row.FlexibleForwardBending}}</td>
-				<td>{{row.FlexibleBackwardBending}}</td>
+				<td>{{row.Weight}}kg</td>
+				<td>{{row.Height}}cm</td>
+				<td>{{row.FlexibleForwardBending}}cm</td>
+				<td>{{row.FlexibleBackwardBending}}cm</td>
 				<td>{{row.SBJ}}</td>
-				<td>{{row.VerticleJump}}</td>
+				<td>{{row.VerticleJump}}cm</td>
 				<td>{{row.BallThrow}}</td>
-				<td>{{row.ShuttleRun}}</td>
-				<td>{{row.SitUps}}</td>
+				<td>{{row.ShuttleRun}}sec</td>
+				<td>{{row.SitUps}}sec</td>
 				<td>{{row.Sprint}}</td>
-				<td>{{row.Running400m}}</td>
-				<td>{{row.ShortPutThrow}}</td>
+				<td>{{row.Running400m}}sec</td>
+				<td>{{row.ShortPutThrow}}m</td>
 				<td>{{row.BodyMassIndex}}</td>
 				<td>{{row.Balancing}}</td>
 				<td>{{row.Grade}}</td>
@@ -166,11 +162,12 @@
 			{% endfor %}
 		</form>
 	</table>
-		&nbsp;<p>
+		<p>
 		<b>SocialActivity:</b></p>
     <p/>
 	<table border="1" cellspacing="5" cellpadding="0">
-		<tr><th>Activity</th> <th>Objectives</th> <th>Date</th> <th>Organizer</th> <th>Grade</th><th>PublicComment</th></tr> 
+		<tr><th>Activity</th> <th>Objectives</th> <th>Date</th> <th>Organizer</th> <th>Grade</th><th>
+          Comment</th></tr> 
 		<form action="" method="POST">
 			{% for row in social_activity_data %}
 			<tr>
@@ -184,5 +181,7 @@
 			{% endfor %}
 		</form>
 	</table>
+    <p>&nbsp;</p>
+    <hr>
 </body>
 </html>

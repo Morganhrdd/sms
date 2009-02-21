@@ -44,16 +44,20 @@ def add_rollno():
 
 def add_test():
     yr = AcademicYear.objects.get(Year='2008-2009')
-    for xls, std, div in zip(["B6.xls"], [6], ['B']):
+    for xls, std, div in zip(["../B6.xls"], [6], ['B']):
         book = xlrd.open_workbook(xls)
         sh = book.sheet_by_index(0)
         row = sh.row_values(0)
         tests = row[5:]
         row = sh.row_values(1)
         teachers = row[5:]
-        for test, teacher in zip(tests, teachers):
+        row = sh.row_values(2)
+        max_marks = row[5:]
+        
+        for test, teacher, max_mark in zip(tests, teachers, max_marks):
             subject = test[:3]
             test_type = test[3:]
+            
             try:
                 SubObj = SubjectMaster.objects.get(Standard=std, Name=subject)
             except:
@@ -63,6 +67,23 @@ def add_test():
                 SubObj.Standard = std
                 SubObj.Name = subject[:3]
                 SubObj.save()
+            try:
+                TeacherObj = Teacher.objects.get(Name=teacher)
+            except:
+                print 'unable to get teacher.'
+                print teacher
+            try:
+                TestMappingObj = TestMapping.objects.get(SubjectMaster=SubObj, TestType=test_type, MaximumMarks=max_mark, Teacher=TeacherObj, AcademicYear = yr)
+                print test, max_mark, teacher, yr, 'already in DB'
+            except:
+                TestMappingObj = TestMapping()
+                TestMappingObj.SubjectMaster = SubObj
+                TestMappingObj.TestType = test_type
+                TestMappingObj.MaximumMarks = max_mark
+                TestMappingObj.Teacher = TeacherObj
+                TestMappingObj.AcademicYear = yr
+                TestMappingObj.save()
+                print 'Added: ', test, max_mark, teacher, yr
 
 add_test()
 sys.exit()

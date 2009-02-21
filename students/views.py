@@ -25,115 +25,116 @@ Title = "Jnana Prabodhini Prashala"
 pageinfo = "School Report"
 
 def report(request):
-    # SubObj = SubjectMaster.objects.get(Standard=5, Name='hindi')
-    #print SubObj
-    #test = TestMapping.objects.get(SubjectMaster=SubObj)
-    #print test
-    student_basic_info = StudentBasicInfo.objects.get(RegistrationNo = 1)
-    student_yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo = student_basic_info)
-    student_add_info = StudentAdditionalInformation.objects.get(Id=student_basic_info)
-    
-    student_data={'FirstName':student_basic_info.FirstName,'LastName':student_basic_info.LastName,'DateOfBirth':student_basic_info.DateOfBirth,
-                  'MothersName':student_basic_info.MothersName,'FathersName':student_basic_info.FathersName,'RegistrationNo':student_basic_info.RegistrationNo,
-                  'Address':student_add_info.Address}
+    if request.POST:
+        keys = request.POST.keys()
+        reg_no = request.POST['reg_no']
 
-    attendances = StudentAttendance.objects.filter(StudentYearlyInformation = student_yearly_info)
-    attendance_data = []
-    for attendance in attendances:
-        attendance_data.append({'Month':attendance.AttendanceMaster.Month , 'Attendance':attendance.ActualAttendance , 'Working_days':attendance.AttendanceMaster.WorkingDays})
+        student_basic_info = StudentBasicInfo.objects.get(RegistrationNo = reg_no)
+        student_yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo = student_basic_info)
+        student_add_info = StudentAdditionalInformation.objects.get(Id=student_basic_info)
+        student_data={'FirstName':student_basic_info.FirstName,'LastName':student_basic_info.LastName,'DateOfBirth':student_basic_info.DateOfBirth,
+                      'MothersName':student_basic_info.MothersName,'FathersName':student_basic_info.FathersName,'RegistrationNo':student_basic_info.RegistrationNo,
+                      'Address':student_add_info.Address}
+
+        attendances = StudentAttendance.objects.filter(StudentYearlyInformation = student_yearly_info)
+        attendance_data = []
+        for attendance in attendances:
+            attendance_data.append({'Month':attendance.AttendanceMaster.Month , 'Attendance':attendance.ActualAttendance , 'Working_days':attendance.AttendanceMaster.WorkingDays})
      
-    marks = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
-    mark_data = []
-    for mark in marks:
-        mark_data.append({'MarksObtained':mark.MarksObtained , 'MaximumMarks':mark.TestMapping.MaximumMarks ,'Subject_Name':mark.TestMapping.SubjectMaster.Name,'test_type':mark.TestMapping.TestType})
+        marks = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
+        mark_data = []
+        for mark in marks:
+            mark_data.append({'MarksObtained':mark.MarksObtained , 'MaximumMarks':mark.TestMapping.MaximumMarks ,'Subject_Name':mark.TestMapping.SubjectMaster.Name,'test_type':mark.TestMapping.TestType})
         
-    co_curricular = CoCurricular.objects.filter(StudentYearlyInformation = student_yearly_info)
-    co_curricular_data = []
-    for co_cur_acts in co_curricular:
-        co_curricular_data.append({'Activity':co_cur_acts.Activity , 'Objectives':co_cur_acts.Objectives ,'Date':co_cur_acts.Date ,'Guide':co_cur_acts.Guide ,'Grade':co_cur_acts.Grade ,'PublicComment':co_cur_acts.PublicComment})
+        co_curricular = CoCurricular.objects.filter(StudentYearlyInformation = student_yearly_info)
+        co_curricular_data = []
+        for co_cur_acts in co_curricular:
+            co_curricular_data.append({'Activity':co_cur_acts.Activity , 'Objectives':co_cur_acts.Objectives ,'Date':co_cur_acts.Date ,'Guide':co_cur_acts.Guide ,'Grade':co_cur_acts.Grade ,'PublicComment':co_cur_acts.PublicComment})
 
 
-    abhivyakti_vikas = AbhivyaktiVikas.objects.filter(StudentYearlyInformation = student_yearly_info)
-    abhivyakti_vikas_data = []
-    for abhi_row in abhivyakti_vikas:
-        print abhi_row.MediumOfExpression
-        abhivyakti_vikas_data.append({'MediumOfExpression':abhi_row.MediumOfExpression ,
-                                     'Teacher':abhi_row.Teacher ,
-                                     'Participation':abhi_row.Participation ,
-                                     'ReadinessToLearn':abhi_row.ReadinessToLearn ,
-                                     'ContinuityInWork':abhi_row.ContinuityInWork ,
-                                     'SkillDevelopment':abhi_row.SkillDevelopment,
-                                     'Creativity':abhi_row.Creativity})
+        abhivyakti_vikas = AbhivyaktiVikas.objects.filter(StudentYearlyInformation = student_yearly_info)
+        abhivyakti_vikas_data = []
+        for abhi_row in abhivyakti_vikas:
+            print abhi_row.MediumOfExpression
+            abhivyakti_vikas_data.append({'MediumOfExpression':abhi_row.MediumOfExpression ,
+                                         'Teacher':abhi_row.Teacher ,
+                                         'Participation':abhi_row.Participation ,
+                                         'ReadinessToLearn':abhi_row.ReadinessToLearn ,
+                                         'ContinuityInWork':abhi_row.ContinuityInWork ,
+                                         'SkillDevelopment':abhi_row.SkillDevelopment,
+                                         'Creativity':abhi_row.Creativity})
 
 
-    projects = Project.objects.filter(StudentYearlyInformation = student_yearly_info)
-    project_data = []
-    for proj_row in projects:
-        print proj_row.Title
-        project_data.append({'Title':proj_row.Title ,
-                                     'Type':proj_row.Type ,
-                                     'Subject':proj_row.Subject ,
-                                     'ProblemSelection':proj_row.ProblemSelection ,
-                                     'Review':proj_row.Review ,
-                                     'Planning':proj_row.Planning,
-                                     'Documentation':proj_row.Documentation,
-                                     'Communication':proj_row.Communication})
+        projects = Project.objects.filter(StudentYearlyInformation = student_yearly_info)
+        project_data = []
+        for proj_row in projects:
+            print proj_row.Title
+            project_data.append({'Title':proj_row.Title ,
+                                         'Type':proj_row.Type ,
+                                         'Subject':proj_row.Subject ,
+                                         'ProblemSelection':proj_row.ProblemSelection ,
+                                         'Review':proj_row.Review ,
+                                         'Planning':proj_row.Planning,
+                                         'Documentation':proj_row.Documentation,
+                                         'Communication':proj_row.Communication})
 
-    elocution = Elocution.objects.filter(StudentYearlyInformation = student_yearly_info)
-    elocution_data = []
-    for elo_row in elocution:
-        print elo_row.Title
-        elocution_data.append({'Title':elo_row.Title ,
-                                     'Memory':elo_row.Memory ,
-                                     'Content':elo_row.Content ,
-                                     'Understanding':elo_row.Understanding ,
-                                     'Skill':elo_row.Skill ,
-                                     'Presentation':elo_row.Presentation})
+        elocution = Elocution.objects.filter(StudentYearlyInformation = student_yearly_info)
+        elocution_data = []
+        for elo_row in elocution:
+            print elo_row.Title
+            elocution_data.append({'Title':elo_row.Title ,
+                                         'Memory':elo_row.Memory ,
+                                         'Content':elo_row.Content ,
+                                         'Understanding':elo_row.Understanding ,
+                                         'Skill':elo_row.Skill ,
+                                         'Presentation':elo_row.Presentation})
 
-    physical_fit_info = PhysicalFitnessInfo.objects.filter(StudentYearlyInformation = student_yearly_info)
-    physical_fit_info_data = []
-    for ph_data in physical_fit_info:
-        physical_fit_info_data.append({'Pathak':ph_data.Pathak ,
-                                       'Pratod':ph_data.Pratod ,
-                                       'Margadarshak':ph_data.Margadarshak ,
-                                       'SpecialSport':ph_data.SpecialSport ,                                       
-                                       'Weight':ph_data.Weight ,
-                                       'Height':ph_data.Height ,
-                                       'FlexibleForwardBending':ph_data.FlexibleForwardBending ,
-                                       'FlexibleBackwardBending':ph_data.FlexibleBackwardBending ,
-                                       'SBJ':ph_data.SBJ ,
-                                       'VerticleJump':ph_data.VerticleJump ,
-                                       'BallThrow':ph_data.BallThrow ,
-                                       'ShuttleRun':ph_data.ShuttleRun ,
-                                       'SitUps':ph_data.SitUps ,
-                                       'Sprint':ph_data.Sprint ,
-                                       'Running400m':ph_data.Running400m ,
-                                       'ShortPutThrow':ph_data.ShortPutThrow ,
-                                       'BodyMassIndex':ph_data.BodyMassIndex ,
-                                       'Balancing':ph_data.Balancing ,
-                                       'Grade':ph_data.Grade ,
-                                       'PublicComment':ph_data.PublicComment})
+        physical_fit_info = PhysicalFitnessInfo.objects.filter(StudentYearlyInformation = student_yearly_info)
+        physical_fit_info_data = []
+        for ph_data in physical_fit_info:
+            physical_fit_info_data.append({'Pathak':ph_data.Pathak ,
+                                           'Pratod':ph_data.Pratod ,
+                                           'Margadarshak':ph_data.Margadarshak ,
+                                           'SpecialSport':ph_data.SpecialSport ,                                       
+                                           'Weight':ph_data.Weight ,
+                                           'Height':ph_data.Height ,
+                                           'FlexibleForwardBending':ph_data.FlexibleForwardBending ,
+                                           'FlexibleBackwardBending':ph_data.FlexibleBackwardBending ,
+                                           'SBJ':ph_data.SBJ ,
+                                           'VerticleJump':ph_data.VerticleJump ,
+                                           'BallThrow':ph_data.BallThrow ,
+                                           'ShuttleRun':ph_data.ShuttleRun ,
+                                           'SitUps':ph_data.SitUps ,
+                                           'Sprint':ph_data.Sprint ,
+                                           'Running400m':ph_data.Running400m ,
+                                           'ShortPutThrow':ph_data.ShortPutThrow ,
+                                           'BodyMassIndex':ph_data.BodyMassIndex ,
+                                           'Balancing':ph_data.Balancing ,
+                                           'Grade':ph_data.Grade ,
+                                           'PublicComment':ph_data.PublicComment})
+
+        social_activities = SocialActivity.objects.filter(StudentYearlyInformation = student_yearly_info)
+        social_activity_data = []
+        for soc_act_data in social_activities:
+            print soc_act_data.Activity
+            social_activity_data.append({'Activity':soc_act_data.Activity ,
+                                         'Objectives':soc_act_data.Objectives ,
+                                         'Date':soc_act_data.Date ,
+                                         'Organizer':soc_act_data.Organizer ,
+                                         'Grade':soc_act_data.Grade ,
+                                         'PublicComment':soc_act_data.PublicComment})
         
-    social_activities = SocialActivity.objects.filter(StudentYearlyInformation = student_yearly_info)
-    social_activity_data = []
-    for soc_act_data in social_activities:
-        print soc_act_data.Activity
-        social_activity_data.append({'Activity':soc_act_data.Activity ,
-                                     'Objectives':soc_act_data.Objectives ,
-                                     'Date':soc_act_data.Date ,
-                                     'Organizer':soc_act_data.Organizer ,
-                                     'Grade':soc_act_data.Grade ,
-                                     'PublicComment':soc_act_data.PublicComment})
-        
-    return render_to_response('students/Marks_Report.html',Context({'student_data':student_data ,
-                                                           'mark_data':mark_data ,
-                                                           'attendance_data':attendance_data ,
-                                                           'co_curricular_data':co_curricular_data,
-                                                           'abhivyakti_vikas_data':abhivyakti_vikas_data ,
-                                                           'project_data':project_data ,
-                                                           'elocution_data':elocution_data,
-                                                           'physical_fit_info_data':physical_fit_info_data,
-                                                           'social_activity_data':social_activity_data}))
+        return render_to_response('students/Marks_Report.html',Context({'student_data':student_data ,
+        'mark_data':mark_data ,
+        'attendance_data':attendance_data ,
+        'co_curricular_data':co_curricular_data,
+        'abhivyakti_vikas_data':abhivyakti_vikas_data ,
+        'project_data':project_data ,
+        'elocution_data':elocution_data,
+        'physical_fit_info_data':physical_fit_info_data,
+        'social_activity_data':social_activity_data}))
+    else:
+        return HttpResponse ('<html><body>Enter Registration Number<form action="" method="POST"><input type="text" name="reg_no" value="" id="reg_no" size="20"></td>	<input type="submit" value="Enter" /></form></body></html>')
 
 
 
