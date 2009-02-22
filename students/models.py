@@ -100,12 +100,16 @@ class StudentAdditionalInformation(models.Model):
     Mothers_Phone_No = models.PositiveIntegerField()
     Mothers_Email = models.EmailField()
     Address = models.CharField(max_length=60)
+    class Meta:
+        verbose_name_plural = "Student Additional Information"
 
 
 class AcademicYear(models.Model):
     Year = models.CharField(max_length=9, primary_key=True)
     def __unicode__(self):
         return str(self.Year)
+    class Meta:
+        verbose_name_plural = "Academic Years"
 
 
 class Teacher(models.Model):
@@ -157,6 +161,8 @@ class StudentTestMarks(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
     TestMapping = models.ForeignKey(TestMapping)
     MarksObtained = models.FloatField()
+    class Meta:
+        verbose_name_plural = "Student Test Marks"
 
 
 class AttendanceMaster(models.Model):
@@ -196,6 +202,8 @@ class PhysicalFitnessInfo(models.Model):
     Margadarshak = models.CharField(max_length=50)
     SpecialSport = models.CharField(max_length=50)
     Grade = models.CharField(max_length=10)
+    class Meta:
+        verbose_name_plural = "Physical Fitness Information"
 
 class SocialActivity(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
@@ -206,6 +214,8 @@ class SocialActivity(models.Model):
     Grade = models.CharField(max_length=5)
     PublicComment = models.CharField(max_length=200)
     PrivateComment = models.CharField(max_length=200)
+    class Meta:
+        verbose_name_plural = "Social Activities"
 
 class CoCurricular(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
@@ -246,6 +256,8 @@ class AbhivyaktiVikas(models.Model):
     ContinuityInWork = models.CharField(max_length=1, choices=GRADE_CHOICES)
     SkillDevelopment = models.CharField(max_length=1, choices=GRADE_CHOICES)
     Creativity = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    class Meta:
+        verbose_name_plural = "Abhivyakti Vikas"
 
 class Project(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)

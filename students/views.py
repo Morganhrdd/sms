@@ -1,9 +1,8 @@
 # Create your views here.
 from django.db.models import Q
 from django.shortcuts import render_to_response
-from models import StudentBasicInfo
 from django.http import HttpResponse 
-from jp_sms.students.models import TestMapping, StudentTestMarks, StudentYearlyInformation
+from jp_sms.students.models import TestMapping, StudentTestMarks, StudentYearlyInformation, StudentBasicInfo
 from jp_sms.students.models import SubjectMaster, ClassMaster, SubjectMaster, AttendanceMaster
 from jp_sms.students.models import StudentAttendance, StudentAdditionalInformation,CoCurricular
 from jp_sms.students.models import SocialActivity,PhysicalFitnessInfo,AbhivyaktiVikas,Project,Elocution
@@ -326,3 +325,4 @@ def fillLibraryReport(Story):
 
 
 marks_add = login_required(marks_add)
+report=login_required(report)
