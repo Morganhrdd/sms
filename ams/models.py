@@ -36,6 +36,8 @@ REMARK_CHOICES = (
 	('O', 'Leave'),
 	('C', 'Compensatory Off'),
 	('S', 'Holiday'),
+	('D', 'OnDuty'),
+	('F', 'Approved HalfDay'),
 )
 
 STATUS_CHOICES = (
@@ -47,12 +49,15 @@ LEAVE_CHOICES = (
 	(1, 'Casual'),
 	(2, 'Sick'),
 	(3, 'Earned'),
+	(4, 'OnDuty'),
+	(5, 'Halfday'),
 )
 
 LEAVESTATUS_CHOICES = (
 	(1, 'Pending'),
 	(2, 'Approve'),
 	(3, 'Deny'),
+	(4, 'Pending Deny'),
 )
 
 YEAR_CHOICES = (
@@ -80,7 +85,9 @@ class User(models.Model):
 	Category = models.ForeignKey(Category)
 	Name = models.CharField(max_length=30)
 	def __unicode__(self):
-		return "%d - %s" % (self.Barcode,self.Name)
+		return "%s" % (self.Name)
+	def __str__(self):
+		return "%s" % (self.Name)
 
 class UserStatus(models.Model):
 	Barcode = models.ForeignKey(User)
@@ -112,8 +119,13 @@ class Attendance(models.Model):
 	Date = models.DateField(null=True, blank=True)
 	Remark = models.CharField(max_length=1, choices=REMARK_CHOICES)
 	Year = models.ForeignKey(AcademicYear)
-	Comment = models.CharField(max_length=30)
+	Comment = models.CharField(max_length=30, null=True, blank=True)
 	
+class LeaveAttendance(models.Model):
+	Barcode = models.ForeignKey(User)
+	Date = models.DateField(null=True, blank=True)
+	Remark = models.CharField(max_length=1, choices=REMARK_CHOICES)
+
 class TempAttendance(models.Model):
 	Barcode = models.ForeignKey(User)
 	Remark = models.CharField(max_length=1, choices=REMARK_CHOICES)
@@ -128,18 +140,40 @@ class Leaves(models.Model):
 	Barcode = models.ForeignKey(User)
 	ApplicationDate = models.DateField()
 	LeaveDate = models.DateField()
+	ApprovalDate = models.DateField(null=True, blank=True)
 	Type = models.PositiveIntegerField(choices=LEAVE_CHOICES)
 	Status = models.PositiveIntegerField(choices=LEAVESTATUS_CHOICES)
+	Reason = models.CharField(max_length=30, null=True, blank=True)
 	def __unicode__(self):
 		return "%s %s %s" % (self.Barcode, self.LeaveDate, self.Status)
+
+class LeavesBalance(models.Model):
+	Barcode = models.ForeignKey(User)
+	Type = models.PositiveIntegerField(choices=LEAVE_CHOICES)
+	Days = models.PositiveIntegerField()
 
 class LeaveRules(models.Model):
 	Category = models.ForeignKey(Category)
 	Type = models.PositiveIntegerField(choices=LEAVE_CHOICES)
 	Days = models.PositiveIntegerField()
 
+class EncashLeaves(models.Model):
+	Barcode = models.ForeignKey(User)
+	Days = models.PositiveIntegerField()
+	Status = models.PositiveIntegerField(choices=LEAVESTATUS_CHOICES)
+	
+class Overtime(models.Model):
+	Barcode = models.ForeignKey(User)
+	Date = models.DateField()
+	ApprovalDate = models.DateField(null=True, blank=True)
+	Hours = models.FloatField()
+	Status = models.PositiveIntegerField(choices=LEAVESTATUS_CHOICES)
+
 class LeaveForm(forms.Form):
 	Category = forms.ModelChoiceField(queryset=Category.objects.all())
 	Barcode = forms.ModelChoiceField(queryset=User.objects.all())
-	Date =  forms.DateField(widget=forms.DateTimeInput, required=False)
+	FromDate =  forms.DateField(widget=forms.DateTimeInput, required=False)
+	ToDate =  forms.DateField(widget=forms.DateTimeInput, required=False)
+	Days = forms.IntegerField(required=False)
 	Type = forms.ChoiceField(choices=LEAVE_CHOICES)
+	Reason = forms.CharField(max_length=30, required=False)

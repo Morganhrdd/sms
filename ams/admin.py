@@ -2,7 +2,9 @@ from django.contrib.auth.models import User
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from jp_sms.ams.models import Category, User, UserStatus, TimeRules, DayRules, Attendance, TimeRecords, Leaves, LeaveRules, AcademicYear
+from jp_sms.ams.models import Category, User, UserStatus, TimeRules, DayRules, Attendance, TimeRecords
+from jp_sms.ams.models import Leaves, LeaveRules, AcademicYear, LeaveAttendance, LeavesBalance, EncashLeaves, Overtime
+import datetime
 
 class categoryAdmin(admin.ModelAdmin):
 	list_display = ('Description','Id',)
@@ -14,8 +16,14 @@ class userAdmin(admin.ModelAdmin):
 	list_display = ('Name','Barcode','Category',)
 	ordering = ('Barcode',)
 	search_fields =['Barcode', 'Name']
-	pass
-
+	def save_model(self, request, obj, form, change):
+		if not change:
+			userstatus = UserStatus()
+			userstatus.Barcode = obj
+			userstatus.Status = 'O'
+			userstatus.save()
+		obj.save()
+			
 class userstatusAdmin(admin.ModelAdmin):
 	list_display = ('Barcode','Status')
 	ordering = ('Barcode',)
@@ -45,26 +53,38 @@ class timerecordsAdmin(admin.ModelAdmin):
 	list_display = ('Barcode','Type','Date','Time')
 	ordering = ('Barcode',)
 	search_fields = ['Date', 'Barcode__Barcode']
+	list_filter = ['Barcode', 'Date']
 	pass
 	
 class leavesAdmin(admin.ModelAdmin):
 	list_display = ('Barcode', 'ApplicationDate', 'LeaveDate', 'Type', 'Status')
 	ordering = ('Barcode',)
 	search_fields = ['Barcode__Barcode', 'LeaveDate']
+	list_filter = ['LeaveDate', 'Status']
 
 	def save_model(self, request, obj, form, change):
 		if change:
+			dt = datetime.datetime.now()
+			obj.ApprovalDate = dt.date()
 			if obj.Status == 2:
 				prevatt = Attendance.objects.filter(Date=obj.LeaveDate).filter(Barcode=obj.Barcode)
 				if prevatt:
 					attendance = prevatt[0]
 				else:
-					attendance = Attendance()
+					attendance = LeaveAttendance()
 					attendance.Barcode = obj.Barcode
 					attendance.Date = obj.LeaveDate
-					attendance.Year = AcademicYear.objects.filter(Status=1)[0]
-				attendance.Remark = 'O'
+
+				if obj.Type == 4:
+					attendance.Remark = 'D'
+				elif obj.Type == 5:
+					attendance.Remark = 'F'
+				else:
+					attendance.Remark = 'O'
 				attendance.save()
+			else:
+				att = LeaveAttendance.objects.filter(Date=obj.LeaveDate).filter(Barcode=obj.Barcode)
+				att[0].delete()
 		obj.save()
 		
 	pass
@@ -73,6 +93,7 @@ class leaverulesAdmin(admin.ModelAdmin):
 	list_display = ('Category', 'Type', 'Days')
 	ordering = ('Category',)
 	search_fields = ['Category__Id']
+#	list_filter = ['Category__Description']
 	pass
 
 class academicyearAdmin(admin.ModelAdmin):
@@ -83,11 +104,34 @@ class academicyearAdmin(admin.ModelAdmin):
 	def save_model(self, request, obj, form, change):
 		if obj.Status == 1:
 			years = AcademicYear.objects.filter(Status=1)
-			if years:
+			if years and (years[0] != obj):
 				obj.Status = 2
 		obj.save()
 	pass
 	
+class leavesbalanceAdmin(admin.ModelAdmin):
+	list_display = ('Barcode', 'Type', 'Days')
+	ordering = ('Barcode',)
+	list_filter = ['Barcode']
+	pass
+
+class encashleavesAdmin(admin.ModelAdmin):
+	list_display = ('Barcode', 'Days', 'Status')
+	ordering = ('Barcode',)
+	list_filter = ['Barcode', 'Status']
+	pass
+
+class overtimeAdmin(admin.ModelAdmin):
+	list_display = ('Barcode', 'Date', 'Hours', 'Status')
+	ordering = ('Barcode',)
+	list_filter = ['Barcode', 'Status']
+	def save_model(self, request, obj, form, change):
+		if change and (obj.Status == 2 or obj.Status == 3):
+			dt = datetime.datetime.now()
+			obj.ApprovalDate = dt.date()
+		obj.save()
+	pass
+
 admin.site.register(Category, categoryAdmin)
 admin.site.register(User, userAdmin)
 admin.site.register(UserStatus, userstatusAdmin)
@@ -98,3 +142,6 @@ admin.site.register(TimeRecords, timerecordsAdmin)
 admin.site.register(Leaves, leavesAdmin)
 admin.site.register(LeaveRules, leaverulesAdmin)
 admin.site.register(AcademicYear, academicyearAdmin)
+admin.site.register(LeavesBalance, leavesbalanceAdmin)
+admin.site.register(EncashLeaves, encashleavesAdmin)
+admin.site.register(Overtime, overtimeAdmin)

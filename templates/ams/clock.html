@@ -247,12 +247,8 @@ function populateBarcode()
  document.form2.barcode.value = document.form1.barcode.value;
 }
 </script>
-<script language="javascript">
-function populateBarcode()
-{
- document.form2.barcode.value = document.form1.barcode.value;
-}
-</script>
+</head>
+<body>
 </head>
 <body bgcolor="#FFFFFF"
     onload="clockInit(clockLocalStartTime, clockServerStartTime);clockOnLoad();document.form1.barcode.focus();"
@@ -268,100 +264,5 @@ function populateBarcode()
   <h1>{{ datestr }}</h1>
   </p>
 </div>
-
-<div id="Barcode" align=center>
-<form name="form1" action="/ams" method="get">
-Barcode&nbsp&nbsp
-<input type="text" name="barcode"/>&nbsp&nbsp
-<input type="submit" value="Record time"/>
-</form>
-
-</div>
-<div align="center">
-<b>{{ message }}</b>
-</div>
-<br/><br/>
-<div id="User" align="center">
-
-<table>
-<th>Users:Forgot checkout</th>
-<th width="50">
-</th>
-<th>Users:Yet to come</th>
-<th width="50">
-</th>
-<th>Users:In</th>
-<th width="50">
-</th>
-<th>Users:Out</th>
-<th width="50">
-</th>
-<th>Users:On Leave</th>
-<tr>
-
-<td align="center">
-<table>
-{% for row in forgotcheckout %}
-<tr>
-<td>{{ row.user.Barcode}}</td>
-</tr>
-{% endfor %}
-</table>
-</td>
-<td width="50">
-</td>
-
-<td align="center">
-<table>
-{% for row in yettocome %}
-<tr>
-<td>{{ row.user.Barcode}}</td>
-</tr>
-{% endfor %}
-</table>
-</td>
-<td width="50">
-</td>
-
-<td align="center">
-<table>
-{% for row in come %}
-<tr>
-<td>{{ row.user.Barcode}}</td>
-</tr>
-{% endfor %}
-</table>
-</td>
-<td width="50">
-</td>
-
-<td align="center">
-<table>
-{% for row in gone %}
-<tr>
-<td>{{ row.user.Barcode}}</td>
-</tr>
-{% endfor %}
-</table>
-</td>
-</td>
-<td width="50">
-</td>
-
-<td align="center">
-<table>
-{% for row in absent %}
-<tr>
-<td>{{ row.user.Barcode}}</td>
-</tr>
-{% endfor %}
-</table>
-
-</tr>
-</table>
-<br/>
-
-</div>
-
 </body>
 </html>
