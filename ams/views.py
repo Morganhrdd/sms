@@ -8,7 +8,7 @@ import os
 import datetime
 from array import array
 
-from jp_sms.ams.models import Category, User, UserStatus, TimeRecords, DayRules, TimeRules, Attendance
+from jp_sms.ams.models import Category, User, UserStatus, TimeRecords, DayRules, TimeRules, Attendance, TempAttendance
 from jp_sms.ams.models import Leaves, LeaveForm, LeaveRules, AcademicYear, LeaveAttendance, LeavesBalance, EncashLeaves, Overtime
 from jp_sms.ams.models import LEAVE_CHOICES, REMARK_CHOICES
 
@@ -21,7 +21,11 @@ def get_barcode(request):
 		day = dt.isoweekday()
 		
 		barcode = request.GET['barcode']
-		user = User.objects.filter(Barcode=barcode)[0]
+		userqs = User.objects.filter(Barcode=barcode)
+		if not userqs:
+			message = "Invalid barcode! Please rescan the barcode"
+			return populate_user(request,message)		
+		user = userqs[0]
 		userstatus = UserStatus.objects.filter(Barcode=barcode)[0]
 		category = user.Category
 		status = userstatus.Status
