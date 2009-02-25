@@ -14,7 +14,7 @@ from jp_sms.ams.models import LEAVE_CHOICES, REMARK_CHOICES
 
 def get_barcode(request):
 	message = ""
-	if request.GET.has_key('barcode'):
+	if request.GET.has_key('barcode') and request.GET['barcode'].isdigit():
 		dt = datetime.datetime.now()
 		date = dt.date()
 		time = dt.time()
