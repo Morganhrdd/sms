@@ -65,6 +65,10 @@ YEAR_CHOICES = (
 	(2, 'Other'),
 )
 
+FORGOT_CHECKOUT_CHOICES = (
+	(1, 'Update Attendance'),
+	(2, 'Done'),
+)
 class AcademicYear(models.Model):
 	Id = models.AutoField(primary_key=True)
 	Title = models.CharField(max_length=30)
@@ -92,6 +96,11 @@ class User(models.Model):
 class UserStatus(models.Model):
 	Barcode = models.ForeignKey(User)
 	Status = models.CharField(max_length=1, choices=STATUS_CHOICES)
+
+class ForgotCheckout(models.Model):
+	Barcode = models.ForeignKey(User)
+	Date = models.DateField()
+	Status = models.PositiveIntegerField(choices=FORGOT_CHECKOUT_CHOICES)
 
 class TimeRules(models.Model):
 	Type = models.CharField(max_length=30,primary_key=True)

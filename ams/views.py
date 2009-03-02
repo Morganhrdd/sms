@@ -8,19 +8,19 @@ import os
 import datetime
 from array import array
 
-from jp_sms.ams.models import Category, User, UserStatus, TimeRecords, DayRules, TimeRules, Attendance, TempAttendance
+from jp_sms.ams.models import Category, User, UserStatus, TimeRecords, DayRules, TimeRules, Attendance, TempAttendance, ForgotCheckout
 from jp_sms.ams.models import Leaves, LeaveForm, LeaveRules, AcademicYear, LeaveAttendance, LeavesBalance, EncashLeaves, Overtime
 from jp_sms.ams.models import LEAVE_CHOICES, REMARK_CHOICES
 
 def get_barcode(request):
 	message = ""
-	if request.GET.has_key('barcode') and request.GET['barcode'].isdigit():
+	if request.POST.has_key('barcode') and request.POST['barcode'].isdigit():
 		dt = datetime.datetime.now()
 		date = dt.date()
 		time = dt.time()
 		day = dt.isoweekday()
 		
-		barcode = request.GET['barcode']
+		barcode = request.POST['barcode']
 		userqs = User.objects.filter(Barcode=barcode)
 		if not userqs:
 			message = "Invalid barcode! Please rescan the barcode"
@@ -320,20 +320,44 @@ def populate_user(request,message):
 			if rem == 'O' or rem == 'D' or rem == 'C':
 				absent.append({'user': usr})
 		if not attrcd and not lattrcd:
-			forgotcheckout.append({'user': usr})
+			usr.Status = 'O'
+			usr.save()
+			yettocome.append({'user': usr})
+			forgot = ForgotCheckout()
+			forgot.Barcode = usr.Barcode
+			forgot.Status = 1
+			
+			dat = datet.date()
+			oneday = datetime.timedelta(1)
+			while 1:
+				dat = dat - oneday
+				usertr = TimeRecords.objects.filter(Date=dat).filter(Barcode=usr.Barcode).filter(Type='I')
+				if usertr:
+					forgot.Date = dat
+					break
+			forgot.save()
+	
+	usersforgot = ForgotCheckout.objects.filter(Status=1)		
+	for usr in usersforgot:
+		forgotcheckout.append({'user': usr})
 
-	return render_to_response('ams/barcode.html',Context({'come': come,'yettocome':yettocome,'gone':gone,'absent':absent,'forgotcheckout':forgotcheckout,'message':message,'jsdate': jsdate,'datestr': datestr}))
+	usershalf = Attendance.objects.filter(Date=date).filter(Remark='F')
+	for usr in usershalf:
+		half.append({'user': usr})	
+
+	return render_to_response('ams/barcode.html',Context({'come': come,'yettocome':yettocome,'gone':gone,'absent':absent,
+								'forgotcheckout':forgotcheckout,'half':half,'message':message,'jsdate': jsdate,'datestr': datestr}))
 
 def app_leave(request):
 	message = "";
-	if not request.GET:
+	if not request.POST:
 		form = LeaveForm()
 		return render_to_response('ams/leaveapp.html', {'form': form})
 	else:
-		form = LeaveForm(request.GET)
+		form = LeaveForm(request.POST)
 		if not form.is_valid():
 			return render_to_response('ams/leaveapp.html', {'form': form})
-		if request.GET['applyforleave'] == '1':
+		if request.POST['applyforleave'] == '1':
 			if form.is_valid():
 				fdate = form.cleaned_data['FromDate']
 				tdate = form.cleaned_data['ToDate']
@@ -363,6 +387,9 @@ def app_leave(request):
 							if prevapp:
 								leaves = prevapp[0]
 								if leaves.Status == 2:
+									if date < datetime.datetime.now().date():
+										message = "Leave already approved!"
+										return render_to_response('ams/leaveapp.html', {'form': form, 'message': message})
 									att = LeaveAttendance.objects.filter(Date=date).filter(Barcode=barcode)
 									att[0].delete()
 								leaves.Status = 1
@@ -387,7 +414,7 @@ def app_leave(request):
 					message = "Enter correct dates!"
 					return render_to_response('ams/leaveapp.html', {'form': form, 'message': message})
 				message = "Leave application submitted for user " + str(barcode)
-		elif request.GET['applyforleave'] == '2':
+		elif request.POST['applyforleave'] == '2':
 			if form.is_valid():
 				fdate = form.cleaned_data['FromDate']
 				tdate = form.cleaned_data['ToDate']
@@ -421,7 +448,7 @@ def app_leave(request):
 					message = "Enter correct dates!"
 					return render_to_response('ams/leaveapp.html', {'form': form, 'message': message})
 				message = "Leave cancellation submitted for user " + str(barcode)
-		elif request.GET['applyforleave'] == '3':
+		elif request.POST['applyforleave'] == '3':
 			if form.is_valid():
 				days = form.cleaned_data['Days']			
 				barcode = form.cleaned_data['Barcode']

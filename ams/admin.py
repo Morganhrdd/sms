@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from jp_sms.ams.models import Category, User, UserStatus, TimeRules, DayRules, Attendance, TimeRecords
+from jp_sms.ams.models import Category, User, UserStatus, TimeRules, DayRules, Attendance, TimeRecords, ForgotCheckout
 from jp_sms.ams.models import Leaves, LeaveRules, AcademicYear, LeaveAttendance, LeavesBalance, EncashLeaves, Overtime
 import datetime
 
@@ -54,6 +54,13 @@ class timerecordsAdmin(admin.ModelAdmin):
 	ordering = ('Barcode',)
 	search_fields = ['Date', 'Barcode__Barcode']
 	list_filter = ['Barcode', 'Date']
+	def save_model(self, request, obj, form, change):
+		if obj.Type == 'O':
+			fcr = ForgotCheckout.objects.filter(Barcode=obj.Barcode).filter(Date=obj.Date)
+			if fcr:
+				fcr[0].Status = 2
+				fcr[0].save()
+		obj.save()
 	pass
 	
 class leavesAdmin(admin.ModelAdmin):
@@ -132,6 +139,12 @@ class overtimeAdmin(admin.ModelAdmin):
 		obj.save()
 	pass
 
+class forgotcheckoutAdmin(admin.ModelAdmin):
+	list_display = ('Barcode', 'Date', 'Status')
+	ordering = ('Barcode',)
+	list_filter = ['Barcode', 'Date', 'Status']
+	pass
+	
 admin.site.register(Category, categoryAdmin)
 admin.site.register(User, userAdmin)
 admin.site.register(UserStatus, userstatusAdmin)
@@ -145,3 +158,4 @@ admin.site.register(AcademicYear, academicyearAdmin)
 admin.site.register(LeavesBalance, leavesbalanceAdmin)
 admin.site.register(EncashLeaves, encashleavesAdmin)
 admin.site.register(Overtime, overtimeAdmin)
+admin.site.register(ForgotCheckout, forgotcheckoutAdmin)
