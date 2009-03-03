@@ -306,7 +306,7 @@ Barcode&nbsp;&nbsp;
 <table>
 {% for row in forgotcheckout %}
 <tr>
-<td>{{ row.user.Barcode}}({{ row.user.Date}})</td>
+<td>{{ row.user.Barcode}}({{ row.user.Date|date:"D d M Y"}})</td>
 </tr>
 {% endfor %}
 </table>
