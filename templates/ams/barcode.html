@@ -270,7 +270,7 @@ function populateBarcode()
 </div>
 
 <div id="Barcode" align=center>
-<form name="form1" action="/ams" method="get">
+<form name="form1" action="/ams" method="post">
 Barcode&nbsp;&nbsp;
 <input type="text" name="barcode"/>&nbsp;&nbsp;
 <input type="submit" value="Record time"/>
@@ -297,13 +297,16 @@ Barcode&nbsp;&nbsp;
 <th width="50">
 </th>
 <th>Users:On Leave</th>
+<th width="50">
+</th>
+<th>Users:On Halfday</th>
 <tr>
 
 <td align="center">
 <table>
 {% for row in forgotcheckout %}
 <tr>
-<td>{{ row.user.Barcode}}</td>
+<td>{{ row.user.Barcode}}({{ row.user.Date}})</td>
 </tr>
 {% endfor %}
 </table>
@@ -344,7 +347,6 @@ Barcode&nbsp;&nbsp;
 {% endfor %}
 </table>
 </td>
-</td>
 <td width="50">
 </td>
 
@@ -356,6 +358,20 @@ Barcode&nbsp;&nbsp;
 </tr>
 {% endfor %}
 </table>
+</td>
+
+<td width="50">
+</td>
+
+<td align="center">
+<table>
+{% for row in half %}
+<tr>
+<td>{{ row.user.Barcode}}</td>
+</tr>
+{% endfor %}
+</table>
+</td>
 
 </tr>
 </table>
