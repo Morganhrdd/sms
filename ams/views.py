@@ -294,6 +294,7 @@ def populate_user(request,message):
 	yettocome = []
 	gone = []
 	absent = []
+	half = []
 	come = []
 	dt = datetime.datetime.now()
 	date = dt.date()
@@ -307,6 +308,8 @@ def populate_user(request,message):
 			rem = lattrcd[0].Remark
 			if rem == 'O' or rem == 'D' or rem == 'C':
 				absent.append({'user': usr})
+			if rem == 'F':
+				half.append({'user': usr})	
 		if not attrcd and not lattrcd:
 			yettocome.append({'user': usr})
 
@@ -319,6 +322,8 @@ def populate_user(request,message):
 			rem = lattrcd[0].Remark
 			if rem == 'O' or rem == 'D' or rem == 'C':
 				absent.append({'user': usr})
+			if rem == 'F':
+				half.append({'user': usr})	
 		if not attrcd and not lattrcd:
 			usr.Status = 'O'
 			usr.save()
