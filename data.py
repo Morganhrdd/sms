@@ -1,8 +1,9 @@
 import xlrd, os, sys, datetime
 os.environ['DJANGO_SETTINGS_MODULE'] = 'jp_sms.settings'
 sys.path.append('/Users/shantanoo/repo')
-from jp_sms.students.models import StudentBasicInfo, SubjectMaster, Teacher, AcademicYear, TestMapping, StudentYearlyInformation, ClassMaster, StudentTestMarks, StudentAdditionalInformation
-
+from jp_sms.students.models import StudentBasicInfo, SubjectMaster, Teacher, AttendanceMaster
+from jp_sms.students.models import AcademicYear, TestMapping, StudentYearlyInformation, StudentAttendance
+from jp_sms.students.models import ClassMaster, StudentTestMarks, StudentAdditionalInformation
 def reg_no():
     book = xlrd.open_workbook('REG.xls')
     sh = book.sheet_by_index(0)
@@ -41,6 +42,7 @@ def add_rollno():
             classobj = ClassMaster.objects.get(AcademicYear=yr, Standard=std, Division=div, Type='P')
             a.ClassMaster = classobj
             a.save()
+    
 
 def add_test():
     yr = AcademicYear.objects.get(Year='2008-2009')
@@ -120,8 +122,145 @@ def add_additional_info():
             yrlinfo.save()
             print 'Added regno: ', regno
 
-add_additional_info()
-    
+def add_attendance():
+    yr = AcademicYear.objects.get(Year='2008-2009')    
+    for xls, std, div in zip(["../Data.xls"], [9], ['B']):
+        book = xlrd.open_workbook(xls)
+        sh = book.sheet_by_index(0)
+        try:
+            classmaster = ClassMaster.objects.get(AcademicYear=yr, Standard=std, Division=div)
+        except:
+            print 'classmaster not in db. ', yr, std, div
+            pass
+        for rx in range(3,sh.nrows):
+            row = sh.row_values(rx)
+            regno = row[0]
+            try:
+                basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
+            except:
+                print 'regno: ', regno, ' not found in db'
+                pass
+            try:
+                yrlinfo = StudentYearlyInformation.objects.get(StudentBasicInfo=basicinfo)
+            except:
+                print 'yearly info: ', regno, ' not found in db'
+                pass
+            for i in range(4,12):
+                mon = i+2
+                if mon > 12:
+                    mon = mon - 12
+                if not row[i]:
+                    raise 'blank value for regno '+str(int(regno))+' month '+str(i)
+                try:
+                    attendancemaster = AttendanceMaster.objects.get(ClassMaster=classmaster, Month=mon)
+                except:
+                    print "Attendance master not in db. ", classmaster, mon
+                    sys.exit()
+                print attendancemaster
+                studentattendance = StudentAttendance()
+                studentattendance.AttendanceMaster = attendancemaster
+                studentattendance.StudentYearlyInformation = yrlinfo
+                studentattendance.ActualAttendance = row[i]
+                studentattendance.save()
+                #print regno, mon, classmaster, studentattendance, row[i],
+            print
+
+
+def add_marks():
+    yr = AcademicYear.objects.get(Year='2008-2009')    
+    for xls, std, div in zip(["../B9.xls"], [9], ['B']):
+        book = xlrd.open_workbook(xls)
+        sh = book.sheet_by_index(0)
+        row = sh.row_values(0)
+        subjects = row[5:]
+        for subject in subjects:
+            try:
+                SubObj = SubjectMaster.objects.get(Standard=std, Name=subject[:3])
+            except:
+                SubObj = SubjectMaster()
+                SubObj.Name = subject[:3]
+                SubObj.Standard = std
+                SubObj.save()
+                print 'Added new subject', subject[:3]
+        yr = AcademicYear.objects.get(Year='2008-2009')
+        row = sh.row_values(1)
+        teachers = row[5:]
+        row = sh.row_values(2)
+        max_marks = row[5:]
+        for teacher, subject, max_mark in zip(teachers, subjects, max_marks):
+            if teacher:
+                try:
+                    TeacherObj = Teacher.objects.get(Name=teacher)
+                except:
+                    print teacher
+                    sys.exit()
+                try:
+                    SubObj = SubjectMaster.objects.get(Standard=std, Name=subject[:3])
+                except:
+                    print 'Subject does not exist ', subject[:3]
+                try:
+                    testmapping = TestMapping.objects.get(SubjectMaster = SubObj, TestType = subject[3:], MaximumMarks = max_mark, Teacher = TeacherObj, AcademicYear = yr)
+                    pass
+                except:
+                    testmapping = TestMapping()
+                    testmapping.SubjectMaster = SubObj
+                    testmapping.TestType = subject[3:]
+                    testmapping.MaximumMarks = max_mark
+                    testmapping.Teacher = TeacherObj
+                    testmapping.AcademicYear = yr
+                    testmapping.save()
+                    print subject, 'successfully added'
+        for rx in range(3, sh.nrows):
+            row = sh.row_values(rx)
+            row = sh.row_values(rx)
+            regno = row[0]
+            marks = row[5:]
+            for teacher, subject, mark, max_mark in zip(teachers, subjects, marks, max_marks):
+                if teacher:
+                    try:
+                        SubObj = SubjectMaster.objects.get(Standard=std, Name=subject[:3])
+                    except:
+                        print 'Subject does not exist ', subject[:3]
+                        sys.exit()
+                    try:
+                        TeacherObj = Teacher.objects.get(Name=teacher)
+                    except:
+                        print 'Teacher does not exist ', teacher
+                        sys.exit()
+                    try:
+                        testmapping = TestMapping.objects.get(TestType=subject[3:], SubjectMaster = SubObj, MaximumMarks = max_mark, Teacher = TeacherObj, AcademicYear = yr)
+                    except:
+                        print 'TestMapping does not exist ',SubObj, TeacherObj, yr, subject[3:], max_mark
+                        sys.exit()
+                    try:
+                        basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
+                    except:
+                        print 'Basic info not found ', regno
+                        sys.exit()
+                    try:
+                        classmaster = ClassMaster.objects.get(Standard=std, AcademicYear=yr,Division=div)
+                    except:
+                        print 'ClassMaster not found ', std, yr, div
+                        sys.exit()
+                    try:
+                        yrlyinfo = StudentYearlyInformation.objects.get(StudentBasicInfo=basicinfo, ClassMaster=classmaster)
+                    except:
+                        print 'StudentYearlyInformation not found ', basicinfo, classmaster
+                        sys.exit()
+                    try:
+                        a=StudentTestMarks.objects.get(StudentYearlyInformation=yrlyinfo, TestMapping=testmapping)
+                        pass
+                    except:
+                        a = StudentTestMarks()
+                        a.StudentYearlyInformation = yrlyinfo
+                        a.TestMapping = testmapping
+                        if not mark:
+                            mark = 0.5
+                        a.MarksObtained = mark
+                        a.save()
+                        print "added successfully", a
+
+add_marks()
 sys.exit()
 def add_b5():
     book = xlrd.open_workbook('B5.xls')

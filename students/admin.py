@@ -34,7 +34,8 @@ class SubjectMasterAdmin(admin.ModelAdmin):
 
 class StudentYearlyInformationAdmin(admin.ModelAdmin):
     list_display = ('StudentBasicInfo', 'RollNo', 'ClassMaster', 'Photo')
-    ordering = ('ClassMaster', 'RollNo',)
+    ordering = ('ClassMaster', 'RollNo', )
+    search_fields = ['StudentBasicInfo__FirstName', 'StudentBasicInfo__LastName', 'ClassMaster__Teacher__Name', 'RollNo', 'ClassMaster__Standard','ClassMaster__AcademicYear__Year']
 
 class ClassMasterAdmin(admin.ModelAdmin):
     list_display = ('AcademicYear' ,'Standard', 'Division', 'Teacher')
@@ -42,11 +43,11 @@ class ClassMasterAdmin(admin.ModelAdmin):
     
 class TestMappingAdmin(admin.ModelAdmin):
     list_display = ('SubjectMaster', 'TestType', 'MaximumMarks', 'Teacher', 'AcademicYear')
-    search_fields = ['TestType']
+    search_fields = ['TestType', 'SubjectMaster__Name', 'Teacher__Name', 'AcademicYear__Year']
     
 class StudentTestMarksAdmin(admin.ModelAdmin):
     list_display = ('StudentYearlyInformation', 'TestMapping', 'MarksObtained')
-    search_fields = ['MarksObtained']
+    search_fields = ['MarksObtained', 'TestMapping__SubjectMaster__Name', 'TestMapping__SubjectMaster__Standard', 'StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName', 'TestMapping__Teacher__Name']
 
 class AttendanceMasterAdmin(admin.ModelAdmin):
     list_display = ('ClassMaster', 'WorkingDays')

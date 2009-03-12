@@ -163,6 +163,8 @@ class StudentTestMarks(models.Model):
     MarksObtained = models.FloatField()
     class Meta:
         verbose_name_plural = "Student Test Marks"
+    def __unicode__(self):
+        return "%s, %s, %f" % (self.StudentYearlyInformation, self.TestMapping, self.MarksObtained)
 
 
 class AttendanceMaster(models.Model):
@@ -177,6 +179,8 @@ class StudentAttendance(models.Model):
     AttendanceMaster = models.ForeignKey(AttendanceMaster)
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
     ActualAttendance = models.PositiveIntegerField()
+    def __unicode__(self):
+        return "%s" % (self.AttendanceMaster)
 
 class PhysicalFitnessInfo(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
