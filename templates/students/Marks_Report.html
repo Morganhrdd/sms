@@ -28,7 +28,47 @@
  	 Mother&#39;s Name: {{student_data.MothersName}}<p/>
  	 Father&#39;s Name: {{student_data.FathersName}}<p/>
 	 Address: {{student_data.Address}}<p/>
-	 &nbsp;<hr><p align="center"/>
+	 <img src={{photo[0]}}><p align="center"/>
+	 <b>Report Summary</b><table border="2" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" id="AutoNumber1" width="352">
+        <tr>
+          <th width="174">
+          <p align="center"><b>Category</b></th>
+          <th width="174">
+          <p align="center"><b>Grade</b></th>
+        </tr>
+        <tr>
+          <td width="174">Academics</td>
+          <td width="174">&nbsp;</td>
+        </tr>
+        <tr>
+          <td width="174">co curricular</td>
+          <td width="174">{{cumulative_cocur_grade}}</td>
+        </tr>
+        <tr>
+          <td width="174">Abhivyakti Vikas</td>
+          <td width="174">{{cumulative_abhi_grade}}</td>
+        </tr>
+        <tr>
+          <td width="174">Projects</td>
+          <td width="174">{{cumulative_project_grade}}</td>
+        </tr>
+        <tr>
+          <td width="174">Elocution</td>
+          <td width="174">{{cumulative_elocution_grade}}</td>
+        </tr>
+        <tr>
+          <td width="174">Physical fitness</td>
+          <td width="174">{{cumulative_physical_grade}}</td>
+        </tr>
+        <tr>
+          <td width="174">social activity</td>
+          <td width="174">{{cumulative_social_grade}}</td>
+        </tr>
+      </table>
+      <p>Tip: Grades are Outstanding (Best performance), excellent, good, 
+      satisfactory, needs improvement and unsatisfactory (worst performance).
+      </p>
+      <hr><p align="center"/>
 	<u><b>Part 2: Academics</b></u><p/>
 	<b>School attendance:</b><p/>
 	<table border="1" cellspacing="5" cellpadding="0">
@@ -117,7 +157,7 @@
 	<table border="1" cellspacing="5" cellpadding="0">
 		<tr><th>Title</th> <th>Memory</th> <th>Content</th> <th>Understanding</th> <th>Skill</th><th>Presentation</th></tr> 
 		<form action="" method="POST">
-			{% for row in project_data %}
+			{% for row in elocution_data %}
 			<tr>
 				<td>{{row.Title}}</td>
 				<td>{{row.Memory}}</td>
@@ -133,32 +173,36 @@
 			<p>
 			<b>Physical fitness info:</b></p>
     <p/>
-	<table border="1" cellspacing="5" cellpadding="0">
-		<tr> <th>SpecialSport</th> <th>Weight</th><th>Height</th>
-		<th>FFB</th> <th>FBB</th> <th>SBJ</th> <th>VerticleJump</th> <th>BallThrow</th><th>ShuttleRun</th>
-		<th>SitUps</th> <th>sprint</th> <th>400m</th> <th>ShortPut</th><th>BMI</th> <th>Balancing</th>
-		 <th>Grade</th><th>Comment</th></tr> 
+	<table border="1" cellspacing="5" cellpadding="0" >
+		<tr> <th width="141">SpecialSport</th> <th width="139">Weight</th>
+          <th width="120">Height</th>
+		<th width="230">FFB</th> <th width="240">FBB</th> <th width="88">SBJ</th> 
+          <th width="176">VerticleJump</th> <th width="121">BallThrow</th>
+          <th width="143">ShuttleRun</th>
+		<th width="119">SitUps</th> <th width="94">sprint</th> <th width="161">400m</th> 
+          <th width="162">ShortPut</th><th width="158">BMI</th> <th width="116">Balancing</th>
+		 <th width="96">Grade</th></tr> 
 		<form action="" method="POST">
 			{% for row in physical_fit_info_data %}
 			<tr>
-				<td>{{row.SpecialSport}}</td>
-				<td>{{row.Weight}}kg</td>
-				<td>{{row.Height}}cm</td>
-				<td>{{row.FlexibleForwardBending}}cm</td>
-				<td>{{row.FlexibleBackwardBending}}cm</td>
-				<td>{{row.SBJ}}</td>
-				<td>{{row.VerticleJump}}cm</td>
-				<td>{{row.BallThrow}}</td>
-				<td>{{row.ShuttleRun}}sec</td>
-				<td>{{row.SitUps}}sec</td>
-				<td>{{row.Sprint}}</td>
-				<td>{{row.Running400m}}sec</td>
-				<td>{{row.ShortPutThrow}}m</td>
-				<td>{{row.BodyMassIndex}}</td>
-				<td>{{row.Balancing}}</td>
-				<td>{{row.Grade}}</td>
-				<td>{{row.PublicComment}}</td>
+				<td width="10">{{row.SpecialSport}}</td>
+				<td width="100">{{row.Weight}}kg</td>
+				<td width="100">{{row.Height}}cm</td>
+				<td width="100">{{row.FlexibleForwardBending}}cm</td>
+				<td width="100">{{row.FlexibleBackwardBending}}cm</td>
+				<td width="100">{{row.SBJ}}</td>
+				<td width="176">{{row.VerticleJump}}cm</td>
+				<td width="121">{{row.BallThrow}}</td>
+				<td width="143">{{row.ShuttleRun}}sec</td>
+				<td width="119">{{row.SitUps}}sec</td>
+				<td width="94">{{row.Sprint}}</td>
+				<td width="161">{{row.Running400m}}sec</td>
+				<td width="162">{{row.ShortPutThrow}}m</td>
+				<td width="158">{{row.BodyMassIndex}}</td>
+				<td width="116">{{row.Balancing}}</td>
+				<td width="96">{{row.Grade}}</td>
 			</tr>
+			<tr><td><b>Comment--></b></td><td colspan="10">{{ row.PublicComment}}</td></tr>
 			{% endfor %}
 		</form>
 	</table>
