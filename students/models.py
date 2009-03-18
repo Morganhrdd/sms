@@ -260,6 +260,8 @@ class AbhivyaktiVikas(models.Model):
     ContinuityInWork = models.CharField(max_length=1, choices=GRADE_CHOICES)
     SkillDevelopment = models.CharField(max_length=1, choices=GRADE_CHOICES)
     Creativity = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    PublicComment = models.CharField(max_length=200)
+    PrivateComment = models.CharField(max_length=200)
     class Meta:
         verbose_name_plural = "Abhivyakti Vikas"
 
@@ -273,6 +275,8 @@ class Project(models.Model):
     Planning = models.CharField(max_length=1, choices=GRADE_CHOICES)
     Documentation = models.CharField(max_length=1, choices=GRADE_CHOICES)
     Communication = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    PublicComment = models.CharField(max_length=200)
+    PrivateComment = models.CharField(max_length=200)
 
 class Elocution(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
@@ -282,4 +286,15 @@ class Elocution(models.Model):
     Understanding = models.CharField(max_length=1, choices=GRADE_CHOICES)
     Skill = models.CharField(max_length=1, choices=GRADE_CHOICES)
     Presentation = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    PublicComment = models.CharField(max_length=200)
+    PrivateComment = models.CharField(max_length=200)
+
+class Library(models.Model):
+    StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
+    BooksRead = models.PositiveIntegerField()
+    Grade = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    PublicComment = models.CharField(max_length=200)
+    PrivateComment = models.CharField(max_length=200)
+    class Meta:
+        verbose_name_plural = "Libraries"
     
