@@ -205,7 +205,7 @@ class PhysicalFitnessInfo(models.Model):
     Pratod = models.CharField(max_length=50)
     Margadarshak = models.CharField(max_length=50)
     SpecialSport = models.CharField(max_length=50)
-    Grade = models.CharField(max_length=10)
+    Grade = models.CharField(max_length=1, choices=GRADE_CHOICES)
     class Meta:
         verbose_name_plural = "Physical Fitness Information"
 
@@ -215,7 +215,7 @@ class SocialActivity(models.Model):
     Objectives = models.CharField(max_length=200)
     Date = models.DateField()
     Organizer = models.CharField(max_length=50)
-    Grade = models.CharField(max_length=5)
+    Grade = models.CharField(max_length=1, choices=GRADE_CHOICES)
     PublicComment = models.CharField(max_length=200)
     PrivateComment = models.CharField(max_length=200)
     class Meta:
@@ -227,7 +227,7 @@ class CoCurricular(models.Model):
     Objectives = models.CharField(max_length=200)
     Date = models.DateField()
     Guide = models.CharField(max_length=30)
-    Grade = models.CharField(max_length=5)
+    Grade = models.CharField(max_length=1, choices=GRADE_CHOICES)
     PublicComment = models.CharField(max_length=200)
     PrivateComment = models.CharField(max_length=200)
 
@@ -237,7 +237,7 @@ class CompetitiveExam(models.Model):
     Subject = models.CharField(max_length=30)
     Level = models.CharField(max_length=30)
     Date = models.DateField()
-    Grade_Marks = models.CharField(max_length=5)
+    Grade = models.CharField(max_length=1, choices=GRADE_CHOICES)
     PublicComment = models.CharField(max_length=200)
     PrivateComment = models.CharField(max_length=200)
 
