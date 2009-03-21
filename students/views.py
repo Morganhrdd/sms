@@ -78,23 +78,39 @@ def report(request):
         student_basic_info = StudentBasicInfo.objects.get(RegistrationNo = reg_no)
         student_yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo = student_basic_info)
         student_add_info = StudentAdditionalInformation.objects.get(Id=student_basic_info)
-        student_data={'FirstName':student_basic_info.FirstName,'LastName':student_basic_info.LastName,'DateOfBirth':student_basic_info.DateOfBirth,
-                      'MothersName':student_basic_info.MothersName,'FathersName':student_basic_info.FathersName,'RegistrationNo':student_basic_info.RegistrationNo,
-                      'Address':student_add_info.Address}
+        student_data={'FirstName':student_basic_info.FirstName,
+                      'LastName':student_basic_info.LastName,
+                      'DateOfBirth':student_basic_info.DateOfBirth,
+                      'MothersName':student_basic_info.MothersName,
+                      'FathersName':student_basic_info.FathersName,
+                      'RegistrationNo':student_basic_info.RegistrationNo,
+                      'Address':student_add_info.Address,
+                      'photo':student_yearly_info.Photo}
 
         attendances = StudentAttendance.objects.filter(StudentYearlyInformation = student_yearly_info)
         attendance_data = []
         for attendance in attendances:
-            attendance_data.append({'Month':MONTH_CHOICES[attendance.AttendanceMaster.Month] , 'Attendance':attendance.ActualAttendance , 'Working_days':attendance.AttendanceMaster.WorkingDays})
+            attendance_data.append({'Month':MONTH_CHOICES[attendance.AttendanceMaster.Month] ,
+                                    'Attendance':attendance.ActualAttendance ,
+                                    'Working_days':attendance.AttendanceMaster.WorkingDays})
      
         marks = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
         mark_data = []
+        marks_summary={'TotalMarksObtained':0 , 'TotalMaximumMarks':0}
         for mark in marks:
-            mark_data.append({'MarksObtained':mark.MarksObtained , 'MaximumMarks':mark.TestMapping.MaximumMarks ,'Subject_Name':mark.TestMapping.SubjectMaster.Name,'test_type':mark.TestMapping.TestType})
+            marks_summary['TotalMarksObtained']+=mark.MarksObtained
+            marks_summary['TotalMaximumMarks']+=mark.TestMapping.MaximumMarks
+            #if marks_summary.has_key[mark.TestMapping.SubjectMaster.Name]:
+             #   marks_summary[mark.TestMapping.SubjectMaster.Name]+=mark.MarksObtained
+            #else:
+             #   marks_summary[mark.TestMapping.SubjectMaster.Name]=0
+            #marks_summary['Subject_Name']+=marks_summary['Subject_Name']
+            mark_data.append({'MarksObtained':mark.MarksObtained ,
+                              'MaximumMarks':mark.TestMapping.MaximumMarks ,
+                              'Subject_Name':mark.TestMapping.SubjectMaster.Name,
+                              'test_type':mark.TestMapping.TestType})
+        
 
-        im=Image.open('media/'+student_yearly_info.Photo)
-        photo = []
-        photo.append(im.show())
         
         co_curricular = CoCurricular.objects.filter(StudentYearlyInformation = student_yearly_info)
         co_curricular_data = []
@@ -102,8 +118,12 @@ def report(request):
         cumulative_cocur_grade=0
         for co_cur_acts in co_curricular:
             cumulative_cocur_grade_sum=cumulative_cocur_grade_sum + GRADE_NUM[co_cur_acts.Grade]
-            co_curricular_data.append({'Activity':co_cur_acts.Activity , 'Objectives':co_cur_acts.Objectives ,'Date':co_cur_acts.Date ,'Guide':co_cur_acts.Guide ,'Grade':co_cur_acts.Grade ,'PublicComment':co_cur_acts.PublicComment})
-        cumulative_cocur_grade=GRADE_CHOICE_NUM[int(round(cumulative_cocur_grade_sum/len(co_curricular)))]        
+            co_curricular_data.append({'Activity':co_cur_acts.Activity , 'Objectives':co_cur_acts.Objectives ,
+                                       'Date':co_cur_acts.Date ,'Guide':co_cur_acts.Guide ,
+                                       'Grade':co_cur_acts.Grade ,
+                                       'PublicComment':co_cur_acts.PublicComment})
+        if len(co_curricular)>0:
+            cumulative_cocur_grade=GRADE_CHOICE_NUM[int(round(cumulative_cocur_grade_sum/len(co_curricular)))]        
         print cumulative_cocur_grade
         
         abhivyakti_vikas = AbhivyaktiVikas.objects.filter(StudentYearlyInformation = student_yearly_info)
@@ -120,8 +140,10 @@ def report(request):
                                          'ReadinessToLearn':GRADE_CHOICES[abhi_row.ReadinessToLearn] ,
                                          'ContinuityInWork':GRADE_CHOICES[abhi_row.ContinuityInWork] ,
                                          'SkillDevelopment':GRADE_CHOICES[abhi_row.SkillDevelopment],
-                                         'Creativity':GRADE_CHOICES[abhi_row.Creativity]})
-        cumulative_abhi_grade=GRADE_CHOICE_NUM[int(round(cumulative_abhi_grade_sum/len(abhivyakti_vikas)))]
+                                         'Creativity':GRADE_CHOICES[abhi_row.Creativity],
+                                         'PublicComment':abhi_row.PublicComment})
+        if(len(abhivyakti_vikas) > 0):
+            cumulative_abhi_grade=GRADE_CHOICE_NUM[int(round(cumulative_abhi_grade_sum/len(abhivyakti_vikas)))]
         print cumulative_abhi_grade
 
 
@@ -140,8 +162,10 @@ def report(request):
                                          'Review':GRADE_CHOICES[proj_row.Review] ,
                                          'Planning':GRADE_CHOICES[proj_row.Planning],
                                          'Documentation':GRADE_CHOICES[proj_row.Documentation],
-                                         'Communication':GRADE_CHOICES[proj_row.Communication]})
-        cumulative_project_grade=GRADE_CHOICE_NUM[int(round(cumulative_project_grade_sum/len(projects)))]
+                                         'Communication':GRADE_CHOICES[proj_row.Communication],
+                                         'PublicComment':proj_row.PublicComment})
+        if(len(projects) > 0):
+            cumulative_project_grade=GRADE_CHOICE_NUM[int(round(cumulative_project_grade_sum/len(projects)))]
         print cumulative_project_grade
 
 
@@ -161,8 +185,10 @@ def report(request):
                                          'Content':GRADE_CHOICES[elo_row.Content] ,
                                          'Understanding':GRADE_CHOICES[elo_row.Understanding] ,
                                          'Skill':GRADE_CHOICES[elo_row.Skill] ,
-                                         'Presentation':GRADE_CHOICES[elo_row.Presentation]})
-        cumulative_elocution_grade=GRADE_CHOICE_NUM[int(round(cumulative_elocution_grade_sum/len(elocution)))]
+                                         'Presentation':GRADE_CHOICES[elo_row.Presentation],
+                                         'PublicComment':elo_row.PublicComment})
+        if(len(elocution) > 0):
+            cumulative_elocution_grade=GRADE_CHOICE_NUM[int(round(cumulative_elocution_grade_sum/len(elocution)))]
         print cumulative_elocution_grade
 
         physical_fit_info = PhysicalFitnessInfo.objects.filter(StudentYearlyInformation = student_yearly_info)
@@ -191,7 +217,8 @@ def report(request):
                                            'Balancing':ph_data.Balancing ,
                                            'Grade':ph_data.Grade ,
                                            'PublicComment':ph_data.PublicComment})
-        cumulative_physical_grade=GRADE_CHOICE_NUM[int(round(cumulative_physical_grade_sum/len(physical_fit_info)))]        
+        if(len(physical_fit_info) > 0):
+            cumulative_physical_grade=GRADE_CHOICE_NUM[int(round(cumulative_physical_grade_sum/len(physical_fit_info)))]        
         print cumulative_physical_grade
 
         social_activities = SocialActivity.objects.filter(StudentYearlyInformation = student_yearly_info)
@@ -206,12 +233,14 @@ def report(request):
                                          'Organizer':soc_act_data.Organizer ,
                                          'Grade':soc_act_data.Grade ,
                                          'PublicComment':soc_act_data.PublicComment})
-        cumulative_social_grade=GRADE_CHOICE_NUM[int(round(cumulative_social_grade_sum/len(social_activities)))]        
+        if(len(social_activities) > 0):
+            cumulative_social_grade=GRADE_CHOICE_NUM[int(round(cumulative_social_grade_sum/len(social_activities)))]        
         print cumulative_social_grade
 
         
         return render_to_response('students/Marks_Report.html',Context({'student_data':student_data ,
         'mark_data':mark_data ,
+        'marks_summary':marks_summary,
         'attendance_data':attendance_data ,
         'co_curricular_data':co_curricular_data,
         'cumulative_cocur_grade':cumulative_cocur_grade,                                                       
@@ -224,10 +253,10 @@ def report(request):
         'physical_fit_info_data':physical_fit_info_data,
         'cumulative_physical_grade':cumulative_physical_grade,                                                         
         'social_activity_data':social_activity_data,
-        'cumulative_social_grade':cumulative_social_grade,
-        'photo':photo}))
+        'cumulative_social_grade':cumulative_social_grade}))
     else:
         return HttpResponse ('<html><body>Enter Registration Number<form action="" method="POST"><input type="text" name="reg_no" value="" id="reg_no" size="20"></td>	<input type="submit" value="Enter" /></form></body></html>')
+
 
 
 

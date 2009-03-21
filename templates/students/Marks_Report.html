@@ -28,7 +28,7 @@
  	 Mother&#39;s Name: {{student_data.MothersName}}<p/>
  	 Father&#39;s Name: {{student_data.FathersName}}<p/>
 	 Address: {{student_data.Address}}<p/>
-	 <img src={{photo[0]}}><p align="center"/>
+	 Photo: {{student_data.photo}}<p style="text-align: center"/>	 
 	 <b>Report Summary</b><table border="2" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" id="AutoNumber1" width="352">
         <tr>
           <th width="174">
@@ -38,7 +38,7 @@
         </tr>
         <tr>
           <td width="174">Academics</td>
-          <td width="174">&nbsp;</td>
+          <td width="174">{{marks_summary.TotalMarksObtained}}/{{marks_summary.TotalMaximumMarks}}</td>
         </tr>
         <tr>
           <td width="174">co curricular</td>
@@ -76,7 +76,9 @@
 		<form action="" method="POST">
 			{% for row in attendance_data %}
 			<tr>
-				<td>{{ row.Month}}</td><td>{{ row.Attendance}}</td><td>{{ row.Working_days}}</td>
+				<td>{{ row.Month}}</td>
+				<td>{{ row.Attendance}}</td>
+				<td>{{ row.Working_days}}</td>
                 <p/>
 			</tr>
 			{% endfor %}
@@ -90,17 +92,19 @@
 		<form action="" method="POST">
 			{% for row in mark_data %}
 			<tr>
-				<td>{{ row.Subject_Name}}</td><td>{{ row.test_type}}</td><td>{{ row.MarksObtained}}</td>
+				<td>{{ row.Subject_Name}}</td>
+				<td>{{ row.test_type}}</td>
+				<td>{{ row.MarksObtained}}</td>
 				<td>{{ row.MaximumMarks}}</td><p/>
 			</tr>
 			{% endfor %}
+			<tr><td>Total</td><td>All</td><td>{{marks_summary.TotalMarksObtained}}</td><td>{{marks_summary.TotalMaximumMarks}}</td></tr>
 		</form>
 	</table>
       <p/>
 	<b>Co Curricular:</b><p/>
 	<table border="1" cellspacing="5" cellpadding="0">
-		<tr><th>Activity</th> <th>Objectives</th> <th>Date</th> <th>Guide</th> <th>Grade</th><th>
-          Comment</th></tr> 
+		<tr><th>Activity</th> <th>Objectives</th> <th>Date</th> <th>Guide</th> <th>Grade</th></tr> 
 		<form action="" method="POST">
 			{% for row in co_curricular_data %}
 			<tr>
@@ -108,9 +112,9 @@
 				<td>{{ row.Objectives}}</td>
 				<td>{{ row.Date}}</td>
 				<td>{{ row.Guide}}</td>
-				<td>{{ row.Grade}}</td>
-				<td>{{ row.PublicComment}}</td>
+				<td>{{ row.Grade}}</td>				
 			</tr>
+			<tr><td><b>Comment--></b></td><td colspan="4">{{ row.PublicComment}}</td></tr>
 			{% endfor %}
 		</form>
 	</table><hr>
@@ -129,6 +133,7 @@
 				<td>{{row.SkillDevelopment}}</td>
 				<td>{{row.Creativity}}</td>
 			</tr>
+			<tr><td><b>Comment--></b></td><td colspan="6">{{ row.PublicComment}}</td></tr>
 			{% endfor %}
 		</form>
 	</table>
@@ -148,6 +153,7 @@
 				<td>{{row.Documentation}}</td>
 				<td>{{row.Communication}}</td>
 			</tr>
+			<tr><td><b>Comment--></b></td><td colspan="7">{{ row.PublicComment}}</td></tr>
 			{% endfor %}
 		</form>
 	</table>
@@ -166,6 +172,7 @@
 				<td>{{row.Skill}}</td>
 				<td>{{row.Presentation}}</td>
 			</tr>
+			<tr><td><b>Comment--></b></td><td colspan="5">{{ row.PublicComment}}</td></tr>
 			{% endfor %}
 		</form>
 	</table>    <p>&nbsp;</p>
@@ -210,8 +217,7 @@
 		<b>SocialActivity:</b></p>
     <p/>
 	<table border="1" cellspacing="5" cellpadding="0">
-		<tr><th>Activity</th> <th>Objectives</th> <th>Date</th> <th>Organizer</th> <th>Grade</th><th>
-          Comment</th></tr> 
+		<tr><th>Activity</th> <th>Objectives</th> <th>Date</th> <th>Organizer</th> <th>Grade</th></tr> 
 		<form action="" method="POST">
 			{% for row in social_activity_data %}
 			<tr>
@@ -219,9 +225,9 @@
 				<td>{{ row.Objectives}}</td>
 				<td>{{ row.Date}}</td>
 				<td>{{ row.Organizer}}</td>
-				<td>{{ row.Grade}}</td>
-				<td>{{ row.PublicComment}}</td>
+				<td>{{ row.Grade}}</td>				
 			</tr>
+			<tr><td><b>Comment--></b></td><td colspan="4">{{ row.PublicComment}}</td></tr>
 			{% endfor %}
 		</form>
 	</table>
