@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from jp_sms.ams.models import Category, User, UserStatus, TimeRules, DayRules, Attendance, TimeRecords, ForgotCheckout
 from jp_sms.ams.models import Leaves, LeaveRules, AcademicYear, LeaveAttendance, LeavesBalance, EncashLeaves, Overtime
+from jp_sms.ams.models import UserJoiningDate
 import datetime
 
 class categoryAdmin(admin.ModelAdmin):
@@ -46,7 +47,7 @@ class attendanceAdmin(admin.ModelAdmin):
 	list_display = ('Barcode', 'Date', 'Remark', 'Comment')
 	ordering = ('Barcode', 'Date')
 	search_fields = ['Barcode__Barcode', ]
-	list_filter = ['Year', 'Barcode']
+	list_filter = ['Year', 'Barcode', 'Date']
 	pass
 
 class timerecordsAdmin(admin.ModelAdmin):
@@ -67,7 +68,7 @@ class leavesAdmin(admin.ModelAdmin):
 	list_display = ('Barcode', 'ApplicationDate', 'LeaveDate', 'Type', 'Status')
 	ordering = ('Barcode',)
 	search_fields = ['Barcode__Barcode', 'LeaveDate']
-	list_filter = ['LeaveDate', 'Status']
+	list_filter = ['LeaveDate', 'Status', 'Barcode']
 
 	def save_model(self, request, obj, form, change):
 		if change:
@@ -84,7 +85,7 @@ class leavesAdmin(admin.ModelAdmin):
 
 				if obj.Type == 4:
 					attendance.Remark = 'D'
-				elif obj.Type == 5:
+				elif obj.Type == 5 or obj.Type == 6:
 					attendance.Remark = 'F'
 				else:
 					attendance.Remark = 'O'
@@ -145,6 +146,12 @@ class forgotcheckoutAdmin(admin.ModelAdmin):
 	list_filter = ['Barcode', 'Date', 'Status']
 	pass
 	
+class userjoiningdateAdmin(admin.ModelAdmin):
+	list_display = ('Barcode', 'JoiningDate')
+	ordering = ('Barcode',)
+	list_filter = ['Barcode',]
+	pass
+	
 admin.site.register(Category, categoryAdmin)
 admin.site.register(User, userAdmin)
 admin.site.register(UserStatus, userstatusAdmin)
@@ -159,3 +166,4 @@ admin.site.register(LeavesBalance, leavesbalanceAdmin)
 admin.site.register(EncashLeaves, encashleavesAdmin)
 admin.site.register(Overtime, overtimeAdmin)
 admin.site.register(ForgotCheckout, forgotcheckoutAdmin)
+admin.site.register(UserJoiningDate, userjoiningdateAdmin)

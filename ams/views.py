@@ -10,6 +10,7 @@ from array import array
 
 from jp_sms.ams.models import Category, User, UserStatus, TimeRecords, DayRules, TimeRules, Attendance, TempAttendance, ForgotCheckout
 from jp_sms.ams.models import Leaves, LeaveForm, LeaveRules, AcademicYear, LeaveAttendance, LeavesBalance, EncashLeaves, Overtime
+from jp_sms.ams.models import UserJoiningDate
 from jp_sms.ams.models import LEAVE_CHOICES, REMARK_CHOICES
 
 def get_barcode(request):
@@ -85,7 +86,7 @@ def get_barcode(request):
 			timerule = dayrule[0].Type
 
 			if status == 'I':
-				if timerule == TimeRules.objects.filter(Type='Holiday')[0]:
+				if timerule.Type == 'Holiday':
 					remark = 'S'
 					attendance = Attendance()
 					attendance.Barcode = user
@@ -129,6 +130,10 @@ def get_barcode(request):
 				attendance.save()
 				
 				startdate = attendance.Year.StartDate
+				userjoindate = UserJoiningDate.objects.filter(Barcode=barcode)
+				if userjoindate:
+					if startdate < userjoindate[0].JoiningDate:
+						startdate = userjoindate[0].JoiningDate
 				oneday = datetime.timedelta(1)
 				while 1:
 					date = date - oneday
@@ -170,7 +175,7 @@ def get_barcode(request):
 								dayruleh = DayRules.objects.filter(Day=day).filter(Barcode=barcode)
 								if not dayruleh:
 									dayruleh = DayRules.objects.filter(Day=day).filter(Category=category)
-						if (dayruleh) and (dayruleh[0].Type == TimeRules.objects.filter(Type='Holiday')[0]):
+						if (dayruleh) and (dayruleh[0].Type.Type == 'Holiday'):
 							premark = 'S'
 						else:
 							leaveattendance = LeaveAttendance.objects.filter(Date=date).filter(Barcode=barcode)
@@ -294,7 +299,6 @@ def populate_user(request,message):
 	yettocome = []
 	gone = []
 	absent = []
-	half = []
 	come = []
 	dt = datetime.datetime.now()
 	date = dt.date()
@@ -303,13 +307,38 @@ def populate_user(request,message):
 		attrcd = Attendance.objects.filter(Date=date).filter(Barcode=usr.Barcode)
 		if attrcd:
 			gone.append({'user': usr})
+			rem = attrcd[0].Remark
+			if rem == 'O':
+				absent.append({'user': usr, 'remark': 'OnLeave'})
+			elif rem == 'D':
+				absent.append({'user': usr, 'remark': 'OnDuty'})
+			elif rem == 'C':
+				absent.append({'user': usr, 'remark': 'Compensatory Off'})
+			if rem == 'F':
+				leaves = Leaves.objects.filter(LeaveDate=date).filter(Barcode=usr.Barcode)
+				if leaves:
+					lchoice = leaves[0].Type
+					if lchoice == 5:
+						absent.append({'user': usr, 'remark': 'First Half'})
+					elif lchoice == 6:
+						absent.append({'user': usr, 'remark': 'Second Half'})
 		lattrcd = LeaveAttendance.objects.filter(Date=date).filter(Barcode=usr.Barcode)
 		if lattrcd:
 			rem = lattrcd[0].Remark
-			if rem == 'O' or rem == 'D' or rem == 'C':
-				absent.append({'user': usr})
+			if rem == 'O':
+				absent.append({'user': usr, 'remark': 'OnLeave'})
+			elif rem == 'D':
+				absent.append({'user': usr, 'remark': 'OnDuty'})
+			elif rem == 'C':
+				absent.append({'user': usr, 'remark': 'Compensatory Off'})
 			if rem == 'F':
-				half.append({'user': usr})	
+				leaves = Leaves.objects.filter(LeaveDate=date).filter(Barcode=usr.Barcode)
+				if leaves:
+					lchoice = leaves[0].Type
+					if lchoice == 5:
+						absent.append({'user': usr, 'remark': 'First Half'})
+					elif lchoice == 6:
+						absent.append({'user': usr, 'remark': 'Second Half'})
 		if not attrcd and not lattrcd:
 			yettocome.append({'user': usr})
 
@@ -317,13 +346,38 @@ def populate_user(request,message):
 		attrcd = Attendance.objects.filter(Date=date).filter(Barcode=usr.Barcode)
 		if attrcd:
 			come.append	({'user': usr})
+			rem = attrcd[0].Remark
+			if rem == 'O':
+				absent.append({'user': usr, 'remark': 'OnLeave'})
+			elif rem == 'D':
+				absent.append({'user': usr, 'remark': 'OnDuty'})
+			elif rem == 'C':
+				absent.append({'user': usr, 'remark': 'Compensatory Off'})
+			if rem == 'F':
+				leaves = Leaves.objects.filter(LeaveDate=date).filter(Barcode=usr.Barcode)
+				if leaves:
+					lchoice = leaves[0].Type
+					if lchoice == 5:
+						absent.append({'user': usr, 'remark': 'First Half'})
+					elif lchoice == 6:
+						absent.append({'user': usr, 'remark': 'Second Half'})
 		lattrcd = LeaveAttendance.objects.filter(Date=date).filter(Barcode=usr.Barcode)
 		if lattrcd:
 			rem = lattrcd[0].Remark
-			if rem == 'O' or rem == 'D' or rem == 'C':
-				absent.append({'user': usr})
+			if rem == 'O':
+				absent.append({'user': usr, 'remark': 'OnLeave'})
+			elif rem == 'D':
+				absent.append({'user': usr, 'remark': 'OnDuty'})
+			elif rem == 'C':
+				absent.append({'user': usr, 'remark': 'Compensatory Off'})
 			if rem == 'F':
-				half.append({'user': usr})	
+				leaves = Leaves.objects.filter(LeaveDate=date).filter(Barcode=usr.Barcode)
+				if leaves:
+					lchoice = leaves[0].Type
+					if lchoice == 5:
+						absent.append({'user': usr, 'remark': 'First Half'})
+					elif lchoice == 6:
+						absent.append({'user': usr, 'remark': 'Second Half'})
 		if not attrcd and not lattrcd:
 			usr.Status = 'O'
 			usr.save()
@@ -346,12 +400,8 @@ def populate_user(request,message):
 	for usr in usersforgot:
 		forgotcheckout.append({'user': usr})
 
-	usershalf = Attendance.objects.filter(Date=date).filter(Remark='F')
-	for usr in usershalf:
-		half.append({'user': usr})	
-
 	return render_to_response('ams/barcode.html',Context({'come': come,'yettocome':yettocome,'gone':gone,'absent':absent,
-								'forgotcheckout':forgotcheckout,'half':half,'message':message,'jsdate': jsdate,'datestr': datestr}))
+								'forgotcheckout':forgotcheckout,'message':message,'jsdate': jsdate,'datestr': datestr}))
 
 def app_leave(request):
 	message = "";
@@ -385,7 +435,7 @@ def app_leave(request):
 								dayruleh = DayRules.objects.filter(Day=day).filter(Barcode=barcode.Barcode)
 								if not dayruleh:
 									dayruleh = DayRules.objects.filter(Day=day).filter(Category=category)
-						if (dayruleh) and (dayruleh[0].Type == TimeRules.objects.filter(Type='Holiday')[0]):
+						if (dayruleh) and (dayruleh[0].Type.Type == 'Holiday'):
 							pass
 						else:
 							prevapp = Leaves.objects.filter(LeaveDate=date).filter(Barcode=barcode)
@@ -445,7 +495,12 @@ def app_leave(request):
 									latten = LeaveAttendance.objects.filter(Date=date).filter(Barcode=barcode)[0]
 									latten.delete()
 								leaves.delete()
-							
+						else:
+							if date >= today:	
+								latten = LeaveAttendance.objects.filter(Date=date).filter(Barcode=barcode)[0]
+								if latten:
+									latten[0].delete()
+
 						date = date + oneday
 						if date > tdate:
 							break
@@ -474,7 +529,7 @@ def app_leave(request):
 		approveleaves = Leaves.objects.filter(Barcode=barcode).filter(Status=2)
 
 		data = []
-		balance = [0,0,0,0,0,0,0]
+		balance = [0,0,0,0,0,0,0,0]
 		for type in LEAVE_CHOICES:
 			leavetype = type[0]
 			lrule = LeaveRules.objects.filter(Category=category).filter(Type=leavetype)
@@ -529,12 +584,12 @@ def app_leave(request):
 				abdays.append({'date':day.Date})
 				absentdays += 1
 		for day in hdays:
-			if not Leaves.objects.filter(Barcode=barcode).filter(LeaveDate=day.Date).filter(Type=5):
+			if not Leaves.objects.filter(Barcode=barcode).filter(LeaveDate=day.Date).filter(Type__in=(5,6)):
 				hfdays.append({'date':day.Date})
 				halfdays += 1
 			
 		
-		total_subtract = (((latedays / 3) + halfdays + (-balance[5])) / 2) + absentdays
+		total_subtract = (((latedays / 3.0) + halfdays + (-balance[5]) + (-balance[6])) / 2.0)  + absentdays
 		if total_subtract > balance[1]:
 			total_subtract -= balance[1]
 			balance[1] = 0

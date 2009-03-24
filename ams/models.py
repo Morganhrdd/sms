@@ -50,7 +50,8 @@ LEAVE_CHOICES = (
 	(2, 'Sick'),
 	(3, 'Earned'),
 	(4, 'OnDuty'),
-	(5, 'Halfday'),
+	(5, 'Halfday(First)'),
+	(6, 'Halfday(Second)'),
 )
 
 LEAVESTATUS_CHOICES = (
@@ -97,6 +98,10 @@ class UserStatus(models.Model):
 	Barcode = models.ForeignKey(User)
 	Status = models.CharField(max_length=1, choices=STATUS_CHOICES)
 
+class UserJoiningDate(models.Model):
+	Barcode = models.ForeignKey(User)
+	JoiningDate = models.DateField();
+	
 class ForgotCheckout(models.Model):
 	Barcode = models.ForeignKey(User)
 	Date = models.DateField()
