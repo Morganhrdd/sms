@@ -260,8 +260,6 @@ def add_marks():
                         a.save()
                         print "added successfully", a
 
-add_marks()
-sys.exit()
 def add_b5():
     book = xlrd.open_workbook('B5.xls')
     sh = book.sheet_by_index(0)
@@ -388,15 +386,23 @@ def populate_subjects():
 
 
 def populate_teachers():
-    teachers = ['Vivek Ponkshe', 'Bhagyashree Harshe', 'Milind Naik', 'Shantala Kulkarni', 'Kalyani Keskar', 'Neha Abhyankar', 'Mrudula Pathak', 'Mukulika Thatte', 'Ragini Naik', 'Rohini Dhavale', 'Prashant Divekar', 'Kanchan Abhyankar', 'Ashwini Joshi', 'Sheetal Pasalkar', 'Laxmi Roshan', 'Anil Joshi', 'Rekha Paigude', 'Siddharth Dhomkar', 'Rahul Kokil']
-    for teacher in teachers.sort():
-        a = Teacher()
-        a.Name = teacher
-        a.Email = teacher.lower().replace(' ','.')+'@jnanapraboadhini.org'
-        a.ResidenceNo = '+912024207000'
-        a.MobileNo = '0'
-        a.save()
+    teachers = []
+    teachers.sort()
+    for teacher in teachers:
+        try:
+            a=Teacher.objects.get(Name=teacher)
+            print a, 'is already available in database'
+        except:
+            a = Teacher()
+            a.Name = teacher
+            a.Email = teacher.lower().replace(' ','.')+'@jnanapraboadhini.org'
+            a.ResidenceNo = '+912024207000'
+            a.MobileNo = '0'
+            a.save()
+            print "added: ", a
 
+populate_teachers()
+sys.exit()
 
 def add_yrly_info():
     book = xlrd.open_workbook('B5.xls')
