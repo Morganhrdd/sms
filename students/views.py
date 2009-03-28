@@ -95,7 +95,7 @@ def report(request):
                                     'Working_days':attendance.AttendanceMaster.WorkingDays})
      
         marks = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
-        mark_data = []
+        mark_data = {}
         marks_summary={'TotalMarksObtained':0 , 'TotalMaximumMarks':0}
         for mark in marks:
             marks_summary['TotalMarksObtained']+=mark.MarksObtained
@@ -105,13 +105,22 @@ def report(request):
             #else:
              #   marks_summary[mark.TestMapping.SubjectMaster.Name]=0
             #marks_summary['Subject_Name']+=marks_summary['Subject_Name']
-            mark_data.append({'MarksObtained':mark.MarksObtained ,
-                              'MaximumMarks':mark.TestMapping.MaximumMarks ,
-                              'Subject_Name':mark.TestMapping.SubjectMaster.Name,
-                              'test_type':mark.TestMapping.TestType})
-        
-
-        
+            subject_marks = {}
+            try:
+                subject_marks[mark.Subject_Name]['obtained'] += mark.MarksObtained
+                subject_marks[mark.Subject_Name]['max_marks'] += mark.MaximumMarks
+            except:
+                subject_marks[mark.Subject_Name]['obtained'] = {}
+                subject_marks[mark.Subject_Name]['max_marks'] = {}
+                subject_marks[mark.Subject_Name]['obtained'] = mark.MarksObtained
+                subject_marks[mark.Subject_Name]['max_marks'] = mark.MaximumMarks
+            if not mark_data.has_key(mark.Subject_Name):
+                mark_data[mark.Subject_Name] = {}
+            if not mark_data[mark.Subject_Name].has_key(mark.TestType):
+                mark_data[mark.Subject_Name][mark.TestType] = {}    
+            mark_data[mark.Subject_Name][mark.TestType]['marks_obtained'] = mark.MarksObtained
+            mark_data[mark.Subject_Name][mark.TestType]['max_marks'] = mark.MaximumMarks
+    
         co_curricular = CoCurricular.objects.filter(StudentYearlyInformation = student_yearly_info)
         co_curricular_data = []
         cumulative_cocur_grade_sum=0
