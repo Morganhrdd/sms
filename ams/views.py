@@ -584,7 +584,7 @@ def app_leave(request):
 				halfdays += 1
 			
 		
-		total_subtract = (((latedays / 3.0) + halfdays + (-balance[5]) + (-balance[6])) / 2.0)  + absentdays
+		total_subtract = (((latedays / 3) + halfdays + (-balance[5]) + (-balance[6])) / 2.0)  + absentdays
 		if total_subtract > balance[1]:
 			total_subtract -= balance[1]
 			balance[1] = 0
