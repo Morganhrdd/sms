@@ -10,7 +10,7 @@ from array import array
 
 from jp_sms.ams.models import Category, User, UserStatus, TimeRecords, DayRules, TimeRules, Attendance, TempAttendance, ForgotCheckout
 from jp_sms.ams.models import Leaves, LeaveForm, LeaveRules, AcademicYear, LeaveAttendance, LeavesBalance, EncashLeaves, Overtime
-from jp_sms.ams.models import UserJoiningDate
+from jp_sms.ams.models import UserJoiningDate, ReportForm
 from jp_sms.ams.models import LEAVE_CHOICES, REMARK_CHOICES
 
 def get_barcode(request):
@@ -40,7 +40,7 @@ def get_barcode(request):
 				lastin = TimeRecords.objects.filter(Date=date).filter(Barcode=barcode).filter(Type='I')[0].Time
 				t1_m = lastin.hour*60 + lastin.minute
 				t2_m = time.hour*60 + time.minute
-				if t2_m - t1_m < 1:
+				if t2_m - t1_m < 5:
 					message = str(user) + " already checked in"
 					return populate_user(request,message)		
 		else:
@@ -51,7 +51,7 @@ def get_barcode(request):
 					lastin = lastinrec[0].Time
 					t1_m = lastin.hour*60 + lastin.minute
 					t2_m = time.hour*60 + time.minute
-					if t2_m - t1_m < 1:
+					if t2_m - t1_m < 5:
 						message = str(user) + " already checked out"
 					else:
 						message = str(user) + " entry for today already marked"
@@ -69,11 +69,6 @@ def get_barcode(request):
 		timerc.Time = time
 		timerc.save()
 		
-#		if remqs:
-#			if (rem == 'O') or (rem == 'C') or (rem == 'D') or (status == 'I'):
-#				message = "user entry for today already marked"
-#				return populate_user(request,message)		
-			
 		dayrule = DayRules.objects.filter(Date=date).filter(Barcode=barcode)
 		if not dayrule:
 			dayrule = DayRules.objects.filter(Date=date).filter(Category=category)
@@ -599,6 +594,77 @@ def app_leave(request):
 
 		return render_to_response('ams/leaveapp.html', {'datedata':datedata,'form': form, 'data': data, 'message': message, 'abdays': abdays,
 									 'absentdays': absentdays, 'latedays': latedays, 'hfdays':hfdays, 'halfdays': halfdays, 'balance': balance})
+
+def monthly_report(request):
+	message = ""
+	if not request.POST:
+		form = ReportForm()
+		return render_to_response('ams/report.html', {'form': form})
+	else:
+		form = ReportForm(request.POST)
+		if not form.is_valid():
+			return render_to_response('ams/report.html', {'form': form})
+		else:
+			barcode = form.cleaned_data['Barcode']
+			fdate = form.cleaned_data['FromDate']
+			tdate = form.cleaned_data['ToDate']
+			
+			if fdate > tdate:
+				message = "Please supply valid dates for monthly attendance"
+				return render_to_response('ams/report.html', {'form': form, 'message': message})
+
+			attendance = Attendance.objects.filter(Barcode=barcode).filter(Date__gte = fdate, Date__lte = tdate)
+			timerecords = TimeRecords.objects.filter(Barcode=barcode).filter(Date__gte = fdate, Date__lte = tdate)
+			
+			oneday = datetime.timedelta(1)
+			date = fdate
+			report = []
+			late = 0
+			half = 0
+			abs = 0
+			while 1:
+				day = date.strftime("%A")
+				
+				trin = timerecords.filter(Date=date).filter(Type='I')
+				trout = timerecords.filter(Date=date).filter(Type='O')
+				remark = attendance.filter(Date=date)
+				
+				if trin:
+					str1 = trin[0].Time.strftime("%H:%M:%S")
+				else:
+					str1 = "NIL"	
+				
+				if trout:
+					str2 = trout[0].Time.strftime("%H:%M:%S")
+				else:
+					str2 = "NIL"	
+				
+				if remark:
+					str3 = ""
+					for ar in remark:
+						tmp = ar.Remark
+						if tmp == 'A' or tmp == 'O':
+							abs += 1
+						if tmp == 'H' or tmp == 'F':
+							half += 1
+						if tmp == 'L' or tmp == 'E':
+							late += 1
+								
+						for tmprem in REMARK_CHOICES:
+							if tmp == tmprem[0]:
+								str3 = str3 + " " + tmprem[1]
+				else:
+					str3 = "NIL"		
+				
+				report.append({'date':date,'day':day,'ti':str1,'to':str2,'rem':str3})
+				
+				date = date + oneday
+				if date > tdate:
+					break
+					
+					
+			return render_to_response('ams/report.html', {'form': form, 'message': message, 'report':report, 'late':late, 'half':half, 'absent':abs})		
+					
 
 def admin_home(request):
 	user = request.user

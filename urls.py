@@ -12,6 +12,7 @@ urlpatterns = patterns('',
     (r'^report/', 'students.views.report'),
     (r'^ams/', 'ams.views.get_barcode'),
     (r'^leave/', 'ams.views.app_leave'),
+    (r'^ams_report/', 'ams.views.monthly_report'),
     #(r'^useradd/', views.user_add),
     # ... the rest of your URLs here ...
 )

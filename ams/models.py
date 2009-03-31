@@ -120,7 +120,6 @@ class TimeRules(models.Model):
 		
 class DayRules(models.Model):
 	Category = models.ForeignKey(Category)
-#	Barcode = models.ForeignKey(User, null=True, blank=True)
 	Barcode = models.PositiveIntegerField(null=True, blank=True)
 	Day = models.PositiveIntegerField(choices=DAY_CHOICES, null=True, blank=True)
 	Date = models.DateField(null=True, blank=True)
@@ -191,3 +190,10 @@ class LeaveForm(forms.Form):
 	Days = forms.IntegerField(required=False)
 	Type = forms.ChoiceField(choices=LEAVE_CHOICES)
 	Reason = forms.CharField(max_length=30, required=False)
+
+class ReportForm(forms.Form):
+	Category = forms.ModelChoiceField(queryset=Category.objects.all())
+	Barcode = forms.ModelChoiceField(queryset=User.objects.all())
+	FromDate =  forms.DateField(widget=forms.DateTimeInput)
+	ToDate =  forms.DateField(widget=forms.DateTimeInput)
+		
