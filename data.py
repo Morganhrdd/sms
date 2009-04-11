@@ -3,7 +3,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'jp_sms.settings'
 sys.path.append('/Users/shantanoo/repo')
 from jp_sms.students.models import StudentBasicInfo, SubjectMaster, Teacher, AttendanceMaster
 from jp_sms.students.models import AcademicYear, TestMapping, StudentYearlyInformation, StudentAttendance
-from jp_sms.students.models import ClassMaster, StudentTestMarks, StudentAdditionalInformation
+from jp_sms.students.models import ClassMaster, StudentTestMarks, StudentAdditionalInformation, Elocution
 def reg_no():
     book = xlrd.open_workbook('REG.xls')
     sh = book.sheet_by_index(0)
@@ -316,50 +316,53 @@ def add_b5():
             if not marks[i]:
                 marks[i] = 0.5
             a.MarksObtained = marks[i]
-        
 
-    sys.exit()
-    x = 41
-    y = 5
-    tests = row[x:x+y]
-    row = sh.row_values(1)
-    max_marks = row[x:x+y]
-    teachers = ['Mrudula Pathak']
+
+def populate_elocution():
+    xls_file = raw_input("Enter filename: ")
+    std = raw_input("Enter standard: ")
+    book = xlrd.open_workbook(xls_file)
+    sh = book.sheet_by_index(0)
     yr = AcademicYear.objects.get(Year='2008-2009')
-    for i in range(len(tests)):
-        test = tests[i]
-        max_mark = max_marks[i]
-        
-        testmapping = TestMapping()
-        testmapping.TestType = test[3:]
-        subject = test[:3]
-        SubObj = SubjectMaster.objects.get(Standard=5, Name=subject)
-        testmapping.SubjectMaster = SubObj
-        testmapping.Teacher = Teacher.objects.get(Name=teachers[0]) ###
-        testmapping.AcademicYear = yr
-        testmapping.MaximumMarks = max_mark
-        testmapping.save()
-    for rx in range(2, sh.nrows):
+    for rx in range(248, 288):
         row = sh.row_values(rx)
         regno = row[0]
-        marks = row[x:x+y]
-        for i in range(len(tests)):
-            subject = tests[i][:3]
-            testtype = tests[i][3:]
-            SubObj = SubjectMaster.objects.get(Standard=5, Name=subject)
-            TeacherObj = Teacher.objects.get(Name=teachers[0]) ###
-            
-            testmapping = TestMapping.objects.get(TestType=testtype, SubjectMaster = SubObj, MaximumMarks = max_marks[i], Teacher = TeacherObj, AcademicYear = yr)
+        title = row[1]
+        memory = int(round(row[2]))
+        content = int(round(row[3]))
+        understanding = int(round(row[4]))
+        skill = int(round(row[5]))
+        presentation = int(round(row[6]))
+        print memory, content, understanding, skill, presentation
+        try:
             basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
-            classmaster = ClassMaster.objects.get(Standard=5, AcademicYear=yr,Division='B')
+        except:
+            print 'regno: ', regno, ' not found in db'
+            pass
+        try:
+            classmaster = ClassMaster.objects.get(Standard=std, AcademicYear=yr,Division='B')
+        except:
+            print 'unable to get '
+        try:
             yrlyinfo = StudentYearlyInformation.objects.get(StudentBasicInfo=basicinfo, ClassMaster=classmaster)
-            a = StudentTestMarks()
-            a.StudentYearlyInformation = yrlyinfo
-            a.TestMapping = testmapping
-            if not marks[i]:
-                marks[i] = 0.5
-            a.MarksObtained = marks[i]
-            a.save()
+        except:
+            print 'StudentYearlyInformation not found ', basicinfo, classmaster
+            sys.exit()
+        elocution_obj = Elocution()
+        elocution_obj.StudentYearlyInformation = yrlyinfo
+        elocution_obj.Title = title
+        elocution_obj.Memory = memory
+        elocution_obj.Content = content
+        elocution_obj.Understanding = understanding
+        elocution_obj.Skill = skill
+        elocution_obj.Presentation = presentation
+        elocution_obj.save()
+        print 'successfully added ', regno
+        
+        
+
+populate_elocution()
+sys.exit()
 
 def populate_subjects():
     #subjects = ['Mathematics', 'English', 'Geography', 'Hindi', 'History', 'Marathi','Sanskrit', 'Science']
@@ -400,9 +403,6 @@ def populate_teachers():
             a.MobileNo = '0'
             a.save()
             print "added: ", a
-
-populate_teachers()
-sys.exit()
 
 def add_yrly_info():
     book = xlrd.open_workbook('B5.xls')

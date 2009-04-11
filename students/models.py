@@ -50,12 +50,12 @@ EXAM_CHOICES = (
 )
 
 GRADE_CHOICES = (
-    ('O', 'Outstanding'),
-    ('E', 'Excellent'),
-    ('G', 'Good'),
-    ('S', 'Satisfactory'),
-    ('N', 'Needs Improvement'),
-    ('U', 'Unsatisfactory'),
+    ('5', 'Outstanding'),
+    ('4', 'Excellent'),
+    ('3', 'Good'),
+    ('2', 'Satisfactory'),
+    ('1', 'Needs Improvement'),
+    ('0', 'Unsatisfactory'),
 )
 
 PROJECT_TYPE_CHOICES = (
@@ -135,16 +135,16 @@ class ClassMaster(models.Model):
     Teacher = models.ForeignKey(Teacher)
     Type = models.CharField(max_length=1, choices=CLASS_MASTER_CHOICES)
     def __unicode__(self):
-        return "%s %d %s %s %s" % (self.AcademicYear, self.Standard, self.Division, self.Type, self.Teacher)
+        return "%s %d %s %s" % (self.AcademicYear, self.Standard, self.Division, self.Teacher)
 
 
 class StudentYearlyInformation(models.Model):
     StudentBasicInfo = models.ForeignKey(StudentBasicInfo)
     RollNo = models.PositiveIntegerField()
     ClassMaster = models.ForeignKey(ClassMaster)
-    Photo = models.ImageField(upload_to='media')
+    Photo = models.ImageField(upload_to='media', blank=True)
     def __unicode__(self):
-        return "%s, %d, %s, %s" % (self.StudentBasicInfo, self.RollNo, self.ClassMaster, self.Photo)
+        return "%s, %d, %s" % (self.StudentBasicInfo, self.RollNo, self.ClassMaster)
 
 
 class TestMapping(models.Model):
@@ -288,6 +288,8 @@ class Elocution(models.Model):
     Presentation = models.CharField(max_length=1, choices=GRADE_CHOICES)
     PublicComment = models.CharField(max_length=200)
     PrivateComment = models.CharField(max_length=200)
+    def __unicode__(self):
+        return "%s, %s" % (self.Title, self.StudentYearlyInformation)
 
 class Library(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
