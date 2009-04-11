@@ -72,6 +72,7 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     '/Users/shantanoo/repo/jp_sms/templates'
+    #'C:/Documents and Settings/aditya/Desktop/JPP/latest/jp_sms/templates'
 )
 
 INSTALLED_APPS = (
@@ -82,4 +83,5 @@ INSTALLED_APPS = (
 	'django.contrib.admin',
     'jp_sms.students',
     'jp_sms.ams',
+    'jp_sms.fees',
 )
