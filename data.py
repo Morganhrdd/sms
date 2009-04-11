@@ -4,6 +4,8 @@ sys.path.append('/Users/shantanoo/repo')
 from jp_sms.students.models import StudentBasicInfo, SubjectMaster, Teacher, AttendanceMaster
 from jp_sms.students.models import AcademicYear, TestMapping, StudentYearlyInformation, StudentAttendance
 from jp_sms.students.models import ClassMaster, StudentTestMarks, StudentAdditionalInformation, Elocution
+from jp_sms.fees.models import FeeType, FeeReceipt
+
 def reg_no():
     book = xlrd.open_workbook('REG.xls')
     sh = book.sheet_by_index(0)
@@ -333,7 +335,6 @@ def populate_elocution():
         understanding = int(round(row[4]))
         skill = int(round(row[5]))
         presentation = int(round(row[6]))
-        print memory, content, understanding, skill, presentation
         try:
             basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
         except:
@@ -343,6 +344,7 @@ def populate_elocution():
             classmaster = ClassMaster.objects.get(Standard=std, AcademicYear=yr,Division='B')
         except:
             print 'unable to get '
+            pass
         try:
             yrlyinfo = StudentYearlyInformation.objects.get(StudentBasicInfo=basicinfo, ClassMaster=classmaster)
         except:
@@ -358,12 +360,57 @@ def populate_elocution():
         elocution_obj.Presentation = presentation
         elocution_obj.save()
         print 'successfully added ', regno
-        
-        
 
-populate_elocution()
-sys.exit()
 
+def populate_fee_receipts():
+    #xls_file = raw_input("Enter filename: ")
+    xls_file = "/Users/shantanoo/Downloads/FEES.xls"
+    std = '9'
+    yr = '2008-2009'
+    book = xlrd.open_workbook(xls_file)
+    sh = book.sheet_by_index(0)
+    for rx in range(1, sh.nrows):
+        row = sh.row_values(rx)
+        regno = row[3]
+        div = False
+        if row[6] == std and row[7] == yr:
+            print row
+            try:
+                basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
+            except:
+                print 'regno: ', regno, ' not found in db'
+                pass
+            if basicinfo.Gender == 'M':
+                div = 'B'
+            elif basicinfo.Gender == 'F':
+                div = 'G'
+            try:
+                classmaster = ClassMaster.objects.get(Standard=std, AcademicYear=yr,Division=div)
+            except:
+                print 'unable to get '
+                pass
+            try:
+                yrlyinfo = StudentYearlyInformation.objects.get(StudentBasicInfo=basicinfo, ClassMaster=classmaster)
+            except:
+                print 'StudentYearlyInformation not found ', basicinfo, classmaster
+                sys.exit()
+            if row[8] == 'SCHOOL FEE':
+                fee_type = 'School'
+            elif row[8] == 'HOSTEL FEE':
+                fee_type = 'Hostel'
+            fee_type_obj = FeeType.objects.get(ClassMaster=classmaster, Type=fee_type)
+            fee_receipt_obj = FeeReceipt()
+            fee_receipt_obj.StudentYearlyInformation = yrlyinfo
+            fee_receipt_obj.ReceiptNumber = row[1]
+            fee_receipt_obj.FeeType = fee_type_obj
+            fee_receipt_obj.Amount = row[9]
+            fee_receipt_obj.Status = 1
+            tmp = row[2].split('/')
+            fee_receipt_obj.Date = datetime.date(2008, int(tmp[0]), int(tmp[1]))
+            fee_receipt_obj.save()
+
+populate_fee_receipts()
+sys.exit(0)
 def populate_subjects():
     #subjects = ['Mathematics', 'English', 'Geography', 'Hindi', 'History', 'Marathi','Sanskrit', 'Science']
     subject = {}
