@@ -68,6 +68,12 @@ PROJECT_TYPE_CHOICES = (
     ('O', 'Open ended exploration'),
 )
 
+HOSTEL_CHOICES = (
+	('1', 'No Hostel'),
+	('2', 'Full Hostel'),
+	('3', 'Half Hostel'),
+)
+	
 class StudentBasicInfo(models.Model):
     RegistrationNo = models.PositiveIntegerField(primary_key=True)
     DateOfRegistration = models.DateField()
@@ -144,6 +150,7 @@ class StudentYearlyInformation(models.Model):
     RollNo = models.PositiveIntegerField()
     ClassMaster = models.ForeignKey(ClassMaster)
     Photo = models.ImageField(upload_to='media', blank=True)
+    Hostel = models.PositiveIntegerField(choices=HOSTEL_CHOICES)
     def __unicode__(self):
         return "%s, %d, %s" % (self.StudentBasicInfo, self.RollNo, self.ClassMaster)
 

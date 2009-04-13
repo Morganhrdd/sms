@@ -217,10 +217,18 @@ def fee_receipt(request):
 				classmaster = StudentYearlyInformation.objects.filter(StudentBasicInfo=student)
 				if classmaster:
 					for data in classmaster:
+						hostel = data.Hostel
+						if hostel == 
 						feetypes = FeeType.objects.filter(ClassMaster=data.ClassMaster)
 						feeinfo = []
 						if feetypes:
 							for ftype in feetypes:
+								amount = ftype.Amount
+								if ftype.Type == 'Hostel':
+									if hostel == 1:
+										continue
+									elif hostel == 3:
+										amount = amount / 2
 								feereceipts = FeeReceipt.objects.filter(StudentYearlyInformation=data).filter(FeeType=ftype).filter(Status=1)
 								feedateamount = []
 								total = 0
@@ -229,7 +237,7 @@ def fee_receipt(request):
 										feedateamount.append({'ReceiptNo':fr.ReceiptNumber, 'Date':fr.Date, 'Amount':fr.Amount})
 										total += fr.Amount
 								feeinfo.append({'Type':ftype.Type, 'Amount':ftype.Amount, 'FeeDateAmount': feedateamount, 'Total':total,
-												 'Balance':ftype.Amount - total})
+												 'Balance':amount - total})
 						years.append({'ClassMaster':data.ClassMaster, 'FeeInfo': feeinfo})															
 
 				return render_to_response('fees/feeform.html', {'form': form, 'message': message, 'date':date,
