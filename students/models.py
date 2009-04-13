@@ -77,6 +77,7 @@ class StudentBasicInfo(models.Model):
     Gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     FathersName = models.CharField(max_length=60)
     MothersName = models.CharField(max_length=60)
+    TerminationDate = models.DateField()
     def __unicode__(self):
         return "%d-%s %s" % (self.RegistrationNo, self.FirstName, self.LastName)
     
@@ -264,6 +265,8 @@ class AbhivyaktiVikas(models.Model):
     PrivateComment = models.CharField(max_length=200)
     class Meta:
         verbose_name_plural = "Abhivyakti Vikas"
+    def __unicode__(self):
+        return "%s, %s" % (self.MediumOfExpression, self.StudentYearlyInformation)
 
 class Project(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)

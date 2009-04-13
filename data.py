@@ -4,6 +4,7 @@ sys.path.append('/Users/shantanoo/repo')
 from jp_sms.students.models import StudentBasicInfo, SubjectMaster, Teacher, AttendanceMaster
 from jp_sms.students.models import AcademicYear, TestMapping, StudentYearlyInformation, StudentAttendance
 from jp_sms.students.models import ClassMaster, StudentTestMarks, StudentAdditionalInformation, Elocution
+from jp_sms.students.models import AbhivyaktiVikas
 from jp_sms.fees.models import FeeType, FeeReceipt
 
 def reg_no():
@@ -409,8 +410,55 @@ def populate_fee_receipts():
             fee_receipt_obj.Date = datetime.date(2008, int(tmp[0]), int(tmp[1]))
             fee_receipt_obj.save()
 
-populate_fee_receipts()
-sys.exit(0)
+def populate_abhivyakti():
+    xls_file = raw_input('Enter filename: ')
+    div=raw_input('Enter Division: ')
+    std=raw_input('Enter Standard: ')
+    book = xlrd.open_workbook(xls_file)
+    sh = book.sheet_by_index(0)
+    yr = AcademicYear.objects.get(Year='2008-2009')
+    for rx in range(6, 46):
+        row = sh.row_values(rx)
+        regno = row[0]
+        mediumofexpression = row[1]
+        teacher = row[2]
+        
+        try:
+            basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
+        except:
+            print 'regno: ', regno, ' not found in db'
+            pass
+        try:
+            classmaster = ClassMaster.objects.get(Standard=std, AcademicYear=yr,Division=div)
+        except:
+            print 'unable to get '
+            pass
+        try:
+            yrlyinfo = StudentYearlyInformation.objects.get(StudentBasicInfo=basicinfo, ClassMaster=classmaster)
+        except:
+            print 'StudentYearlyInformation not found ', basicinfo, classmaster
+            pass
+        try:
+            teacher = Teacher(Name=teacher)
+        except:
+            print 'Teacher ', row[2], 'not in db'
+            pass
+        try:
+            abhivyakti_obj = AbhivyaktiVikas.objects.get(StudentYearlyInformation=yrlyinfo)
+            print abhivyakti_obj, 'Already available in database'
+        except:
+            abhivyakti_obj = AbhivyaktiVikas()
+            abhivyakti_obj.StudentYearlyInformation = yrlyinfo
+            abhivyakti_obj.Teacher = teacher
+            abhivyakti_obj.MediumOfExpression = mediumofexpression
+            abhivyakti_obj.save()
+            print 'Sucessfully added', abhivyakti_obj
+            
+        
+
+populate_abhivyakti()
+sys.exit()
+
 def populate_subjects():
     #subjects = ['Mathematics', 'English', 'Geography', 'Hindi', 'History', 'Marathi','Sanskrit', 'Science']
     subject = {}
