@@ -60,8 +60,10 @@ def fee_receipt(request):
 					message = "Invalid Standard"
 					return render_to_response('fees/feeform.html', {'form': form, 'message': message, 'date':date,'receiptnumber':receiptnumber })					
 					
-				classmaster = cms[0]
-				studentyearlyinfo = StudentYearlyInformation.objects.filter(StudentBasicInfo=student).filter(ClassMaster=classmaster)
+				for classmaster in cms:
+					studentyearlyinfo = StudentYearlyInformation.objects.filter(StudentBasicInfo=student).filter(ClassMaster=classmaster)
+					if studentyearlyinfo:				
+						break
 				if not studentyearlyinfo:
 					message = "Student not enrolled"
 					return render_to_response('fees/feeform.html', {'form': form, 'message': message, 'date':date,'receiptnumber':receiptnumber })					
