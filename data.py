@@ -4,7 +4,7 @@ sys.path.append('/Users/shantanoo/repo')
 from jp_sms.students.models import StudentBasicInfo, SubjectMaster, Teacher, AttendanceMaster
 from jp_sms.students.models import AcademicYear, TestMapping, StudentYearlyInformation, StudentAttendance
 from jp_sms.students.models import ClassMaster, StudentTestMarks, StudentAdditionalInformation, Elocution
-from jp_sms.students.models import AbhivyaktiVikas
+from jp_sms.students.models import AbhivyaktiVikas, CoCurricular
 from jp_sms.fees.models import FeeType, FeeReceipt
 
 def reg_no():
@@ -456,7 +456,50 @@ def populate_abhivyakti():
             
         
 
-populate_abhivyakti()
+def populate_cocurricular():
+    xls_file = raw_input('Enter filename: ')
+    div=raw_input('Enter Division: ')
+    std=raw_input('Enter Standard: ')
+    book = xlrd.open_workbook(xls_file)
+    sh = book.sheet_by_index(1)
+    yr = AcademicYear.objects.get(Year='2008-2009')
+    for rx in range(5, 83):
+        row = sh.row_values(rx)
+        regno = row[0]
+        activity = row[1]
+        tmp = row[3].split('/')
+        if tmp[2] == '08':
+            tmp[2] = '2008'
+        date = datetime.date(int(tmp[2]), int(tmp[1]), int(tmp[0]))
+        guide = row[4]
+        try:
+            basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
+        except:
+            print 'regno: ', regno, ' not found in db'
+            pass
+        try:
+            classmaster = ClassMaster.objects.get(Standard=std, AcademicYear=yr,Division=div)
+        except:
+            print 'unable to get '
+            pass
+        try:
+            yrlyinfo = StudentYearlyInformation.objects.get(StudentBasicInfo=basicinfo, ClassMaster=classmaster)
+        except:
+            print 'StudentYearlyInformation not found ', basicinfo, classmaster
+            pass
+        try:
+            cocurricular_obj = CoCurricular.objects.get(StudentYearlyInformation=yrlyinfo, Activity=activity)
+            print cocurricular_obj, 'already in db'
+        except:
+            cocurricular_obj = CoCurricular()
+            cocurricular_obj.StudentYearlyInformation = yrlyinfo
+            cocurricular_obj.Activity = activity
+            cocurricular_obj.Date = date
+            cocurricular_obj.Guide = guide
+            cocurricular_obj.save()
+            print 'Successfully added', cocurricular_obj
+
+populate_cocurricular()
 sys.exit()
 
 def populate_subjects():
