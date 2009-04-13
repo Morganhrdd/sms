@@ -53,7 +53,7 @@ class AttendanceMasterAdmin(admin.ModelAdmin):
     list_display = ('ClassMaster', 'WorkingDays')
     
 class StudentAttendanceAdmin(admin.ModelAdmin):
-    list_display = ('AttendanceMaster', 'StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName', 'ActualAttendance')
+    list_display = ('AttendanceMaster', 'ActualAttendance')
 
 class PhysicalFitnessInfoAdmin(admin.ModelAdmin):
     list_display = ('Weight', 'Height')
@@ -71,6 +71,8 @@ class CompetitionAdmin(admin.ModelAdmin):
     pass
 
 class AbhivyaktiVikasAdmin(admin.ModelAdmin):
+    list_display = ('StudentYearlyInformation', 'MediumOfExpression', 'Teacher', 'Participation', 'ReadinessToLearn', 'ContinuityInWork', 'SkillDevelopment', 'Creativity')
+    search_fields = ('StudentYearlyInformation__StudentBasicInfo__FirstName', 'MediumOfExpression', 'Teacher__Name')
     pass
 
 class ProjectAdmin(admin.ModelAdmin):
