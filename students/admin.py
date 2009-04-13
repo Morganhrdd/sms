@@ -63,8 +63,7 @@ class SocialActivityAdmin(admin.ModelAdmin):
 
 class CoCurricularAdmin(admin.ModelAdmin):
     list_display = ('StudentYearlyInformation', 'Activity', 'Objectives', 'Date', 'Guide', 'Grade')
-    search_fields = ('StudentYearlyInformation__StudentBasicInfo__FirstName', 'Activity')
-    pass
+    search_fields = ('StudentYearlyInformation__StudentBasicInfo__FirstName', 'Activity', 'Guide')
 
 class CompetitiveExamAdmin(admin.ModelAdmin):
     pass
@@ -75,7 +74,6 @@ class CompetitionAdmin(admin.ModelAdmin):
 class AbhivyaktiVikasAdmin(admin.ModelAdmin):
     list_display = ('StudentYearlyInformation', 'MediumOfExpression', 'Teacher', 'Participation', 'ReadinessToLearn', 'ContinuityInWork', 'SkillDevelopment', 'Creativity')
     search_fields = ('StudentYearlyInformation__StudentBasicInfo__FirstName', 'MediumOfExpression', 'Teacher__Name')
-    pass
 
 class ProjectAdmin(admin.ModelAdmin):
     pass
