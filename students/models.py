@@ -231,6 +231,8 @@ class CoCurricular(models.Model):
     Grade = models.CharField(max_length=1, choices=GRADE_CHOICES)
     PublicComment = models.CharField(max_length=200)
     PrivateComment = models.CharField(max_length=200)
+    def __unicode__(self):
+        return "%s, %s" % (self.Activity, self.StudentYearlyInformation)
 
 class CompetitiveExam(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)

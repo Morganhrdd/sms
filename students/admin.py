@@ -62,6 +62,8 @@ class SocialActivityAdmin(admin.ModelAdmin):
     pass
 
 class CoCurricularAdmin(admin.ModelAdmin):
+    list_display = ('StudentYearlyInformation', 'Activity', 'Objectives', 'Date', 'Guide', 'Grade')
+    search_fields = ('StudentYearlyInformation__StudentBasicInfo__FirstName', 'Activity')
     pass
 
 class CompetitiveExamAdmin(admin.ModelAdmin):
