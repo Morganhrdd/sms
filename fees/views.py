@@ -218,7 +218,6 @@ def fee_receipt(request):
 				if classmaster:
 					for data in classmaster:
 						hostel = data.Hostel
-						if hostel == 
 						feetypes = FeeType.objects.filter(ClassMaster=data.ClassMaster)
 						feeinfo = []
 						if feetypes:
