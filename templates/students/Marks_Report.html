@@ -45,6 +45,15 @@
           <td width="174">{{cumulative_cocur_grade}}</td>
         </tr>
         <tr>
+          <td width="174">competitive_exam</td>
+          <td width="174">{{cumulative_compexam_grade}}</td>
+        </tr>
+        <tr>
+          <td width="174">competitions</td>
+          <td width="174">{{cumulative_comp_grade}}</td>
+        </tr>
+
+        <tr>
           <td width="174">Abhivyakti Vikas</td>
           <td width="174">{{cumulative_abhi_grade}}</td>
         </tr>
@@ -118,8 +127,45 @@
 			{% endfor %}
 		</form>
 	</table><hr>
+    <p/>
+	<b>competitive Exams:</b><p/>
+	<table border="1" cellspacing="5" cellpadding="0">
+		<tr><th>Name</th> <th>Subject</th> <th>Date</th> <th>Level</th> <th>Grade</th></tr> 
+		<form action="" method="POST">
+			{% for row in competitive_exam_data %}
+			<tr>
+				<td>{{ row.Name}}</td>
+				<td>{{ row.Subject}}</td>
+				<td>{{ row.Date}}</td>
+				<td>{{ row.Level}}</td>
+				<td>{{ row.Grade}}</td>				
+			</tr>
+			<tr><td><b>Comment--></b></td><td colspan="4">{{ row.PublicComment}}</td></tr>
+			{% endfor %}
+		</form>
+	</table>
+    <p/>
+	<b>Competition:</b><p/>
+	<table border="1" cellspacing="5" cellpadding="0">
+		<tr><th>Organizer</th> <th>Subject</th> <th>Date</th> <th>Achievement</th> <th>Guide</th></tr> 
+		<form action="" method="POST">
+			{% for row in competitions_data %}
+			<tr>
+				<td>{{ row.Organizer}}</td>
+				<td>{{ row.Subject}}</td>
+				<td>{{ row.Date}}</td>
+				<td>{{ row.Achievement}}</td>
+				<td>{{ row.Guide}}</td>				
+			</tr>
+			<tr><td><b>Comment--></b></td><td colspan="4">{{ row.PublicComment}}</td></tr>
+			{% endfor %}
+		</form>
+	</table>
+
+
 			<p><b>Abhivyakti Vikas:</b></p>
     <p/>
+
 	<table border="1" cellspacing="5" cellpadding="0">
 		<tr><th>MediumOfExpression</th> <th>Teacher</th> <th>Participation</th> <th>ReadinessToLearn</th> <th>ContinuityInWork</th><th>SkillDevelopment</th><th>Creativity</th></tr> 
 		<form action="" method="POST">
