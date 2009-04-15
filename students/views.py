@@ -127,13 +127,47 @@ def report(request):
         cumulative_cocur_grade=0
         for co_cur_acts in co_curricular:
             cumulative_cocur_grade_sum=cumulative_cocur_grade_sum + GRADE_NUM[co_cur_acts.Grade]
-            co_curricular_data.append({'Activity':co_cur_acts.Activity , 'Objectives':co_cur_acts.Objectives ,
-                                       'Date':co_cur_acts.Date ,'Guide':co_cur_acts.Guide ,
+            co_curricular_data.append({'Activity':co_cur_acts.Activity ,
+                                       'Objectives':co_cur_acts.Objectives ,
+                                       'Date':co_cur_acts.Date ,
+                                       'Guide':co_cur_acts.Guide ,
                                        'Grade':co_cur_acts.Grade ,
                                        'PublicComment':co_cur_acts.PublicComment})
         if len(co_curricular)>0:
             cumulative_cocur_grade=GRADE_CHOICE_NUM[int(round(cumulative_cocur_grade_sum/len(co_curricular)))]        
         print cumulative_cocur_grade
+
+        competitive_exam = CompetitiveExam.objects.filter(StudentYearlyInformation = student_yearly_info)
+        competitive_exam_data = []
+        cumulative_compexam_grade_sum=0
+        cumulative_compexam_grade=0
+        for exams in competitive_exam:
+            cumulative_compexam_grade_sum=cumulative_compexam_grade_sum + GRADE_NUM[exams.Grade]
+            competitive_exam_data.append({'Name':exams.Name ,
+                                          'Subject':exams.Subject ,
+                                          'Level':exams.Level ,
+                                          'Date':exams.Date ,
+                                          'Grade':GRADE_CHOICES[exams.Grade] ,
+                                          'PublicComment':exams.PublicComment})
+        if len(competitive_exam)>0:
+            cumulative_compexam_grade=GRADE_CHOICE_NUM[int(round(cumulative_compexam_grade_sum/len(competitive_exam)))]        
+        print cumulative_compexam_grade
+
+        competitions = Competition.objects.filter(StudentYearlyInformation = student_yearly_info)
+        competitions_data = []
+        cumulative_comp_grade_sum=0
+        cumulative_comp_grade=0
+        for comps in competitions:
+            cumulative_comp_grade_sum=cumulative_comp_grade_sum + GRADE_NUM[comps.Achievement]
+            competitions_data.append({'Organizer':comps.Organizer ,
+                                          'Subject':comps.Subject ,
+                                          'Date':comps.Date ,
+                                          'Achievement':GRADE_CHOICES[comps.Achievement] ,
+                                          'Guide':comps.Guide ,
+                                          'PublicComment':comps.PublicComment})
+        if len(competitions)>0:
+            cumulative_comp_grade=GRADE_CHOICE_NUM[int(round(cumulative_comp_grade_sum/len(competitions)))]        
+        print cumulative_comp_grade
         
         abhivyakti_vikas = AbhivyaktiVikas.objects.filter(StudentYearlyInformation = student_yearly_info)
         abhivyakti_vikas_data = []
