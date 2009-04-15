@@ -4,8 +4,28 @@ sys.path.append('/Users/shantanoo/repo')
 from jp_sms.students.models import StudentBasicInfo, SubjectMaster, Teacher, AttendanceMaster
 from jp_sms.students.models import AcademicYear, TestMapping, StudentYearlyInformation, StudentAttendance
 from jp_sms.students.models import ClassMaster, StudentTestMarks, StudentAdditionalInformation, Elocution
-from jp_sms.students.models import AbhivyaktiVikas, CoCurricular
+from jp_sms.students.models import AbhivyaktiVikas, CoCurricular, Competition, CompetitiveExam
 from jp_sms.fees.models import FeeType, FeeReceipt
+
+def get_yrly_info(regno, year, std, div):
+    try:
+        basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
+    except:
+        raise 'regno not found in db'
+    try:
+        yr = AcademicYear.objects.get(Year=year)
+    except:
+        raise 'academic year not foind'
+    try:
+        classmaster = ClassMaster.objects.get(Standard=std, AcademicYear=yr,Division=div)
+    except:
+        raise 'class master not found'
+    try:
+        yrlyinfo = StudentYearlyInformation.objects.get(StudentBasicInfo=basicinfo, ClassMaster=classmaster)
+        return yrlyinfo
+    except:
+        raise 'StudentYearlyInformation not found'
+    
 
 def reg_no():
     book = xlrd.open_workbook('REG.xls')
@@ -499,7 +519,77 @@ def populate_cocurricular():
             cocurricular_obj.save()
             print 'Successfully added', cocurricular_obj
 
-populate_cocurricular()
+def populate_competitions():
+    xls_file = raw_input('Enter filename: ')
+    div = raw_input('Enter Division: ')
+    std = raw_input('Enter Standard: ')
+    book = xlrd.open_workbook(xls_file)
+    yr = '2008-2009'
+    sh = book.sheet_by_index(2)
+    for rx in range(4, 14):
+        row = sh.row_values(rx)
+        regno = row[0]
+        yrlyinfo = get_yrly_info(regno, yr, std, div)
+        print row
+        organizer = row[1]
+        subject = row[2]
+        tmp = row[3].split('/')
+        if tmp[2] == '08':
+            tmp[2] = '2008'
+        date = datetime.date(int(tmp[2]), int(tmp[1]), int(tmp[0]))
+        achievement = row[4]
+        guide = row[5]
+        try:
+            competetion_obj = Competition.objects.get(StudentYearlyInformation=yrlyinfo, Organizer=organizer, Subject=subject, Date=date, Achievement=achievement, Guide=guide)
+        except:
+            competetion_obj = Competition()
+            competetion_obj.StudentYearlyInformation = yrlyinfo
+            competetion_obj.Organizer = organizer
+            competetion_obj.Subject = subject
+            competetion_obj.Date = date
+            competetion_obj.Achievement = achievement
+            competetion_obj.Guide = guide
+            competetion_obj.save()
+            print competetion_obj, 'added in db'
+    
+def populate_competitiveexam():
+    xls_file = raw_input('Enter filename: ')
+    div = raw_input('Enter Division: ')
+    std = raw_input('Enter Standard: ')
+    book = xlrd.open_workbook(xls_file)
+    yr = '2008-2009'
+    sh = book.sheet_by_index(3)
+    for rx in range(4, 48):
+        row = sh.row_values(rx)
+        regno = row[0]
+        yrlyinfo = get_yrly_info(regno, yr, std, div)
+        print row
+        name = row[1]
+        subject = row[2]
+        level = row[3]
+        date = False
+        if row[4]:
+            tmp = row[4].split('/')
+            if tmp[2] == '08':
+                tmp[2] = '2008'
+            date = datetime.date(int(tmp[2]), int(tmp[1]), int(tmp[0]))
+        else:
+            date = datetime.date(1,1,1)
+        grade = row[5]
+        try:
+            competitiveexam_obj = CompetitiveExam.objects.get(StudentYearlyInformation=yrlyinfo, Name=name, Subject=subject, Level=level, Grade=grade)
+        except:
+            competitiveexam_obj = CompetitiveExam()
+            competitiveexam_obj.StudentYearlyInformation = yrlyinfo
+            competitiveexam_obj.Name = name
+            competitiveexam_obj.Subject = subject
+            competitiveexam_obj.Date = date
+            competitiveexam_obj.Level = level
+            competitiveexam_obj.Grade = grade
+            competitiveexam_obj.save()
+            print competitiveexam_obj, 'added in db'
+
+populate_competitiveexam()
 sys.exit()
 
 def populate_subjects():

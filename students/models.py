@@ -246,20 +246,24 @@ class CompetitiveExam(models.Model):
     Name = models.CharField(max_length=30)
     Subject = models.CharField(max_length=30)
     Level = models.CharField(max_length=30)
-    Date = models.DateField()
-    Grade = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    Date = models.DateField(blank=True, null=True)
+    Grade = models.CharField(max_length=50)
     PublicComment = models.CharField(max_length=200)
     PrivateComment = models.CharField(max_length=200)
+    def __unicode__(self):
+        return "%s, %s" % (self.Name, self.StudentYearlyInformation)
 
 class Competition(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
     Organizer = models.CharField(max_length=50)
     Subject = models.CharField(max_length=30)
     Date = models.DateField()
-    Achievement = models.CharField(max_length=20)
+    Achievement = models.CharField(max_length=20, blank=True)
     Guide = models.CharField(max_length=30)
-    PublicComment = models.CharField(max_length=200)
-    PrivateComment = models.CharField(max_length=200)
+    PublicComment = models.CharField(max_length=200, blank=True)
+    PrivateComment = models.CharField(max_length=200, blank=True)
+    def __unicode__(self):
+        return "%s, %s" % (self.Subject, self.StudentYearlyInformation)
 
 class AbhivyaktiVikas(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
