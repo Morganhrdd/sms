@@ -196,7 +196,7 @@ def report(request):
         cumulative_comp_grade_sum=0
         cumulative_comp_grade=0
         for comps in competitions:
-            cumulative_comp_grade_sum=cumulative_comp_grade_sum + GRADE_NUM[comps.Achievement]
+            cumulative_comp_grade_sum=0 #cumulative_comp_grade_sum + GRADE_NUM[comps.Achievement]
             competitions_data.append({'Organizer':comps.Organizer ,
                                           'Subject':comps.Subject ,
                                           'Date':comps.Date ,
