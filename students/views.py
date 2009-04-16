@@ -741,7 +741,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
             cummulative_attendance = cummulative_attendance + attendance.ActualAttendance
             cummulative_workingdays_attendance = cummulative_workingdays_attendance + attendance.AttendanceMaster.WorkingDays
     if cummulative_workingdays_attendance > 0:
-        cumulative_attendance_percentage = str(round((cummulative_attendance / cummulative_workingdays_attendance * 100),2)) + "%"
+        cumulative_attendance_percentage = str(round((float(cummulative_attendance) / cummulative_workingdays_attendance * 100),2)) + "%"
     
     # Cumulative Grade Table
     addSubHeaderToStory(Story,"Report Summary");
