@@ -136,7 +136,7 @@ def report(request):
     cummulative_maxmarks=0
     for subject_item in subjects_data.keys():
         subject_data = subjects_data[subject_item]
-        addSubHeaderToStory(Story,subject_item);
+#        addSubHeaderToStory(Story,subject_item);
         data = []
         data.append(['','Test Type','Marks','Maximum Marks'])
         cummulative_subject_marks=0
