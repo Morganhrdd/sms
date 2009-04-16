@@ -5,7 +5,7 @@ from jp_sms.students.models import StudentBasicInfo, SubjectMaster, Teacher, Att
 from jp_sms.students.models import AcademicYear, TestMapping, StudentYearlyInformation, StudentAttendance
 from jp_sms.students.models import ClassMaster, StudentTestMarks, StudentAdditionalInformation, Elocution
 from jp_sms.students.models import AbhivyaktiVikas, CoCurricular, Competition, CompetitiveExam
-from jp_sms.students.models import Project
+from jp_sms.students.models import Project, Library
 
 from jp_sms.fees.models import FeeType, FeeReceipt
 
@@ -624,7 +624,34 @@ def populate_project():
             project_obj.save()
             print project_obj, 'added in db'
 
-populate_project()
+
+def populate_library():
+    xls_file = raw_input('Enter filename: ')
+    div = raw_input('Enter Division: ')
+    std = raw_input('Enter Standard: ')
+    book = xlrd.open_workbook(xls_file)
+    yr = '2008-2009'
+    sh = book.sheet_by_index(8)
+    for rx in range(1, 41):
+        row = sh.row_values(rx)
+        regno = row[0]
+        yrlyinfo = get_yrly_info(regno, yr, std, div)
+        print row
+        booksread = row[1]
+        grade = row[2]
+        comment = row[3]
+        try:
+            library_obj = Library.objects.get(StudentYearlyInformation=yrlyinfo, BooksRead=booksread, Grade=grade, PublicComment=comment)
+        except:
+            library_obj = Library()
+            library_obj.StudentYearlyInformation = yrlyinfo
+            library_obj.BooksRead = booksread
+            library_obj.Grade = grade
+            library_obj.PublicComment = comment
+            library_obj.save()
+            print library_obj, 'added in db'
+            
+populate_library()
 sys.exit()
 
 def populate_subjects():
