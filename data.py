@@ -5,6 +5,8 @@ from jp_sms.students.models import StudentBasicInfo, SubjectMaster, Teacher, Att
 from jp_sms.students.models import AcademicYear, TestMapping, StudentYearlyInformation, StudentAttendance
 from jp_sms.students.models import ClassMaster, StudentTestMarks, StudentAdditionalInformation, Elocution
 from jp_sms.students.models import AbhivyaktiVikas, CoCurricular, Competition, CompetitiveExam
+from jp_sms.students.models import Project
+
 from jp_sms.fees.models import FeeType, FeeReceipt
 
 def get_yrly_info(regno, year, std, div):
@@ -589,7 +591,40 @@ def populate_competitiveexam():
             competitiveexam_obj.save()
             print competitiveexam_obj, 'added in db'
 
-populate_competitiveexam()
+def populate_project():
+    xls_file = raw_input('Enter filename: ')
+    div = raw_input('Enter Division: ')
+    std = raw_input('Enter Standard: ')
+    book = xlrd.open_workbook(xls_file)
+    yr = '2008-2009'
+    sh = book.sheet_by_index(5)
+    for rx in range(0, 42):
+        row = sh.row_values(rx)
+        regno = row[0]
+        yrlyinfo = get_yrly_info(regno, yr, std, div)
+        print row
+        title = row[1]
+        proj_types = {}
+        proj_types['Collection, classification'] = 'CC'
+        proj_types['Investigation'] = 'I'
+        proj_types['Investigation by Survey'] = 'IS'
+        proj_types['Creative Production'] = 'CP'
+        proj_types['Appreciation- criticism'] = 'AC'
+        proj_types['Open Ended Exploration'] = 'O'
+        proj_type = proj_types[row[2]]
+        subject = row[3]
+        try:
+            project_obj = Project.objects.get(StudentYearlyInformation=yrlyinfo, Title=title, Subject=subject, Type=proj_type)
+        except:
+            project_obj = Project()
+            project_obj.StudentYearlyInformation = yrlyinfo
+            project_obj.Title = title
+            project_obj.Subject = subject
+            project_obj.Type = proj_type
+            project_obj.save()
+            print project_obj, 'added in db'
+
+populate_project()
 sys.exit()
 
 def populate_subjects():
