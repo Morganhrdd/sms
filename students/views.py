@@ -875,7 +875,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         subject = competitive_exam.Subject
         level = competitive_exam.Level
         date = competitive_exam.Date
-        grade = GRADE_CHOICES[competitive_exam.Grade]
+        grade = competitive_exam.Grade
         comment = competitive_exam.PublicComment
         
         addNormalTextToStory(Story,'<strong>' + 'Competitive Exam' + ' ' + str(i) + '</strong>');     
@@ -984,7 +984,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         objectives = coCurricular.Objectives
         date = coCurricular.Date
         guide = coCurricular.Guide
-        grade = GRADE_CHOICES[coCurricular.Grade]
+        grade = coCurricular.Grade
         comment = coCurricular.PublicComment
 
         addNormalTextToStory(Story,'<strong>' + 'Activity'+ ' ' + str(i) + '</strong>')
@@ -1019,7 +1019,7 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         short_put = physical_fitness_info.ShortPutThrow
         bmi = physical_fitness_info.BodyMassIndex
         balancing = physical_fitness_info.Balancing
-        grade = GRADE_CHOICES[physical_fitness_info.Grade]
+        grade = physical_fitness_info.Grade
         pathak = physical_fitness_info.Pathak
         special_sport = physical_fitness_info.SpecialSport
         comment = physical_fitness_info.PublicComment
@@ -1051,7 +1051,7 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         objectives = social_activity.Objectives
         date = social_activity.Date
         organizer = social_activity.Organizer
-        grade = GRADE_CHOICES[social_activity.Grade]
+        grade = social_activity.Grade
         comment = social_activity.PublicComment
 
         addNormalTextToStory(Story,'<strong>' + 'Activity'+ ' ' + str(i) + '</strong>')
@@ -1079,7 +1079,7 @@ def fillLibraryReport(student_yearly_info, Story):
     for library in libraries:
         i = i + 1;
         books_read = library.BooksRead
-        grade = GRADE_CHOICES[library.Grade]
+        grade = library.Grade
         comment = library.PublicComment
         data.append([i,books_read, grade, comment])
     addTableToStory(Story, data, 'CENTER')
