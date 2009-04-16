@@ -47,7 +47,14 @@ GRADE_CHOICES = {
     'S': 'Satisfactory',
     'N': 'Needs Improvement',
     'U': 'Unsatisfactory',
-    'A': 'No Entry for this category'
+    'A': 'No Entry for this category',
+    '5': 'Outstanding',
+    '4': 'Excellent',
+    '3': 'Good',
+    '2': 'Satisfactory',
+    '1': 'Needs Improvement',
+    '0': 'Unsatisfactory',
+    '': 'No Entry for this category',
 }
 
 GRADE_NUM = {
@@ -57,10 +64,18 @@ GRADE_NUM = {
     'S': 3,
     'N': 2,
     'U': 1,
-    'A':0
+    'A':0,
+    '':0,
+    '0':0,
+    '1':1,
+    '2':2,
+    '3':3,
+    '4':4,
+    '5':5,
+    '6':6,
 }
 
-GRADE_CHOICE_NUM = ['No Entry for this category','Unsatisfactory','Needs Improvement','Satisfactory','Good','Excellent','Outstanding']
+GRADE_CHOICE_NUM = ['', 'No Entry for this category','Unsatisfactory','Needs Improvement','Satisfactory','Good','Excellent','Outstanding']
 
 PROJECT_TYPE_CHOICES = {
     'CC': 'Collection, Classification',
