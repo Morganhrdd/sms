@@ -20,6 +20,7 @@ from reportlab.lib import colors
 import os
 from django.contrib.auth.decorators import login_required
 from PIL import Image
+from django.utils.safestring import mark_safe
 
 PAGE_HEIGHT=defaultPageSize[1]; PAGE_WIDTH=defaultPageSize[0]
 styles = getSampleStyleSheet()
@@ -822,8 +823,8 @@ def fillAcademicReport(student_yearly_info, Story):
         addTableToStory(Story, data, 'CENTER')
         Story.append(Spacer(1,0.25*inch))
 
-    addSubHeaderToStory(Story, 'Grand Total' + '' + ' : ' + str(cummulative_marks) + " / " + str(cummulative_maxmarks)
-                        + "<br/>" + 'Percentage' + '' + ' : ' + str(round((cummulative_marks / cummulative_maxmarks * 100),2)) + "%")
+    addSubHeaderToStory(Story, mark_safe('Grand Total: ' +  str(cummulative_marks) + " / " + str(cummulative_maxmarks)
+                        + "<br/>" + ' Percentage: ' + str(round((cummulative_marks / cummulative_maxmarks * 100),2)) + "%"))
     
     Story.append(Spacer(1,0.5*inch))
     addSubHeaderToStory(Story, "School Attendance");
