@@ -49,14 +49,14 @@ GRADE_CHOICES = {
     'S': 'Satisfactory',
     'N': 'Needs Improvement',
     'U': 'Unsatisfactory',
-    'A': 'No Entry for this category',
+    'A': 'N/A',
     '5': 'Outstanding',
     '4': 'Excellent',
     '3': 'Good',
     '2': 'Satisfactory',
     '1': 'Needs Improvement',
     '0': 'Unsatisfactory',
-    '': 'No Entry for this category',
+    '': 'N/A',
 }
 
 GRADE_NUM = {
@@ -200,12 +200,12 @@ def report(request):
         cumulative_compexam_grade_sum=0
         cumulative_compexam_grade=0
         for exams in competitive_exam:
-            cumulative_compexam_grade_sum=cumulative_compexam_grade_sum + GRADE_NUM[exams.Grade]
+            #cumulative_compexam_grade_sum=cumulative_compexam_grade_sum + GRADE_NUM[exams.Grade]
             competitive_exam_data.append({'Name':exams.Name ,
-                                          'Subject':exams.Subject ,
-                                          'Level':exams.Level ,
-                                          'Date':exams.Date ,
-                                          'Grade':GRADE_CHOICES[exams.Grade] ,
+                                          'Subject':exams.Subject,
+                                          'Level':exams.Level,
+                                          'Date':exams.Date,
+                                          'Grade':exams.Grade,
                                           'PublicComment':exams.PublicComment})
         if len(competitive_exam)>0:
             cumulative_compexam_grade=GRADE_CHOICE_NUM[int(round(cumulative_compexam_grade_sum/len(competitive_exam)))]        
@@ -644,7 +644,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
             ['Registration No.: ' , student_basic_info.RegistrationNo,''],
             ['Name: ' , student_basic_info.FirstName + ' ' + student_basic_info.LastName,''],
             ['Address: ' , student_addtional_info.Address,''],
-            ['Standard: ' , STANDARD_CHOICES[student_yearly_data.ClassMaster.Standard][1],''],
+            ['Standard: ' , student_yearly_data.ClassMaster.Standard,''],
             ['Roll No.: ' , student_yearly_data.RollNo,''],
         )
     table=Table(data)
@@ -725,13 +725,8 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
         cumulative_social_grade=GRADE_CHOICE_NUM[int(round(cumulative_social_grade_sum/len(social_activities)))]
 
     # Cumulative Library Grade
-    libraries = Library.objects.filter(StudentYearlyInformation = student_yearly_info)
-    cumulative_library_grade_sum=0
-    cumulative_library_grade='Not Available'
-    for library in libraries:
-        cumulative_library_grade_sum=cumulative_library_grade_sum + GRADE_NUM[library.Grade]
-    if len(libraries) > 0:
-        cumulative_library_grade=GRADE_CHOICE_NUM[int(round(cumulative_library_grade_sum/len(libraries)))]
+    library = Library.objects.get(StudentYearlyInformation = student_yearly_info)
+    cumulative_library_grade = library.Grade
 
     # Cumulative Prashala Attendance
     attendances = StudentAttendance.objects.filter(StudentYearlyInformation = student_yearly_info)
@@ -1004,7 +999,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
   
 def fillOutdoorActivityReport(student_yearly_info, Story):
     addMainHeaderToStory(Story, "Part 4: Outdoor Activity Report")
-
+    pratod = ''
     # Physical Fitness Report
     addSubHeaderToStory(Story, "Physical Fitness Report")
     physical_fitness_infos = PhysicalFitnessInfo.objects.filter(StudentYearlyInformation=student_yearly_info)
@@ -1038,6 +1033,7 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         addNormalTextToStory(Story,'<br/><strong>' + 'Grade' + ' : ' + grade + '</strong>');        
         addNormalTextToStory(Story,'Comment' + ' : ' + comment);
         Story.append(Spacer(1,0.2*inch))
+        pratod = physical_fitness_info.Pratod
     Story.append(Spacer(1,0.5*inch))
 
     # Dal Attendance
@@ -1067,7 +1063,6 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         Story.append(Spacer(1,0.2*inch))
     Story.append(Spacer(1,0.5*inch))
                  
-    pratod = physical_fitness_info.Pratod
     addSignatureSpaceToStory(Story,pratod + ",<br/>" + "Dal Pratod")
     Story.append(PageBreak())
 
