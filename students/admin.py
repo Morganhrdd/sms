@@ -50,10 +50,12 @@ class StudentTestMarksAdmin(admin.ModelAdmin):
     search_fields = ['MarksObtained', 'TestMapping__SubjectMaster__Name', 'TestMapping__SubjectMaster__Standard', 'StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName', 'TestMapping__Teacher__Name']
 
 class AttendanceMasterAdmin(admin.ModelAdmin):
-    list_display = ('ClassMaster', 'WorkingDays')
-    
+    list_display = ('ClassMaster', 'WorkingDays', 'Month',)
+    search_fields = ('ClassMaster__Standard', 'ClassMaster__Division', 'Month', 'ClassMaster__AcademicYear__Year', 'ClassMaster__Teacher__Name')
+
 class StudentAttendanceAdmin(admin.ModelAdmin):
-    list_display = ('AttendanceMaster', 'ActualAttendance')
+    list_display = ('StudentYearlyInformation','AttendanceMaster', 'ActualAttendance',)
+    search_fields = [ 'AttendanceMaster__ClassMaster__Teacher__Name', ]
 
 class PhysicalFitnessInfoAdmin(admin.ModelAdmin):
     list_display = ('Weight', 'Height')

@@ -17,7 +17,7 @@ def get_yrly_info(regno, year, std, div):
     try:
         yr = AcademicYear.objects.get(Year=year)
     except:
-        raise 'academic year not foind'
+        raise 'academic year not found'
     try:
         classmaster = ClassMaster.objects.get(Standard=std, AcademicYear=yr,Division=div)
     except:
@@ -148,48 +148,41 @@ def add_additional_info():
             print 'Added regno: ', regno
 
 def add_attendance():
-    yr = AcademicYear.objects.get(Year='2008-2009')    
-    for xls, std, div in zip(["../Data.xls"], [9], ['B']):
-        book = xlrd.open_workbook(xls)
-        sh = book.sheet_by_index(0)
+    xls_file = raw_input('Enter filename: ')
+    div=raw_input('Enter Division: ')
+    std=raw_input('Enter Standard: ')
+    book = xlrd.open_workbook(xls_file)
+    sh = book.sheet_by_index(7)
+    yr = '2008-2009'
+    for rx in range(2, 42):
+        row = sh.row_values(rx)
+        regno = row[0]
+        yrlyinfo = get_yrly_info(regno, yr, std, div)
         try:
             classmaster = ClassMaster.objects.get(AcademicYear=yr, Standard=std, Division=div)
         except:
             print 'classmaster not in db. ', yr, std, div
             pass
-        for rx in range(3,sh.nrows):
-            row = sh.row_values(rx)
-            regno = row[0]
-            try:
-                basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
-            except:
-                print 'regno: ', regno, ' not found in db'
-                pass
-            try:
-                yrlinfo = StudentYearlyInformation.objects.get(StudentBasicInfo=basicinfo)
-            except:
-                print 'yearly info: ', regno, ' not found in db'
-                pass
-            for i in range(4,12):
-                mon = i+2
-                if mon > 12:
-                    mon = mon - 12
-                if not row[i]:
-                    raise 'blank value for regno '+str(int(regno))+' month '+str(i)
-                try:
-                    attendancemaster = AttendanceMaster.objects.get(ClassMaster=classmaster, Month=mon)
-                except:
-                    print "Attendance master not in db. ", classmaster, mon
-                    sys.exit()
-                print attendancemaster
-                studentattendance = StudentAttendance()
-                studentattendance.AttendanceMaster = attendancemaster
-                studentattendance.StudentYearlyInformation = yrlinfo
-                studentattendance.ActualAttendance = row[i]
-                studentattendance.save()
-                #print regno, mon, classmaster, studentattendance, row[i],
-            print
+        month = 2
+        try:
+            attendancemaster = AttendanceMaster.objects.get(ClassMaster=classmaster, Month=month)
+        except:
+            print "Attendance master not in db. ", classmaster, month
+            pass
+        try:
+            studentattendance = StudentAttendance.objects.get(AttendanceMaster=attendancemaster, StudentYearlyInformation=yrlyinfo)
+            print 'Found', studentattendance
+        except:
+            studentattendance = StudentAttendance()
+            studentattendance.AttendanceMaster = attendancemaster
+            studentattendance.StudentYearlyInformation = yrlyinfo
+            studentattendance.ActualAttendance = row[9]
+            studentattendance.save()
+            print studentattendance, 'added in db'
+            
 
+add_attendance()
+sys.exit()
 
 def add_marks():
     yr = AcademicYear.objects.get(Year='2008-2009')    
@@ -650,9 +643,6 @@ def populate_library():
             library_obj.PublicComment = comment
             library_obj.save()
             print library_obj, 'added in db'
-            
-populate_library()
-sys.exit()
 
 def populate_subjects():
     #subjects = ['Mathematics', 'English', 'Geography', 'Hindi', 'History', 'Marathi','Sanskrit', 'Science']
