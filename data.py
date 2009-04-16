@@ -163,7 +163,7 @@ def add_attendance():
         except:
             print 'classmaster not in db. ', yr, std, div
             pass
-        month = 3
+        month = 2
         try:
             attendancemaster = AttendanceMaster.objects.get(ClassMaster=classmaster, Month=month)
         except:
@@ -176,51 +176,10 @@ def add_attendance():
             studentattendance = StudentAttendance()
             studentattendance.AttendanceMaster = attendancemaster
             studentattendance.StudentYearlyInformation = yrlyinfo
-            studentattendance.ActualAttendance = row[10]
+            studentattendance.ActualAttendance = row[9]
             studentattendance.save()
-            #print studentattendance, 'added in db'
+            print studentattendance, 'added in db'
             
-#    yr = AcademicYear.objects.get(Year='2008-2009')
-#    for xls, std, div in zip(["../Data.xls"], [9], ['B']):
-#        book = xlrd.open_workbook(xls)
-#        sh = book.sheet_by_index(0)
-#        try:
-#            classmaster = ClassMaster.objects.get(AcademicYear=yr, Standard=std, Division=div)
-#        except:
-#            print 'classmaster not in db. ', yr, std, div
-#            pass
-#        for rx in range(3,sh.nrows):
-#            row = sh.row_values(rx)
-#            regno = row[0]
-#            try:
-#                basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
-#            except:
-#                print 'regno: ', regno, ' not found in db'
-#                pass
-#            try:
-#                yrlinfo = StudentYearlyInformation.objects.get(StudentBasicInfo=basicinfo)
-#            except:
-#                print 'yearly info: ', regno, ' not found in db'
-#                pass
-#            for i in range(4,12):
-#                mon = i+2
-#                if mon > 12:
-#                    mon = mon - 12
-#                if not row[i]:
-#                    raise 'blank value for regno '+str(int(regno))+' month '+str(i)
-#                try:
-#                    attendancemaster = AttendanceMaster.objects.get(ClassMaster=classmaster, Month=mon)
-#                except:
-#                    print "Attendance master not in db. ", classmaster, mon
-#                    sys.exit()
-#                print attendancemaster
-#                studentattendance = StudentAttendance()
-#                studentattendance.AttendanceMaster = attendancemaster
-#                studentattendance.StudentYearlyInformation = yrlinfo
-#                studentattendance.ActualAttendance = row[i]
-#                studentattendance.save()
-#                #print regno, mon, classmaster, studentattendance, row[i],
-#            print
 
 add_attendance()
 sys.exit()
