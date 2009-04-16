@@ -515,8 +515,11 @@ def reportPDF(request):
 
 def fillPdfData(Story, registration_nos, part_option):
     for registration_no in registration_nos:
-        student_basic_info = StudentBasicInfo.objects.get(RegistrationNo = registration_no)
-        student_yearly_infos = StudentYearlyInformation.objects.filter(StudentBasicInfo = student_basic_info)
+        try:
+            student_basic_info = StudentBasicInfo.objects.get(RegistrationNo = registration_no)
+            student_yearly_infos = StudentYearlyInformation.objects.filter(StudentBasicInfo = student_basic_info)
+        except:
+            continue
         for student_yearly_info in student_yearly_infos:
             year = student_yearly_info.ClassMaster.AcademicYear.Year
             #Year is hardcoded
@@ -627,7 +630,10 @@ def fillStudentAttendance(student_yearly_info, Story, class_type):
 
 def fillStaticAndYearlyInfo(student_yearly_info, Story):
     student_basic_info = student_yearly_info.StudentBasicInfo
-    student_addtional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info.RegistrationNo)
+    try:
+        student_addtional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info.RegistrationNo)
+    except:
+        return
     student_yearly_data = student_yearly_info
     print student_yearly_data.Photo
     #im = Image.open(student_yearly_data.Photo)
@@ -822,9 +828,11 @@ def fillAcademicReport(student_yearly_info, Story):
         cummulative_maxmarks = cummulative_maxmarks + cummulative_subject_maxmarks
         addTableToStory(Story, data, 'CENTER')
         Story.append(Spacer(1,0.25*inch))
-
+    percentage = 0
+    if cummulative_maxmarks > 0:
+        percentage = round((cummulative_marks / cummulative_maxmarks * 100),2)
     addSubHeaderToStory(Story, mark_safe('Grand Total: ' +  str(cummulative_marks) + " / " + str(cummulative_maxmarks)
-                        + "<br/>" + ' Percentage: ' + str(round((cummulative_marks / cummulative_maxmarks * 100),2)) + "%"))
+                        + "<br/>" + ' Percentage: ' + str(percentage) + "%"))
     
     Story.append(Spacer(1,0.5*inch))
     addSubHeaderToStory(Story, "School Attendance");
