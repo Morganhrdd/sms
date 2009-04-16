@@ -84,10 +84,10 @@ class ProjectAdmin(admin.ModelAdmin):
 class ElocutionAdmin(admin.ModelAdmin):
     list_display = ('Title', 'StudentYearlyInformation', 'Memory', 'Content', 'Understanding', 'Skill', 'Presentation',)
     search_fields = ['Title', 'StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName']
-    pass
 
 class LibraryAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('StudentYearlyInformation', 'BooksRead', 'Grade', 'PublicComment', 'PrivateComment')
+    search_fields = ['StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName', 'PublicComment', 'PrivateComment']
 
 admin.site.register(AttendanceMaster, AttendanceMasterAdmin)
 admin.site.register(StudentAttendance, StudentAttendanceAdmin)
