@@ -200,7 +200,7 @@ def report(request):
             competitions_data.append({'Organizer':comps.Organizer ,
                                           'Subject':comps.Subject ,
                                           'Date':comps.Date ,
-                                          'Achievement':GRADE_CHOICES[comps.Achievement] ,
+                                          'Achievement':comps.Achievement,
                                           'Guide':comps.Guide ,
                                           'PublicComment':comps.PublicComment})
         if len(competitions)>0:
