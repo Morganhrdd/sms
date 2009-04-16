@@ -94,32 +94,67 @@ def report(request):
                                     'Attendance':attendance.ActualAttendance ,
                                     'Working_days':attendance.AttendanceMaster.WorkingDays})
      
-        marks = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
-        mark_data = {}
-        marks_summary={'TotalMarksObtained':0 , 'TotalMaximumMarks':0}
-        for mark in marks:
-            marks_summary['TotalMarksObtained']+=mark.MarksObtained
-            marks_summary['TotalMaximumMarks']+=mark.TestMapping.MaximumMarks
-            #if marks_summary.has_key[mark.TestMapping.SubjectMaster.Name]:
-             #   marks_summary[mark.TestMapping.SubjectMaster.Name]+=mark.MarksObtained
-            #else:
-             #   marks_summary[mark.TestMapping.SubjectMaster.Name]=0
-            #marks_summary['Subject_Name']+=marks_summary['Subject_Name']
-            subject_marks = {}
-            try:
-                subject_marks[mark.Subject_Name]['obtained'] += mark.MarksObtained
-                subject_marks[mark.Subject_Name]['max_marks'] += mark.MaximumMarks
-            except:
-                subject_marks[mark.Subject_Name]['obtained'] = {}
-                subject_marks[mark.Subject_Name]['max_marks'] = {}
-                subject_marks[mark.Subject_Name]['obtained'] = mark.MarksObtained
-                subject_marks[mark.Subject_Name]['max_marks'] = mark.MaximumMarks
-            if not mark_data.has_key(mark.Subject_Name):
-                mark_data[mark.Subject_Name] = {}
-            if not mark_data[mark.Subject_Name].has_key(mark.TestType):
-                mark_data[mark.Subject_Name][mark.TestType] = {}    
-            mark_data[mark.Subject_Name][mark.TestType]['marks_obtained'] = mark.MarksObtained
-            mark_data[mark.Subject_Name][mark.TestType]['max_marks'] = mark.MaximumMarks
+##        marks = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
+##        mark_data = {}
+##        marks_summary={'TotalMarksObtained':0 , 'TotalMaximumMarks':0}
+##        for mark in marks:
+##            marks_summary['TotalMarksObtained']+=mark.MarksObtained
+##            marks_summary['TotalMaximumMarks']+=mark.TestMapping.MaximumMarks
+##            #if marks_summary.has_key[mark.TestMapping.SubjectMaster.Name]:
+##             #   marks_summary[mark.TestMapping.SubjectMaster.Name]+=mark.MarksObtained
+##            #else:
+##             #   marks_summary[mark.TestMapping.SubjectMaster.Name]=0
+##            #marks_summary['Subject_Name']+=marks_summary['Subject_Name']
+##            subject_marks = {}
+##            try:
+##                subject_marks[mark.Subject_Name]['obtained'] += mark.MarksObtained
+##                subject_marks[mark.Subject_Name]['max_marks'] += mark.MaximumMarks
+##            except:
+##                subject_marks[mark.Subject_Name]['obtained'] = {}
+##                subject_marks[mark.Subject_Name]['max_marks'] = {}
+##                subject_marks[mark.Subject_Name]['obtained'] = mark.MarksObtained
+##                subject_marks[mark.Subject_Name]['max_marks'] = mark.MaximumMarks
+##            if not mark_data.has_key(mark.Subject_Name):
+##                mark_data[mark.Subject_Name] = {}
+##            if not mark_data[mark.Subject_Name].has_key(mark.TestType):
+##                mark_data[mark.Subject_Name][mark.TestType] = {}    
+##            mark_data[mark.Subject_Name][mark.TestType]['marks_obtained'] = mark.MarksObtained
+##            mark_data[mark.Subject_Name][mark.TestType]['max_marks'] = mark.MaximumMarks
+    subjects_data = {}
+    student_test_data = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
+    data = []
+    data.append(['','Subject Name','Test type','Marks','Maximum Marks'])
+    for test_marks in student_test_data:
+        test_mapping = test_marks.TestMapping
+        subject_name = test_mapping.SubjectMaster.Name
+        if not subjects_data.has_key(subject_name):
+            subjects_data[subject_name] = []
+        subject_data = subjects_data[subject_name]
+        subject_data.append(test_marks)
+
+    cummulative_marks=0
+    cummulative_maxmarks=0
+    for subject_item in subjects_data.keys():
+        subject_data = subjects_data[subject_item]
+        addSubHeaderToStory(Story,subject_item);
+        data = []
+        data.append(['','Test Type','Marks','Maximum Marks'])
+        cummulative_subject_marks=0
+        cummulative_subject_maxmarks=0
+        i=0
+        for subject_marks in subject_data:
+            i = i + 1
+            test_mapping = subject_marks.TestMapping
+            subject_name = test_mapping.SubjectMaster.Name
+            test_type = test_mapping.TestType
+            maximum_marks = test_mapping.MaximumMarks
+            marks_obtained = subject_marks.MarksObtained 
+            data.append([i,test_type,marks_obtained,maximum_marks])
+            cummulative_subject_marks = cummulative_subject_marks + marks_obtained
+            cummulative_subject_maxmarks = cummulative_subject_maxmarks + maximum_marks
+        data.append(['','Subject Total :',cummulative_subject_marks,cummulative_subject_maxmarks])
+        cummulative_marks = cummulative_marks + cummulative_subject_marks
+        cummulative_maxmarks = cummulative_maxmarks + cummulative_subject_maxmarks
     
         co_curricular = CoCurricular.objects.filter(StudentYearlyInformation = student_yearly_info)
         co_curricular_data = []
