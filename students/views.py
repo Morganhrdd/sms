@@ -6,6 +6,7 @@ from jp_sms.students.models import TestMapping, StudentTestMarks, StudentYearlyI
 from jp_sms.students.models import SubjectMaster, ClassMaster, SubjectMaster, AttendanceMaster
 from jp_sms.students.models import StudentAttendance, StudentAdditionalInformation,CoCurricular
 from jp_sms.students.models import SocialActivity,PhysicalFitnessInfo,AbhivyaktiVikas,Project,Elocution
+from jp_sms.students.models import CompetitiveExam, Competition
 from django.template import Context
 from django.template.loader import get_template
 from reportlab.pdfgen import canvas
