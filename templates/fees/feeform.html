@@ -1,8 +1,8 @@
 <html>
 <script lannguage="javascript">
-function statusform()
+function statusform(value)
 {
- document.fee.applyforfee.value = 1;
+ document.fee.applyforfee.value = value;
  document.fee.submit();
 }
 
@@ -19,6 +19,18 @@ function populatename(name)
  document.fee.Name.value = name;
 }
 
+function clearform()
+{
+ document.fee.RegNo.value = '';
+ document.fee.Name.value = '';
+ document.fee.Std.value = '';
+ document.fee.Year.value = '';
+ document.fee.FeeType.value = '';
+ document.fee.Amount.value = '';
+ document.fee.ChequeNo.value = '';
+ document.fee.Bank.value = '';
+}
+
 </script>
 <body onLoad="populatename('{{student.FirstName}} {{student.LastName}}')">
 <div align="center">
@@ -30,7 +42,7 @@ Jnana Prabodhini Prashala<br/>
 <div name="receiptnum" style="position:absolute;right:200;top:100">
 <table>
 <tr> <td><b>Date</b></td><td>{{date}}</td></tr>
-<tr> <td><b>Receipt Number</b></td><td>{{receiptnumber}}</td></tr>
+<!--<tr> <td><b>Receipt Number</b></td><td>{{receiptnumber}}</td></tr>-->
 </table>
 </div>
 <form name="fee" action="/fee/" method="post">
@@ -49,8 +61,9 @@ Jnana Prabodhini Prashala<br/>
 {{ form.as_table }}
 </table>
 <br/><b>{{ message }}</b><br/><br/>
-<input type="submit" value="Check Status" />
-<input type="submit" value="Print Receipt" onClick="statusform()"/>
+<input type="submit" value="Check Status" onClick="statusform(0)"/>
+<input type="submit" value="Print Receipt" onClick="statusform(1)"/>
+<input type="button" value="Clear Form" onClick="clearform()"/>
 <input type="hidden" name="applyforfee" value="0"/>
 </form>
 
