@@ -519,7 +519,7 @@ def fillPdfData(Story, registration_nos, part_option):
         for student_yearly_info in student_yearly_infos:
             year = student_yearly_info.ClassMaster.AcademicYear.Year
             #Year is hardcoded
-            if year == '2008-9':
+            if year == '2008-2009':
                 print 'Filling'
                 if part_option == 0:
                     fillStaticAndYearlyInfo(student_yearly_info, Story)
