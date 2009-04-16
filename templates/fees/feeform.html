@@ -1,0 +1,93 @@
+<html>
+<script lannguage="javascript">
+function statusform()
+{
+ document.fee.applyforfee.value = 1;
+ document.fee.submit();
+}
+
+function populatedata(std, year, feetype, amount)
+{
+ document.fee.Std.value = std;
+ document.fee.Year.value = year;
+ document.fee.FeeType.value = feetype;
+ document.fee.Amount.value = amount;
+}
+
+function populatename(name)
+{
+ document.fee.Name.value = name;
+}
+
+</script>
+<body onLoad="populatename('{{student.FirstName}} {{student.LastName}}')">
+<div align="center">
+
+<h2>
+Jnana Prabodhini Prashala<br/>
+510, Sadashiv Peth, Pune - 30<br/>
+</h2><br/>
+<div name="receiptnum" style="position:absolute;right:200;top:100">
+<table>
+<tr> <td><b>Date</b></td><td>{{date}}</td></tr>
+<tr> <td><b>Receipt Number</b></td><td>{{receiptnumber}}</td></tr>
+</table>
+</div>
+<form name="fee" action="/fee/" method="post">
+
+<!--
+<table>
+<tr><td> {{ form.RegNo.errors }} </td></tr>
+<tr><td> {{ form.RegNo.label_tag }}:</td><td> {{ form.RegNo }}</td></tr>
+
+<tr><td> {{ form.Student.errors }} </td></tr>
+<tr><td> {{ form.Student.label_tag }}:</td><td> {{ form.Student }}</td></tr>
+</table>
+-->
+
+<table>
+{{ form.as_table }}
+</table>
+<br/><b>{{ message }}</b><br/><br/>
+<input type="submit" value="Check Status" />
+<input type="submit" value="Print Receipt" onClick="statusform()"/>
+<input type="hidden" name="applyforfee" value="0"/>
+</form>
+
+</div>
+
+<br/><br/>
+
+<div>
+<table align="center">
+{% for row in years %}
+<th>{{row.ClassMaster.AcademicYear}} / {{row.ClassMaster.Standard}}</th>
+<th width="10">
+</th>
+{% endfor %}
+
+<tr>
+{% for row in years %}
+<td>
+<div id="{{row.ClassMaster.Standard}}" name="{{row.ClassMaster.Standard}}" align="top">
+<table border="1" cellspacing="5" cellpadding="0">
+{% for frow in row.FeeInfo %}
+<tr><th colspan=2>{{frow.Type}}</th><th colspan=3>{{frow.Amount}}</th></tr>
+{% for fda in frow.FeeDateAmount %}
+<tr><td></td><td></td><td>{{fda.ReceiptNo}}</td><td>{{fda.Date}}</td><td>{{fda.Amount}}</td></tr>
+{% endfor %}
+<tr><th colspan=2>Total</th><th colspan=3>{{frow.Total}}</th></tr>
+<tr><th colspan=2>Balance</th><th colspan=3><a href="javascript:populatedata('{{row.ClassMaster.Standard}}','{{row.ClassMaster.AcademicYear}}','{{frow.Type}}','{{frow.Balance}}')">{{frow.Balance}}</a></th></tr>
+{% endfor %}
+
+</table>
+</div>
+</td>
+<td width="10">
+</td>
+{% endfor %}
+</tr>
+</table>
+</div>
+</body>
+</html>
