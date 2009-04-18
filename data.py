@@ -117,7 +117,7 @@ def add_additional_info():
     yr = AcademicYear.objects.get(Year='2008-2009')
     for xls, std, div in zip(["../Data.xls"], [9], ['B']):
         book = xlrd.open_workbook(xls)
-        sh = book.sheet_by_index(0)
+        sh = book.sheet_by_name('Students Information')
         for rx in range(3,sh.nrows):
             row = sh.row_values(rx)
             regno = row[0]
@@ -152,7 +152,7 @@ def add_attendance():
     div=raw_input('Enter Division: ')
     std=raw_input('Enter Standard: ')
     book = xlrd.open_workbook(xls_file)
-    sh = book.sheet_by_index(7)
+    sh = book.sheet_by_name('School Attendance')
     yr = '2008-2009'
     for rx in range(2, 42):
         row = sh.row_values(rx)
@@ -428,7 +428,7 @@ def populate_abhivyakti():
     div=raw_input('Enter Division: ')
     std=raw_input('Enter Standard: ')
     book = xlrd.open_workbook(xls_file)
-    sh = book.sheet_by_index(0)
+    sh = book.sheet_by_name('Abhivyakti Vikas')
     yr = '2008-2009'
     for rx in range(0, 40):
         row = sh.row_values(rx)
@@ -508,7 +508,7 @@ def populate_competitions():
     std = raw_input('Enter Standard: ')
     book = xlrd.open_workbook(xls_file)
     yr = '2008-2009'
-    sh = book.sheet_by_index(1)
+    sh = book.sheet_by_name('Competitions')
     for rx in range(0, 14):
         row = sh.row_values(rx)
         regno = row[0]
@@ -541,7 +541,7 @@ def populate_competitiveexam():
     std = raw_input('Enter Standard: ')
     book = xlrd.open_workbook(xls_file)
     yr = '2008-2009'
-    sh = book.sheet_by_index(2)
+    sh = book.sheet_by_name('Competitive Exams')
     for rx in range(0, 44):
         row = sh.row_values(rx)
         regno = row[0]
@@ -580,7 +580,7 @@ def populate_project():
     std = raw_input('Enter Standard: ')
     book = xlrd.open_workbook(xls_file)
     yr = '2008-2009'
-    sh = book.sheet_by_index(5)
+    sh = book.sheet_by_name('Projects')
     for rx in range(0, 42):
         row = sh.row_values(rx)
         regno = row[0]
@@ -614,11 +614,14 @@ def populate_library():
     std = raw_input('Enter Standard: ')
     book = xlrd.open_workbook(xls_file)
     yr = '2008-2009'
-    sh = book.sheet_by_index(8)
+    sh = book.sheet_by_name('Library')
     for rx in range(1, 41):
         row = sh.row_values(rx)
         regno = row[0]
-        yrlyinfo = get_yrly_info(regno, yr, std, div)
+        try:
+            yrlyinfo = get_yrly_info(regno, yr, std, div)
+        except:
+            print 'yearly info not found in db for ', regno
         print row
         booksread = row[1]
         grade = row[2]
@@ -691,5 +694,5 @@ def add_yrly_info():
         yrlyinfo.ClassMaster = classmaster
         yrlyinfo.save()
 
-populate_competitiveexam()
+populate_library()
 sys.exit()
