@@ -56,7 +56,7 @@ class AttendanceMasterAdmin(admin.ModelAdmin):
 
 class StudentAttendanceAdmin(admin.ModelAdmin):
     list_display = ('StudentYearlyInformation','AttendanceMaster', 'ActualAttendance',)
-    search_fields = [ 'AttendanceMaster__ClassMaster__Teacher__Name', ]
+    search_fields = [ 'AttendanceMaster__ClassMaster__Teacher__Name', 'StudentYearlyInformation__StudentBasicInfo__RegistrationNo' ]
 
 class PhysicalFitnessInfoAdmin(admin.ModelAdmin):
     list_display = ('Weight', 'Height')
