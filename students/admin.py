@@ -16,6 +16,7 @@ class StudentAdditionalInformationAdmin(admin.ModelAdmin):
     list_display = ('Id', 'Strength', 'Weakness', 'Sankalp', 'Sankalp_Comment', 'Hobbies', 'Family_Background', 'Fathers_Income',
                     'Fathers_Education', 'Fathers_Occupation', 'Fathers_Phone_No', 'Fathers_Email', 'Mothers_Income' ,'Mothers_Education',
                     'Mothers_Occupation', 'Mothers_Phone_No', 'Mothers_Email', 'Address')
+    search_fields = ['Id__RegistrationNo', 'Id__FirstName', 'Id__LastName']
     ordering = ('Id',)
 
 class AcademicYearAdmin(admin.ModelAdmin):
