@@ -115,37 +115,40 @@ def add_test():
 
 def add_additional_info():
     yr = AcademicYear.objects.get(Year='2008-2009')
-    for xls, std, div in zip(["../Data.xls"], [9], ['B']):
-        book = xlrd.open_workbook(xls)
-        sh = book.sheet_by_name('Students Information')
-        for rx in range(3,sh.nrows):
-            row = sh.row_values(rx)
-            regno = row[0]
-            yrlinfo = StudentAdditionalInformation()
-            try:
-                basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
-            except:
-                print 'regno: ', regno, ' not found in db'
-                continue
-            yrlinfo.Id = basicinfo
-            yrlinfo.Strength = row[14]
-            yrlinfo.Weakness = row[15]
-            yrlinfo.Sankalp = row[16]
-            yrlinfo.Sankalp_Comment = row[17]
-            yrlinfo.Hobbies = row[18]
-            yrlinfo.Fathers_Income = row[21]
-            yrlinfo.Fathers_Education = row[22]
-            yrlinfo.Fathers_Occupation = row[23]
-            yrlinfo.Fathers_Phone_No = str(row[24]).replace('.0','')
-            yrlinfo.Fathers_Email = row[25]
-            yrlinfo.Mothers_Income = row[27]
-            yrlinfo.Mothers_Education = row[28]
-            yrlinfo.Mothers_Occupation = row[29]
-            yrlinfo.Mothers_Phone_No = str(row[30]).replace('.0','')
-            yrlinfo.Mothers_Email = row[31]
-            yrlinfo.Address = row[32]
-            yrlinfo.save()
-            print 'Added regno: ', regno
+    #for xls, std, div in zip(["../Data.xls"], [9], ['B']):
+    xls_file = raw_input('Enter filename: ')
+    div = raw_input('Enter Division: ')
+    std = raw_input('Enter Standard: ')
+    book = xlrd.open_workbook(xls_file)
+    sh = book.sheet_by_name('Students Information')
+    for rx in range(0,40):
+        row = sh.row_values(rx)
+        regno = row[0]
+        yrlinfo = StudentAdditionalInformation()
+        try:
+            basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
+        except:
+            print 'regno: ', regno, ' not found in db'
+            continue
+        yrlinfo.Id = basicinfo
+        yrlinfo.Strength = row[1]
+        yrlinfo.Weakness = row[2]
+        yrlinfo.Sankalp = row[3]
+        yrlinfo.Sankalp_Comment = row[4]
+        yrlinfo.Hobbies = row[5]
+        yrlinfo.Fathers_Income = row[7]
+        yrlinfo.Fathers_Education = row[8]
+        yrlinfo.Fathers_Occupation = row[9]
+        yrlinfo.Fathers_Phone_No = str(row[10]).replace('.0','')
+        yrlinfo.Fathers_Email = row[11]
+        yrlinfo.Mothers_Income = row[13]
+        yrlinfo.Mothers_Education = row[14]
+        yrlinfo.Mothers_Occupation = row[15]
+        yrlinfo.Mothers_Phone_No = str(row[16]).replace('.0','')
+        yrlinfo.Mothers_Email = row[17]
+        yrlinfo.Address = row[18]
+        yrlinfo.save()
+        print 'Added regno: ', regno
 
 def add_attendance():
     xls_file = raw_input('Enter filename: ')
