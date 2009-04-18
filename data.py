@@ -126,7 +126,7 @@ def add_additional_info():
                 basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
             except:
                 print 'regno: ', regno, ' not found in db'
-                pass
+                continue
             yrlinfo.Id = basicinfo
             yrlinfo.Strength = row[14]
             yrlinfo.Weakness = row[15]
@@ -157,18 +157,21 @@ def add_attendance():
     for rx in range(2, 42):
         row = sh.row_values(rx)
         regno = row[0]
-        yrlyinfo = get_yrly_info(regno, yr, std, div)
+        try:
+            yrlyinfo = get_yrly_info(regno, yr, std, div)
+        except:
+            print 'yearly info not found for', regno
         try:
             classmaster = ClassMaster.objects.get(AcademicYear=yr, Standard=std, Division=div)
         except:
             print 'classmaster not in db. ', yr, std, div
-            pass
+            continue
         month = 2
         try:
             attendancemaster = AttendanceMaster.objects.get(ClassMaster=classmaster, Month=month)
         except:
             print "Attendance master not in db. ", classmaster, month
-            pass
+            continue
         try:
             studentattendance = StudentAttendance.objects.get(AttendanceMaster=attendancemaster, StudentYearlyInformation=yrlyinfo)
             print 'Found', studentattendance
@@ -216,7 +219,7 @@ def add_marks():
                     print 'Subject does not exist ', subject[:3]
                 try:
                     testmapping = TestMapping.objects.get(SubjectMaster = SubObj, TestType = subject[3:], MaximumMarks = max_mark, Teacher = TeacherObj, AcademicYear = yr)
-                    pass
+                    continue
                 except:
                     testmapping = TestMapping()
                     testmapping.SubjectMaster = SubObj
@@ -265,7 +268,7 @@ def add_marks():
                         sys.exit()
                     try:
                         a=StudentTestMarks.objects.get(StudentYearlyInformation=yrlyinfo, TestMapping=testmapping)
-                        pass
+                        continue
                     except:
                         a = StudentTestMarks()
                         a.StudentYearlyInformation = yrlyinfo
@@ -297,7 +300,7 @@ def add_b5():
     max_marks = row[5:]
     for teacher, subject, max_mark in zip(teachers, subjects, max_marks):
         SubObj = SubjectMaster.objects.get(Standard=5, Name=subject[:3])
-        pass
+        continue
         try:
             TeacherObj = Teacher.objects.get(Name=teacher)
         except:
@@ -305,7 +308,7 @@ def add_b5():
             sys.exit()
         try:
             testmapping = TestMapping.objects.get(SubjectMaster = SubObj, TestType = subject[3:], MaximumMarks = max_mark, Teacher = TeacherObj, AcademicYear = yr)
-            pass
+            continue
         except:
             testmapping = TestMapping()
             testmapping.SubjectMaster = SubObj
@@ -353,12 +356,12 @@ def populate_elocution():
             basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
         except:
             print 'regno: ', regno, ' not found in db'
-            pass
+            continue
         try:
             classmaster = ClassMaster.objects.get(Standard=std, AcademicYear=yr,Division='B')
         except:
             print 'unable to get '
-            pass
+            continue
         try:
             yrlyinfo = StudentYearlyInformation.objects.get(StudentBasicInfo=basicinfo, ClassMaster=classmaster)
         except:
@@ -393,7 +396,7 @@ def populate_fee_receipts():
                 basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
             except:
                 print 'regno: ', regno, ' not found in db'
-                pass
+                continue
             if basicinfo.Gender == 'M':
                 div = 'B'
             elif basicinfo.Gender == 'F':
@@ -402,7 +405,7 @@ def populate_fee_receipts():
                 classmaster = ClassMaster.objects.get(Standard=std, AcademicYear=yr,Division=div)
             except:
                 print 'unable to get '
-                pass
+                continue
             try:
                 yrlyinfo = StudentYearlyInformation.objects.get(StudentBasicInfo=basicinfo, ClassMaster=classmaster)
             except:
@@ -439,13 +442,13 @@ def populate_abhivyakti():
             yrlyinfo = get_yrly_info(regno, yr, std, div)
         except:
             print 'yearly info not found for ', regno
-            pass
+            continue
         
         try:
             teacher = Teacher(Name=teacher)
         except:
             print 'Teacher ', row[2], 'not in db'
-            pass
+            continue
         try:
             abhivyakti_obj = AbhivyaktiVikas.objects.get(StudentYearlyInformation=yrlyinfo)
             print abhivyakti_obj, 'Already available in database'
@@ -479,17 +482,17 @@ def populate_cocurricular():
             basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
         except:
             print 'regno: ', regno, ' not found in db'
-            pass
+            continue
         try:
             classmaster = ClassMaster.objects.get(Standard=std, AcademicYear=yr,Division=div)
         except:
             print 'unable to get '
-            pass
+            continue
         try:
             yrlyinfo = StudentYearlyInformation.objects.get(StudentBasicInfo=basicinfo, ClassMaster=classmaster)
         except:
             print 'StudentYearlyInformation not found ', basicinfo, classmaster
-            pass
+            continue
         try:
             cocurricular_obj = CoCurricular.objects.get(StudentYearlyInformation=yrlyinfo, Activity=activity)
             print cocurricular_obj, 'already in db'
@@ -512,7 +515,11 @@ def populate_competitions():
     for rx in range(0, 14):
         row = sh.row_values(rx)
         regno = row[0]
-        yrlyinfo = get_yrly_info(regno, yr, std, div)
+        try:
+            yrlyinfo = get_yrly_info(regno, yr, std, div)
+        except:
+            print 'yearly info not found for', regno
+            continue
         print row
         organizer = row[1]
         subject = row[2]
@@ -549,7 +556,7 @@ def populate_competitiveexam():
             yrlyinfo = get_yrly_info(regno, yr, std, div)
         except:
             print 'yearly info not found for', regno
-            pass
+            continue
         print row
         name = row[1]
         subject = row[2]
@@ -584,7 +591,11 @@ def populate_project():
     for rx in range(0, 42):
         row = sh.row_values(rx)
         regno = row[0]
-        yrlyinfo = get_yrly_info(regno, yr, std, div)
+        try:
+            yrlyinfo = get_yrly_info(regno, yr, std, div)
+        except:
+            print 'yearly info not found for', regno
+            continue
         print row
         title = row[1]
         proj_types = {}
@@ -694,5 +705,5 @@ def add_yrly_info():
         yrlyinfo.ClassMaster = classmaster
         yrlyinfo.save()
 
-populate_library()
+populate_project()
 sys.exit()
