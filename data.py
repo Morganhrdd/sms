@@ -181,8 +181,6 @@ def add_attendance():
             print studentattendance, 'added in db'
             
 
-add_attendance()
-sys.exit()
 
 def add_marks():
     yr = AcademicYear.objects.get(Year='2008-2009')    
@@ -431,28 +429,18 @@ def populate_abhivyakti():
     std=raw_input('Enter Standard: ')
     book = xlrd.open_workbook(xls_file)
     sh = book.sheet_by_index(0)
-    yr = AcademicYear.objects.get(Year='2008-2009')
-    for rx in range(6, 46):
+    yr = '2008-2009'
+    for rx in range(0, 40):
         row = sh.row_values(rx)
         regno = row[0]
         mediumofexpression = row[1]
         teacher = row[2]
+        try:
+            yrlyinfo = get_yrly_info(regno, yr, std, div)
+        except:
+            print 'yearly info not found for ', regno
+            pass
         
-        try:
-            basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
-        except:
-            print 'regno: ', regno, ' not found in db'
-            pass
-        try:
-            classmaster = ClassMaster.objects.get(Standard=std, AcademicYear=yr,Division=div)
-        except:
-            print 'unable to get '
-            pass
-        try:
-            yrlyinfo = StudentYearlyInformation.objects.get(StudentBasicInfo=basicinfo, ClassMaster=classmaster)
-        except:
-            print 'StudentYearlyInformation not found ', basicinfo, classmaster
-            pass
         try:
             teacher = Teacher(Name=teacher)
         except:
@@ -701,3 +689,5 @@ def add_yrly_info():
         yrlyinfo.ClassMaster = classmaster
         yrlyinfo.save()
 
+populate_abhivyakti()
+sys.exit()
