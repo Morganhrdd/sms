@@ -124,31 +124,35 @@ def add_additional_info():
     for rx in range(0,40):
         row = sh.row_values(rx)
         regno = row[0]
-        yrlinfo = StudentAdditionalInformation()
         try:
             basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
         except:
             print 'regno: ', regno, ' not found in db'
             continue
-        yrlinfo.Id = basicinfo
-        yrlinfo.Strength = row[1]
-        yrlinfo.Weakness = row[2]
-        yrlinfo.Sankalp = row[3]
-        yrlinfo.Sankalp_Comment = row[4]
-        yrlinfo.Hobbies = row[5]
-        yrlinfo.Fathers_Income = row[7]
-        yrlinfo.Fathers_Education = row[8]
-        yrlinfo.Fathers_Occupation = row[9]
-        yrlinfo.Fathers_Phone_No = str(row[10]).replace('.0','')
-        yrlinfo.Fathers_Email = row[11]
-        yrlinfo.Mothers_Income = row[13]
-        yrlinfo.Mothers_Education = row[14]
-        yrlinfo.Mothers_Occupation = row[15]
-        yrlinfo.Mothers_Phone_No = str(row[16]).replace('.0','')
-        yrlinfo.Mothers_Email = row[17]
-        yrlinfo.Address = row[18]
-        yrlinfo.save()
-        print 'Added regno: ', regno
+        try:
+            yrlinfo = StudentAdditionalInformation.objects.get(Id=basicinfo)
+            continue
+        except:
+            yrlinfo = StudentAdditionalInformation()
+            yrlinfo.Id = basicinfo
+            yrlinfo.Strength = row[1]
+            yrlinfo.Weakness = row[2]
+            yrlinfo.Sankalp = row[3]
+            yrlinfo.Sankalp_Comment = row[4]
+            yrlinfo.Hobbies = row[5]
+            yrlinfo.Fathers_Income = row[7]
+            yrlinfo.Fathers_Education = row[8]
+            yrlinfo.Fathers_Occupation = row[9]
+            yrlinfo.Fathers_Phone_No = str(row[10]).replace('.0','')
+            yrlinfo.Fathers_Email = row[11]
+            yrlinfo.Mothers_Income = row[13]
+            yrlinfo.Mothers_Education = row[14]
+            yrlinfo.Mothers_Occupation = row[15]
+            yrlinfo.Mothers_Phone_No = str(row[16]).replace('.0','')
+            yrlinfo.Mothers_Email = row[17]
+            yrlinfo.Address = row[18]
+            yrlinfo.save()
+            print 'Added regno: ', regno
 
 def add_attendance():
     xls_file = raw_input('Enter filename: ')
@@ -708,5 +712,5 @@ def add_yrly_info():
         yrlyinfo.ClassMaster = classmaster
         yrlyinfo.save()
 
-populate_project()
+add_additional_info()
 sys.exit()
