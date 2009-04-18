@@ -1,6 +1,6 @@
 import xlrd, os, sys, datetime
 os.environ['DJANGO_SETTINGS_MODULE'] = 'jp_sms.settings'
-sys.path.append('/Users/shantanoo/repo')
+sys.path.append(os.environ['DATAPY'])
 from jp_sms.students.models import StudentBasicInfo, SubjectMaster, Teacher, AttendanceMaster
 from jp_sms.students.models import AcademicYear, TestMapping, StudentYearlyInformation, StudentAttendance
 from jp_sms.students.models import ClassMaster, StudentTestMarks, StudentAdditionalInformation, Elocution
@@ -508,8 +508,8 @@ def populate_competitions():
     std = raw_input('Enter Standard: ')
     book = xlrd.open_workbook(xls_file)
     yr = '2008-2009'
-    sh = book.sheet_by_index(2)
-    for rx in range(4, 14):
+    sh = book.sheet_by_index(1)
+    for rx in range(0, 14):
         row = sh.row_values(rx)
         regno = row[0]
         yrlyinfo = get_yrly_info(regno, yr, std, div)
@@ -541,11 +541,15 @@ def populate_competitiveexam():
     std = raw_input('Enter Standard: ')
     book = xlrd.open_workbook(xls_file)
     yr = '2008-2009'
-    sh = book.sheet_by_index(3)
-    for rx in range(4, 48):
+    sh = book.sheet_by_index(2)
+    for rx in range(0, 44):
         row = sh.row_values(rx)
         regno = row[0]
-        yrlyinfo = get_yrly_info(regno, yr, std, div)
+        try:
+            yrlyinfo = get_yrly_info(regno, yr, std, div)
+        except:
+            print 'yearly info not found for', regno
+            pass
         print row
         name = row[1]
         subject = row[2]
@@ -553,8 +557,6 @@ def populate_competitiveexam():
         date = False
         if row[4]:
             tmp = row[4].split('/')
-            if tmp[2] == '08':
-                tmp[2] = '2008'
             date = datetime.date(int(tmp[2]), int(tmp[1]), int(tmp[0]))
         else:
             date = datetime.date(1,1,1)
@@ -689,5 +691,5 @@ def add_yrly_info():
         yrlyinfo.ClassMaster = classmaster
         yrlyinfo.save()
 
-populate_abhivyakti()
+populate_competitiveexam()
 sys.exit()
