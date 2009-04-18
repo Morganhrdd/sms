@@ -161,6 +161,10 @@ def add_attendance():
     book = xlrd.open_workbook(xls_file)
     sh = book.sheet_by_name('School Attendance')
     yr = '2008-2009'
+    months = [6, 7, 8, 9, 10, 11, 12, 1, 2, 3]
+    row = sh.row_values(1)
+    months_max = row[:10]
+    
     for rx in range(2, 42):
         row = sh.row_values(rx)
         regno = row[0]
@@ -169,26 +173,38 @@ def add_attendance():
         except:
             print 'yearly info not found for', regno
         try:
-            classmaster = ClassMaster.objects.get(AcademicYear=yr, Standard=std, Division=div)
+            classmaster = ClassMaster.objects.get(AcademicYear=yr, Standard=std, Division=div, Type='P')
         except:
             print 'classmaster not in db. ', yr, std, div
             continue
-        month = 2
-        try:
-            attendancemaster = AttendanceMaster.objects.get(ClassMaster=classmaster, Month=month)
-        except:
-            print "Attendance master not in db. ", classmaster, month
-            continue
-        try:
-            studentattendance = StudentAttendance.objects.get(AttendanceMaster=attendancemaster, StudentYearlyInformation=yrlyinfo)
-            print 'Found', studentattendance
-        except:
-            studentattendance = StudentAttendance()
+        for month, month_max in zip(months, months_max):
+            try:
+                attendancemaster = AttendanceMaster.objects.get(ClassMaster=classmaster, Month=month)
+            except:
+                attendancemaster = AttendanceMaster()
+                attendancemaster.ClassMaster = classmaster
+                attendancemaster.Month = month
+                attendancemaster.WorkingDays = month_max
+                if not attendancemaster.WorkingDays:
+                    attendancemaster.WorkingDays = 0
+                attendancemaster.save()
+                print "Attendance master not in db. ", classmaster, month
+                continue
+            try:
+                studentattendance = StudentAttendance.objects.get(AttendanceMaster=attendancemaster, StudentYearlyInformation=yrlyinfo)
+                print 'Found', studentattendance
+            except:
+                studentattendance = StudentAttendance()
             studentattendance.AttendanceMaster = attendancemaster
             studentattendance.StudentYearlyInformation = yrlyinfo
-            studentattendance.ActualAttendance = row[9]
+            tmp = month-5
+            if tmp < 0:
+                tmp += 12
+            if not row[tmp]:
+                row[tmp] = 0
+            studentattendance.ActualAttendance = row[tmp]
             studentattendance.save()
-            print studentattendance, 'added in db'
+            print studentattendance, 'added/updated in db'
             
 
 
@@ -712,5 +728,5 @@ def add_yrly_info():
         yrlyinfo.ClassMaster = classmaster
         yrlyinfo.save()
 
-add_additional_info()
+add_attendance()
 sys.exit()
