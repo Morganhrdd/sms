@@ -163,7 +163,9 @@ def add_attendance():
     yr = '2008-2009'
     months = [6, 7, 8, 9, 10, 11, 12, 1, 2, 3]
     row = sh.row_values(1)
-    months_max = row[:10]
+    months_max = row[1:11]
+    print months_max
+#    sys.exit()
     
     for rx in range(2, 42):
         row = sh.row_values(rx)
@@ -182,14 +184,13 @@ def add_attendance():
                 attendancemaster = AttendanceMaster.objects.get(ClassMaster=classmaster, Month=month)
             except:
                 attendancemaster = AttendanceMaster()
-                attendancemaster.ClassMaster = classmaster
-                attendancemaster.Month = month
-                attendancemaster.WorkingDays = month_max
-                if not attendancemaster.WorkingDays:
-                    attendancemaster.WorkingDays = 0
-                attendancemaster.save()
-                print "Attendance master not in db. ", classmaster, month
-                continue
+            attendancemaster.ClassMaster = classmaster
+            attendancemaster.Month = month
+            attendancemaster.WorkingDays = month_max
+            if not attendancemaster.WorkingDays:
+                attendancemaster.WorkingDays = 0
+            attendancemaster.save()
+            print "Attendance master not in db. ", classmaster, month
             try:
                 studentattendance = StudentAttendance.objects.get(AttendanceMaster=attendancemaster, StudentYearlyInformation=yrlyinfo)
                 print 'Found', studentattendance
