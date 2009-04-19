@@ -169,7 +169,7 @@ def add_attendance():
     print months_max
 #    sys.exit()
     
-    for rx in range(2, 42):
+    for rx in range(2, sh.nrows):
         row = sh.row_values(rx)
         regno = row[0]
         try:
@@ -371,7 +371,7 @@ def populate_elocution():
     book = xlrd.open_workbook(xls_file)
     sh = book.sheet_by_name('Elocutions')
     yr = '2008-2009'
-    for rx in range(0, 40):
+    for rx in range(0, sh.nrows):
         row = sh.row_values(rx)
         regno = row[0]
         title = row[1]
@@ -458,7 +458,7 @@ def populate_abhivyakti():
     book = xlrd.open_workbook(xls_file)
     sh = book.sheet_by_name('Abhivyakti Vikas')
     yr = '2008-2009'
-    for rx in range(0, 40):
+    for rx in range(0, sh.nrows):
         row = sh.row_values(rx)
         regno = row[0]
         mediumofexpression = row[1]
@@ -539,7 +539,7 @@ def populate_competitions():
     book = xlrd.open_workbook(xls_file)
     yr = '2008-2009'
     sh = book.sheet_by_name('Competitions')
-    for rx in range(0, 14):
+    for rx in range(0, sh.nrows):
         row = sh.row_values(rx)
         regno = row[0]
         try:
@@ -577,7 +577,7 @@ def populate_competitiveexam():
     book = xlrd.open_workbook(xls_file)
     yr = '2008-2009'
     sh = book.sheet_by_name('Competitive Exams')
-    for rx in range(0, 44):
+    for rx in range(0, sh.nrows):
         row = sh.row_values(rx)
         regno = row[0]
         try:
