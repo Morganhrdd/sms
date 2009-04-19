@@ -114,6 +114,7 @@ def add_test():
 
 
 def add_additional_info():
+    print "Additional Info"
     yr = AcademicYear.objects.get(Year='2008-2009')
     #for xls, std, div in zip(["../Data.xls"], [9], ['B']):
     xls_file = raw_input('Enter filename: ')
@@ -155,6 +156,7 @@ def add_additional_info():
             print 'Added regno: ', regno
 
 def add_attendance():
+    print "Attendance"
     xls_file = raw_input('Enter filename: ')
     div=raw_input('Enter Division: ')
     std=raw_input('Enter Standard: ')
@@ -362,12 +364,14 @@ def add_b5():
 
 
 def populate_elocution():
+    print 'Elocution'
     xls_file = raw_input("Enter filename: ")
+    div=raw_input('Enter Division: ')
     std = raw_input("Enter standard: ")
     book = xlrd.open_workbook(xls_file)
-    sh = book.sheet_by_index(0)
-    yr = AcademicYear.objects.get(Year='2008-2009')
-    for rx in range(248, 288):
+    sh = book.sheet_by_name('Elocutions')
+    yr = '2008-2009'
+    for rx in range(0, 40):
         row = sh.row_values(rx)
         regno = row[0]
         title = row[1]
@@ -376,22 +380,18 @@ def populate_elocution():
         understanding = int(round(row[4]))
         skill = int(round(row[5]))
         presentation = int(round(row[6]))
+        row = sh.row_values(rx)
+        regno = row[0]
         try:
-            basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
+            yrlyinfo = get_yrly_info(regno, yr, std, div)
         except:
-            print 'regno: ', regno, ' not found in db'
+            print 'yearly info not found for', regno
             continue
         try:
-            classmaster = ClassMaster.objects.get(Standard=std, AcademicYear=yr,Division='B')
+            elocution_obj = Elocution.objects.get(StudentYearlyInformation=yrlyinfo, Title=title)
+            print 'Found', elocution_obj
         except:
-            print 'unable to get '
-            continue
-        try:
-            yrlyinfo = StudentYearlyInformation.objects.get(StudentBasicInfo=basicinfo, ClassMaster=classmaster)
-        except:
-            print 'StudentYearlyInformation not found ', basicinfo, classmaster
-            sys.exit()
-        elocution_obj = Elocution()
+            elocution_obj = Elocution()
         elocution_obj.StudentYearlyInformation = yrlyinfo
         elocution_obj.Title = title
         elocution_obj.Memory = memory
@@ -400,12 +400,12 @@ def populate_elocution():
         elocution_obj.Skill = skill
         elocution_obj.Presentation = presentation
         elocution_obj.save()
-        print 'successfully added ', regno
+        print 'successfully added/saved', regno
 
 
 def populate_fee_receipts():
-    #xls_file = raw_input("Enter filename: ")
-    xls_file = "/Users/shantanoo/Downloads/FEES.xls"
+    print 'Fees'
+    xls_file = raw_input("Enter filename: ")
     std = '9'
     yr = '2008-2009'
     book = xlrd.open_workbook(xls_file)
@@ -451,6 +451,7 @@ def populate_fee_receipts():
             fee_receipt_obj.save()
 
 def populate_abhivyakti():
+    print 'Abhivyakti'
     xls_file = raw_input('Enter filename: ')
     div=raw_input('Enter Division: ')
     std=raw_input('Enter Standard: ')
@@ -487,6 +488,7 @@ def populate_abhivyakti():
         
 
 def populate_cocurricular():
+    print 'Cocurricular'
     xls_file = raw_input('Enter filename: ')
     div=raw_input('Enter Division: ')
     std=raw_input('Enter Standard: ')
@@ -530,6 +532,7 @@ def populate_cocurricular():
             print 'Successfully added', cocurricular_obj
 
 def populate_competitions():
+    prin 'Competitions'
     xls_file = raw_input('Enter filename: ')
     div = raw_input('Enter Division: ')
     std = raw_input('Enter Standard: ')
@@ -567,6 +570,7 @@ def populate_competitions():
             print competetion_obj, 'added in db'
     
 def populate_competitiveexam():
+    print 'CompetitiveExam'
     xls_file = raw_input('Enter filename: ')
     div = raw_input('Enter Division: ')
     std = raw_input('Enter Standard: ')
@@ -606,6 +610,7 @@ def populate_competitiveexam():
             print competitiveexam_obj, 'added in db'
 
 def populate_project():
+    print 'Projects'
     xls_file = raw_input('Enter filename: ')
     div = raw_input('Enter Division: ')
     std = raw_input('Enter Standard: ')
@@ -644,6 +649,7 @@ def populate_project():
 
 
 def populate_library():
+    print 'Library'
     xls_file = raw_input('Enter filename: ')
     div = raw_input('Enter Division: ')
     std = raw_input('Enter Standard: ')
@@ -729,5 +735,9 @@ def add_yrly_info():
         yrlyinfo.ClassMaster = classmaster
         yrlyinfo.save()
 
+populate_abhivyakti()
+populate_competitiveexam()
+populate_competitions()
+populate_elocution()
 add_attendance()
 sys.exit()
