@@ -532,7 +532,7 @@ def populate_cocurricular():
             print 'Successfully added', cocurricular_obj
 
 def populate_competitions():
-    prin 'Competitions'
+    print 'Competitions'
     xls_file = raw_input('Enter filename: ')
     div = raw_input('Enter Division: ')
     std = raw_input('Enter Standard: ')
