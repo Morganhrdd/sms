@@ -21,26 +21,27 @@ import os
 from django.contrib.auth.decorators import login_required
 from PIL import Image
 from django.utils.safestring import mark_safe
+import time
+import datetime
 
 PAGE_HEIGHT=defaultPageSize[1]; PAGE_WIDTH=defaultPageSize[0]
 styles = getSampleStyleSheet()
 
-Title = "Jnana Prabodhini Prashala"
-pageinfo = "Certificate of School Based Evaluation"
+page_footer = ""
 
 MONTH_CHOICES = {
-    1: 'January',
-    2: 'February',
-    3: 'March',
-    4: 'April',
+    1: 'Jan',
+    2: 'Feb',
+    3: 'Mar',
+    4: 'Apr',
     5: 'May',
-    6: 'June',
-    7: 'July',
-    8: 'August',
-    9: 'September',
-    10: 'October',
-    11: 'November',
-    12: 'December'
+    6: 'Jun',
+    7: 'Jul',
+    8: 'Aug',
+    9: 'Sep',
+    10: 'Oct',
+    11: 'Nov',
+    12: 'Dec'
 }
 
 GRADE_CHOICES = {
@@ -466,13 +467,17 @@ def firstPage(canvas, doc):
     margin=0.7*inch
     canvas.line((margin * 1.5), PAGE_HEIGHT-position-5, PAGE_WIDTH - (margin * 1.5), PAGE_HEIGHT-position-5)
     canvas.setFont('Times-Roman',9)
-    canvas.drawString(inch, 0.75 * inch, "%s, Page %d" % (pageinfo, doc.page))
+    canvas.drawString(inch, 0.75 * inch, "%s, Page %d" % (page_footer, doc.page))
     pageBorder(canvas)
 
 def laterPages(canvas, doc):
     canvas.saveState()
     canvas.setFont('Times-Roman',9)
-    canvas.drawString(inch, 0.75 * inch, "%s, Page %d" % (pageinfo, doc.page))
+    canvas.drawString(inch, 0.75 * inch, "%s" % (page_footer))
+    canvas.setFont('Times-Roman',6)
+    now_time = datetime.datetime.now()
+    epoch_seconds = time.mktime(now_time.timetuple())
+    canvas.drawString(0.9*inch, 0.75 * inch, "ES%dP%d    %s" % (epoch_seconds, doc.page, "Jnana Prabodhini Prashala's Certificate of School Based Evaluation"))
     canvas.restoreState()
     pageBorder(canvas)
 
@@ -613,23 +618,56 @@ def fillLetterHead(Story):
 def fillStudentAttendance(student_yearly_info, Story, class_type):
     attendances = StudentAttendance.objects.filter(StudentYearlyInformation = student_yearly_info)
     cummulative_attendance=0
-    cummulative_workingdays_attendance=0
+    cummulative_workingdays=0
+    
     data = []
-    data.append(['Month','Attendance','Working Days'])
+    
+    data_row = []
+    data_row.append('')
+    for i in range(1, 13):
+        data_row.append(MONTH_CHOICES[i])
+    data_row.append("Total")
+    data.append(data_row)
+
+    monthly_attendance = {}
+    for i in range(1, 13):
+        monthly_attendance[i] = '-'
+        
+    monthly_workingdays = {}
+    for i in range(1, 13):
+        monthly_workingdays[i] = '-'
+
     for attendance in attendances:
         attendance_master = attendance.AttendanceMaster
         class_master = attendance_master.ClassMaster
         if class_master.Type == class_type:
-            data.append([MONTH_CHOICES[attendance.AttendanceMaster.Month] , attendance.ActualAttendance , attendance.AttendanceMaster.WorkingDays])
-            cummulative_attendance = cummulative_attendance + attendance.ActualAttendance
-            cummulative_workingdays_attendance = cummulative_workingdays_attendance + attendance.AttendanceMaster.WorkingDays  
-    data.append(['Total :', cummulative_attendance, cummulative_workingdays_attendance])
+            actual_attendance = attendance.ActualAttendance
+            working_days = attendance.AttendanceMaster.WorkingDays
+            monthly_attendance[int(attendance.AttendanceMaster.Month)] = actual_attendance
+            monthly_workingdays[int(attendance.AttendanceMaster.Month)] = working_days
+            cummulative_attendance = cummulative_attendance + actual_attendance
+            cummulative_workingdays = cummulative_workingdays + working_days
+
+    data_row = []
+    data_row.append('Attendance')
+    for i in range(1, 13):
+        data_row.append(monthly_attendance[i])
+    data_row.append(cummulative_attendance)
+    data.append(data_row)
+
+    data_row = []
+    data_row.append('Working Days')
+    for i in range(1, 13):
+        data_row.append(monthly_attendance[i])
+    data_row.append(cummulative_workingdays)
+    data.append(data_row)
     
     addTableToStory(Story,data,'CENTER')
     Story.append(Spacer(1,0.25*inch))
 
 def fillStaticAndYearlyInfo(student_yearly_info, Story):
     student_basic_info = student_yearly_info.StudentBasicInfo
+    page_footer = str(student_basic_info.RegistrationNo) + "  " + student_basic_info.FirstName
     try:
         student_addtional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info.RegistrationNo)
     except:
@@ -732,8 +770,11 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
         cumulative_social_grade=GRADE_CHOICE_NUM[int(round(cumulative_social_grade_sum/len(social_activities)))]
 
     # Cumulative Library Grade
-    library = Library.objects.get(StudentYearlyInformation = student_yearly_info)
-    cumulative_library_grade = library.Grade
+    try:
+        library = Library.objects.get(StudentYearlyInformation = student_yearly_info)
+        cumulative_library_grade = library.Grade
+    except:
+        cumulative_library_grade='Not Available'
 
     # Cumulative Prashala Attendance
     attendances = StudentAttendance.objects.filter(StudentYearlyInformation = student_yearly_info)
@@ -805,29 +846,49 @@ def fillAcademicReport(student_yearly_info, Story):
 
     cummulative_marks=0
     cummulative_maxmarks=0
+    data = []
+    data.append(['Subject \ TestType','W1','W2','W3','W4','T1','N1','F1','Total'])
     for subject_item in subjects_data.keys():
         subject_data = subjects_data[subject_item]
-        addSubHeaderToStory(Story,subject_item);
-        data = []
-        data.append(['','Test Type','Marks','Maximum Marks'])
+        subject_name = subject_item
         cummulative_subject_marks=0
         cummulative_subject_maxmarks=0
-        i=0
+        subject_test_marks = {}
+        subject_test_marks['W1'] = '-'
+        subject_test_marks['W2'] = '-'
+        subject_test_marks['W3'] = '-'
+        subject_test_marks['W4'] = '-'
+        subject_test_marks['T1'] = '-'
+        subject_test_marks['N1'] = '-'
+        subject_test_marks['F1'] = '-'
+        subject_test_marks['Total'] = 0
         for subject_marks in subject_data:
-            i = i + 1
             test_mapping = subject_marks.TestMapping
             subject_name = test_mapping.SubjectMaster.Name
             test_type = test_mapping.TestType
             maximum_marks = test_mapping.MaximumMarks
-            marks_obtained = subject_marks.MarksObtained 
-            data.append([i,test_type,marks_obtained,maximum_marks])
+            marks_obtained = subject_marks.MarksObtained
+            subject_test_marks[test_type] = str(marks_obtained) + " / " + str(maximum_marks)
             cummulative_subject_marks = cummulative_subject_marks + marks_obtained
             cummulative_subject_maxmarks = cummulative_subject_maxmarks + maximum_marks
-        data.append(['','Subject Total :',cummulative_subject_marks,cummulative_subject_maxmarks])
+        subject_test_marks['Total'] = str(cummulative_subject_marks) + " / " + str(cummulative_subject_maxmarks)
+        data_row = []
+        data_row.append(subject_name)
+        data_row.append(subject_test_marks['W1'])
+        data_row.append(subject_test_marks['W2'])
+        data_row.append(subject_test_marks['W3'])
+        data_row.append(subject_test_marks['W4'])
+        data_row.append(subject_test_marks['T1'])
+        data_row.append(subject_test_marks['N1'])
+        data_row.append(subject_test_marks['F1'])  
+        data_row.append(subject_test_marks['Total'])
+        data.append(data_row)
         cummulative_marks = cummulative_marks + cummulative_subject_marks
         cummulative_maxmarks = cummulative_maxmarks + cummulative_subject_maxmarks
-        addTableToStory(Story, data, 'CENTER')
-        Story.append(Spacer(1,0.25*inch))
+        
+    addTableToStory(Story, data, 'CENTER')
+    Story.append(Spacer(1,0.25*inch))
+        
     percentage = 0
     if cummulative_maxmarks > 0:
         percentage = round((cummulative_marks / cummulative_maxmarks * 100),2)
