@@ -624,7 +624,9 @@ def fillStudentAttendance(student_yearly_info, Story, class_type):
     
     data_row = []
     data_row.append('')
-    for i in range(1, 13):
+    for i in range(6, 13):
+        data_row.append(MONTH_CHOICES[i])
+    for i in range(1, 6):
         data_row.append(MONTH_CHOICES[i])
     data_row.append("Total")
     data.append(data_row)
@@ -650,15 +652,19 @@ def fillStudentAttendance(student_yearly_info, Story, class_type):
 
     data_row = []
     data_row.append('Attendance')
-    for i in range(1, 13):
+    for i in range(6, 13):
+        data_row.append(monthly_attendance[i])
+    for i in range(1, 6):
         data_row.append(monthly_attendance[i])
     data_row.append(cummulative_attendance)
     data.append(data_row)
 
     data_row = []
     data_row.append('Working Days')
-    for i in range(1, 13):
-        data_row.append(monthly_attendance[i])
+    for i in range(6, 13):
+        data_row.append(monthly_workingdays[i])
+    for i in range(1, 6):
+        data_row.append(monthly_workingdays[i])
     data_row.append(cummulative_workingdays)
     data.append(data_row)
     
@@ -688,6 +694,8 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
     data=(
             ['Registration No.: ' , student_basic_info.RegistrationNo,''],
             ['Name: ' , student_basic_info.FirstName + ' ' + student_basic_info.LastName,''],
+            ["Father's Name: " , student_basic_info.FathersName,''],
+            ["Mother's Name: " , student_basic_info.MothersName,''],
             ['Address: ' , student_addtional_info.Address,''],
             ['Standard: ' , student_yearly_data.ClassMaster.Standard,''],
             ['Roll No.: ' , student_yearly_data.RollNo,''],
@@ -772,7 +780,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
     # Cumulative Library Grade
     try:
         library = Library.objects.get(StudentYearlyInformation = student_yearly_info)
-        cumulative_library_grade = library.Grade
+        cumulative_library_grade = GRADE_CHOICES[library.Grade]
     except:
         cumulative_library_grade='Not Available'
 
@@ -796,19 +804,19 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
     data=(
             ['Category','Performance'],
             ['Academics',cumulative_academics],
-            ['Co-curricular',cumulative_cocur_grade],
-            ['Abhivyakti Vikas',cumulative_abhi_grade],
+            ['Evening Sports Activities',cumulative_physical_grade],
+            ['Co-curricular Activities',cumulative_cocur_grade],
+            ['Self Expression through Arts',cumulative_abhi_grade],
             ['Projects',cumulative_project_grade],
             ['Elocution',cumulative_elocution_grade],
-            ['Physical Fitness',cumulative_physical_grade],
             ['Social activities',cumulative_social_grade],
             ['Library',cumulative_library_grade],
             ['Attendance',cumulative_attendance_percentage]            
         )
     addTableToStory(Story, data, 'CENTER')
 
-    tipStyle = ParagraphStyle(name = 'tip', fontSize = 7, alignment=TA_CENTER)
-    Story.append(Paragraph('<br/>Tip: Grades are Outstanding (Best performance), Excellent, Good, <br/>Satisfactory, Needs improvement and Unsatisfactory (worst performance)', tipStyle))
+    tipStyle = ParagraphStyle(name = 'Note', fontSize = 7, alignment=TA_CENTER)
+    Story.append(Paragraph('<br/>Note: Grades are Outstanding, Excellent, Good, Satisfactory, Needs improvement and Unsatisfactory, <br/>which indicate level of participation or performance', tipStyle))
     
     Story.append(Spacer(1,0.7*inch))
 
@@ -830,7 +838,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
     Story.append(PageBreak())
 
 def fillAcademicReport(student_yearly_info, Story):
-    addMainHeaderToStory(Story, "Part 2: Academic Information");
+    addMainHeaderToStory(Story, "Part 2: Academic Performace");
 
     subjects_data = {}
     student_test_data = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
@@ -847,7 +855,7 @@ def fillAcademicReport(student_yearly_info, Story):
     cummulative_marks=0
     cummulative_maxmarks=0
     data = []
-    data.append(['Subject \ TestType','W1','W2','W3','W4','T1','N1','F1','Total'])
+    data.append(['Subject \ TestType','W1','W2','W3','W4','T1','N1','F1','Total','%'])
     for subject_item in subjects_data.keys():
         subject_data = subjects_data[subject_item]
         subject_name = subject_item
@@ -862,16 +870,22 @@ def fillAcademicReport(student_yearly_info, Story):
         subject_test_marks['N1'] = '-'
         subject_test_marks['F1'] = '-'
         subject_test_marks['Total'] = 0
+        subject_test_marks['%'] = 0
         for subject_marks in subject_data:
             test_mapping = subject_marks.TestMapping
             subject_name = test_mapping.SubjectMaster.Name
             test_type = test_mapping.TestType
             maximum_marks = test_mapping.MaximumMarks
             marks_obtained = subject_marks.MarksObtained
-            subject_test_marks[test_type] = str(marks_obtained) + " / " + str(maximum_marks)
-            cummulative_subject_marks = cummulative_subject_marks + marks_obtained
-            cummulative_subject_maxmarks = cummulative_subject_maxmarks + maximum_marks
+            subject_test_marks[test_type] = str(marks_obtained) + " / " + str(maximum_marks)            
+            if marks_obtained > 0:
+                cummulative_subject_marks = cummulative_subject_marks + marks_obtained
+                cummulative_subject_maxmarks = cummulative_subject_maxmarks + maximum_marks            
         subject_test_marks['Total'] = str(cummulative_subject_marks) + " / " + str(cummulative_subject_maxmarks)
+        percentage = 0
+        if cummulative_subject_maxmarks > 0:
+            percentage = round((cummulative_subject_marks / cummulative_subject_maxmarks * 100),2)
+        subject_test_marks['%'] = str(percentage) + '%'
         data_row = []
         data_row.append(subject_name)
         data_row.append(subject_test_marks['W1'])
@@ -882,6 +896,7 @@ def fillAcademicReport(student_yearly_info, Story):
         data_row.append(subject_test_marks['N1'])
         data_row.append(subject_test_marks['F1'])  
         data_row.append(subject_test_marks['Total'])
+        data_row.append(subject_test_marks['%'])
         data.append(data_row)
         cummulative_marks = cummulative_marks + cummulative_subject_marks
         cummulative_maxmarks = cummulative_maxmarks + cummulative_subject_maxmarks
@@ -907,7 +922,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
     addMainHeaderToStory(Story, "Part 3: Co-curricular Activity Report");
 
     # Abhivyakti Report
-    addSubHeaderToStory(Story,"Abhivyakti Report")
+    addSubHeaderToStory(Story,"Self Expression through Arts")
     abhivyaktiVikass = AbhivyaktiVikas.objects.filter(StudentYearlyInformation=student_yearly_info)
     i=0
     for abhivyaktiVikas in abhivyaktiVikass:
@@ -925,7 +940,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         addNormalTextToStory(Story,'Medium of Expression' + '' + ' : ' + mediumOfExpression);
         addNormalTextToStory(Story,'Teacher' + ' : ' + teacher_name);
         data = []
-        data.append(['Participation','ReadinessToLearn','Continuity','SkillDevelopment','Creativity'])
+        data.append(['Participation','Readiness to Learn','Perseverence','Skill Development','Creativity'])
         data.append([participation,readinessToLearn,continuityInWork,skillDevelopment,creativity])
         addTableToStory(Story, data, 'CENTER')
         addNormalTextToStory(Story,'Comment' + ' : ' + comment);
@@ -935,7 +950,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
     Story.append(Spacer(1,0.5*inch))
 
     # Competitive Exams
-    addSubHeaderToStory(Story,"Competitive Exams")
+    addSubHeaderToStory(Story,"Competitive Examinations")
     competitive_exams = CompetitiveExam.objects.filter(StudentYearlyInformation=student_yearly_info) 
     i=0
     for competitive_exam in competitive_exams:
@@ -1005,7 +1020,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         addNormalTextToStory(Story,'Subject' + ' : ' + subject);
         Story.append(Spacer(1,0.1*inch))
         data = []
-        data.append(['ProblemSelection','Review','Planning','Documentation','Communication']);
+        data.append(['ProblemSelection','Review of topic','Planning','Documentation','Communication']);
         data.append([problem_selection,review,planning,documentation,communication])
         addTableToStory(Story, data, 'CENTER')
         addNormalTextToStory(Story,'Comment' + ' : ' + comment);
@@ -1072,8 +1087,9 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
     pratod = ''
     # Physical Fitness Report
     addSubHeaderToStory(Story, "Physical Fitness Report")
-    physical_fitness_infos = PhysicalFitnessInfo.objects.filter(StudentYearlyInformation=student_yearly_info)
-    for physical_fitness_info in physical_fitness_infos:
+    try:
+        physical_fitness_info = PhysicalFitnessInfo.objects.get(StudentYearlyInformation=student_yearly_info)
+
         weight = physical_fitness_info.Weight
         height = physical_fitness_info.Height
         ffb = physical_fitness_info.FlexibleForwardBending
@@ -1087,6 +1103,7 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         running_400m = physical_fitness_info.Running400m
         short_put = physical_fitness_info.ShortPutThrow
         bmi = physical_fitness_info.BodyMassIndex
+        bmi = round(float(weight) / (float(height / 100.0) * float(height / 100.0)), 2)
         balancing = physical_fitness_info.Balancing
         grade = physical_fitness_info.Grade
         pathak = physical_fitness_info.Pathak
@@ -1099,16 +1116,22 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
                      shuttle_run, sit_ups, sprint, running_400m, short_put, bmi, balancing])
         addTableToStory(Story, data, 'CENTER')
         addNormalTextToStory(Story,'Special Sport' + ' : ' + special_sport);
-        addNormalTextToStory(Story,'Pathak' + ' : ' + pathak);
-        addNormalTextToStory(Story,'<br/><strong>' + 'Grade' + ' : ' + grade + '</strong>');        
-        addNormalTextToStory(Story,'Comment' + ' : ' + comment);
+        addNormalTextToStory(Story,'House' + ' : ' + pathak);
         Story.append(Spacer(1,0.2*inch))
         pratod = physical_fitness_info.Pratod
-    Story.append(Spacer(1,0.5*inch))
+        Story.append(Spacer(1,0.5*inch))
+    except:
+        pratod = ''
+        grade = 'N/A'
+        comment = ''
 
     # Dal Attendance
-    addSubHeaderToStory(Story,"Dal Attendance")
+    addSubHeaderToStory(Story,"Evening Sports Attendance")
     fillStudentAttendance(student_yearly_info, Story, 'D')
+    
+    Story.append(Spacer(1,0.25*inch))
+    addNormalTextToStory(Story,'<strong>' + 'Grade' + ' : ' + grade + '</strong>');        
+    addNormalTextToStory(Story,'Comment' + ' : ' + comment);
 
     # Social Activities
     addSubHeaderToStory(Story,"Social Activities")
@@ -1133,7 +1156,7 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         Story.append(Spacer(1,0.2*inch))
     Story.append(Spacer(1,0.5*inch))
                  
-    addSignatureSpaceToStory(Story,pratod + ",<br/>" + "Dal Pratod")
+    addSignatureSpaceToStory(Story,pratod + ",<br/>" + "Activity Incharge")
     Story.append(PageBreak())
 
 def fillLibraryReport(student_yearly_info, Story):
@@ -1148,7 +1171,7 @@ def fillLibraryReport(student_yearly_info, Story):
     for library in libraries:
         i = i + 1;
         books_read = library.BooksRead
-        grade = library.Grade
+        grade = GRADE_CHOICES[library.Grade]
         comment = library.PublicComment
         data.append([i,books_read, grade, comment])
     addTableToStory(Story, data, 'CENTER')
