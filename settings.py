@@ -73,6 +73,7 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     '/Users/shantanoo/repo/jp_sms/templates'
     #'C:/Documents and Settings/aditya/Desktop/JPP/latest/jp_sms/templates'
+    'D:/Chinmay/Assembla/jp_sms/templates'
 )
 
 INSTALLED_APPS = (
