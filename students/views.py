@@ -744,7 +744,10 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
     cumulative_project_grade_sum=0
     cumulative_project_grade='Not Available'
     for proj_row in projects:
-        proj_grade_row_sum=int(GRADE_NUM[proj_row.ProblemSelection])+int(GRADE_NUM[proj_row.Review])+int(GRADE_NUM[proj_row.Planning])+int(GRADE_NUM[proj_row.Documentation])+int(GRADE_NUM[proj_row.Communication])
+        try:
+            proj_grade_row_sum=int(GRADE_NUM[proj_row.ProblemSelection])+int(GRADE_NUM[proj_row.Review])+int(GRADE_NUM[proj_row.Planning])+int(GRADE_NUM[proj_row.Documentation])+int(GRADE_NUM[proj_row.Communication])
+        except:
+            proj_grade_row_sum=0
         cumulative_project_grade_sum=cumulative_project_grade_sum+(int(proj_grade_row_sum/5))
     if len(projects) > 0:
         cumulative_project_grade=GRADE_CHOICE_NUM[int(round(cumulative_project_grade_sum/len(projects)))]
