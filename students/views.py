@@ -58,6 +58,12 @@ GRADE_CHOICES = {
     '2': 'Satisfactory',
     '1': 'Needs Improvement',
     '0': 'Unsatisfactory',
+    '5.0': 'Outstanding',
+    '4.0': 'Excellent',
+    '3.0': 'Good',
+    '2.0': 'Satisfactory',
+    '1.0': 'Needs Improvement',
+    '0.0': 'Unsatisfactory',
     '': 'N/A',
 }
 
@@ -512,7 +518,7 @@ def reportPDF(request):
     else:
         return HttpResponse ('<html><body>Enter Range of Registration Numbers'
                              + '<form action="" method="POST">'
-                             + '<input type="text" name="registration_number_min" value="9999" id="registration_number_min" size="20"></td>'
+                             + '<input type="text" name="registration_number_min" value="0" id="registration_number_min" size="20"></td>'
                              + '<input type="text" name="registration_number_max" value="9999" id="registration_number_max" size="20"></td>'
                              + '<input type="text" name="part_option" value="0" id="part_option" size="20"></td>'
                              + '<input type="submit" value="Enter" />'
