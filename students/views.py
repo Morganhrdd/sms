@@ -516,7 +516,7 @@ def reportPDF(request):
         print 'build'
         return response
     else:
-        return HttpResponse ('<html><body>Enter Range of Registration Numbers'
+        return HttpResponse ('<html><body>Enter Range of Registration Numbers and Type of Report (0 for All & 1 to 4 for respective Part)'
                              + '<form action="" method="POST">'
                              + '<input type="text" name="registration_number_min" value="0" id="registration_number_min" size="20"></td>'
                              + '<input type="text" name="registration_number_max" value="9999" id="registration_number_max" size="20"></td>'
@@ -826,7 +826,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
     addTableToStory(Story, data, 'CENTER')
 
     tipStyle = ParagraphStyle(name = 'Note', fontSize = 7, alignment=TA_CENTER)
-    Story.append(Paragraph('Note: Grades are Outstanding, Excellent, Good, Satisfactory, Needs improvement and Unsatisfactory,' tipStyle))
+    Story.append(Paragraph('Note: Grades are Outstanding, Excellent, Good, Satisfactory, Needs improvement and Unsatisfactory,', tipStyle))
     Story.append(Paragraph('which indicate level of participation or performance', tipStyle))
     
     Story.append(Spacer(1,0.7*inch))
@@ -918,7 +918,7 @@ def fillAcademicReport(student_yearly_info, Story):
     percentage = 0
     if cummulative_maxmarks > 0:
         percentage = round((cummulative_marks / cummulative_maxmarks * 100),2)
-    addSubHeaderToStory(Story, mark_safe('Grand Total: ' +  str(cummulative_marks) + " / " + str(cummulative_maxmarks))
+    addSubHeaderToStory(Story, mark_safe('Grand Total: ' +  str(cummulative_marks) + " / " + str(cummulative_maxmarks)))
     addSubHeaderToStory(Story, 'Percentage: ' + str(percentage) + "%")
                                          
     Story.append(Spacer(1,0.5*inch))
@@ -982,7 +982,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         addNormalTextToStory(Story,'Comment' + ' : ' + comment);
         Story.append(Spacer(1,0.2*inch))
     
-    addSignatureSpaceToStory(Story,'',"Incharge", "Competitive Exams")
+    addSignatureSpaceToStory(Story,"Incharge", "Competitive Exams")
     Story.append(Spacer(1,0.5*inch))
 
     # Competitions
@@ -1006,7 +1006,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         addNormalTextToStory(Story,'Comment' + ' : ' + comment);
         Story.append(Spacer(1,0.2*inch))
         
-    addSignatureSpaceToStory(Story,'',"Incharge", "Competition")
+    addSignatureSpaceToStory(Story,"Incharge", "Competition")
     Story.append(PageBreak())
 
     # Projects
