@@ -632,20 +632,33 @@ def populate_project():
         proj_types['Investigation'] = 'I'
         proj_types['Investigation by Survey'] = 'IS'
         proj_types['Creative Production'] = 'CP'
-        proj_types['Appreciation- criticism'] = 'AC'
-        proj_types['Open Ended Exploration'] = 'O'
+        proj_types['Appreciation, criticism'] = 'AC'
+        proj_types['Open Ended'] = 'O'
         proj_type = proj_types[row[2]]
         subject = row[3]
+        problemselection = str(round(row[4]))
+        review = str(round(row[5]))
+        planning = str(round(row[6]))
+        documentation = str(round(row[7]))
+        communication = str(round(row[8]))
+        publiccomment = row[9]
+                
         try:
             project_obj = Project.objects.get(StudentYearlyInformation=yrlyinfo, Title=title, Subject=subject, Type=proj_type)
         except:
             project_obj = Project()
-            project_obj.StudentYearlyInformation = yrlyinfo
-            project_obj.Title = title
-            project_obj.Subject = subject
-            project_obj.Type = proj_type
-            project_obj.save()
-            print project_obj, 'added in db'
+        project_obj.StudentYearlyInformation = yrlyinfo
+        project_obj.Title = title
+        project_obj.Subject = subject
+        project_obj.Type = proj_type
+        project_obj.ProblemSelection = problemselection
+        project_obj.Review = review
+        project_obj.Planning = planning
+        project_obj.Documentation = documentation
+        project_obj.Communication = communication
+        project_obj.PublicComment = publiccomment
+        project_obj.save()
+        print project_obj, 'added/saved in db'
 
 
 def populate_library():
@@ -735,9 +748,10 @@ def add_yrly_info():
         yrlyinfo.ClassMaster = classmaster
         yrlyinfo.save()
 
-populate_abhivyakti()
-populate_competitiveexam()
-populate_competitions()
-populate_elocution()
-add_attendance()
+#populate_abhivyakti()
+#populate_competitiveexam()
+#populate_competitions()
+#populate_elocution()
+#add_attendance()
+populate_project()
 sys.exit()
