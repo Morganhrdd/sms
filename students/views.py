@@ -51,7 +51,7 @@ GRADE_CHOICES = {
     'S': 'Satisfactory',
     'N': 'Needs Improvement',
     'U': 'Unsatisfactory',
-    'A': 'N/A',
+    'A': '-',
     '5': 'Outstanding',
     '4': 'Excellent',
     '3': 'Good',
@@ -64,7 +64,7 @@ GRADE_CHOICES = {
     '2.0': 'Satisfactory',
     '1.0': 'Needs Improvement',
     '0.0': 'Unsatisfactory',
-    '': 'N/A',
+    '': '-',
 }
 
 GRADE_NUM = {
@@ -575,10 +575,11 @@ def addSubHeaderToStory(Story,header_text):
     Story.append(Paragraph("<strong>" + header_text + "</strong>", style))
     Story.append(Spacer(1,0.25*inch))
 
-def addSignatureSpaceToStory(Story,signature_text):
-    Story.append(Spacer(1,0.7*inch))
+def addSignatureSpaceToStory(Story,signature_text,designation):
+    Story.append(Spacer(1,0.4*inch))
     style = ParagraphStyle(name = 'SignatureStyle', fontSize = 10, alignment=TA_RIGHT)
     Story.append(Paragraph(signature_text, style))
+    Story.append(Paragraph(designation, style))
 
 def addNormalTextToStory(Story,normal_text):
     style = ParagraphStyle(name = 'NormalText', fontSize = 9)
@@ -719,7 +720,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
     marks = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
     cumulative_marks=0
     cumulative_maximum_marks=0
-    cumulative_academics='Not Available'
+    cumulative_academics='-'
     for mark in marks:
         cumulative_marks = cumulative_marks + mark.MarksObtained
         cumulative_maximum_marks = cumulative_maximum_marks + mark.TestMapping.MaximumMarks
@@ -729,7 +730,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
     # Cumulative CoCurricular
     co_curricular = CoCurricular.objects.filter(StudentYearlyInformation = student_yearly_info)
     cumulative_cocur_grade_sum=0
-    cumulative_cocur_grade='Not Available'
+    cumulative_cocur_grade='-'
     for co_cur_acts in co_curricular:
         cumulative_cocur_grade_sum=cumulative_cocur_grade_sum + GRADE_NUM[co_cur_acts.Grade]
     if len(co_curricular) > 0:
@@ -738,7 +739,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
     # Cumulative Abhivyakti Vikas
     abhivyakti_vikas = AbhivyaktiVikas.objects.filter(StudentYearlyInformation = student_yearly_info)
     cumulative_abhi_grade_sum=0
-    cumulative_abhi_grade='Not Available'
+    cumulative_abhi_grade='-'
     for abhi_row in abhivyakti_vikas:
         abhi_grade_row_sum=int(GRADE_NUM[abhi_row.Participation])+int(GRADE_NUM[abhi_row.ReadinessToLearn])+int(GRADE_NUM[abhi_row.ContinuityInWork])+int(GRADE_NUM[abhi_row.SkillDevelopment])+int(GRADE_NUM[abhi_row.Creativity])
         cumulative_abhi_grade_sum=cumulative_abhi_grade_sum+(int(abhi_grade_row_sum/5))
@@ -748,7 +749,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
     # Cumulative Projects
     projects = Project.objects.filter(StudentYearlyInformation = student_yearly_info)
     cumulative_project_grade_sum=0
-    cumulative_project_grade='Not Available'
+    cumulative_project_grade='-'
     for proj_row in projects:
         try:
             proj_grade_row_sum=int(GRADE_NUM[proj_row.ProblemSelection])+int(GRADE_NUM[proj_row.Review])+int(GRADE_NUM[proj_row.Planning])+int(GRADE_NUM[proj_row.Documentation])+int(GRADE_NUM[proj_row.Communication])
@@ -761,7 +762,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
     # Cumulative Elocution
     elocutions = Elocution.objects.filter(StudentYearlyInformation = student_yearly_info)
     cumulative_elocution_grade_sum=0
-    cumulative_elocution_grade='Not Available'
+    cumulative_elocution_grade='-'
     for elo_row in elocutions:
         elocution_grade_row_sum=int(GRADE_NUM[elo_row.Memory])+int(GRADE_NUM[elo_row.Content])+int(GRADE_NUM[elo_row.Understanding])+int(GRADE_NUM[elo_row.Skill])+int(GRADE_NUM[elo_row.Presentation])
         cumulative_elocution_grade_sum=cumulative_elocution_grade_sum+(int(elocution_grade_row_sum/5))
@@ -771,7 +772,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
     # Cumulative Physical Fitness Info
     physical_fit_info = PhysicalFitnessInfo.objects.filter(StudentYearlyInformation = student_yearly_info)
     cumulative_physical_grade_sum=0
-    cumulative_physical_grade='Not Available'
+    cumulative_physical_grade='-'
     for ph_data in physical_fit_info:
         cumulative_physical_grade_sum=cumulative_physical_grade_sum + GRADE_NUM[ph_data.Grade]
     if len(physical_fit_info) > 0:
@@ -780,7 +781,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
     # Cumulative Social Activity
     social_activities = SocialActivity.objects.filter(StudentYearlyInformation = student_yearly_info)
     cumulative_social_grade_sum=0
-    cumulative_social_grade='Not Available'
+    cumulative_social_grade='-'
     for soc_act_data in social_activities:
         cumulative_social_grade_sum=cumulative_social_grade_sum + GRADE_NUM[soc_act_data.Grade]
     if len(social_activities) > 0:
@@ -791,13 +792,13 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
         library = Library.objects.get(StudentYearlyInformation = student_yearly_info)
         cumulative_library_grade = GRADE_CHOICES[library.Grade]
     except:
-        cumulative_library_grade='Not Available'
+        cumulative_library_grade='-'
 
     # Cumulative Prashala Attendance
     attendances = StudentAttendance.objects.filter(StudentYearlyInformation = student_yearly_info)
     cummulative_attendance=0
     cummulative_workingdays_attendance=0
-    cumulative_attendance_percentage='Not Available'
+    cumulative_attendance_percentage='-'
     for attendance in attendances:
         attendance_master = attendance.AttendanceMaster
         class_master = attendance_master.ClassMaster
@@ -825,7 +826,8 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
     addTableToStory(Story, data, 'CENTER')
 
     tipStyle = ParagraphStyle(name = 'Note', fontSize = 7, alignment=TA_CENTER)
-    Story.append(Paragraph('<br/>Note: Grades are Outstanding, Excellent, Good, Satisfactory, Needs improvement and Unsatisfactory, <br/>which indicate level of participation or performance', tipStyle))
+    Story.append(Paragraph('Note: Grades are Outstanding, Excellent, Good, Satisfactory, Needs improvement and Unsatisfactory,' tipStyle))
+    Story.append(Paragraph('which indicate level of participation or performance', tipStyle))
     
     Story.append(Spacer(1,0.7*inch))
 
@@ -864,7 +866,7 @@ def fillAcademicReport(student_yearly_info, Story):
     cummulative_marks=0
     cummulative_maxmarks=0
     data = []
-    data.append(['Subject \ TestType','W1','W2','W3','W4','T1','N1','F1','Total','%'])
+    data.append(['','W1','W2','W3','W4','T1','N1','F1','Total','%'])
     for subject_item in subjects_data.keys():
         subject_data = subjects_data[subject_item]
         subject_name = subject_item
@@ -886,11 +888,11 @@ def fillAcademicReport(student_yearly_info, Story):
             test_type = test_mapping.TestType
             maximum_marks = test_mapping.MaximumMarks
             marks_obtained = subject_marks.MarksObtained
-            subject_test_marks[test_type] = str(marks_obtained) + " / " + str(maximum_marks)            
+            subject_test_marks[test_type] = str(marks_obtained) + " / " + str(int(maximum_marks))            
             if marks_obtained > 0:
                 cummulative_subject_marks = cummulative_subject_marks + marks_obtained
                 cummulative_subject_maxmarks = cummulative_subject_maxmarks + maximum_marks            
-        subject_test_marks['Total'] = str(cummulative_subject_marks) + " / " + str(cummulative_subject_maxmarks)
+        subject_test_marks['Total'] = str(cummulative_subject_marks) + " / " + str(int(cummulative_subject_maxmarks))
         percentage = 0
         if cummulative_subject_maxmarks > 0:
             percentage = round((cummulative_subject_marks / cummulative_subject_maxmarks * 100),2)
@@ -916,15 +918,15 @@ def fillAcademicReport(student_yearly_info, Story):
     percentage = 0
     if cummulative_maxmarks > 0:
         percentage = round((cummulative_marks / cummulative_maxmarks * 100),2)
-    addSubHeaderToStory(Story, mark_safe('Grand Total: ' +  str(cummulative_marks) + " / " + str(cummulative_maxmarks)
-                        + "<br/>" + ' Percentage: ' + str(percentage) + "%"))
-    
+    addSubHeaderToStory(Story, mark_safe('Grand Total: ' +  str(cummulative_marks) + " / " + str(cummulative_maxmarks))
+    addSubHeaderToStory(Story, 'Percentage: ' + str(percentage) + "%")
+                                         
     Story.append(Spacer(1,0.5*inch))
     addSubHeaderToStory(Story, "School Attendance");
     fillStudentAttendance(student_yearly_info, Story, 'P')
 
     class_teacher = student_yearly_info.ClassMaster.Teacher.Name
-    addSignatureSpaceToStory(Story,class_teacher + ",<br/>" + "Class Teacher")
+    addSignatureSpaceToStory(Story,class_teacher, "Class Teacher")
     Story.append(PageBreak())
 
 def fillCoCurricularReport(student_yearly_info, Story):
@@ -948,6 +950,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         addNormalTextToStory(Story,'<strong>' + 'Abhivyakti' + ' ' + str(i) + '</strong>');                
         addNormalTextToStory(Story,'Medium of Expression' + '' + ' : ' + mediumOfExpression);
         addNormalTextToStory(Story,'Teacher' + ' : ' + teacher_name);
+        Story.append(Spacer(1,0.2*inch))
         data = []
         data.append(['Participation','Readiness to Learn','Perseverence','Skill Development','Creativity'])
         data.append([participation,readinessToLearn,continuityInWork,skillDevelopment,creativity])
@@ -955,7 +958,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         addNormalTextToStory(Story,'Comment' + ' : ' + comment);
         Story.append(Spacer(1,0.2*inch))
 
-    addSignatureSpaceToStory(Story,"Incharge, Abhivyakti")
+    addSignatureSpaceToStory(Story,"Incharge", "Abhivyakti")
     Story.append(Spacer(1,0.5*inch))
 
     # Competitive Exams
@@ -979,7 +982,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         addNormalTextToStory(Story,'Comment' + ' : ' + comment);
         Story.append(Spacer(1,0.2*inch))
     
-    addSignatureSpaceToStory(Story,"Incharge, Competitive Exams")
+    addSignatureSpaceToStory(Story,'',"Incharge", "Competitive Exams")
     Story.append(Spacer(1,0.5*inch))
 
     # Competitions
@@ -1003,7 +1006,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         addNormalTextToStory(Story,'Comment' + ' : ' + comment);
         Story.append(Spacer(1,0.2*inch))
         
-    addSignatureSpaceToStory(Story,"Incharge, Competition")
+    addSignatureSpaceToStory(Story,'',"Incharge", "Competition")
     Story.append(PageBreak())
 
     # Projects
@@ -1035,7 +1038,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         addNormalTextToStory(Story,'Comment' + ' : ' + comment);
         Story.append(Spacer(1,0.2*inch))
         
-    addSignatureSpaceToStory(Story,"Incharge, Projects")
+    addSignatureSpaceToStory(Story,"Incharge", "Projects")
     Story.append(Spacer(1,0.5*inch))
 
     # Elocutions
@@ -1061,7 +1064,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         addNormalTextToStory(Story,'Comment' + ' : ' + comment);
         Story.append(Spacer(1,0.2*inch))
         
-    addSignatureSpaceToStory(Story,"Incharge, Elocution")
+    addSignatureSpaceToStory(Story,"Incharge", "Elocution")
     Story.append(Spacer(1,0.5*inch))
 
     # Other CoCurricular Activities
@@ -1131,7 +1134,7 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         Story.append(Spacer(1,0.5*inch))
     except:
         pratod = ''
-        grade = 'N/A'
+        grade = '-'
         comment = ''
 
     # Dal Attendance
@@ -1165,7 +1168,7 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         Story.append(Spacer(1,0.2*inch))
     Story.append(Spacer(1,0.5*inch))
                  
-    addSignatureSpaceToStory(Story,pratod + ",<br/>" + "Activity Incharge")
+    addSignatureSpaceToStory(Story,pratod , "Activity Incharge")
     Story.append(PageBreak())
 
 def fillLibraryReport(student_yearly_info, Story):
@@ -1186,7 +1189,7 @@ def fillLibraryReport(student_yearly_info, Story):
     addTableToStory(Story, data, 'CENTER')
     
     Story.append(Spacer(1,1*inch))
-    addSignatureSpaceToStory(Story, "Librarian");
+    addSignatureSpaceToStory(Story, "","Librarian");
     Story.append(PageBreak())
 
 
