@@ -83,9 +83,16 @@ GRADE_NUM = {
     '4':4,
     '5':5,
     '6':6,
+    '6.0':6,
+    '5.0':5,
+    '4.0':4,
+    '3.0':3,
+    '2.0':2,
+    '1.0':1,
+    '0.0':0
 }
 
-GRADE_CHOICE_NUM = ['', 'No Entry for this category','Unsatisfactory','Needs Improvement','Satisfactory','Good','Excellent','Outstanding']
+GRADE_CHOICE_NUM = ['', '-','Unsatisfactory','Needs Improvement','Satisfactory','Good','Excellent','Outstanding']
 
 PROJECT_TYPE_CHOICES = {
     'CC': 'Collection, Classification',
@@ -478,12 +485,12 @@ def firstPage(canvas, doc):
 
 def laterPages(canvas, doc):
     canvas.saveState()
-    canvas.setFont('Times-Roman',9)
+    canvas.setFont('Times-Roman',8)
     canvas.drawString(inch, 0.75 * inch, "%s" % (page_footer))
     canvas.setFont('Times-Roman',6)
     now_time = datetime.datetime.now()
     epoch_seconds = time.mktime(now_time.timetuple())
-    canvas.drawString(0.9*inch, 0.75 * inch, "ES%dP%d    %s" % (epoch_seconds, doc.page, "Jnana Prabodhini Prashala's Certificate of School Based Evaluation"))
+    canvas.drawString(PAGE_WIDTH / 2, 0.75 * inch, "%s          ES%dP%d" % ("Jnana Prabodhini Prashala's Certificate of School Based Evaluation", epoch_seconds, doc.page))
     canvas.restoreState()
     pageBorder(canvas)
 
@@ -493,6 +500,8 @@ def pageBorder(canvas):
     canvas.line(margin, PAGE_HEIGHT - margin, PAGE_WIDTH - margin, PAGE_HEIGHT - margin)
     canvas.line(PAGE_WIDTH - margin, PAGE_HEIGHT - margin, PAGE_WIDTH - margin, margin)
     canvas.line(PAGE_WIDTH - margin, margin, margin, margin)
+    canvas.setLineWidth(0.1)
+    canvas.line(PAGE_WIDTH - margin, margin + 0.16*inch, margin, margin + 0.16*inch)
 
 def reportPDF(request):
     if request.POST:
@@ -680,7 +689,9 @@ def fillStudentAttendance(student_yearly_info, Story, class_type):
 
 def fillStaticAndYearlyInfo(student_yearly_info, Story):
     student_basic_info = student_yearly_info.StudentBasicInfo
+    global page_footer
     page_footer = str(student_basic_info.RegistrationNo) + "  " + student_basic_info.FirstName
+    
     try:
         student_addtional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info.RegistrationNo)
     except:
@@ -849,7 +860,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
     Story.append(PageBreak())
 
 def fillAcademicReport(student_yearly_info, Story):
-    addMainHeaderToStory(Story, "Part 2: Academic Performace");
+    addMainHeaderToStory(Story, "Part 2: Academic Performance");
 
     subjects_data = {}
     student_test_data = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
@@ -935,6 +946,8 @@ def fillCoCurricularReport(student_yearly_info, Story):
     # Abhivyakti Report
     addSubHeaderToStory(Story,"Self Expression through Arts")
     abhivyaktiVikass = AbhivyaktiVikas.objects.filter(StudentYearlyInformation=student_yearly_info)
+    if len(abhivyaktiVikass) == 0:
+        addNormalTextToStory(Story,'No Activities');
     i=0
     for abhivyaktiVikas in abhivyaktiVikass:
         i = i + 1;
@@ -963,7 +976,9 @@ def fillCoCurricularReport(student_yearly_info, Story):
 
     # Competitive Exams
     addSubHeaderToStory(Story,"Competitive Examinations")
-    competitive_exams = CompetitiveExam.objects.filter(StudentYearlyInformation=student_yearly_info) 
+    competitive_exams = CompetitiveExam.objects.filter(StudentYearlyInformation=student_yearly_info)
+    if len(competitive_exams) == 0:
+        addNormalTextToStory(Story,'No Activities');
     i=0
     for competitive_exam in competitive_exams:
         i = i + 1;
@@ -988,6 +1003,8 @@ def fillCoCurricularReport(student_yearly_info, Story):
     # Competitions
     addSubHeaderToStory(Story,"Competitions")    
     competitions = Competition.objects.filter(StudentYearlyInformation=student_yearly_info)
+    if len(competitions) == 0:
+        addNormalTextToStory(Story,'No Activities');
     i=0
     for competition in competitions:
         i = i + 1;
@@ -1011,8 +1028,9 @@ def fillCoCurricularReport(student_yearly_info, Story):
 
     # Projects
     addSubHeaderToStory(Story,"Projects")
-
     projects = Project.objects.filter(StudentYearlyInformation=student_yearly_info)
+    if len(projects) == 0:
+        addNormalTextToStory(Story,'No Activities');
     i=0
     for project in projects:
         i = i + 1;
@@ -1044,6 +1062,8 @@ def fillCoCurricularReport(student_yearly_info, Story):
     # Elocutions
     addSubHeaderToStory(Story,"Elocutions")
     elocutions = Elocution.objects.filter(StudentYearlyInformation=student_yearly_info)
+    if len(elocutions) == 0:
+        addNormalTextToStory(Story,'No Activities');
     i=0
     for elocution in elocutions:
         i = i + 1;
@@ -1070,7 +1090,8 @@ def fillCoCurricularReport(student_yearly_info, Story):
     # Other CoCurricular Activities
     addSubHeaderToStory(Story, "Other Co-curricular Activities");
     coCurriculars = CoCurricular.objects.filter(StudentYearlyInformation=student_yearly_info)
-
+    if len(coCurriculars) == 0:
+        addNormalTextToStory(Story,'No Activities');
     data = []
     data.append(['','Activity','Objectives','Date','Guide','Grade'])
     i=0
@@ -1117,7 +1138,10 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         bmi = physical_fitness_info.BodyMassIndex
         bmi = round(float(weight) / (float(height / 100.0) * float(height / 100.0)), 2)
         balancing = physical_fitness_info.Balancing
-        grade = physical_fitness_info.Grade
+        try:
+            grade = GRADE_CHOICE_NUM[physical_fitness_info.Grade]
+        except:
+            grade = '-'    
         pathak = physical_fitness_info.Pathak
         special_sport = physical_fitness_info.SpecialSport
         comment = physical_fitness_info.PublicComment
@@ -1131,8 +1155,9 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         addNormalTextToStory(Story,'House' + ' : ' + pathak);
         Story.append(Spacer(1,0.2*inch))
         pratod = physical_fitness_info.Pratod
-        Story.append(Spacer(1,0.5*inch))
+        Story.append(Spacer(1,0.2*inch))
     except:
+        addNormalTextToStory(Story,'N/A');
         pratod = ''
         grade = '-'
         comment = ''
@@ -1141,13 +1166,16 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
     addSubHeaderToStory(Story,"Evening Sports Attendance")
     fillStudentAttendance(student_yearly_info, Story, 'D')
     
-    Story.append(Spacer(1,0.25*inch))
+    Story.append(Spacer(1,0.1*inch))
     addNormalTextToStory(Story,'<strong>' + 'Grade' + ' : ' + grade + '</strong>');        
     addNormalTextToStory(Story,'Comment' + ' : ' + comment);
-
+    Story.append(Spacer(1,0.25*inch))
+    
     # Social Activities
     addSubHeaderToStory(Story,"Social Activities")
     social_activities = SocialActivity.objects.filter(StudentYearlyInformation=student_yearly_info)
+    if len(social_activities) == 0:
+        addNormalTextToStory(Story,'No Activities');
     i=0
     for social_activity in social_activities:
         i = i + 1
@@ -1155,7 +1183,10 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         objectives = social_activity.Objectives
         date = social_activity.Date
         organizer = social_activity.Organizer
-        grade = social_activity.Grade
+        try:
+            grade = GRADE_CHOICE_NUM[social_activity.Grade]
+        except:
+            grade = '-'
         comment = social_activity.PublicComment
 
         addNormalTextToStory(Story,'<strong>' + 'Activity'+ ' ' + str(i) + '</strong>')
