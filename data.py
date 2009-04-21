@@ -70,47 +70,52 @@ def add_rollno():
     
 
 def add_test():
+    print "Testmaster"
     yr = AcademicYear.objects.get(Year='2008-2009')
-    for xls, std, div in zip(["../B6.xls"], [6], ['B']):
-        book = xlrd.open_workbook(xls)
-        sh = book.sheet_by_index(0)
-        row = sh.row_values(0)
-        tests = row[5:]
-        row = sh.row_values(1)
-        teachers = row[5:]
-        row = sh.row_values(2)
-        max_marks = row[5:]
+    xls_file = raw_input('Enter filename: ')
+    div = raw_input('Enter Division: ')
+    std = raw_input('Enter Standard: ')
+    book = xlrd.open_workbook(xls_file)
+    
+    sh = book.sheet_by_index(0)
+    row = sh.row_values(0)
+    tests = row[5:]
+    row = sh.row_values(1)
+    teachers = row[5:]
+    row = sh.row_values(2)
+    max_marks = row[5:]
         
-        for test, teacher, max_mark in zip(tests, teachers, max_marks):
-            subject = test[:3]
-            test_type = test[3:]
+    for test, teacher, max_mark in zip(tests, teachers, max_marks):
+        subject = test[:3]
+        test_type = test[3:]
             
-            try:
-                SubObj = SubjectMaster.objects.get(Standard=std, Name=subject)
-            except:
-                print 'unable to get subject. adding: '
-                print test, std
-                SubObj = SubjectMaster()
-                SubObj.Standard = std
-                SubObj.Name = subject[:3]
-                SubObj.save()
-            try:
-                TeacherObj = Teacher.objects.get(Name=teacher)
-            except:
-                print 'unable to get teacher.'
-                print teacher
-            try:
-                TestMappingObj = TestMapping.objects.get(SubjectMaster=SubObj, TestType=test_type, MaximumMarks=max_mark, Teacher=TeacherObj, AcademicYear = yr)
-                print test, max_mark, teacher, yr, 'already in DB'
-            except:
-                TestMappingObj = TestMapping()
-                TestMappingObj.SubjectMaster = SubObj
-                TestMappingObj.TestType = test_type
-                TestMappingObj.MaximumMarks = max_mark
-                TestMappingObj.Teacher = TeacherObj
-                TestMappingObj.AcademicYear = yr
-                TestMappingObj.save()
-                print 'Added: ', test, max_mark, teacher, yr
+        try:
+            SubObj = SubjectMaster.objects.get(Standard=std, Name=subject)
+        except:
+            print 'unable to get subject. adding: '
+            print test, std
+            SubObj = SubjectMaster()
+            SubObj.Standard = std
+            SubObj.Name = subject[:3]
+            SubObj.save()
+        try:
+            TeacherObj = Teacher.objects.get(Name=teacher)
+        except:
+            print 'unable to get teacher.'
+            print teacher
+            continue
+        try:
+            TestMappingObj = TestMapping.objects.get(SubjectMaster=SubObj, TestType=test_type, MaximumMarks=max_mark, Teacher=TeacherObj, AcademicYear = yr)
+            print test, max_mark, teacher, yr, 'already in DB'
+        except:
+            TestMappingObj = TestMapping()
+        TestMappingObj.SubjectMaster = SubObj
+        TestMappingObj.TestType = test_type
+        TestMappingObj.MaximumMarks = max_mark
+        TestMappingObj.Teacher = TeacherObj
+        TestMappingObj.AcademicYear = yr
+        TestMappingObj.save()
+        print 'Added: ', test, max_mark, teacher, yr
 
 
 def add_additional_info():
@@ -212,98 +217,99 @@ def add_attendance():
 
 
 def add_marks():
-    yr = AcademicYear.objects.get(Year='2008-2009')    
-    for xls, std, div in zip(["../B9.xls"], [9], ['B']):
-        book = xlrd.open_workbook(xls)
-        sh = book.sheet_by_index(0)
-        row = sh.row_values(0)
-        subjects = row[5:]
-        for subject in subjects:
+    yr = AcademicYear.objects.get(Year='2008-2009')  
+    xls_file = raw_input('Enter filename: ')
+    div=raw_input('Enter Division: ')
+    std=raw_input('Enter Standard: ')
+    book = xlrd.open_workbook(xls_file)
+    sh = book.sheet_by_index(0)
+    row = sh.row_values(0)
+    subjects = row[5:]
+    for subject in subjects:
+        try:
+            SubObj = SubjectMaster.objects.get(Standard=std, Name=subject[:3])
+        except:
+            SubObj = SubjectMaster()
+            SubObj.Name = subject[:3]
+            SubObj.Standard = std
+            SubObj.save()
+            print 'Added new subject', subject[:3]
+    yr = AcademicYear.objects.get(Year='2008-2009')
+    row = sh.row_values(1)
+    teachers = row[5:]
+    row = sh.row_values(2)
+    max_marks = row[5:]
+    for teacher, subject, max_mark in zip(teachers, subjects, max_marks):
+        if teacher:
+            try:
+                TeacherObj = Teacher.objects.get(Name=teacher)
+            except:
+                print teacher
+                sys.exit()
             try:
                 SubObj = SubjectMaster.objects.get(Standard=std, Name=subject[:3])
             except:
-                SubObj = SubjectMaster()
-                SubObj.Name = subject[:3]
-                SubObj.Standard = std
-                SubObj.save()
-                print 'Added new subject', subject[:3]
-        yr = AcademicYear.objects.get(Year='2008-2009')
-        row = sh.row_values(1)
-        teachers = row[5:]
-        row = sh.row_values(2)
-        max_marks = row[5:]
-        for teacher, subject, max_mark in zip(teachers, subjects, max_marks):
+                print 'Subject does not exist ', subject[:3]
+            try:
+                testmapping = TestMapping.objects.get(SubjectMaster = SubObj, TestType = subject[3:], MaximumMarks = max_mark, Teacher = TeacherObj, AcademicYear = yr)
+                continue
+            except:
+                testmapping = TestMapping()
+                testmapping.SubjectMaster = SubObj
+                testmapping.TestType = subject[3:]
+                testmapping.MaximumMarks = max_mark
+                testmapping.Teacher = TeacherObj
+                testmapping.AcademicYear = yr
+                testmapping.save()
+                print subject, 'successfully added'
+    for rx in range(3, sh.nrows):
+        row = sh.row_values(rx)
+        row = sh.row_values(rx)
+        regno = row[0]
+        marks = row[5:]
+        for teacher, subject, mark, max_mark in zip(teachers, subjects, marks, max_marks):
             if teacher:
-                try:
-                    TeacherObj = Teacher.objects.get(Name=teacher)
-                except:
-                    print teacher
-                    sys.exit()
                 try:
                     SubObj = SubjectMaster.objects.get(Standard=std, Name=subject[:3])
                 except:
                     print 'Subject does not exist ', subject[:3]
-                try:
-                    testmapping = TestMapping.objects.get(SubjectMaster = SubObj, TestType = subject[3:], MaximumMarks = max_mark, Teacher = TeacherObj, AcademicYear = yr)
                     continue
+                try:
+                    TeacherObj = Teacher.objects.get(Name=teacher)
                 except:
-                    testmapping = TestMapping()
-                    testmapping.SubjectMaster = SubObj
-                    testmapping.TestType = subject[3:]
-                    testmapping.MaximumMarks = max_mark
-                    testmapping.Teacher = TeacherObj
-                    testmapping.AcademicYear = yr
-                    testmapping.save()
-                    print subject, 'successfully added'
-        for rx in range(3, sh.nrows):
-            row = sh.row_values(rx)
-            row = sh.row_values(rx)
-            regno = row[0]
-            marks = row[5:]
-            for teacher, subject, mark, max_mark in zip(teachers, subjects, marks, max_marks):
-                if teacher:
-                    try:
-                        SubObj = SubjectMaster.objects.get(Standard=std, Name=subject[:3])
-                    except:
-                        print 'Subject does not exist ', subject[:3]
-                        sys.exit()
-                    try:
-                        TeacherObj = Teacher.objects.get(Name=teacher)
-                    except:
-                        print 'Teacher does not exist ', teacher
-                        sys.exit()
-                    try:
-                        testmapping = TestMapping.objects.get(TestType=subject[3:], SubjectMaster = SubObj, MaximumMarks = max_mark, Teacher = TeacherObj, AcademicYear = yr)
-                    except:
-                        print 'TestMapping does not exist ',SubObj, TeacherObj, yr, subject[3:], max_mark
-                        sys.exit()
-                    try:
-                        basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
-                    except:
-                        print 'Basic info not found ', regno
-                        sys.exit()
-                    try:
-                        classmaster = ClassMaster.objects.get(Standard=std, AcademicYear=yr,Division=div)
-                    except:
-                        print 'ClassMaster not found ', std, yr, div
-                        sys.exit()
-                    try:
-                        yrlyinfo = StudentYearlyInformation.objects.get(StudentBasicInfo=basicinfo, ClassMaster=classmaster)
-                    except:
-                        print 'StudentYearlyInformation not found ', basicinfo, classmaster
-                        sys.exit()
-                    try:
-                        a=StudentTestMarks.objects.get(StudentYearlyInformation=yrlyinfo, TestMapping=testmapping)
-                        continue
-                    except:
-                        a = StudentTestMarks()
-                        a.StudentYearlyInformation = yrlyinfo
-                        a.TestMapping = testmapping
-                        if not mark:
-                            mark = 0.5
-                        a.MarksObtained = mark
-                        a.save()
-                        print "added successfully", a
+                    print 'Teacher does not exist ', teacher
+                    continue
+                try:
+                    testmapping = TestMapping.objects.get(TestType=subject[3:], SubjectMaster = SubObj, MaximumMarks = max_mark, Teacher = TeacherObj, AcademicYear = yr)
+                except:
+                    print 'TestMapping does not exist ',SubObj, TeacherObj, yr, subject[3:], max_mark
+                    continue
+                try:
+                    basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
+                except:
+                    print 'Basic info not found ', regno
+                    continue
+                try:
+                    classmaster = ClassMaster.objects.get(Standard=std, AcademicYear=yr,Division=div)
+                except:
+                    print 'ClassMaster not found ', std, yr, div
+                    continue
+                try:
+                    yrlyinfo = StudentYearlyInformation.objects.get(StudentBasicInfo=basicinfo, ClassMaster=classmaster)
+                except:
+                    print 'StudentYearlyInformation not found ', basicinfo, classmaster
+                    continue
+                try:
+                    a=StudentTestMarks.objects.get(StudentYearlyInformation=yrlyinfo, TestMapping=testmapping)
+                except:
+                    a = StudentTestMarks()
+                a.StudentYearlyInformation = yrlyinfo
+                a.TestMapping = testmapping
+                if not mark:
+                    mark = 0.5
+                a.MarksObtained = mark
+                a.save()
+                print "added successfully", a
 
 def add_b5():
     book = xlrd.open_workbook('B5.xls')
@@ -475,15 +481,15 @@ def populate_abhivyakti():
             print 'Teacher ', row[2], 'not in db'
             continue
         try:
-            abhivyakti_obj = AbhivyaktiVikas.objects.get(StudentYearlyInformation=yrlyinfo)
+            abhivyakti_obj = AbhivyaktiVikas.objects.get(StudentYearlyInformation=yrlyinfo, MediumOfExpression=mediumofexpression, Teacher=teacher)
             print abhivyakti_obj, 'Already available in database'
         except:
             abhivyakti_obj = AbhivyaktiVikas()
-            abhivyakti_obj.StudentYearlyInformation = yrlyinfo
-            abhivyakti_obj.Teacher = teacher
-            abhivyakti_obj.MediumOfExpression = mediumofexpression
-            abhivyakti_obj.save()
-            print 'Sucessfully added', abhivyakti_obj
+        abhivyakti_obj.StudentYearlyInformation = yrlyinfo
+        abhivyakti_obj.Teacher = teacher
+        abhivyakti_obj.MediumOfExpression = mediumofexpression
+        abhivyakti_obj.save()
+        print 'Sucessfully added', abhivyakti_obj
             
         
 
@@ -722,6 +728,7 @@ def populate_teachers():
         try:
             a=Teacher.objects.get(Name=teacher)
             print a, 'is already available in database'
+            continue
         except:
             a = Teacher()
             a.Name = teacher
@@ -753,5 +760,7 @@ def add_yrly_info():
 #populate_competitions()
 #populate_elocution()
 #add_attendance()
-populate_project()
+#populate_project()
+#add_test()
+add_marks()
 sys.exit()
