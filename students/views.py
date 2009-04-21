@@ -65,6 +65,12 @@ GRADE_CHOICES = {
     '1.0': 'Needs Improvement',
     '0.0': 'Unsatisfactory',
     '': '-',
+    5: 'Outstanding',
+    4: 'Excellent',
+    3: 'Good',
+    2: 'Satisfactory',
+    1: 'Needs Improvement',
+    0: 'Unsatisfactory',
 }
 
 GRADE_NUM = {
@@ -91,8 +97,6 @@ GRADE_NUM = {
     '1.0':1,
     '0.0':0
 }
-
-GRADE_CHOICE_NUM = ['', '-','Unsatisfactory','Needs Improvement','Satisfactory','Good','Excellent','Outstanding']
 
 PROJECT_TYPE_CHOICES = {
     'CC': 'Collection, Classification',
@@ -207,7 +211,7 @@ def report(request):
                                        'Grade':co_cur_acts.Grade ,
                                        'PublicComment':co_cur_acts.PublicComment})
         if len(co_curricular)>0:
-            cumulative_cocur_grade=GRADE_CHOICE_NUM[int(round(cumulative_cocur_grade_sum/len(co_curricular)))]        
+            cumulative_cocur_grade=GRADE_CHOICES[int(round(cumulative_cocur_grade_sum/len(co_curricular)))]        
         print cumulative_cocur_grade
 
         competitive_exam = CompetitiveExam.objects.filter(StudentYearlyInformation = student_yearly_info)
@@ -223,7 +227,7 @@ def report(request):
                                           'Grade':exams.Grade,
                                           'PublicComment':exams.PublicComment})
         if len(competitive_exam)>0:
-            cumulative_compexam_grade=GRADE_CHOICE_NUM[int(round(cumulative_compexam_grade_sum/len(competitive_exam)))]        
+            cumulative_compexam_grade=GRADE_CHOICES[int(round(cumulative_compexam_grade_sum/len(competitive_exam)))]        
         print cumulative_compexam_grade
 
         competitions = Competition.objects.filter(StudentYearlyInformation = student_yearly_info)
@@ -239,7 +243,7 @@ def report(request):
                                           'Guide':comps.Guide ,
                                           'PublicComment':comps.PublicComment})
         if len(competitions)>0:
-            cumulative_comp_grade=GRADE_CHOICE_NUM[int(round(cumulative_comp_grade_sum/len(competitions)))]        
+            cumulative_comp_grade=GRADE_CHOICES[int(round(cumulative_comp_grade_sum/len(competitions)))]        
         print cumulative_comp_grade
         
         abhivyakti_vikas = AbhivyaktiVikas.objects.filter(StudentYearlyInformation = student_yearly_info)
@@ -259,7 +263,7 @@ def report(request):
                                          'Creativity':GRADE_CHOICES[abhi_row.Creativity],
                                          'PublicComment':abhi_row.PublicComment})
         if(len(abhivyakti_vikas) > 0):
-            cumulative_abhi_grade=GRADE_CHOICE_NUM[int(round(cumulative_abhi_grade_sum/len(abhivyakti_vikas)))]
+            cumulative_abhi_grade=GRADE_CHOICES[int(round(cumulative_abhi_grade_sum/len(abhivyakti_vikas)))]
         print cumulative_abhi_grade
 
 
@@ -281,7 +285,7 @@ def report(request):
                                          'Communication':GRADE_CHOICES[proj_row.Communication],
                                          'PublicComment':proj_row.PublicComment})
         if(len(projects) > 0):
-            cumulative_project_grade=GRADE_CHOICE_NUM[int(round(cumulative_project_grade_sum/len(projects)))]
+            cumulative_project_grade=GRADE_CHOICES[int(round(cumulative_project_grade_sum/len(projects)))]
         print cumulative_project_grade
 
 
@@ -304,7 +308,7 @@ def report(request):
                                          'Presentation':GRADE_CHOICES[elo_row.Presentation],
                                          'PublicComment':elo_row.PublicComment})
         if(len(elocution) > 0):
-            cumulative_elocution_grade=GRADE_CHOICE_NUM[int(round(cumulative_elocution_grade_sum/len(elocution)))]
+            cumulative_elocution_grade=GRADE_CHOICES[int(round(cumulative_elocution_grade_sum/len(elocution)))]
         print cumulative_elocution_grade
 
         physical_fit_info = PhysicalFitnessInfo.objects.filter(StudentYearlyInformation = student_yearly_info)
@@ -334,7 +338,7 @@ def report(request):
                                            'Grade':ph_data.Grade ,
                                            'PublicComment':ph_data.PublicComment})
         if(len(physical_fit_info) > 0):
-            cumulative_physical_grade=GRADE_CHOICE_NUM[int(round(cumulative_physical_grade_sum/len(physical_fit_info)))]        
+            cumulative_physical_grade=GRADE_CHOICES[int(round(cumulative_physical_grade_sum/len(physical_fit_info)))]        
         print cumulative_physical_grade
 
         social_activities = SocialActivity.objects.filter(StudentYearlyInformation = student_yearly_info)
@@ -350,7 +354,7 @@ def report(request):
                                          'Grade':soc_act_data.Grade ,
                                          'PublicComment':soc_act_data.PublicComment})
         if(len(social_activities) > 0):
-            cumulative_social_grade=GRADE_CHOICE_NUM[int(round(cumulative_social_grade_sum/len(social_activities)))]        
+            cumulative_social_grade=GRADE_CHOICES[int(round(cumulative_social_grade_sum/len(social_activities)))]        
         print cumulative_social_grade
 
         
@@ -745,7 +749,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
     for co_cur_acts in co_curricular:
         cumulative_cocur_grade_sum=cumulative_cocur_grade_sum + GRADE_NUM[co_cur_acts.Grade]
     if len(co_curricular) > 0:
-        cumulative_cocur_grade=GRADE_CHOICE_NUM[int(round(cumulative_cocur_grade_sum/len(co_curricular)))]        
+        cumulative_cocur_grade=GRADE_CHOICES[int(round(cumulative_cocur_grade_sum/len(co_curricular)))]        
 
     # Cumulative Abhivyakti Vikas
     abhivyakti_vikas = AbhivyaktiVikas.objects.filter(StudentYearlyInformation = student_yearly_info)
@@ -755,7 +759,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
         abhi_grade_row_sum=int(GRADE_NUM[abhi_row.Participation])+int(GRADE_NUM[abhi_row.ReadinessToLearn])+int(GRADE_NUM[abhi_row.ContinuityInWork])+int(GRADE_NUM[abhi_row.SkillDevelopment])+int(GRADE_NUM[abhi_row.Creativity])
         cumulative_abhi_grade_sum=cumulative_abhi_grade_sum+(int(abhi_grade_row_sum/5))
     if len(abhivyakti_vikas) > 0:
-        cumulative_abhi_grade=GRADE_CHOICE_NUM[int(round(cumulative_abhi_grade_sum/len(abhivyakti_vikas)))]
+        cumulative_abhi_grade=GRADE_CHOICES[int(round(cumulative_abhi_grade_sum/len(abhivyakti_vikas)))]
 
     # Cumulative Projects
     projects = Project.objects.filter(StudentYearlyInformation = student_yearly_info)
@@ -768,7 +772,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
             proj_grade_row_sum=0
         cumulative_project_grade_sum=cumulative_project_grade_sum+(int(proj_grade_row_sum/5))
     if len(projects) > 0:
-        cumulative_project_grade=GRADE_CHOICE_NUM[int(round(cumulative_project_grade_sum/len(projects)))]
+        cumulative_project_grade=GRADE_CHOICES[int(round(cumulative_project_grade_sum/len(projects)))]
 
     # Cumulative Elocution
     elocutions = Elocution.objects.filter(StudentYearlyInformation = student_yearly_info)
@@ -778,7 +782,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
         elocution_grade_row_sum=int(GRADE_NUM[elo_row.Memory])+int(GRADE_NUM[elo_row.Content])+int(GRADE_NUM[elo_row.Understanding])+int(GRADE_NUM[elo_row.Skill])+int(GRADE_NUM[elo_row.Presentation])
         cumulative_elocution_grade_sum=cumulative_elocution_grade_sum+(int(elocution_grade_row_sum/5))
     if len(elocutions) > 0:
-        cumulative_elocution_grade=GRADE_CHOICE_NUM[int(round(cumulative_elocution_grade_sum/len(elocutions)))]
+        cumulative_elocution_grade=GRADE_CHOICES[int(round(cumulative_elocution_grade_sum/len(elocutions)))]
 
     # Cumulative Physical Fitness Info
     physical_fit_info = PhysicalFitnessInfo.objects.filter(StudentYearlyInformation = student_yearly_info)
@@ -787,7 +791,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
     for ph_data in physical_fit_info:
         cumulative_physical_grade_sum=cumulative_physical_grade_sum + GRADE_NUM[ph_data.Grade]
     if len(physical_fit_info) > 0:
-        cumulative_physical_grade=GRADE_CHOICE_NUM[int(round(cumulative_physical_grade_sum/len(physical_fit_info)))]        
+        cumulative_physical_grade=GRADE_CHOICES[int(round(cumulative_physical_grade_sum/len(physical_fit_info)))]        
 
     # Cumulative Social Activity
     social_activities = SocialActivity.objects.filter(StudentYearlyInformation = student_yearly_info)
@@ -796,7 +800,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
     for soc_act_data in social_activities:
         cumulative_social_grade_sum=cumulative_social_grade_sum + GRADE_NUM[soc_act_data.Grade]
     if len(social_activities) > 0:
-        cumulative_social_grade=GRADE_CHOICE_NUM[int(round(cumulative_social_grade_sum/len(social_activities)))]
+        cumulative_social_grade=GRADE_CHOICES[int(round(cumulative_social_grade_sum/len(social_activities)))]
 
     # Cumulative Library Grade
     try:
@@ -1139,7 +1143,7 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         bmi = round(float(weight) / (float(height / 100.0) * float(height / 100.0)), 2)
         balancing = physical_fitness_info.Balancing
         try:
-            grade = GRADE_CHOICE_NUM[physical_fitness_info.Grade]
+            grade = GRADE_CHOICES[physical_fitness_info.Grade]
         except:
             grade = '-'    
         pathak = physical_fitness_info.Pathak
@@ -1184,7 +1188,7 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         date = social_activity.Date
         organizer = social_activity.Organizer
         try:
-            grade = GRADE_CHOICE_NUM[social_activity.Grade]
+            grade = GRADE_CHOICES[social_activity.Grade]
         except:
             grade = '-'
         comment = social_activity.PublicComment
