@@ -520,8 +520,9 @@ def app_leave(request):
 				
 		barcode = form.cleaned_data['Barcode']
 		category = form.cleaned_data['Category']
-		pendingleaves = Leaves.objects.filter(Barcode=barcode).filter(Status=1)
-		approveleaves = Leaves.objects.filter(Barcode=barcode).filter(Status=2)
+		acadyear = AcademicYear.objects.get(Status=1)
+		pendingleaves = Leaves.objects.filter(Barcode=barcode).filter(Status=1).filter(LeaveDate__gte = acadyear.StartDate, LeaveDate__lte = acadyear.EndDate)
+		approveleaves = Leaves.objects.filter(Barcode=barcode).filter(Status=2).filter(LeaveDate__gte = acadyear.StartDate, LeaveDate__lte = acadyear.EndDate)
 
 		data = []
 		balance = [0,0,0,0,0,0,0,0]
@@ -567,9 +568,9 @@ def app_leave(request):
 			datedata.append({'type':type[1], 'approve': approvedates, 'pending':pendingdates})
 		print datedata
 			
-		adays = Attendance.objects.filter(Barcode=barcode).filter(Remark='A')
-		latedays = Attendance.objects.filter(Barcode=barcode).filter(Remark='L').count()
-		hdays = Attendance.objects.filter(Barcode=barcode).filter(Remark='H')
+		adays = Attendance.objects.filter(Barcode=barcode).filter(Remark='A').filter(Year=acadyear)
+		latedays = Attendance.objects.filter(Barcode=barcode).filter(Remark='L').filter(Year=acadyear).count()
+		hdays = Attendance.objects.filter(Barcode=barcode).filter(Remark='H').filter(Year=acadyear)
 		abdays = []
 		hfdays = []
 		absentdays = 0
