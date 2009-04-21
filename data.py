@@ -5,7 +5,7 @@ from jp_sms.students.models import StudentBasicInfo, SubjectMaster, Teacher, Att
 from jp_sms.students.models import AcademicYear, TestMapping, StudentYearlyInformation, StudentAttendance
 from jp_sms.students.models import ClassMaster, StudentTestMarks, StudentAdditionalInformation, Elocution
 from jp_sms.students.models import AbhivyaktiVikas, CoCurricular, Competition, CompetitiveExam
-from jp_sms.students.models import Project, Library
+from jp_sms.students.models import Project, Library, PhysicalFitnessInfo
 
 from jp_sms.fees.models import FeeType, FeeReceipt
 
@@ -677,7 +677,7 @@ def populate_library():
     book = xlrd.open_workbook(xls_file)
     yr = '2008-2009'
     sh = book.sheet_by_name('Library')
-    for rx in range(1, 41):
+    for rx in range(1, sh.nrows):
         row = sh.row_values(rx)
         regno = row[0]
         try:
@@ -692,12 +692,12 @@ def populate_library():
             library_obj = Library.objects.get(StudentYearlyInformation=yrlyinfo, BooksRead=booksread, Grade=grade, PublicComment=comment)
         except:
             library_obj = Library()
-            library_obj.StudentYearlyInformation = yrlyinfo
-            library_obj.BooksRead = booksread
-            library_obj.Grade = grade
-            library_obj.PublicComment = comment
-            library_obj.save()
-            print library_obj, 'added in db'
+        library_obj.StudentYearlyInformation = yrlyinfo
+        library_obj.BooksRead = booksread
+        library_obj.Grade = grade
+        library_obj.PublicComment = comment
+        library_obj.save()
+        print library_obj, 'added in db'
 
 def populate_subjects():
     #subjects = ['Mathematics', 'English', 'Geography', 'Hindi', 'History', 'Marathi','Sanskrit', 'Science']
@@ -757,11 +757,83 @@ def add_yrly_info():
         yrlyinfo.ClassMaster = classmaster
         yrlyinfo.save()
 
+def populate_physical_fitness_info():
+    print 'Physical Fitness'
+    xls_file = raw_input('Enter filename: ')
+    div = raw_input('Enter Division: ')
+    std = raw_input('Enter Standard: ')
+    book = xlrd.open_workbook(xls_file)
+    yr = '2008-2009'
+    sh = book.sheet_by_name('Physical Fitness')
+    for rx in range(0, sh.nrows):
+        row = sh.row_values(rx)
+        regno = row[0]
+        try:
+            yrlyinfo = get_yrly_info(regno, yr, std, div)
+        except:
+            print 'yearly info not found in db for ', regno
+        print row
+        for x in range(1,16):
+            if row[x] == '':
+                row[x] = 0
+        weight = row[1]
+        height = row[2]
+        ffb = row[3]
+        fbb = row[4]
+        sbj = row[5]
+        verticlejump = row[6]
+        ballthrow = row[7]
+        shuttlerin = row[8]
+        situps = row[9]
+        sprint = row[10]
+        running400m = row[11]
+        shortputthrow = row[12]
+        split = row[13]
+        bmi = row[14]
+        balancing = row[15]
+        pri_comment = row[16]
+        pub_comment = row[17]
+        pathak = row[18]
+        pratod = row[19]
+        margadarshak = row[20]
+        specialsport = row[21]
+        grade = row[22]
+        try:
+            phy_obj = PhysicalFitnessInfo.objects.get(StudentYearlyInformation=yrlyinfo)
+        except:
+            phy_obj = PhysicalFitnessInfo()
+        phy_obj.StudentYearlyInformation = yrlyinfo
+        phy_obj.Weight = round(weight,2)
+        phy_obj.Height = height
+        phy_obj.FlexibleForwardBending = ffb
+        phy_obj.FlexibleBackwardBending = fbb
+        phy_obj.SBJ = round(sbj,2)
+        phy_obj.VerticleJump = round(verticlejump,2)
+        phy_obj.BallThrow = round(ballthrow,2)
+        phy_obj.ShuttleRun = round(shuttlerin,2)
+        phy_obj.SitUps = situps
+        phy_obj.Sprint = round(sprint,2)
+        phy_obj.Running400m = round(running400m,2)
+        phy_obj.ShortPutThrow = round(shortputthrow,2)
+        phy_obj.Split = split
+        if height == 0:
+            height = 1.0
+        phy_obj.BodyMassIndex = round(float(weight**2)/float((height/100)**2),2)
+        phy_obj.Balancing = balancing
+        phy_obj.PrivateComment = pri_comment
+        phy_obj.PublicComment = pub_comment
+        phy_obj.Pathak = pathak
+        phy_obj.Pratod = pratod
+        phy_obj.Margadarshak = margadarshak
+        phy_obj.SpecialSport = specialsport
+        phy_obj.Grade = grade
+        phy_obj.save()
+        print phy_obj, 'added in db'
 #populate_abhivyakti()
 #populate_competitiveexam()
 #populate_competitions()
 #populate_elocution()
-add_attendance()
+populate_physical_fitness_info()
 #populate_project()
 #add_test()
 #add_marks()

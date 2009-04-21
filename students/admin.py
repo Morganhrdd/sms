@@ -61,7 +61,7 @@ class StudentAttendanceAdmin(admin.ModelAdmin):
 
 class PhysicalFitnessInfoAdmin(admin.ModelAdmin):
     list_display = ('StudentYearlyInformation', 'Weight','Height','FlexibleForwardBending','FlexibleBackwardBending','SBJ','VerticleJump','BallThrow','ShuttleRun','SitUps','Sprint','Running400m','ShortPutThrow','Split','BodyMassIndex','Balancing','PrivateComment','PublicComment','Pathak','Pratod','Margadarshak','SpecialSport','Grade')
-    search_fields = ('StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName')
+    search_fields = ('StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName', 'StudentYearlyInformation__StudentBasicInfo__RegistrationNo')
     
 class SocialActivityAdmin(admin.ModelAdmin):
     pass
