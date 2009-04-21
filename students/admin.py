@@ -36,7 +36,7 @@ class SubjectMasterAdmin(admin.ModelAdmin):
 class StudentYearlyInformationAdmin(admin.ModelAdmin):
     list_display = ('StudentBasicInfo', 'RollNo', 'ClassMaster', 'Photo')
     ordering = ('ClassMaster', 'RollNo', )
-    search_fields = ['StudentBasicInfo__FirstName', 'StudentBasicInfo__LastName', 'ClassMaster__Teacher__Name', 'RollNo', 'ClassMaster__Standard','ClassMaster__AcademicYear__Year']
+    search_fields = ['StudentBasicInfo__FirstName', 'StudentBasicInfo__LastName', 'ClassMaster__Teacher__Name', 'RollNo', 'ClassMaster__Standard','ClassMaster__AcademicYear__Year', 'StudentBasicInfo__RegistrationNo']
 
 class ClassMasterAdmin(admin.ModelAdmin):
     list_display = ('AcademicYear' ,'Standard', 'Division', 'Teacher', 'Type')
