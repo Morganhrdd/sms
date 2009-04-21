@@ -819,8 +819,9 @@ def populate_physical_fitness_info():
         phy_obj.ShortPutThrow = round(shortputthrow,2)
         phy_obj.Split = split
         if height == 0:
-            height = 1.0
-        phy_obj.BodyMassIndex = round(float(weight**2)/float((height/100)**2),2)
+            phy_obj.BodyMassIndex = 0
+        else:
+            phy_obj.BodyMassIndex = round(float(weight**2)/float((height/100)**2),2)
         phy_obj.Balancing = balancing
         phy_obj.PrivateComment = pri_comment
         phy_obj.PublicComment = pub_comment
