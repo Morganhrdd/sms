@@ -39,8 +39,9 @@ class StudentYearlyInformationAdmin(admin.ModelAdmin):
     search_fields = ['StudentBasicInfo__FirstName', 'StudentBasicInfo__LastName', 'ClassMaster__Teacher__Name', 'RollNo', 'ClassMaster__Standard','ClassMaster__AcademicYear__Year']
 
 class ClassMasterAdmin(admin.ModelAdmin):
-    list_display = ('AcademicYear' ,'Standard', 'Division', 'Teacher')
+    list_display = ('AcademicYear' ,'Standard', 'Division', 'Teacher', 'Type')
     ordering = ('AcademicYear', 'Standard', 'Division',)
+    search_fields = ['AcademicYear__Year', 'Standard', 'Division', 'Teacher__Name']
     
 class TestMappingAdmin(admin.ModelAdmin):
     list_display = ('SubjectMaster', 'TestType', 'MaximumMarks', 'Teacher', 'AcademicYear')
@@ -59,7 +60,8 @@ class StudentAttendanceAdmin(admin.ModelAdmin):
     search_fields = [ 'AttendanceMaster__ClassMaster__Teacher__Name', 'StudentYearlyInformation__StudentBasicInfo__RegistrationNo' ]
 
 class PhysicalFitnessInfoAdmin(admin.ModelAdmin):
-    list_display = ('Weight', 'Height')
+    list_display = ('StudentYearlyInformation', 'Weight','Height','FlexibleForwardBending','FlexibleBackwardBending','SBJ','VerticleJump','BallThrow','ShuttleRun','SitUps','Sprint','Running400m','ShortPutThrow','Split','BodyMassIndex','Balancing','PrivateComment','PublicComment','Pathak','Pratod','Margadarshak','SpecialSport','Grade')
+    search_fields = ('StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName')
     
 class SocialActivityAdmin(admin.ModelAdmin):
     pass
