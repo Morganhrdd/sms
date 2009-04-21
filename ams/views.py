@@ -25,7 +25,7 @@ def get_barcode(request):
 		userqs = User.objects.filter(Barcode=barcode)
 		if not userqs:
 			message = "Invalid barcode! Please rescan the barcode"
-			return populate_user(request,message)		
+			return populate_user(request,message,'ams/barcode.html')		
 		user = userqs[0]
 		userstatus = UserStatus.objects.filter(Barcode=barcode)[0]
 		category = user.Category
@@ -42,7 +42,7 @@ def get_barcode(request):
 				t2_m = time.hour*60 + time.minute
 				if t2_m - t1_m < 5:
 					message = str(user) + " already checked in"
-					return populate_user(request,message)		
+					return populate_user(request,message,'ams/barcode.html')		
 		else:
 			if remqs:
 				rem = remqs[0].Remark
@@ -55,7 +55,7 @@ def get_barcode(request):
 						message = str(user) + " already checked out"
 					else:
 						message = str(user) + " entry for today already marked"
-					return populate_user(request,message)		
+					return populate_user(request,message,'ams/barcode.html')		
 			userstatus.Status = 'I'
 
 		message = "Time " + dt.strftime("%H:%M:%S") + " recorded for " + str(user)
@@ -90,7 +90,7 @@ def get_barcode(request):
 					attendance.Year = AcademicYear.objects.filter(Status=1)[0]
 					attendance.save()
 					message = "Today is a holiday. Remember to checkout"
-					return populate_user(request,message)		
+					return populate_user(request,message,'ams/barcode.html')		
 				
 				t1_m = time.hour*60 + time.minute
 				t2_m = timerule.HalfIn.hour*60 + timerule.HalfIn.minute
@@ -282,9 +282,9 @@ def get_barcode(request):
 		else:
 			print "No day rule found"
 			
-	return populate_user(request,message)		
+	return populate_user(request,message,'ams/barcode.html')		
 	
-def populate_user(request,message):
+def populate_user(request,message,template):
 	datet = datetime.datetime.now()
 	jsdate = datet.strftime("%Y,%m,%d,%H,%M,%S")
 	datestr = datet.strftime("%A, %B %d, %Y")
@@ -395,9 +395,19 @@ def populate_user(request,message):
 	for usr in usersforgot:
 		forgotcheckout.append({'user': usr})
 
-	return render_to_response('ams/barcode.html',Context({'come': come,'yettocome':yettocome,'gone':gone,'absent':absent,
-								'forgotcheckout':forgotcheckout,'message':message,'jsdate': jsdate,'datestr': datestr}))
+	# Find pending requests for template ams/display.html
+	pendingleaves = Leaves.objects.filter(Status=1)
+	leaves = []
+	if pendingleaves:
+		for pleave in pendingleaves:
+			leaves.append({'leave':pleave})
+			
+	return render_to_response(template,Context({'come': come,'yettocome':yettocome,'gone':gone,'absent':absent,
+								'forgotcheckout':forgotcheckout,'message':message,'jsdate': jsdate,'datestr': datestr,'leaves':leaves}))
 
+def ams_display(request):
+	return populate_user(request,'','ams/display.html')
+	
 def app_leave(request):
 	message = "";
 	if not request.POST:
