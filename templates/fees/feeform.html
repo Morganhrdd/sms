@@ -1,5 +1,5 @@
 <html>
-<script lannguage="javascript">
+<script language="javascript">
 function statusform(value)
 {
  document.fee.applyforfee.value = value;
@@ -29,6 +29,12 @@ function clearform()
  document.fee.Amount.value = '';
  document.fee.ChequeNo.value = '';
  document.fee.Bank.value = '';
+}
+
+function printreceipt(receiptno)
+{
+ document.printform.receiptno.value = receiptno;
+ document.printform.submit();
 }
 
 </script>
@@ -87,7 +93,7 @@ Jnana Prabodhini Prashala<br/>
 {% for frow in row.FeeInfo %}
 <tr><th colspan=2>{{frow.Type}}</th><th colspan=3>{{frow.Amount}}</th></tr>
 {% for fda in frow.FeeDateAmount %}
-<tr><td></td><td></td><td>{{fda.ReceiptNo}}</td><td>{{fda.Date}}</td><td>{{fda.Amount}}</td></tr>
+<tr><td></td><td></td><td><a href="javascript:printreceipt({{fda.ReceiptNo}})">{{fda.ReceiptNo}}</a></td><td>{{fda.Date}}</td><td>{{fda.Amount}}</td></tr>
 {% endfor %}
 <tr><th colspan=2>Total</th><th colspan=3>{{frow.Total}}</th></tr>
 <tr><th colspan=2>Balance</th><th colspan=3><a href="javascript:populatedata('{{row.ClassMaster.Standard}}','{{row.ClassMaster.AcademicYear}}','{{frow.Type}}','{{frow.Balance}}')">{{frow.Balance}}</a></th></tr>
@@ -102,5 +108,10 @@ Jnana Prabodhini Prashala<br/>
 </tr>
 </table>
 </div>
+
+<form name="printform" action="/fee_receipt/" method="POST">
+<input type="hidden" name="receiptno"/>
+</form>
+
 </body>
 </html>

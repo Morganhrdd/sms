@@ -22,6 +22,14 @@ from jp_sms.fees.models import FeeForm
 
 from jp_sms.fees.num2word_EN import Num2Word_EN
 
+PAGE_HEIGHT=defaultPageSize[1]; PAGE_WIDTH=defaultPageSize[0]
+#PAGE_HEIGHT=8*inch; PAGE_WIDTH=defaultPageSize[0]
+styles = getSampleStyleSheet()
+margin=0.4*inch
+tbmargin=0.5*inch
+rmargin=0.8*inch
+lmargin=1.2*inch
+
 def fee_receipt(request):
 	message = "";
 	dt = datetime.datetime.now()
@@ -115,96 +123,7 @@ def fee_receipt(request):
 				message = "Fee receipt " + str(feereceipt.ReceiptNumber) + " generated"
 				receiptnumber = feereceipt.ReceiptNumber
 				
-				response = HttpResponse(mimetype='application/pdf')
-				doc = SimpleDocTemplate(response,
-								bottomMargin=0,
-								topMargin=0,
-								leftMargin=1.2*inch,
-								rightMargin=0.8*inch)
-				
-				Story = []
-				Story.append(Spacer(1,1*inch))
-
-				ptable_style = TableStyle([
-					('FONT', (0,0), (-1,-1), 'Times-Roman'),
-					('FONTSIZE',(0,0),(-1,-1),12)])
-
-				rstable_style = TableStyle([
-					('FONT', (0,0), (-1,-1), 'Times-Roman'),
-					('FONTSIZE',(0,0),(-1,-1),12),
-					('ALIGN',(0,0),(-1,-1),'LEFT')])
-
-				feetable_style = TableStyle([
-					('FONT', (0,0), (-1,0), 'Times-Roman'),
-					('FONTSIZE',(0,0),(-1,-1),12),
-					('ALIGN',(0,0),(-1,-1),'CENTER'),
-					('INNERGRID',(0,0),(-2,-3),0.25,colors.black),
-					('INNERGRID',(1,0),(-1,-3),0.25,colors.black),
-					('INNERGRID',(0,2),(-2,-1),0.25,colors.black),
-					('INNERGRID',(1,2),(-1,-1),0.25,colors.black),
-					('BOX',(0,0),(-1,-1),0.25,colors.black)])
-
-				rsdata = []
-				rscolwidth = (2*inch,2.5*inch,1.5*inch)
-				rsdata.append(['Registration No: ' + str(student.RegistrationNo),'','Date: ' + date.strftime("%d-%m-%Y")])
-				rsdata.append(['Name: ' + student.FirstName + ' ' + student.LastName,'','Receipt No: ' + str(id)])
-				rsdata.append(['Standard: ' + str(std),'',''])
-				rsdata.append(['Year: ' + year,'',''])
-				
-				rstable=Table(rsdata,colWidths=rscolwidth)
-				rstable.setStyle(rstable_style);
-				rstable.hAlign='LEFT'
-				Story.append(rstable)
-
-				if amount < 0:
-					amount = -amount
-					paid = "RECEIVED"
-				else:
-					paid = "PAID"
-
-				fdata = []
-				fdata.append(['Fee Type','Amount'])
-				fdata.append([feetype,str(amount)])
-				fdata.append(['',''])
-				fdata.append(['Total', str(amount)])
-				fcolwidth = (4*margin,4*margin)
-				ftable=Table(fdata, colWidths=fcolwidth)
-				ftable.setStyle(feetable_style);
-				ftable.hAlign='CENTER'
-				Story.append(ftable)
-				Story.append(Spacer(1,0.2*inch))
-
-				pdata = []
-				n2w = Num2Word_EN()
-				words = n2w.to_cardinal(amount)
-				pdata.append(['In words:', words + " only", '', ''])				
-				if cheque:
-					pdata.append(['Payment Details:',paid, "By Cheque",''])
-					pdata.append(['', "Cheque No: ", str(cheque),''])
-					pdata.append(['', "Bank: ", bank,''])
-				else:
-					pdata.append(['Payment Details:',paid, "By Cash",''])
-					pdata.append(['', "Cheque No: ", 'Nil',''])
-					pdata.append(['', "Bank: ", 'Nil',''])
-				
-				ptable=Table(pdata)
-				ptable.setStyle(ptable_style);
-				ptable.hAlign='LEFT'
-				Story.append(ptable)
-				Story.append(Spacer(1,0.8*inch))
-				
-				addSignatureSpaceToStory(Story);
-
-				Story.append(Spacer(1,1.5*inch))
-				Story.append(rstable)
-				Story.append(ftable)
-				Story.append(Spacer(1,0.2*inch))
-				Story.append(ptable)
-				Story.append(Spacer(1,0.8*inch))
-				addSignatureSpaceToStory(Story);
-
-				doc.build(Story, onFirstPage=firstPage)
-				return response
+				return print_receipt(feereceipt)
 				
 		elif request.POST['applyforfee'] == '0':
 			if form.is_valid():
@@ -244,11 +163,117 @@ def fee_receipt(request):
 				return render_to_response('fees/feeform.html', {'form': form, 'message': message, 'date':date,
 											'receiptnumber':receiptnumber, 'student':student, 'years':years })					
 
-PAGE_HEIGHT=defaultPageSize[1]; PAGE_WIDTH=defaultPageSize[0]
-styles = getSampleStyleSheet()
-margin=0.4*inch
-rmargin=0.8*inch
-lmargin=1.2*inch
+def reprint_receipt(request):
+	if request.POST:
+		receiptno = request.POST['receiptno']
+		fr = FeeReceipt.objects.filter(ReceiptNumber=receiptno)
+		if fr:
+			feerct = fr[0]
+			return print_receipt(feerct)
+	
+	return HttpResponse ('<html><body></body></html>')
+
+def print_receipt(feerct):
+	student = feerct.StudentYearlyInformation.StudentBasicInfo
+	id = feerct.ReceiptNumber
+	date = feerct.Date
+	std = feerct.StudentYearlyInformation.ClassMaster.Standard
+	year = str(feerct.StudentYearlyInformation.ClassMaster.AcademicYear)
+	amount = feerct.Amount
+	feetype = feerct.FeeType.Type
+	cheque = feerct.ChequeNo
+	bank = feerct.Bank
+	
+	response = HttpResponse(mimetype='application/pdf')
+	doc = SimpleDocTemplate(response,
+				bottomMargin=0,
+				topMargin=0,
+				leftMargin=1.2*inch,
+				rightMargin=0.8*inch)
+				
+	Story = []
+	Story.append(Spacer(1,1*inch))
+
+	ptable_style = TableStyle([
+		('FONT', (0,0), (-1,-1), 'Times-Roman'),
+		('FONTSIZE',(0,0),(-1,-1),12)])
+
+	rstable_style = TableStyle([
+		('FONT', (0,0), (-1,-1), 'Times-Roman'),
+		('FONTSIZE',(0,0),(-1,-1),12),
+		('ALIGN',(0,0),(-1,-1),'LEFT')])
+
+	feetable_style = TableStyle([
+		('FONT', (0,0), (-1,0), 'Times-Roman'),
+		('FONTSIZE',(0,0),(-1,-1),12),
+		('ALIGN',(0,0),(-1,-1),'CENTER'),
+		('INNERGRID',(0,0),(-2,-3),0.25,colors.black),
+		('INNERGRID',(1,0),(-1,-3),0.25,colors.black),
+		('INNERGRID',(0,2),(-2,-1),0.25,colors.black),
+		('INNERGRID',(1,2),(-1,-1),0.25,colors.black),
+		('BOX',(0,0),(-1,-1),0.25,colors.black)])
+
+	rsdata = []
+	rscolwidth = (2*inch,2.5*inch,1.5*inch)
+	rsdata.append(['Registration No: ' + str(student.RegistrationNo),'','Date: ' + date.strftime("%d-%m-%Y")])
+	rsdata.append(['Name: ' + student.FirstName + ' ' + student.LastName,'','Receipt No: ' + str(id)])
+	rsdata.append(['Standard: ' + str(std),'',''])
+	rsdata.append(['Year: ' + year,'',''])
+	
+	rstable=Table(rsdata,colWidths=rscolwidth)
+	rstable.setStyle(rstable_style);
+	rstable.hAlign='LEFT'
+	Story.append(rstable)
+
+	if amount < 0:
+		amount = -amount
+		paid = "RECEIVED"
+	else:
+		paid = "PAID"
+
+	fdata = []
+	fdata.append(['Fee Type','Amount'])
+	fdata.append([feetype,str(amount)])
+	fdata.append(['',''])
+	fdata.append(['Total', str(amount)])
+	fcolwidth = (4*margin,4*margin)
+	ftable=Table(fdata, colWidths=fcolwidth)
+	ftable.setStyle(feetable_style);
+	ftable.hAlign='CENTER'
+	Story.append(ftable)
+	Story.append(Spacer(1,0.2*inch))
+
+	pdata = []
+	n2w = Num2Word_EN()
+	words = n2w.to_cardinal(amount)
+	pdata.append(['In words:', words + " only", '', ''])				
+	if cheque:
+		pdata.append(['Payment Details:',paid, "By Cheque",''])
+		pdata.append(['', "Cheque No: ", str(cheque),''])
+		pdata.append(['', "Bank: ", bank,''])
+	else:
+		pdata.append(['Payment Details:',paid, "By Cash",''])
+		pdata.append(['', "Cheque No: ", 'Nil',''])
+		pdata.append(['', "Bank: ", 'Nil',''])
+				
+	ptable=Table(pdata)
+	ptable.setStyle(ptable_style);
+	ptable.hAlign='LEFT'
+	Story.append(ptable)
+	Story.append(Spacer(1,0.8*inch))
+				
+	addSignatureSpaceToStory(Story);
+
+	Story.append(Spacer(1,1.5*inch))
+	Story.append(rstable)
+	Story.append(ftable)
+	Story.append(Spacer(1,0.2*inch))
+	Story.append(ptable)
+	Story.append(Spacer(1,0.8*inch))
+	addSignatureSpaceToStory(Story);
+
+	doc.build(Story, onFirstPage=firstPage)
+	return response
 
 def addSignatureSpaceToStory(Story):
 	stable_style = TableStyle([
@@ -285,10 +310,10 @@ def firstPage(canvas, doc):
 
 def pageBorder(canvas):
     
-    canvas.line(lmargin, margin, lmargin, (PAGE_HEIGHT/2) - margin)
+    canvas.line(lmargin, tbmargin, lmargin, (PAGE_HEIGHT/2) - margin)
     canvas.line(lmargin, (PAGE_HEIGHT/2) - margin, PAGE_WIDTH - rmargin, (PAGE_HEIGHT/2) - margin)
-    canvas.line(PAGE_WIDTH - rmargin, (PAGE_HEIGHT/2) - margin, PAGE_WIDTH - rmargin, margin)
-    canvas.line(PAGE_WIDTH - rmargin, margin, lmargin, margin)
+    canvas.line(PAGE_WIDTH - rmargin, (PAGE_HEIGHT/2) - margin, PAGE_WIDTH - rmargin, tbmargin)
+    canvas.line(PAGE_WIDTH - rmargin, tbmargin, lmargin, tbmargin)
 
     canvas.line(lmargin, margin + (PAGE_HEIGHT/2), lmargin, PAGE_HEIGHT - margin)
     canvas.line(lmargin, PAGE_HEIGHT - margin, PAGE_WIDTH - rmargin, PAGE_HEIGHT - margin)
