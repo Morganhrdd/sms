@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>AddMarks</title>
+	<!-- Date: 2008-10-12 -->
+</head>
+<body>
+ 	<br/>
+	<h2>{{ test_details }}</h2>
+	<table border="1" cellspacing="5" cellpadding="0">
+		<tr><th>Roll Number</th> <th>Name</th> <th>Marks</th></tr>
+	
+	
+		<form action="" method="POST">
+			{% for row in data %}
+			<tr>
+				<td>{{ row.rollno}}</td><td>{{ row.name }}</td>
+				<td><input type="text" name="{{ row.id }}" value="" id="id_{{ row.id }}"></td><p/>
+			</tr>
+			{% endfor %}
+			<input type="hidden" name="test_id" value="{{ test_id }}" id="some_name">
+		    <td><input type="submit" value="Save" /></td>
+		</form>
+	</table>
+
+</body>
+</html>
