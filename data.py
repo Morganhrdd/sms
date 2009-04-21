@@ -9,7 +9,7 @@ from jp_sms.students.models import Project, Library
 
 from jp_sms.fees.models import FeeType, FeeReceipt
 
-def get_yrly_info(regno, year, std, div):
+def get_yrly_info(regno, year, std, div, class_type='P'):
     try:
         basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
     except:
@@ -19,7 +19,7 @@ def get_yrly_info(regno, year, std, div):
     except:
         raise 'academic year not found'
     try:
-        classmaster = ClassMaster.objects.get(Standard=std, AcademicYear=yr,Division=div)
+        classmaster = ClassMaster.objects.get(Standard=std, AcademicYear=yr,Division=div, Type=class_type)
     except:
         raise 'class master not found'
     try:
@@ -177,10 +177,12 @@ def add_attendance():
     for rx in range(2, sh.nrows):
         row = sh.row_values(rx)
         regno = row[0]
+        print row
         try:
-            yrlyinfo = get_yrly_info(regno, yr, std, div)
+            yrlyinfo = get_yrly_info(regno, yr, std, div, 'P')
         except:
             print 'yearly info not found for', regno
+            continue
         try:
             classmaster = ClassMaster.objects.get(AcademicYear=yr, Standard=std, Division=div, Type='P')
         except:
@@ -759,8 +761,8 @@ def add_yrly_info():
 #populate_competitiveexam()
 #populate_competitions()
 #populate_elocution()
-#add_attendance()
+add_attendance()
 #populate_project()
 #add_test()
-add_marks()
+#add_marks()
 sys.exit()
