@@ -776,6 +776,8 @@ def populate_physical_fitness_info():
         for x in range(1,16):
             if row[x] == '':
                 row[x] = 0
+        if row[22] == '':
+            row[22] = 0
         weight = row[1]
         height = row[2]
         ffb = row[3]
@@ -826,7 +828,7 @@ def populate_physical_fitness_info():
         phy_obj.Pratod = pratod
         phy_obj.Margadarshak = margadarshak
         phy_obj.SpecialSport = specialsport
-        phy_obj.Grade = grade
+        phy_obj.Grade = int(grade)
         phy_obj.save()
         print phy_obj, 'added in db'
 #populate_abhivyakti()
