@@ -538,6 +538,7 @@ def fillPdfData(Story, registration_nos, part_option):
         try:
             student_basic_info = StudentBasicInfo.objects.get(RegistrationNo = registration_no)
             student_yearly_infos = StudentYearlyInformation.objects.filter(StudentBasicInfo = student_basic_info)
+            student_addtional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info.RegistrationNo)
         except:
             continue
         for student_yearly_info in student_yearly_infos:
