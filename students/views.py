@@ -45,32 +45,28 @@ MONTH_CHOICES = {
 }
 
 GRADE_CHOICES = {
-    'O': 'Outstanding',
-    'E': 'Excellent',
-    'G': 'Good',
-    'S': 'Satisfactory',
-    'N': 'Needs Improvement',
-    'U': 'Unsatisfactory',
-    'A': '-',
-    '5': 'Outstanding',
-    '4': 'Excellent',
-    '3': 'Good',
-    '2': 'Satisfactory',
-    '1': 'Needs Improvement',
-    '0': 'Unsatisfactory',
-    '5.0': 'Outstanding',
-    '4.0': 'Excellent',
-    '3.0': 'Good',
-    '2.0': 'Satisfactory',
-    '1.0': 'Needs Improvement',
-    '0.0': 'Unsatisfactory',
+    6: 'Outstanding',
+    5: 'Excellent',
+    4: 'Good',
+    3: 'Satisfactory',
+    2: 'Needs Improvement',
+    1: 'Unsatisfactory',
+    0: '-',
     '': '-',
-    5: 'Outstanding',
-    4: 'Excellent',
-    3: 'Good',
-    2: 'Satisfactory',
-    1: 'Needs Improvement',
-    0: 'Unsatisfactory',
+    '6': 'Outstanding',
+    '5': 'Excellent',
+    '4': 'Good',
+    '3': 'Satisfactory',
+    '2': 'Needs Improvement',
+    '1': 'Unsatisfactory',
+    '0': '-',
+    '6.0': 'Outstanding',
+    '5.0': 'Excellent',
+    '4.0': 'Good',
+    '3.0': 'Satisfactory',
+    '2.0': 'Needs Improvement',
+    '1.0': 'Unsatisfactory',
+    '0.0': '-',
 }
 
 GRADE_NUM = {
@@ -694,7 +690,7 @@ def fillStudentAttendance(student_yearly_info, Story, class_type):
 def fillStaticAndYearlyInfo(student_yearly_info, Story):
     student_basic_info = student_yearly_info.StudentBasicInfo
     global page_footer
-    page_footer = str(student_basic_info.RegistrationNo) + "  " + student_basic_info.FirstName
+    page_footer = str(student_basic_info.RegistrationNo) + "  " + student_basic_info.FirstName + " " + student_basic_info.LastName
     
     try:
         student_addtional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info.RegistrationNo)

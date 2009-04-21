@@ -50,12 +50,12 @@ EXAM_CHOICES = (
 )
 
 GRADE_CHOICES = (
-    ('5', 'Outstanding'),
-    ('4', 'Excellent'),
-    ('3', 'Good'),
-    ('2', 'Satisfactory'),
-    ('1', 'Needs Improvement'),
-    ('0', 'Unsatisfactory'),
+    ('6', 'Outstanding'),
+    ('5', 'Excellent'),
+    ('4', 'Good'),
+    ('3', 'Satisfactory'),
+    ('2', 'Needs Improvement'),
+    ('1', 'Unsatisfactory'),
 )
 
 PROJECT_TYPE_CHOICES = (
