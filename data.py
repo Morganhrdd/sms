@@ -638,10 +638,12 @@ def populate_project():
         proj_types = {}
         proj_types['Collection, classification'] = 'CC'
         proj_types['Investigation'] = 'I'
+        proj_types['Investigation & Model Making'] = 'I'
         proj_types['Investigation by Survey'] = 'IS'
         proj_types['Creative Production'] = 'CP'
         proj_types['Appreciation, criticism'] = 'AC'
         proj_types['Open Ended'] = 'O'
+        proj_types['Open Ended Exploration'] = 'O'
         proj_type = proj_types[row[2]]
         subject = row[3]
         problemselection = str(round(row[4]))
@@ -832,12 +834,12 @@ def populate_physical_fitness_info():
         phy_obj.Grade = int(grade)
         phy_obj.save()
         print phy_obj, 'added in db'
-#populate_abhivyakti()
+populate_abhivyakti()
 #populate_competitiveexam()
 #populate_competitions()
 #populate_elocution()
-populate_physical_fitness_info()
-#populate_project()
+#populate_physical_fitness_info()
+populate_project()
 #add_test()
 #add_marks()
 sys.exit()
