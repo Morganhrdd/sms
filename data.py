@@ -668,17 +668,18 @@ def populate_project():
         proj_types['Open Ended Exploration'] = 'O'
         proj_type = proj_types[row[2]]
         subject = row[3]
-        problemselection = str(round(row[4]))
-        review = str(round(row[5]))
-        planning = str(round(row[6]))
-        documentation = str(round(row[7]))
-        communication = str(round(row[8]))
+        problemselection = int(round(row[4]))
+        review = int(round(row[5]))
+        planning = int(round(row[6]))
+        documentation = int(round(row[7]))
+        communication = int(round(row[8]))
         publiccomment = row[9]
                 
         try:
             project_obj = Project.objects.get(StudentYearlyInformation=yrlyinfo, Title=title, Subject=subject, Type=proj_type)
         except:
             project_obj = Project()
+        print row
         project_obj.StudentYearlyInformation = yrlyinfo
         project_obj.Title = title
         project_obj.Subject = subject

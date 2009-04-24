@@ -84,7 +84,7 @@ class AbhivyaktiVikasAdmin(admin.ModelAdmin):
 
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ('StudentYearlyInformation', 'Title', 'Type', 'Subject', 'ProblemSelection', 'Review', 'Planning', 'Documentation', 'Communication')
-    search_fields = ['Title', 'StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName', 'Subject', 'Type']
+    search_fields = ['Title', 'StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName', 'Subject', 'Type', 'StudentYearlyInformation__StudentBasicInfo__RegistrationNo']
 
 class ElocutionAdmin(admin.ModelAdmin):
     list_display = ('Title', 'StudentYearlyInformation', 'Memory', 'Content', 'Understanding', 'Skill', 'Presentation',)
