@@ -30,21 +30,30 @@ def get_yrly_info(regno, year, std, div, class_type='P'):
     
 
 def reg_no():
-    book = xlrd.open_workbook('REG.xls')
+    xls_file = raw_input('Enter filename: ')
+    book = xlrd.open_workbook(xls_file)
     sh = book.sheet_by_index(0)
-    for rx in range(1, sh.nrows):
+    for rx in range(1, 41):
         row = sh.row_values(rx)
+        print rx, row
         a=StudentBasicInfo()
         a.RegistrationNo = row[1]
-        a.DateOfRegistration = datetime.date(2008,11,25)
-        a.FirstName = row[4].capitalize()
-        a.LastName = row[6].capitalize()
-        tmp = xlrd.xldate_as_tuple(row[18],0)
-        x = datetime.date(tmp[0], tmp[1], tmp[2])
-        a.DateOfBirth = datetime.date(tmp[0], tmp[1], tmp[2])
-        a.Gender = row[2]
-        a.FathersName = row[5].capitalize()
-        a.MothersName = ''
+        a.DateOfRegistration = datetime.date(2009,4,30)
+        a.FirstName = row[3].capitalize()
+        a.LastName = row[4].capitalize()
+        #tmp = xlrd.xldate_as_tuple(row[18],0)
+        tmp = row[5].split('/')
+        print tmp
+        if tmp[2] == '00':
+            tmp[2] = '2000'
+        elif tmp[2] == '99':
+            tmp[2] = '1999'
+        elif tmp[2] == '98':
+            tmp[2] = '1998'
+        a.DateOfBirth = datetime.date(int(tmp[2]), int(tmp[0]), int(tmp[1]))
+        a.Gender = row[6]
+        a.FathersName = row[7].capitalize()
+        a.MothersName = row[8].capitalize()
         a.save()
 
 def add_rollno():
@@ -834,12 +843,13 @@ def populate_physical_fitness_info():
         phy_obj.Grade = int(grade)
         phy_obj.save()
         print phy_obj, 'added in db'
-populate_abhivyakti()
+#populate_abhivyakti()
 #populate_competitiveexam()
 #populate_competitions()
 #populate_elocution()
 #populate_physical_fitness_info()
-populate_project()
+#populate_project()
 #add_test()
 #add_marks()
+reg_no()
 sys.exit()
