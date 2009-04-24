@@ -480,6 +480,12 @@ def populate_abhivyakti():
         regno = row[0]
         mediumofexpression = row[1]
         teacher = row[2]
+        participation = row[3]
+        redinesstolearn = row[4]
+        continuityinwork = row[5]
+        skilldevelopment = row[6]
+        creativity = row[7]
+        
         try:
             yrlyinfo = get_yrly_info(regno, yr, std, div)
         except:
@@ -499,6 +505,11 @@ def populate_abhivyakti():
         abhivyakti_obj.StudentYearlyInformation = yrlyinfo
         abhivyakti_obj.Teacher = teacher
         abhivyakti_obj.MediumOfExpression = mediumofexpression
+        abhivyakti_obj.Participation = participation
+        abhivyakti_obj.ReadinessToLearn = redinesstolearn
+        abhivyakti_obj.ContinuityInWork = continuityinwork
+        abhivyakti_obj.SkillDevelopment = skilldevelopment
+        abhivyakti_obj.Creativity = creativity
         abhivyakti_obj.save()
         print 'Sucessfully added', abhivyakti_obj
             
@@ -843,7 +854,7 @@ def populate_physical_fitness_info():
         phy_obj.Grade = int(grade)
         phy_obj.save()
         print phy_obj, 'added in db'
-#populate_abhivyakti()
+populate_abhivyakti()
 #populate_competitiveexam()
 #populate_competitions()
 #populate_elocution()
@@ -851,5 +862,5 @@ def populate_physical_fitness_info():
 #populate_project()
 #add_test()
 #add_marks()
-reg_no()
+#reg_no()
 sys.exit()
