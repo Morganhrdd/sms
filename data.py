@@ -480,11 +480,11 @@ def populate_abhivyakti():
         regno = row[0]
         mediumofexpression = row[1]
         teacher = row[2]
-        participation = row[3]
-        redinesstolearn = row[4]
-        continuityinwork = row[5]
-        skilldevelopment = row[6]
-        creativity = row[7]
+        participation = int(row[3])
+        redinesstolearn = int(row[4])
+        continuityinwork = int(row[5])
+        skilldevelopment = int(row[6])
+        creativity = int(row[7])
         
         try:
             yrlyinfo = get_yrly_info(regno, yr, std, div)
@@ -499,9 +499,11 @@ def populate_abhivyakti():
             continue
         try:
             abhivyakti_obj = AbhivyaktiVikas.objects.get(StudentYearlyInformation=yrlyinfo, MediumOfExpression=mediumofexpression, Teacher=teacher)
+            #abhivyakti_obj.delete()
             print abhivyakti_obj, 'Already available in database'
         except:
             abhivyakti_obj = AbhivyaktiVikas()
+        print row
         abhivyakti_obj.StudentYearlyInformation = yrlyinfo
         abhivyakti_obj.Teacher = teacher
         abhivyakti_obj.MediumOfExpression = mediumofexpression

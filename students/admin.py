@@ -80,7 +80,7 @@ class CompetitionAdmin(admin.ModelAdmin):
 
 class AbhivyaktiVikasAdmin(admin.ModelAdmin):
     list_display = ('StudentYearlyInformation', 'MediumOfExpression', 'Teacher', 'Participation', 'ReadinessToLearn', 'ContinuityInWork', 'SkillDevelopment', 'Creativity')
-    search_fields = ('StudentYearlyInformation__StudentBasicInfo__FirstName', 'MediumOfExpression', 'Teacher__Name')
+    search_fields = ('StudentYearlyInformation__StudentBasicInfo__FirstName', 'MediumOfExpression', 'Teacher__Name', 'StudentYearlyInformation__StudentBasicInfo__RegistrationNo')
 
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ('StudentYearlyInformation', 'Title', 'Type', 'Subject', 'ProblemSelection', 'Review', 'Planning', 'Documentation', 'Communication')
