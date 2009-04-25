@@ -905,7 +905,7 @@ def fillAcademicReport(student_yearly_info, Story):
                 subject_test_marks[test_type] = str(marks_obtained) + " / " + str(int(maximum_marks))
                 cummulative_subject_marks = cummulative_subject_marks + marks_obtained
                 cummulative_subject_maxmarks = cummulative_subject_maxmarks + maximum_marks
-            else
+            else:
                 subject_test_marks[test_type] = "Absent"
         subject_test_marks['Total'] = str(cummulative_subject_marks) + " / " + str(int(cummulative_subject_maxmarks))
         percentage = 0
