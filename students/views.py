@@ -734,8 +734,9 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
     cumulative_maximum_marks=0
     cumulative_academics='-'
     for mark in marks:
-        cumulative_marks = cumulative_marks + mark.MarksObtained
-        cumulative_maximum_marks = cumulative_maximum_marks + mark.TestMapping.MaximumMarks
+        if mark.MarksObtained > 0:
+            cumulative_marks = cumulative_marks + mark.MarksObtained
+            cumulative_maximum_marks = cumulative_maximum_marks + mark.TestMapping.MaximumMarks
     if cumulative_maximum_marks > 0:
         cumulative_academics= str(round((cumulative_marks / cumulative_maximum_marks) * 100, 2)) + "%"
     
@@ -900,10 +901,12 @@ def fillAcademicReport(student_yearly_info, Story):
             test_type = test_mapping.TestType
             maximum_marks = test_mapping.MaximumMarks
             marks_obtained = subject_marks.MarksObtained
-            subject_test_marks[test_type] = str(marks_obtained) + " / " + str(int(maximum_marks))            
             if marks_obtained > 0:
+                subject_test_marks[test_type] = str(marks_obtained) + " / " + str(int(maximum_marks))
                 cummulative_subject_marks = cummulative_subject_marks + marks_obtained
-                cummulative_subject_maxmarks = cummulative_subject_maxmarks + maximum_marks            
+                cummulative_subject_maxmarks = cummulative_subject_maxmarks + maximum_marks
+            else
+                subject_test_marks[test_type] = "Abscent"
         subject_test_marks['Total'] = str(cummulative_subject_marks) + " / " + str(int(cummulative_subject_maxmarks))
         percentage = 0
         if cummulative_subject_maxmarks > 0:
