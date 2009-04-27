@@ -523,9 +523,9 @@ def populate_cocurricular():
     div=raw_input('Enter Division: ')
     std=raw_input('Enter Standard: ')
     book = xlrd.open_workbook(xls_file)
-    sh = book.sheet_by_index(1)
+    sh = book.sheet_by_name('Co-curricular')
     yr = AcademicYear.objects.get(Year='2008-2009')
-    for rx in range(5, 83):
+    for rx in range(1, sh.nrows):
         row = sh.row_values(rx)
         regno = row[0]
         activity = row[1]
@@ -647,7 +647,7 @@ def populate_project():
     book = xlrd.open_workbook(xls_file)
     yr = '2008-2009'
     sh = book.sheet_by_name('Projects')
-    for rx in range(0, 42):
+    for rx in range(0, sh.nrows):
         row = sh.row_values(rx)
         regno = row[0]
         try:
@@ -857,13 +857,13 @@ def populate_physical_fitness_info():
         phy_obj.Grade = int(grade)
         phy_obj.save()
         print phy_obj, 'added in db'
-populate_abhivyakti()
+#populate_abhivyakti()
 #populate_competitiveexam()
 #populate_competitions()
 #populate_elocution()
 #populate_physical_fitness_info()
 #populate_project()
 #add_test()
-#add_marks()
+add_marks()
 #reg_no()
 sys.exit()
