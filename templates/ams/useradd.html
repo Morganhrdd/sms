@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us" >
+<head>
+<title>Add user | Django site admin</title>
+<link rel="stylesheet" type="text/css" href="/media/css/forms.css" />
+
+
+
+<script type="text/javascript" src="../../../jsi18n/"></script>
+<script type="text/javascript" src="/media/js/core.js"></script>
+<script type="text/javascript" src="/media/js/admin/RelatedObjectLookups.js"></script>
+
+<meta name="robots" content="NONE,NOARCHIVE" />
+
+</head>
+
+
+<body class="ams-user change-form">
+
+<!-- Container -->
+<div id="container">
+
+    
+    <!-- Header -->
+    <div id="header">
+        <div id="branding">
+        
+<h1 id="site-name">Django administration</h1>
+
+        </div>
+        
+        <div id="user-tools">Welcome, <strong>admin</strong>. <a href="/admin/password_change/">Change password</a> / <a href="/admin/logout/">Log out</a></div>
+        
+        
+    </div>
+    <!-- END Header -->
+    
+
+<div class="breadcrumbs">
+     <a href="../../../">Home</a> &rsaquo;
+     <a href="../../">Ams</a> &rsaquo; 
+     <a href="../">Users</a> &rsaquo; 
+     Add user
+</div>
+
+    
+
+        
+
+    <!-- Content -->
+
+    <div id="content" class="colM">
+        
+        <h1>Add user</h1>
+        <div id="content-main">
+
+
+
+<form enctype="multipart/form-data" action="" method="post" id="user_form">
+<div>
+
+
+
+
+
+  <fieldset class="module aligned ">
+  
+  
+  
+      <div class="form-row Barcode  ">
+      
+      
+      <div>
+          
+              <label for="id_Barcode" class="required">Barcode:</label><input id="id_Barcode" type="text" class="vIntegerField" name="Barcode" />
+          
+          
+      </div>
+      
+      </div>
+  
+      <div class="form-row Category  ">
+      
+      
+      <div>
+
+          
+              <label for="id_Category" class="required">Category:</label><select name="Category" id="id_Category">
+<option value="" selected="selected">---------</option>
+<option value="0">Teacher</option>
+</select><a href="../../../ams/category/add/" class="add-another" id="add_id_Category" onclick="return showAddAnotherPopup(this);"> <img src="/media/img/admin/icon_addlink.gif" width="10" height="10" alt="Add Another"/></a>
+          
+          
+      </div>
+      
+      </div>
+  
+      <div class="form-row Name  ">
+      
+      
+      <div>
+
+          
+              <label for="id_Name" class="required">Name:</label><input id="id_Name" type="text" class="vTextField" name="Name" maxlength="30" />
+          
+          
+      </div>
+      
+      </div>
+  
+</fieldset>
+
+
+
+
+
+
+
+
+
+<div class="submit-row" >
+<input type="submit" value="Save" class="default" name="_save" />
+
+
+<input type="submit" value="Save and add another" name="_addanother"  />
+<input type="submit" value="Save and continue editing" name="_continue" />
+</div>
+
+
+
+   <script type="text/javascript">document.getElementById("id_Barcode").focus();</script>
+
+
+<script type="text/javascript">
+
+</script>
+
+
+</div>
+</form></div>
+
+        
+        <br class="clear" />
+    </div>
+    <!-- END Content -->
+
+    <div id="footer"></div>
+
+</div>
+<!-- END Container -->
+
+</body>
+</html>
