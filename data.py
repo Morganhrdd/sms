@@ -174,8 +174,16 @@ def add_attendance():
     xls_file = raw_input('Enter filename: ')
     div=raw_input('Enter Division: ')
     std=raw_input('Enter Standard: ')
+    attendance_type=raw_input('Enter type (P = Prashala, D = Dal): ')
     book = xlrd.open_workbook(xls_file)
-    sh = book.sheet_by_name('School Attendance')
+    if attendance_type == 'P':
+        sheet_name = 'School Attendance'
+    elif attendance_type == 'D':
+        sheet_name = 'Dal Attendance'
+    else:
+        print 'Invalid type'
+        sys.exit(1)
+    sh = book.sheet_by_name(sheet_name)
     yr = '2008-2009'
     months = [6, 7, 8, 9, 10, 11, 12, 1, 2, 3]
     row = sh.row_values(1)
@@ -193,7 +201,7 @@ def add_attendance():
             print 'yearly info not found for', regno
             continue
         try:
-            classmaster = ClassMaster.objects.get(AcademicYear=yr, Standard=std, Division=div, Type='P')
+            classmaster = ClassMaster.objects.get(AcademicYear=yr, Standard=std, Division=div, Type=attendance_type)
         except:
             print 'classmaster not in db. ', yr, std, div
             continue
@@ -224,7 +232,6 @@ def add_attendance():
             studentattendance.ActualAttendance = row[tmp]
             studentattendance.save()
             print studentattendance, 'added/updated in db'
-            
 
 
 def add_marks():
@@ -301,7 +308,7 @@ def add_marks():
                     print 'Basic info not found ', regno
                     continue
                 try:
-                    classmaster = ClassMaster.objects.get(Standard=std, AcademicYear=yr,Division=div)
+                    classmaster = ClassMaster.objects.get(Standard=std, AcademicYear=yr,Division=div, Type='P')
                 except:
                     print 'ClassMaster not found ', std, yr, div
                     continue
@@ -830,18 +837,44 @@ def populate_physical_fitness_info():
         except:
             phy_obj = PhysicalFitnessInfo()
         phy_obj.StudentYearlyInformation = yrlyinfo
-        phy_obj.Weight = round(weight,2)
+        print weight
+        if weight:
+            phy_obj.Weight = round(weight,2)
         phy_obj.Height = height
         phy_obj.FlexibleForwardBending = ffb
         phy_obj.FlexibleBackwardBending = fbb
-        phy_obj.SBJ = round(sbj,2)
-        phy_obj.VerticleJump = round(verticlejump,2)
-        phy_obj.BallThrow = round(ballthrow,2)
-        phy_obj.ShuttleRun = round(shuttlerin,2)
+        if sbj:
+            phy_obj.SBJ = round(sbj,2)
+        else:
+            phy_obj.SBJ = 0
+            
+        if verticlejump:
+            phy_obj.VerticleJump = round(verticlejump,2)
+        else:
+            phy_obj.VerticleJump = 0
+        if ballthrow:
+            phy_obj.BallThrow = round(ballthrow,2)
+        else:
+            phy_obj.BallThrow = 0
+            
+        if shuttlerin:
+            phy_obj.ShuttleRun = round(shuttlerin,2)
+        else:
+            phy_obj.ShuttleRun = 0
+        
         phy_obj.SitUps = situps
-        phy_obj.Sprint = round(sprint,2)
-        phy_obj.Running400m = round(running400m,2)
-        phy_obj.ShortPutThrow = round(shortputthrow,2)
+        if sprint:
+            phy_obj.Sprint = round(sprint,2)
+        else:
+            phy_obj.Sprint = 0
+        if running400m:
+            phy_obj.Running400m = round(int(running400m),2)
+        else:
+            phy_obj.Running400m = 0
+        if shortputthrow:
+            phy_obj.ShortPutThrow = round(shortputthrow,2)
+        else:
+            phy_obj.ShortPutThrow = 0
         phy_obj.Split = split
         if height == 0:
             phy_obj.BodyMassIndex = 0
@@ -861,9 +894,9 @@ def populate_physical_fitness_info():
 #populate_competitiveexam()
 #populate_competitions()
 #populate_elocution()
-#populate_physical_fitness_info()
+populate_physical_fitness_info()
 #populate_project()
 #add_test()
-add_marks()
+#add_marks()
 #reg_no()
 sys.exit()
