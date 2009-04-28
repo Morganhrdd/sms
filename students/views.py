@@ -27,8 +27,6 @@ import datetime
 PAGE_HEIGHT=defaultPageSize[1]; PAGE_WIDTH=defaultPageSize[0]
 styles = getSampleStyleSheet()
 
-page_footer = ""
-
 MONTH_CHOICES = {
     1: 'Jan',
     2: 'Feb',
@@ -208,7 +206,6 @@ def report(request):
                                        'PublicComment':co_cur_acts.PublicComment})
         if len(co_curricular)>0:
             cumulative_cocur_grade=GRADE_CHOICES[int(round(cumulative_cocur_grade_sum/len(co_curricular)))]        
-        print cumulative_cocur_grade
 
         competitive_exam = CompetitiveExam.objects.filter(StudentYearlyInformation = student_yearly_info)
         competitive_exam_data = []
@@ -224,7 +221,6 @@ def report(request):
                                           'PublicComment':exams.PublicComment})
         if len(competitive_exam)>0:
             cumulative_compexam_grade=GRADE_CHOICES[int(round(cumulative_compexam_grade_sum/len(competitive_exam)))]        
-        print cumulative_compexam_grade
 
         competitions = Competition.objects.filter(StudentYearlyInformation = student_yearly_info)
         competitions_data = []
@@ -240,14 +236,12 @@ def report(request):
                                           'PublicComment':comps.PublicComment})
         if len(competitions)>0:
             cumulative_comp_grade=GRADE_CHOICES[int(round(cumulative_comp_grade_sum/len(competitions)))]        
-        print cumulative_comp_grade
         
         abhivyakti_vikas = AbhivyaktiVikas.objects.filter(StudentYearlyInformation = student_yearly_info)
         abhivyakti_vikas_data = []
         cumulative_abhi_grade_sum=0
         cumulative_abhi_grade=0
         for abhi_row in abhivyakti_vikas:
-            print abhi_row.MediumOfExpression
             abhi_grade_row_sum=int(GRADE_NUM[abhi_row.Participation])+int(GRADE_NUM[abhi_row.ReadinessToLearn])+int(GRADE_NUM[abhi_row.ContinuityInWork])+int(GRADE_NUM[abhi_row.SkillDevelopment])+int(GRADE_NUM[abhi_row.Creativity])
             cumulative_abhi_grade_sum=cumulative_abhi_grade_sum+(int(abhi_grade_row_sum/5))
             abhivyakti_vikas_data.append({'MediumOfExpression':abhi_row.MediumOfExpression ,
@@ -260,15 +254,12 @@ def report(request):
                                          'PublicComment':abhi_row.PublicComment})
         if(len(abhivyakti_vikas) > 0):
             cumulative_abhi_grade=GRADE_CHOICES[int(round(cumulative_abhi_grade_sum/len(abhivyakti_vikas)))]
-        print cumulative_abhi_grade
-
 
         projects = Project.objects.filter(StudentYearlyInformation = student_yearly_info)
         project_data = []
         cumulative_project_grade_sum=0
         cumulative_project_grade=0
         for proj_row in projects:
-            print proj_row.Title
             proj_grade_row_sum=int(GRADE_NUM[proj_row.ProblemSelection])+int(GRADE_NUM[proj_row.Review])+int(GRADE_NUM[proj_row.Planning])+int(GRADE_NUM[proj_row.Documentation])+int(GRADE_NUM[proj_row.Communication])
             cumulative_project_grade_sum=cumulative_project_grade_sum+(int(proj_grade_row_sum/5))
             project_data.append({'Title':proj_row.Title ,
@@ -282,18 +273,12 @@ def report(request):
                                          'PublicComment':proj_row.PublicComment})
         if(len(projects) > 0):
             cumulative_project_grade=GRADE_CHOICES[int(round(cumulative_project_grade_sum/len(projects)))]
-        print cumulative_project_grade
-
 
         elocution = Elocution.objects.filter(StudentYearlyInformation = student_yearly_info)
         elocution_data = []
         cumulative_elocution_grade_sum=0
         cumulative_elocution_grade=0
         for elo_row in elocution:
-            print 'ELOC'
-            print elo_row.Title
-            print elo_row.Memory
-            print elo_row.Content
             elocution_grade_row_sum=int(GRADE_NUM[elo_row.Memory])+int(GRADE_NUM[elo_row.Content])+int(GRADE_NUM[elo_row.Understanding])+int(GRADE_NUM[elo_row.Skill])+int(GRADE_NUM[elo_row.Presentation])
             cumulative_elocution_grade_sum=cumulative_elocution_grade_sum+(int(elocution_grade_row_sum/5))
             elocution_data.append({'Title':elo_row.Title ,
@@ -305,7 +290,6 @@ def report(request):
                                          'PublicComment':elo_row.PublicComment})
         if(len(elocution) > 0):
             cumulative_elocution_grade=GRADE_CHOICES[int(round(cumulative_elocution_grade_sum/len(elocution)))]
-        print cumulative_elocution_grade
 
         physical_fit_info = PhysicalFitnessInfo.objects.filter(StudentYearlyInformation = student_yearly_info)
         physical_fit_info_data = []
@@ -485,8 +469,6 @@ def firstPage(canvas, doc):
 
 def laterPages(canvas, doc):
     canvas.saveState()
-    canvas.setFont('Times-Roman',8)
-    canvas.drawString(inch, 0.75 * inch, "%s" % (page_footer))
     canvas.setFont('Times-Roman',6)
     now_time = datetime.datetime.now()
     epoch_seconds = time.mktime(now_time.timetuple())
@@ -509,6 +491,9 @@ def reportPDF(request):
         registration_number_min = int(request.POST['registration_number_min'])
         registration_number_max = int(request.POST['registration_number_max'])
         part_option = int(request.POST['part_option'])
+        standard = int(request.POST['standard'])
+        division = request.POST['division']
+        year_option = request.POST['year_option']
 
         registration_numbers = []
         registration_number = registration_number_min
@@ -517,23 +502,33 @@ def reportPDF(request):
             registration_number = registration_number + 1
         print registration_numbers
         Story = []
-        fillPdfData(Story, registration_numbers, part_option)
+        fillPdfData(Story, registration_numbers, part_option, standard, division, year_option)
         print 'Filled'
         response = HttpResponse(mimetype='application/pdf')        
         doc = SimpleDocTemplate(response)        
         doc.build(Story, onFirstPage=laterPages, onLaterPages=laterPages)
-        print 'build'
+        print 'PDF Build'
         return response
     else:
-        return HttpResponse ('<html><body>Enter Range of Registration Numbers and Type of Report (0 for All & 1 to 4 for respective Part)'
+        return HttpResponse ('<html><body>'
+                             + '<P><B><BIG><BIG>Report in PDF format</BIG></BIG></B></P>'
                              + '<form action="" method="POST">'
-                             + '<input type="text" name="registration_number_min" value="0" id="registration_number_min" size="20"></td>'
-                             + '<input type="text" name="registration_number_max" value="9999" id="registration_number_max" size="20"></td>'
-                             + '<input type="text" name="part_option" value="0" id="part_option" size="20"></td>'
+                             + '<BIG>Registration Numbers: </BIG><input type="text" name="registration_number_min" value="0" id="registration_number_min" size="5"></td>'
+                             + '<BIG> to </BIG><input type="text" name="registration_number_max" value="9999" id="registration_number_max" size="5"><br /><br />'
+                             + '<BIG>Type of Report</BIG>: <input type="text" name="part_option" value="0" id="part_option" size="3"><br /><br />'
+                             + '<BIG>Standard</BIG>: <input type="text" name="standard" value="0" id="standard" size="3"><br /><br />'
+                             + '<BIG>Division </BIG>: <input type="text" name="division" value="-" id="division" size="3"><br /><br />'
+                             + 'Year: <input type="text" name="year_option" value="2008-2009" id="year_option" size="10"><br /><br />'                        
                              + '<input type="submit" value="Enter" />'
-                             + '</form></body></html>')
+                             + '</form>'
+                             + '<br /><br />'
+                             + 'Type of Report - 0 for All, 1 to 4 for respective Part<br />'
+                             + 'Standard - 5 to 10 for respective Standard, any other value for All<br />'
+                             + 'Division - B for Boys, G for Girls, any other value for for Both<br /><br />'
+                             + '<P>An unsaved PDF file will be generated.<br /> It will contain minimum 5 pages per valid registration number.<br /> At bottom-right, the number after letter P is the page number in this PDF document</P>'
+                             + '</body></html>')
 
-def fillPdfData(Story, registration_nos, part_option):
+def fillPdfData(Story, registration_nos, part_option, standard, division, year_option):
     for registration_no in registration_nos:
         try:
             student_basic_info = StudentBasicInfo.objects.get(RegistrationNo = registration_no)
@@ -542,23 +537,30 @@ def fillPdfData(Story, registration_nos, part_option):
         except:
             continue
         for student_yearly_info in student_yearly_infos:
-            year = student_yearly_info.ClassMaster.AcademicYear.Year
+            student_year = student_yearly_info.ClassMaster.AcademicYear.Year
             #Year is hardcoded
-            if year == '2008-2009':
-                print 'Filling'
-                if part_option == 0:
-                    fillStaticAndYearlyInfo(student_yearly_info, Story)
-                    fillAcademicReport(student_yearly_info, Story)
-                    fillCoCurricularReport(student_yearly_info, Story)
-                    fillOutdoorActivityReport(student_yearly_info, Story)
-                if part_option == 1:
-                    fillStaticAndYearlyInfo(student_yearly_info, Story)
-                if part_option == 2:
-                    fillAcademicReport(student_yearly_info, Story)
-                if part_option == 3:
-                    fillCoCurricularReport(student_yearly_info, Story)
-                if part_option == 4:
-                    fillOutdoorActivityReport(student_yearly_info, Story)
+            if student_year != year_option:
+                continue
+            student_standard = student_yearly_info.ClassMaster.Standard
+            if (standard >= 5) and (standard <= 10) and (student_standard != standard):
+                continue
+            student_division = student_yearly_info.ClassMaster.Division
+            if ((division == 'B') or (division == 'G')) and (student_division != division):
+                continue               
+            print 'Filling ' + str(registration_no)
+            if part_option == 0:
+                fillStaticAndYearlyInfo(student_yearly_info, Story)
+                fillAcademicReport(student_yearly_info, Story)
+                fillCoCurricularReport(student_yearly_info, Story)
+                fillOutdoorActivityReport(student_yearly_info, Story)
+            if part_option == 1:
+                fillStaticAndYearlyInfo(student_yearly_info, Story)
+            if part_option == 2:
+                fillAcademicReport(student_yearly_info, Story)
+            if part_option == 3:
+                fillCoCurricularReport(student_yearly_info, Story)
+            if part_option == 4:
+                fillOutdoorActivityReport(student_yearly_info, Story)
 
 def addTableToStory(Story,data,align):
     table_style = TableStyle([
@@ -690,15 +692,12 @@ def fillStudentAttendance(student_yearly_info, Story, class_type):
 
 def fillStaticAndYearlyInfo(student_yearly_info, Story):
     student_basic_info = student_yearly_info.StudentBasicInfo
-    global page_footer
-    page_footer = str(student_basic_info.RegistrationNo) + "  " + student_basic_info.FirstName + " " + student_basic_info.LastName
-    
+   
     try:
         student_addtional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info.RegistrationNo)
     except:
         return
     student_yearly_data = student_yearly_info
-    print student_yearly_data.Photo
     #im = Image.open(student_yearly_data.Photo)
 
     fillLetterHead(Story)
@@ -990,7 +989,10 @@ def fillCoCurricularReport(student_yearly_info, Story):
         subject = competitive_exam.Subject
         level = competitive_exam.Level
         date = competitive_exam.Date
-        grade = competitive_exam.Grade
+        try:
+            grade = GRADE_CHOICES[competitive_exam.Grade]
+        except:
+            grade = competitive_exam.Grade
         comment = competitive_exam.PublicComment
         
         addNormalTextToStory(Story,'<strong>' + 'Competitive Exam' + ' ' + str(i) + '</strong>');     
@@ -1105,7 +1107,10 @@ def fillCoCurricularReport(student_yearly_info, Story):
         objectives = coCurricular.Objectives
         date = coCurricular.Date
         guide = coCurricular.Guide
-        grade = coCurricular.Grade
+        try:
+            grade = GRADE_CHOICES[coCurricular.Grade]
+        except:
+            grade = coCurricular.Grade
         comment = coCurricular.PublicComment
 
         addNormalTextToStory(Story,'<strong>' + 'Activity'+ ' ' + str(i) + '</strong>')
@@ -1145,7 +1150,7 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         try:
             grade = GRADE_CHOICES[physical_fitness_info.Grade]
         except:
-            grade = '-'    
+            grade = physical_fitness_info.Grade    
         pathak = physical_fitness_info.Pathak
         special_sport = physical_fitness_info.SpecialSport
         comment = physical_fitness_info.PublicComment
@@ -1190,7 +1195,7 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         try:
             grade = GRADE_CHOICES[social_activity.Grade]
         except:
-            grade = '-'
+            grade = social_activity.Grade
         comment = social_activity.PublicComment
 
         addNormalTextToStory(Story,'<strong>' + 'Activity'+ ' ' + str(i) + '</strong>')
@@ -1218,7 +1223,10 @@ def fillLibraryReport(student_yearly_info, Story):
     for library in libraries:
         i = i + 1;
         books_read = library.BooksRead
-        grade = GRADE_CHOICES[library.Grade]
+        try:
+            grade = GRADE_CHOICES[library.Grade]
+        except:
+            grade = library.Grade
         comment = library.PublicComment
         data.append([i,books_read, grade, comment])
     addTableToStory(Story, data, 'CENTER')
