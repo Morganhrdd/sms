@@ -399,11 +399,17 @@ def populate_elocution():
         row = sh.row_values(rx)
         regno = row[0]
         title = row[1]
-        memory = int(round(row[2]))
-        content = int(round(row[3]))
-        understanding = int(round(row[4]))
-        skill = int(round(row[5]))
-        presentation = int(round(row[6]))
+        (memory, content, understanding, skill, presentation) = (False, False, False, False, False)
+        if row[2]:
+            memory = int(round(row[2]))
+        if row[3]:
+            content = int(round(row[3]))
+        if row[4]:
+            understanding = int(round(row[4]))
+        if row[5]:
+            skill = int(round(row[5]))
+        if row[6]:
+            presentation = int(round(row[6]))
         row = sh.row_values(rx)
         regno = row[0]
         try:
@@ -675,11 +681,17 @@ def populate_project():
         proj_types['Open Ended Exploration'] = 'O'
         proj_type = proj_types[row[2]]
         subject = row[3]
-        problemselection = int(round(row[4]))
-        review = int(round(row[5]))
-        planning = int(round(row[6]))
-        documentation = int(round(row[7]))
-        communication = int(round(row[8]))
+        (problemselection, review, planning, documentation, communication) = (False, False, False, False, False)
+        if row[4]:
+            problemselection = int(round(row[4]))
+        if row[5]:
+            review = int(round(row[5]))
+        if row[6]:
+            planning = int(round(row[6]))
+        if row[7]:
+            documentation = int(round(row[7]))
+        if row[8]:
+            communication = int(round(row[8]))
         publiccomment = row[9]
                 
         try:
@@ -893,8 +905,8 @@ def populate_physical_fitness_info():
 #populate_abhivyakti()
 #populate_competitiveexam()
 #populate_competitions()
-#populate_elocution()
-populate_physical_fitness_info()
+populate_elocution()
+#populate_physical_fitness_info()
 #populate_project()
 #add_test()
 #add_marks()
