@@ -822,21 +822,54 @@ def populate_physical_fitness_info():
                 row[x] = 0
         if row[22] == '':
             row[22] = 0
-        weight = row[1]
-        height = row[2]
-        ffb = row[3]
-        fbb = row[4]
-        sbj = row[5]
-        verticlejump = row[6]
-        ballthrow = row[7]
-        shuttlerin = row[8]
-        situps = row[9]
-        sprint = row[10]
-        running400m = row[11]
-        shortputthrow = row[12]
-        split = row[13]
-        bmi = row[14]
-        balancing = row[15]
+        (weight, height, ffb, fbb, sbj, verticlejump, ballthrow, shuttlerin, situps, sprint, running400m, shortputthrow, split, bmi, balancing) = (False for x in range(15))
+        cnt = 1
+        if row[cnt]:
+            cnt=cnt+1
+            weight = row[cnt]
+        if row[cnt]:
+            cnt=cnt+1
+            height = row[cnt]
+        if row[cnt]:
+            cnt=cnt+1
+            ffb = row[cnt]
+        if row[cnt]:
+            cnt=cnt+1
+            fbb = row[cnt]
+        if row[cnt]:
+            cnt=cnt+1
+            sbj = row[cnt]
+        if row[cnt]:
+            cnt=cnt+1
+            verticlejump = row[cnt]
+        if row[cnt]:
+            cnt=cnt+1
+            ballthrow = row[cnt]
+        if row[cnt]:
+            cnt=cnt+1
+            shuttlerin = row[cnt]
+        if row[cnt]:
+            cnt=cnt+1
+            situps = row[cnt]
+        if row[cnt]:
+            cnt=cnt+1
+            sprint = row[cnt]
+        if row[cnt]:
+            cnt=cnt+1
+            running400m = row[cnt]
+        if row[cnt]:
+            cnt=cnt+1
+            shortputthrow = row[cnt]
+        if row[cnt]:
+            cnt=cnt+1
+            split = row[cnt]
+        if row[cnt]:
+            cnt=cnt+1
+            bmi = row[cnt]
+        if row[cnt]:
+            cnt=cnt+1
+            balancing = row[cnt]
+        print "--- cnt ==="
         pri_comment = row[16]
         pub_comment = row[17]
         pathak = row[18]
