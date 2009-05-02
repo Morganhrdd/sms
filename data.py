@@ -433,15 +433,37 @@ def populate_elocution():
         print 'successfully added/saved', regno
 
 
-def populate_fee_receipts():
+def populate_fee_receipts(xls_file=None):
     print 'Fees'
     FEE_TYPE = {}
     FEE_TYPE['SCHOOL FEE'] = 'School'
     FEE_TYPE['HOSTEL FEE'] = 'Hostel'
     FEE_TYPE['OTHER'] = 'Other'
+    if not xls_file:
+        xls_file = raw_input("Enter filename: ")
+    STD={}
+    STD['2008-2009']={}
+    STD['2007-2008']={}
+    STD['2006-2007']={}
+    STD['2005-2006']={}
+    STD['2004-2005']={}
+    STD['2003-2004']={}
+
+
+    STD['2008-2009']['min'] = 5
+    STD['2008-2009']['max'] = 10
+    STD['2007-2008']['min'] = 5
+    STD['2007-2008']['max'] = 9
+    STD['2006-2007']['min'] = 5
+    STD['2006-2007']['max'] = 8
+    STD['2005-2006']['min'] = 5
+    STD['2005-2006']['max'] = 7
+    STD['2004-2005']['min'] = 5
+    STD['2004-2005']['max'] = 6
+    STD['2003-2004']['min'] = 5
+    STD['2003-2004']['max'] = 5
     
-    xls_file = raw_input("Enter filename: ")
-    yr = '2008-2009'
+    YR = ['2008-2009', '2007-2008', '2006-2007', '2005-2006', '2004-2005', '2003-2004']
     #max_rows = input("enter rows: ")
     book = xlrd.open_workbook(xls_file)
     sh = book.sheet_by_index(0)
@@ -449,67 +471,73 @@ def populate_fee_receipts():
         row = sh.row_values(rx)
         regno = row[3]
         div = False
-        if row[7] == yr and row[8] in FEE_TYPE.keys() and int(row[6]) >= 5 and int(row[6]) <= 10:
-            if int(row[6]) != 5 and row[8] == 'OTHER':
-                continue
-            print rx, row[7], row[8], FEE_TYPE.keys()
-            std = int(row[6])
-            print row
-            try:
-                basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
-            except:
-                print 'regno: ', regno, ' not found in db'
-                continue
-            if basicinfo.Gender == 'M':
-                div = 'B'
-            elif basicinfo.Gender == 'F':
-                div = 'G'
-            try:
-                classmaster = ClassMaster.objects.get(Standard=std, AcademicYear=yr,Division=div, Type='P')
-            except:
-                print 'unable to get classmaster', std, yr, div
-                continue
-            try:
-                yrlyinfo = StudentYearlyInformation.objects.get(StudentBasicInfo=basicinfo, ClassMaster=classmaster)
-            except:
-                print 'StudentYearlyInformation not found ', basicinfo, classmaster
-                yrlyinfo = StudentYearlyInformation()
-                yrlyinfo.StudentBasicInfo = basicinfo
-                yrlyinfo.ClassMaster = classmaster
-                yrlyinfo.RollNo = 0
-                yrlyinfo.Hostel = 1
-                yrlyinfo.save()
-            print yrlyinfo
-            fee_type = FEE_TYPE[row[8]]
-            fee_type_obj = FeeType.objects.get(ClassMaster=classmaster, Type=fee_type)
-            try:
-                fee_receipt_obj = FeeReceipt.objects.get(ReceiptNumber=row[1])
-                if fee_receipt_obj.FeeType != fee_type_obj:
-                    # change receipt number
-                    flag = 1
-                    row[1] = row[1]*10 + 1
-                    while flag:
-                        try:
-                            tmp_fee_receipt_obj = FeeReceipt.objects.get(ReceiptNumber=row[1])
-                            row[1] = row[1] + 1
-                        except:
-                            flag = 0
+        for yr in YR:
+            if row[7] == yr and row[8] in FEE_TYPE.keys() and int(row[6]) >= STD[yr]['min'] and int(row[6]) <= STD[yr]['max']:
+                print xls_file
+                if int(row[6]) != 5 and row[8] == 'OTHER':
+                    continue
+                print rx, row[7], row[8], FEE_TYPE.keys()
+                std = int(row[6])
+                print row
+                try:
+                    basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
+                except:
+                    print 'regno: ', regno, ' not found in db'
+                    continue
+                if basicinfo.Gender == 'M':
+                    div = 'B'
+                elif basicinfo.Gender == 'F':
+                    div = 'G'
+                try:
+                    classmaster = ClassMaster.objects.get(Standard=std, AcademicYear=yr,Division=div, Type='P')
+                except:
+                    print 'unable to get classmaster', std, yr, div
+                    continue
+                try:
+                    yrlyinfo = StudentYearlyInformation.objects.get(StudentBasicInfo=basicinfo, ClassMaster=classmaster)
+                except:
+                    print 'StudentYearlyInformation not found ', basicinfo, classmaster
+                    yrlyinfo = StudentYearlyInformation()
+                    yrlyinfo.StudentBasicInfo = basicinfo
+                    yrlyinfo.ClassMaster = classmaster
+                    yrlyinfo.RollNo = 0
+                    yrlyinfo.Hostel = 1
+                    yrlyinfo.save()
+                print yrlyinfo
+                fee_type = FEE_TYPE[row[8]]
+                try:
+                    fee_type_obj = FeeType.objects.get(ClassMaster=classmaster, Type=fee_type)
+                except:
+                    print fee_type
+                    sys.exit()
+                try:
+                    fee_receipt_obj = FeeReceipt.objects.get(ReceiptNumber=row[1])
+                    if fee_receipt_obj.FeeType != fee_type_obj:
+                        # change receipt number
+                        flag = 1
+                        row[1] = row[1]*10 + 1
+                        while flag:
+                            try:
+                                tmp_fee_receipt_obj = FeeReceipt.objects.get(ReceiptNumber=row[1])
+                                row[1] = row[1] + 1
+                            except:
+                                flag = 0
+                        fee_receipt_obj = FeeReceipt()
+                        print 'adding ---'            
+                    else:
+                        print 'updating ---'
+                except:
                     fee_receipt_obj = FeeReceipt()
                     print 'adding ---'            
-                else:
-                    print 'updating ---'
-            except:
-                fee_receipt_obj = FeeReceipt()
-                print 'adding ---'            
-            fee_receipt_obj.StudentYearlyInformation = yrlyinfo
-            fee_receipt_obj.ReceiptNumber = row[1]
-            fee_receipt_obj.FeeType = fee_type_obj
-            fee_receipt_obj.Amount = int(row[9])
-            fee_receipt_obj.Status = 1
-            #tmp = row[2].split('/')
-            tmp = xlrd.xldate_as_tuple(row[2],0)
-            fee_receipt_obj.Date = datetime.date(tmp[0], tmp[1], tmp[2]);
-            fee_receipt_obj.save()
+                fee_receipt_obj.StudentYearlyInformation = yrlyinfo
+                fee_receipt_obj.ReceiptNumber = row[1]
+                fee_receipt_obj.FeeType = fee_type_obj
+                fee_receipt_obj.Amount = int(row[9])
+                fee_receipt_obj.Status = 1
+                #tmp = row[2].split('/')
+                tmp = xlrd.xldate_as_tuple(row[2],0)
+                fee_receipt_obj.Date = datetime.date(tmp[0], tmp[1], tmp[2]);
+                fee_receipt_obj.save()
 
 def populate_abhivyakti():
     print 'Abhivyakti'
@@ -975,5 +1003,7 @@ def populate_physical_fitness_info():
 #add_test()
 #add_marks()
 #reg_no()
-populate_fee_receipts()
+populate_fee_receipts('fee1.xls')
+populate_fee_receipts('fee2.xls')
+
 sys.exit()
