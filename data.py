@@ -435,16 +435,25 @@ def populate_elocution():
 
 def populate_fee_receipts():
     print 'Fees'
+    FEE_TYPE = {}
+    FEE_TYPE['SCHOOL FEE'] = 'School'
+    FEE_TYPE['HOSTEL FEE'] = 'Hostel'
+    FEE_TYPE['OTHER'] = 'Other'
+    
     xls_file = raw_input("Enter filename: ")
-    std = '9'
     yr = '2008-2009'
+    #max_rows = input("enter rows: ")
     book = xlrd.open_workbook(xls_file)
     sh = book.sheet_by_index(0)
     for rx in range(1, sh.nrows):
         row = sh.row_values(rx)
         regno = row[3]
         div = False
-        if row[6] == std and row[7] == yr:
+        if row[7] == yr and row[8] in FEE_TYPE.keys() and int(row[6]) >= 5 and int(row[6]) <= 10:
+            if int(row[6]) != 5 and row[8] == 'OTHER':
+                continue
+            print rx, row[7], row[8], FEE_TYPE.keys()
+            std = int(row[6])
             print row
             try:
                 basicinfo = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -456,28 +465,50 @@ def populate_fee_receipts():
             elif basicinfo.Gender == 'F':
                 div = 'G'
             try:
-                classmaster = ClassMaster.objects.get(Standard=std, AcademicYear=yr,Division=div)
+                classmaster = ClassMaster.objects.get(Standard=std, AcademicYear=yr,Division=div, Type='P')
             except:
-                print 'unable to get '
+                print 'unable to get classmaster', std, yr, div
                 continue
             try:
                 yrlyinfo = StudentYearlyInformation.objects.get(StudentBasicInfo=basicinfo, ClassMaster=classmaster)
             except:
                 print 'StudentYearlyInformation not found ', basicinfo, classmaster
-                sys.exit()
-            if row[8] == 'SCHOOL FEE':
-                fee_type = 'School'
-            elif row[8] == 'HOSTEL FEE':
-                fee_type = 'Hostel'
+                yrlyinfo = StudentYearlyInformation()
+                yrlyinfo.StudentBasicInfo = basicinfo
+                yrlyinfo.ClassMaster = classmaster
+                yrlyinfo.RollNo = 0
+                yrlyinfo.Hostel = 1
+                yrlyinfo.save()
+            print yrlyinfo
+            fee_type = FEE_TYPE[row[8]]
             fee_type_obj = FeeType.objects.get(ClassMaster=classmaster, Type=fee_type)
-            fee_receipt_obj = FeeReceipt()
+            try:
+                fee_receipt_obj = FeeReceipt.objects.get(ReceiptNumber=row[1])
+                if fee_receipt_obj.FeeType != fee_type_obj:
+                    # change receipt number
+                    flag = 1
+                    row[1] = row[1]*10 + 1
+                    while flag:
+                        try:
+                            tmp_fee_receipt_obj = FeeReceipt.objects.get(ReceiptNumber=row[1])
+                            row[1] = row[1] + 1
+                        except:
+                            flag = 0
+                    fee_receipt_obj = FeeReceipt()
+                    print 'adding ---'            
+                else:
+                    print 'updating ---'
+            except:
+                fee_receipt_obj = FeeReceipt()
+                print 'adding ---'            
             fee_receipt_obj.StudentYearlyInformation = yrlyinfo
             fee_receipt_obj.ReceiptNumber = row[1]
             fee_receipt_obj.FeeType = fee_type_obj
-            fee_receipt_obj.Amount = row[9]
+            fee_receipt_obj.Amount = int(row[9])
             fee_receipt_obj.Status = 1
-            tmp = row[2].split('/')
-            fee_receipt_obj.Date = datetime.date(2008, int(tmp[0]), int(tmp[1]))
+            #tmp = row[2].split('/')
+            tmp = xlrd.xldate_as_tuple(row[2],0)
+            fee_receipt_obj.Date = datetime.date(tmp[0], tmp[1], tmp[2]);
             fee_receipt_obj.save()
 
 def populate_abhivyakti():
@@ -938,10 +969,11 @@ def populate_physical_fitness_info():
 #populate_abhivyakti()
 #populate_competitiveexam()
 #populate_competitions()
-populate_elocution()
+#populate_elocution()
 #populate_physical_fitness_info()
 #populate_project()
 #add_test()
 #add_marks()
 #reg_no()
+populate_fee_receipts()
 sys.exit()
