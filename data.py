@@ -823,6 +823,7 @@ def populate_physical_fitness_info():
         if row[22] == '':
             row[22] = 0
         (weight, height, ffb, fbb, sbj, verticlejump, ballthrow, shuttlerin, situps, sprint, running400m, shortputthrow, split, bmi, balancing) = (False for x in range(15))
+        weight = 0 # weight sathi calculatons aahet.
         cnt = 1
         if row[cnt]:
             cnt=cnt+1
@@ -882,7 +883,6 @@ def populate_physical_fitness_info():
         except:
             phy_obj = PhysicalFitnessInfo()
         phy_obj.StudentYearlyInformation = yrlyinfo
-        print weight
         if weight:
             phy_obj.Weight = round(weight,2)
         phy_obj.Height = height

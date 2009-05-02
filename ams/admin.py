@@ -67,7 +67,7 @@ class timerecordsAdmin(admin.ModelAdmin):
 class leavesAdmin(admin.ModelAdmin):
 	list_display = ('Barcode', 'ApplicationDate', 'LeaveDate', 'Type', 'Status')
 	ordering = ('Barcode',)
-	search_fields = ['Barcode__Barcode', 'LeaveDate']
+	search_fields = ['Barcode__Barcode', 'Barcode__Name', 'LeaveDate']
 	list_filter = ['LeaveDate', 'Status', 'Barcode']
 
 	def save_model(self, request, obj, form, change):
