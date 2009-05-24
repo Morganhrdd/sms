@@ -994,6 +994,30 @@ def populate_physical_fitness_info():
         phy_obj.Grade = int(grade)
         phy_obj.save()
         print phy_obj, 'added in db'
+
+def copy_yrly_info():
+    yr = AcademicYear.objects.get(Year='2009-2010')
+    prev_yr = AcademicYear.objects.get(Year='2008-2009')
+    basicinfos = StudentBasicInfo.objects.all()
+    yrly_info = []
+    stds = []
+    for bi in basicinfos:
+        if bi.Gender == 'M':
+            div = 'B'
+        elif bi.Gender == 'F':
+            div = 'G'
+        for std in stds:
+            cm_prev = ClassMaster.objects.get(AcademicYear=prev_yr, Division=div, Type='P', Standard=std)
+            cm = ClassMaster.objects.get(AcademicYear=yr, Division=div, Standard=std+1)
+            try:
+                yi = StudentYearlyInformation.objects.get(StudentBasicInfo=bi, ClassMaster=cm_prev)
+                yi.ClassMaster=cm
+                yi_new = StudentYearlyInformation(StudentBasicInfo=bi, ClassMaster=cm, RollNo=yi.RollNo, Hostel=yi.Hostel)
+                yi_new.save()
+                print yi_new
+            except:
+                pass
+copy_yrly_info()
 #populate_abhivyakti()
 #populate_competitiveexam()
 #populate_competitions()
@@ -1003,7 +1027,6 @@ def populate_physical_fitness_info():
 #add_test()
 #add_marks()
 #reg_no()
-populate_fee_receipts('fee1.xls')
-populate_fee_receipts('fee2.xls')
+#populate_fee_receipts('fee1.xls')
 
 sys.exit()
