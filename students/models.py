@@ -84,6 +84,7 @@ class StudentBasicInfo(models.Model):
     FathersName = models.CharField(max_length=60, blank=True)
     MothersName = models.CharField(max_length=60, blank=True)
     TerminationDate = models.DateField(null=True, blank=True)
+    Caste = models.CharField(max_length=50, blank=True)
     def __unicode__(self):
         return "%d-%s %s" % (self.RegistrationNo, self.FirstName, self.LastName)
     
