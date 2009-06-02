@@ -23,6 +23,7 @@ from PIL import Image
 from django.utils.safestring import mark_safe
 import time
 import datetime
+import string
 
 PAGE_HEIGHT=defaultPageSize[1]; PAGE_WIDTH=defaultPageSize[0]
 styles = getSampleStyleSheet()
@@ -40,6 +41,21 @@ MONTH_CHOICES = {
     10: 'Oct',
     11: 'Nov',
     12: 'Dec'
+}
+
+FULLMONTH_CHOICES = {
+    1: 'January',
+    2: 'February',
+    3: 'March',
+    4: 'April',
+    5: 'May',
+    6: 'June',
+    7: 'July',
+    8: 'August',
+    9: 'September',
+    10: 'October',
+    11: 'November',
+    12: 'December'
 }
 
 GRADE_CHOICES = {
@@ -101,6 +117,15 @@ PROJECT_TYPE_CHOICES = {
     'AC': 'Appreciation-criticism',
     'O': 'Open ended exploration',
 }
+
+ones = ["", "one ","two ","three ","four ", "five ", "six ","seven ","eight ","nine "]
+
+tens = ["ten ","eleven ","twelve ","thirteen ", "fourteen ",
+"fifteen ","sixteen ","seventeen ","eighteen ","nineteen "]
+
+twenties = ["","","twenty ","thirty ","forty ", "fifty ","sixty ","seventy ","eighty ","ninety "]
+
+thousands = ["","thousand ","million ", "billion ", "trillion "]
 
 # HTML Report:
 
@@ -1235,6 +1260,425 @@ def fillLibraryReport(student_yearly_info, Story):
     addSignatureSpaceToStory(Story, "","Librarian");
     Story.append(PageBreak())
 
+# PDF Certificate :	--------------------------------------------------
+
+def CertificateLaterPages(canvas, doc):
+    canvas.saveState()
+    canvas.setFont('Times-Roman',6)
+    now_time = datetime.datetime.now()
+    epoch_seconds = time.mktime(now_time.timetuple())
+    canvas.drawString(PAGE_WIDTH * 0.6, 0.75 * inch, "%s          ES%dP%d" % ("Jnana Prabodhini Prashala's Bonafide Certificate", epoch_seconds, doc.page))
+    canvas.restoreState()
+    pageBorder(canvas)
+
+def addCertificateTextToStory(Story,header_text):
+    style = ParagraphStyle(name = 'Text', fontSize = 11, alignment=TA_CENTER)
+    Story.append(Paragraph(header_text, style))
+    Story.append(Spacer(1,0.05*inch))
+
+def addCertificateNumberTextToStory(Story,header_text):
+    style = ParagraphStyle(name = 'NumberText', fontSize = 8, alignment=TA_RIGHT)
+    Story.append(Paragraph(header_text, style))
+
+def certificatePDF(request):
+    if request.POST:
+        keys = request.POST.keys()
+        registration_number_min = int(request.POST['registration_number_min'])
+        registration_number_max = int(request.POST['registration_number_max'])
+        standard = int(request.POST['standard'])
+        division = request.POST['division']
+        year_option = request.POST['year_option']
+
+        registration_numbers = []
+        registration_number = registration_number_min
+        while registration_number <= registration_number_max:
+            registration_numbers.append(registration_number)
+            registration_number = registration_number + 1
+        print registration_numbers
+        Story = []
+        fillCertificatePdfData(Story, registration_numbers, standard, division, year_option)
+        print 'Filled'
+        response = HttpResponse(mimetype='application/pdf')        
+        doc = SimpleDocTemplate(response)        
+        doc.build(Story, onFirstPage=CertificateLaterPages, onLaterPages=CertificateLaterPages)
+        print 'PDF Build'
+        return response
+    else:
+        return HttpResponse ('<html><body>'
+                             + '<P><B><BIG><BIG>Bonafide Certificate in PDF format</BIG></BIG></B></P>'
+                             + '<form action="" method="POST">'
+                             + '<BIG>Registration Numbers: </BIG><input type="text" name="registration_number_min" value="0" id="registration_number_min" size="5"></td>'
+                             + '<BIG> to </BIG><input type="text" name="registration_number_max" value="9999" id="registration_number_max" size="5"><br /><br />'
+                             + '<BIG>Standard</BIG>: <input type="text" name="standard" value="0" id="standard" size="3"><br /><br />'
+                             + '<BIG>Division </BIG>: <input type="text" name="division" value="-" id="division" size="3"><br /><br />'
+                             + 'Year: <input type="text" name="year_option" value="2008-2009" id="year_option" size="10"><br /><br />'                        
+                             + '<input type="submit" value="Enter" />'
+                             + '</form>'
+                             + '<br /><br />'
+                             + 'Standard - 5 to 10 for respective Standard, any other value for All<br />'
+                             + 'Division - B for Boys, G for Girls, any other value for for Both<br /><br />'
+                             + '<P>An unsaved PDF file will be generated.'
+                             + '<br />It will contain 1 page per valid registration number.'
+                             + '<br />At bottom-right, the number after letter P is the page number in this PDF document</P>'
+                             + '</body></html>')
+
+def fillCertificatePdfData(Story, registration_nos, standard, division, year_option):
+    for registration_no in registration_nos:
+        try:
+            student_basic_info = StudentBasicInfo.objects.get(RegistrationNo = registration_no)
+            student_yearly_infos = StudentYearlyInformation.objects.filter(StudentBasicInfo = student_basic_info)
+            student_addtional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info.RegistrationNo)
+        except:
+            continue
+        for student_yearly_info in student_yearly_infos:
+            student_year = student_yearly_info.ClassMaster.AcademicYear.Year
+            #Year is hardcoded
+            if student_year != year_option:
+                continue
+            student_standard = student_yearly_info.ClassMaster.Standard
+            if (standard >= 5) and (standard <= 10) and (student_standard != standard):
+                continue
+            student_division = student_yearly_info.ClassMaster.Division
+            if ((division == 'B') or (division == 'G')) and (student_division != division):
+                continue               
+            print 'Filling ' + str(registration_no)
+            fillCertificateHeader(Story);
+            fillCertificate(student_yearly_info, Story);
+
+def fillCertificateHeader(Story):
+    style = ParagraphStyle(name='styleName', fontName ='Times-Bold', fontSize = 18, alignment=TA_CENTER)
+    Story.append(Paragraph("Jnana Prabodhini Prashala", style))
+
+    Story.append(Spacer(1,0.1*inch))
+    
+    style = ParagraphStyle(name='styleName', fontName ='Times-Roman', fontSize = 8, alignment=TA_CENTER)
+    Story.append(Paragraph("School Affiliation No:1130001", style))
+    Story.append(Paragraph("C.B.S.E./A.I./69/(G)/12096/30/4/69", style))
+
+    style = ParagraphStyle(name='styleName', fontName ='Times-Roman', fontSize = 9, alignment=TA_CENTER)
+    Story.append(Paragraph("510, Sadashiv Peth, Pune, 411030", style))
+    Story.append(Paragraph("email: prashala@jnanaprabodhini.org", style))
+    Story.append(Paragraph("http://prashala.jnanaprabodhini.org", style))
+    Story.append(Paragraph("Tel: +91 20 24207122", style))
+
+    data = []
+    data.append(["Certificate"])
+    table_style = TableStyle([
+        ('FONT', (0,0), (-1,0), 'Times-Bold'),
+        ('ALIGN',(0,0),(-1,-1), 'CENTER'),
+        ('TEXTCOLOR',(0,0),(-1,-1),colors.black),
+        ('FONTSIZE',(0,0),(-1,-1),12),
+        ('VALIGN',(0,0),(-1,-1),'MIDDLE'),
+        ('LINEABOVE',(0,0),(0,0),1,colors.black),
+        ('LINEBELOW',(0,0),(0,0),1,colors.black)
+        ])
+    margin=0.7*inch
+    column_widths=((PAGE_WIDTH-2*(margin))*0.9)
+    table=Table(data, colWidths=column_widths)
+    table.setStyle(table_style);
+    table.hAlign = 'CENTER'
+    Story.append(table)
+
+    Story.append(Spacer(1,0.1*inch))
+
+def fillCertificate(student_yearly_info, Story):
+    student_basic_info = student_yearly_info.StudentBasicInfo
+   
+    try:
+        student_addtional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info.RegistrationNo)
+    except:
+        return
+   
+    certificateNumber = str(student_basic_info.RegistrationNo);
+    addCertificateNumberTextToStory(Story, "Certificate No. : " + certificateNumber);
+
+    schoolRegistrationNumber = str(student_basic_info.RegistrationNo);
+    addCertificateNumberTextToStory(Story, "School Registration No. : " + schoolRegistrationNumber);
+
+    Story.append(Spacer(1,0.2*inch))
+
+    now_time = datetime.datetime.now();
+    date = now_time.strftime("%d %b %Y");
+    addCertificateNumberTextToStory(Story, "Date : " + date);
+    
+    Story.append(Spacer(1,0.7*inch))
+    studentName = student_basic_info.FirstName + ' ' + student_basic_info.LastName;
+    addCertificateTextToStory(Story, "This is to certify that <strong>" + studentName + "</strong> is/was a bona fide student of");
+
+    dateOfRegistration = student_basic_info.DateOfRegistration;
+    terminationDate = student_basic_info.TerminationDate;
+    fromYear = str(dateOfRegistration.year);
+    toYear = str(terminationDate.year);
+    admissionClass="[5th]"
+    presentClass= str(student_yearly_info.ClassMaster.Standard) + "th"
+    addCertificateTextToStory(Story, "Jnana Prabodhini Prashala during the year " + "<strong>" + fromYear + "</strong>" + " to " + "<strong>" + toYear + "</strong>");
+    addCertificateTextToStory(Story, "from " + "<strong>" + admissionClass + "</strong>" + " class to " + "<strong>" + presentClass + "</strong>" + " class.");
+
+    genderMentionCapital = "He";
+    genderBelong = "his"
+    genderMentionSmall= "he";
+    if student_basic_info.Gender == "F":
+        genderMentionCapital = "She";
+        genderBelong = "her"
+        genderMentionSmall= "she";
+    
+    cast ="[Cast]"
+    addCertificateTextToStory(Story, genderMentionCapital + " belongs to " + "<strong>" + cast + "</strong>" + " category");
+
+    dateOfBirth = student_basic_info.DateOfBirth
+    birthDate = dateOfBirth.strftime("%d %b %Y");
+    addCertificateTextToStory(Story, "According to our school record, " + genderBelong + " birth date is " + "<strong>" + birthDate +"</strong>");
+
+    addCertificateTextToStory(Story, "To the best of my knowledge and belief, " + genderMentionSmall + " bears good moral character.");
+
+    Story.append(Spacer(1,0.7*inch))
+    
+    addSignatureSpaceToStory(Story, "Principal","Jnana Prabodhini Prashala");
+
+    Story.append(Spacer(1,0.1*inch))
+
+# PDF Certificate :	--------------------------------------------------
+
+def SchoolLeavingLaterPages(canvas, doc):
+    canvas.saveState()
+    canvas.setFont('Times-Roman',6)
+    now_time = datetime.datetime.now()
+    epoch_seconds = time.mktime(now_time.timetuple())
+    canvas.drawString(PAGE_WIDTH * 0.55, 0.75 * inch, "%s          ES%dP%d" % ("Jnana Prabodhini Prashala's School Leaving Certificate", epoch_seconds, doc.page))
+    canvas.restoreState()
+    pageBorder(canvas)
+
+def addSchoolLeavingTextToStory(Story,header_text):
+    style = ParagraphStyle(name = 'Text', fontSize = 11, alignment=TA_CENTER)
+    Story.append(Paragraph(header_text, style))
+    Story.append(Spacer(1,0.05*inch))
+
+def schoolLeavingPDF(request):
+    if request.POST:
+        keys = request.POST.keys()
+        registration_number_min = int(request.POST['registration_number_min'])
+        registration_number_max = int(request.POST['registration_number_max'])
+        standard = int(request.POST['standard'])
+        division = request.POST['division']
+        year_option = request.POST['year_option']
+
+        registration_numbers = []
+        registration_number = registration_number_min
+        while registration_number <= registration_number_max:
+            registration_numbers.append(registration_number)
+            registration_number = registration_number + 1
+        print registration_numbers
+        Story = []
+        fillSchoolLeavingPdfData(Story, registration_numbers, standard, division, year_option)
+        print 'Filled'
+        response = HttpResponse(mimetype='application/pdf')        
+        doc = SimpleDocTemplate(response)        
+        doc.build(Story, onFirstPage=SchoolLeavingLaterPages, onLaterPages=SchoolLeavingLaterPages)
+        print 'PDF Build'
+        return response
+    else:
+        return HttpResponse ('<html><body>'
+                             + '<P><B><BIG><BIG>Bonafide Certificate in PDF format</BIG></BIG></B></P>'
+                             + '<form action="" method="POST">'
+                             + '<BIG>Registration Numbers: </BIG><input type="text" name="registration_number_min" value="0" id="registration_number_min" size="5"></td>'
+                             + '<BIG> to </BIG><input type="text" name="registration_number_max" value="9999" id="registration_number_max" size="5"><br /><br />'
+                             + '<BIG>Standard</BIG>: <input type="text" name="standard" value="0" id="standard" size="3"><br /><br />'
+                             + '<BIG>Division </BIG>: <input type="text" name="division" value="-" id="division" size="3"><br /><br />'
+                             + 'Year: <input type="text" name="year_option" value="2008-2009" id="year_option" size="10"><br /><br />'                        
+                             + '<input type="submit" value="Enter" />'
+                             + '</form>'
+                             + '<br /><br />'
+                             + 'Standard - 5 to 10 for respective Standard, any other value for All<br />'
+                             + 'Division - B for Boys, G for Girls, any other value for for Both<br /><br />'
+                             + '<P>An unsaved PDF file will be generated.'
+                             + '<br />It will contain 1 page per valid registration number.'
+                             + '<br />At bottom-right, the number after letter P is the page number in this PDF document</P>'
+                             + '</body></html>')
+
+def fillSchoolLeavingPdfData(Story, registration_nos, standard, division, year_option):
+    for registration_no in registration_nos:
+        try:
+            student_basic_info = StudentBasicInfo.objects.get(RegistrationNo = registration_no)
+            student_yearly_infos = StudentYearlyInformation.objects.filter(StudentBasicInfo = student_basic_info)
+            student_addtional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info.RegistrationNo)
+        except:
+            continue
+        for student_yearly_info in student_yearly_infos:
+            student_year = student_yearly_info.ClassMaster.AcademicYear.Year
+            #Year is hardcoded
+            if student_year != year_option:
+                continue
+            student_standard = student_yearly_info.ClassMaster.Standard
+            if (standard >= 5) and (standard <= 10) and (student_standard != standard):
+                continue
+            student_division = student_yearly_info.ClassMaster.Division
+            if ((division == 'B') or (division == 'G')) and (student_division != division):
+                continue               
+            print 'Filling ' + str(registration_no)
+            fillSchoolLeavingHeader(Story);
+            fillSchoolLeaving(student_yearly_info, Story);
+
+def fillSchoolLeavingHeader(Story):
+    style = ParagraphStyle(name='styleName', fontName ='Times-Bold', fontSize = 18, alignment=TA_CENTER)
+    Story.append(Paragraph("Jnana Prabodhini Prashala", style))
+
+    Story.append(Spacer(1,0.1*inch))
+    
+    style = ParagraphStyle(name='styleName', fontName ='Times-Roman', fontSize = 8, alignment=TA_CENTER)
+    Story.append(Paragraph("School Affiliation No:1130001", style))
+    Story.append(Paragraph("C.B.S.E./A.I./69/(G)/12096/30/4/69", style))
+
+    style = ParagraphStyle(name='styleName', fontName ='Times-Roman', fontSize = 9, alignment=TA_CENTER)
+    Story.append(Paragraph("510, Sadashiv Peth, Pune, 411030", style))
+    Story.append(Paragraph("email: prashala@jnanaprabodhini.org", style))
+    Story.append(Paragraph("http://prashala.jnanaprabodhini.org", style))
+    Story.append(Paragraph("Tel: +91 20 24207122", style))
+
+    data = []
+    data.append(["School Leaving Certificate"])
+    table_style = TableStyle([
+        ('FONT', (0,0), (-1,0), 'Times-Bold'),
+        ('ALIGN',(0,0),(-1,-1), 'CENTER'),
+        ('TEXTCOLOR',(0,0),(-1,-1),colors.black),
+        ('FONTSIZE',(0,0),(-1,-1),12),
+        ('VALIGN',(0,0),(-1,-1),'MIDDLE'),
+        ('LINEABOVE',(0,0),(0,0),1,colors.black),
+        ('LINEBELOW',(0,0),(0,0),1,colors.black)
+        ])
+    margin=0.7*inch
+    column_widths=((PAGE_WIDTH-2*(margin))*0.9)
+    table=Table(data, colWidths=column_widths)
+    table.setStyle(table_style);
+    table.hAlign = 'CENTER'
+    Story.append(table)
+
+    Story.append(Spacer(1,0.1*inch))
+
+def fillSchoolLeaving(student_yearly_info, Story):
+    student_basic_info = student_yearly_info.StudentBasicInfo
+   
+    try:
+        student_addtional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info.RegistrationNo)
+    except:
+        return
+   
+    certificateNumber = str(student_basic_info.RegistrationNo);
+    addCertificateNumberTextToStory(Story, "School Leaving Certificate No. : " + certificateNumber);
+
+    schoolRegistrationNumber = str(student_basic_info.RegistrationNo);
+    addCertificateNumberTextToStory(Story, "School Registration No. : " + schoolRegistrationNumber);
+
+    Story.append(Spacer(1,0.2*inch))
+
+    now_time = datetime.datetime.now();
+    date = now_time.strftime("%d %b %Y");
+    addCertificateNumberTextToStory(Story, "Date : " + date);
+
+
+    studentName = student_basic_info.FirstName + ' ' + student_basic_info.LastName;
+
+    nationality = "[Indian]";
+    cast = "[Cast]";
+    place = "[Place]";
+    lastSchool = "[Last School]";
+
+    dateOfBirth = student_basic_info.DateOfBirth
+    birthDate = dateOfBirth.strftime("%d/%m/%Y");
+    birthDateInWords = int2word(dateOfBirth.day) + FULLMONTH_CHOICES[dateOfBirth.month] + " " + int2word(dateOfBirth.year);
+    birthDateInWords = birthDateInWords.upper();
+
+    dateOfRegistration = student_basic_info.DateOfRegistration;
+    dateOfRegistration = dateOfRegistration.strftime("%d %b %Y");
+    terminationDate = student_basic_info.TerminationDate;
+    terminationDate = terminationDate.strftime("%d %b %Y");
+
+    progress = "[Progress]";
+    conduct = "[Conduct]";
+    reason = "[Reason]";
+
+    Story.append(Spacer(1,0.1*inch))
+    data = []
+    data=(
+            ["Name of the Pupil: " , studentName],
+            ["Nationality: " , nationality],
+            ["Scheduled Caste or Tribe (if any): " , cast],
+            ["Place of Birth: " , place],
+            ["Date of Birth (dd/mm/yyyy): " , birthDate],
+            ["Date of Birth (in Words): " , birthDateInWords],
+            ["Last School attended: " , lastSchool],
+            ["Date of Admission: " , dateOfRegistration],
+            ["Progress: " , progress],
+            ["Conduct: " , conduct],
+            ["Date of Leaving School: " , terminationDate],
+            ["Reason of Leaving School: " , reason],
+        )
+    table=Table(data)
+    table_style = TableStyle([
+        ('FONT', (0,0), (-1,0), 'Times-Roman'),
+        ('FONTSIZE',(0,0),(-1,-1),10)])
+    table.setStyle(table_style);
+    table.hAlign='LEFT'
+    Story.append(table)
+    Story.append(Spacer(1,0.2*inch))
+
+    addSchoolLeavingTextToStory(Story, "Certified that the above information is in accordance with the School Register.");
+
+    Story.append(Spacer(1,0.7*inch))
+    
+    addSignatureSpaceToStory(Story, "Principal","Jnana Prabodhini Prashala");
+
+    Story.append(Spacer(1,0.1*inch))
+
+
+def int2word(n):
+    """
+    convert an integer number n into a string of english words
+    """
+    # break the number into groups of 3 digits using slicing
+    # each group representing hundred, thousand, million, billion, ...
+    n3 = []
+    r1 = ""
+    # create numeric string
+    ns = str(n)
+    for k in range(3, 33, 3):
+        r = ns[-k:]
+        q = len(ns) - k
+        # break if end of ns has been reached
+        if q < -2:
+            break
+        else:
+            if  q >= 0:
+                n3.append(int(r[:3]))
+            elif q >= -1:
+                n3.append(int(r[:2]))
+            elif q >= -2:
+                n3.append(int(r[:1]))
+        r1 = r
+
+    #print n3  # test
+
+    # break each group of 3 digits into
+    # ones, tens/twenties, hundreds
+    # and form a string
+    nw = ""
+    for i, x in enumerate(n3):
+        b1 = x % 10
+        b2 = (x % 100)//10
+        b3 = (x % 1000)//100
+        #print b1, b2, b3  # test
+        if x == 0:
+            continue  # skip
+        else:
+            t = thousands[i]
+        if b2 == 0:
+            nw = ones[b1] + t + nw
+        elif b2 == 1:
+            nw = tens[b1] + t + nw
+        elif b2 > 1:
+            nw = twenties[b2] + ones[b1] + t + nw
+        if b3 > 0:
+            nw = ones[b3] + "hundred " + nw
+    return nw
 
 marks_add = login_required(marks_add)
 report=login_required(report)

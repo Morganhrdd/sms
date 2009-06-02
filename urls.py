@@ -17,6 +17,8 @@ urlpatterns = patterns('',
     (r'^fee/', 'fees.views.fee_receipt'),
     (r'^fee_receipt/', 'fees.views.reprint_receipt'),
     (r'^reportPDF/', 'students.views.reportPDF'),
+    #(r'^certificatePDF/', 'students.views.certificatePDF'),
+    #(r'^schoolLeavingPDF/', 'students.views.schoolLeavingPDF'),
     #(r'^useradd/', views.user_add),
     # ... the rest of your URLs here ...
 )
