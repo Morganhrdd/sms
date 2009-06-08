@@ -92,7 +92,8 @@ class leavesAdmin(admin.ModelAdmin):
 				attendance.save()
 			else:
 				att = LeaveAttendance.objects.filter(Date=obj.LeaveDate).filter(Barcode=obj.Barcode)
-				att[0].delete()
+				if att:
+					att[0].delete()
 		obj.save()
 		
 	pass

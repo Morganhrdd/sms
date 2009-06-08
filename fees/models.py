@@ -1,6 +1,6 @@
 from django.db import models
 from django import forms
-from jp_sms.students.models import StudentBasicInfo, AcademicYear, ClassMaster, StudentYearlyInformation, STANDARD_CHOICES
+from jp_sms.students.models import StudentBasicInfo, AcademicYear, ClassMaster, StudentYearlyInformation, STANDARD_CHOICES, DIVISION_CHOICES
 
 # Create your models here.
 
@@ -35,3 +35,8 @@ class FeeForm(forms.Form):
 	Amount = forms.IntegerField(required=False)
 	ChequeNo = forms.IntegerField(required=False)
 	Bank = forms.CharField(required=False)
+	
+class FeeReportForm(forms.Form):
+	Std = forms.IntegerField(required=False)
+	Year = forms.CharField(required=False)
+	Division = forms.ChoiceField(choices=DIVISION_CHOICES)	

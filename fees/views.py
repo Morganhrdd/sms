@@ -17,8 +17,9 @@ import datetime
 from array import array
 
 from jp_sms.fees.models import StudentBasicInfo, AcademicYear, ClassMaster, StudentYearlyInformation
+from jp_sms.students.models import Scholarship
 from jp_sms.fees.models import FeeType, FeeReceipt
-from jp_sms.fees.models import FeeForm
+from jp_sms.fees.models import FeeForm, FeeReportForm
 
 from jp_sms.fees.num2word_EN import Num2Word_EN
 
@@ -135,10 +136,15 @@ def fee_receipt(request):
 				student = studentbi[0]
 
 				years = []
-				classmaster = StudentYearlyInformation.objects.filter(StudentBasicInfo=student)
+				classmaster = StudentYearlyInformation.objects.filter(StudentBasicInfo=student).order_by('-ClassMaster__Standard')
 				if classmaster:
 					for data in classmaster:
 						hostel = data.Hostel
+						tschol = 0
+						scholarship = Scholarship.objects.filter(StudentYearlyInformation=data)
+						if scholarship:
+							for schol in scholarship:
+								tschol += schol.Amount
 						feetypes = FeeType.objects.filter(ClassMaster=data.ClassMaster)
 						feeinfo = []
 						if feetypes:
@@ -156,12 +162,74 @@ def fee_receipt(request):
 									for fr in feereceipts:
 										feedateamount.append({'ReceiptNo':fr.ReceiptNumber, 'Date':fr.Date, 'Amount':fr.Amount})
 										total += fr.Amount
+								if ftype.Type == 'School':
+									amount = amount - tschol
 								feeinfo.append({'Type':ftype.Type, 'Amount':amount, 'FeeDateAmount': feedateamount, 'Total':total,
 												 'Balance':amount - total})
 						years.append({'ClassMaster':data.ClassMaster, 'FeeInfo': feeinfo})															
 
 				return render_to_response('fees/feeform.html', {'form': form, 'message': message, 'date':date,
 											'receiptnumber':receiptnumber, 'student':student, 'years':years })					
+
+def fee_report(request):
+	message = ""
+	if not request.POST:
+		form = FeeReportForm()
+		return render_to_response('fees/feereport.html', {'form': form, 'message': message})
+	else:
+		form = FeeReportForm(request.POST)
+		if form.is_valid():
+			div = form.cleaned_data['Division']
+			year = form.cleaned_data['Year']
+			std = form.cleaned_data['Std']
+			cms = ClassMaster.objects.filter(AcademicYear=year).filter(Standard=std).filter(Division=div)
+			students = []
+			if cms:
+				studentinfo = StudentYearlyInformation.objects.filter(ClassMaster=cms[0])
+			else:
+				message = "Invalid class details!"
+				return render_to_response('fees/feereport.html', {'form': form, 'message': message})
+
+			if studentinfo:
+				for data in studentinfo:
+					hostel = data.Hostel
+					tschol = 0
+					scholarship = Scholarship.objects.filter(StudentYearlyInformation=data)
+					if scholarship:
+						for schol in scholarship:
+							tschol += schol.Amount
+					feetypes = FeeType.objects.filter(ClassMaster=data.ClassMaster)
+					feeinfo = []
+					color = ''
+					if feetypes:
+						for ftype in feetypes:
+							fcolor = ''
+							amount = ftype.Amount
+							if ftype.Type == 'Hostel':
+								if hostel == 1:
+									continue
+								elif hostel == 3:
+									amount = amount / 2
+							feereceipts = FeeReceipt.objects.filter(StudentYearlyInformation=data).filter(FeeType=ftype).filter(Status=1)
+							total = 0
+							if feereceipts:
+								for fr in feereceipts:
+									total += fr.Amount
+							if ftype.Type == 'School':
+								amount = amount - tschol
+							balance = amount - total
+							if balance > 0:
+								color = 'red'
+								fcolor = 'red'
+							feeinfo.append({'Type':ftype.Type, 'Amount':amount, 'Total':total,
+											 'Balance':balance, 'Color':fcolor})
+					students.append({'Student':data.StudentBasicInfo, 'FeeInfo': feeinfo, 'Color':color})															
+				return render_to_response('fees/feereport.html', {'form': form, 'message': message, 'students':students,
+											'classmaster': cms[0] })
+			else:
+				message = "No student records found!"
+				return render_to_response('fees/feereport.html', {'form': form, 'message': message})
+									
 
 def reprint_receipt(request):
 	if request.POST:

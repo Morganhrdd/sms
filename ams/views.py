@@ -10,7 +10,7 @@ from array import array
 
 from jp_sms.ams.models import Category, User, UserStatus, TimeRecords, DayRules, TimeRules, Attendance, TempAttendance, ForgotCheckout
 from jp_sms.ams.models import Leaves, LeaveForm, LeaveRules, AcademicYear, LeaveAttendance, LeavesBalance, EncashLeaves, Overtime
-from jp_sms.ams.models import UserJoiningDate, ReportForm
+from jp_sms.ams.models import UserJoiningDate, ReportForm, DailyReportForm
 from jp_sms.ams.models import LEAVE_CHOICES, REMARK_CHOICES
 
 def get_barcode(request):
@@ -40,7 +40,7 @@ def get_barcode(request):
 				lastin = TimeRecords.objects.filter(Date=date).filter(Barcode=barcode).filter(Type='I')[0].Time
 				t1_m = lastin.hour*60 + lastin.minute
 				t2_m = time.hour*60 + time.minute
-				if t2_m - t1_m < 5:
+				if t2_m - t1_m < 30:
 					message = str(user) + " already checked in"
 					return populate_user(request,message,'ams/barcode.html')		
 		else:
@@ -51,7 +51,7 @@ def get_barcode(request):
 					lastin = lastinrec[0].Time
 					t1_m = lastin.hour*60 + lastin.minute
 					t2_m = time.hour*60 + time.minute
-					if t2_m - t1_m < 5:
+					if t2_m - t1_m < 30:
 						message = str(user) + " already checked out"
 					else:
 						message = str(user) + " entry for today already marked"
@@ -676,6 +676,66 @@ def monthly_report(request):
 					
 			return render_to_response('ams/report.html', {'form': form, 'message': message, 'report':report, 'late':late, 'half':half, 'absent':abs})		
 					
+def daily_report(request):
+	message = ""
+	if not request.POST:
+		form = DailyReportForm()
+		return render_to_response('ams/dailyreport.html', {'form': form})
+	else:
+		form = DailyReportForm(request.POST)
+		if not form.is_valid():
+			return render_to_response('ams/dailyreport.html', {'form': form})
+		else:
+			category = form.cleaned_data['Category']
+			date = form.cleaned_data['Date']
+			
+			if category:
+				users = User.objects.filter(Category=category)
+			else:
+				users = User.objects.all()
+				
+			report = []
+			late = 0
+			half = 0
+			abs = 0
+			for usr in users:
+				remark = Attendance.objects.filter(Barcode=usr).filter(Date=date)
+				timerecords = TimeRecords.objects.filter(Barcode=usr).filter(Date=date)
+
+				trin = timerecords.filter(Type='I')
+				trout = timerecords.filter(Type='O')
+				
+				if trin:
+					str1 = trin[0].Time.strftime("%H:%M:%S")
+				else:
+					str1 = "NIL"	
+				
+				if trout:
+					str2 = trout[0].Time.strftime("%H:%M:%S")
+				else:
+					str2 = "NIL"	
+				
+				if remark:
+					str3 = ""
+					for ar in remark:
+						tmp = ar.Remark
+						if tmp == 'A' or tmp == 'O':
+							abs += 1
+						if tmp == 'H' or tmp == 'F':
+							half += 1
+						if tmp == 'L' or tmp == 'E':
+							late += 1
+								
+						for tmprem in REMARK_CHOICES:
+							if tmp == tmprem[0]:
+								str3 = str3 + " " + tmprem[1]
+				else:
+					str3 = "NIL"		
+				
+				report.append({'user':usr,'ti':str1,'to':str2,'rem':str3})
+
+			return render_to_response('ams/dailyreport.html', {'form': form, 'message': message, 'report':report,
+									 'late':late, 'half':half, 'absent':abs, 'date':date})		
 
 def admin_home(request):
 	user = request.user
@@ -683,3 +743,4 @@ def admin_home(request):
 		print "superuser"
 	else:
 		print "not superuser"
+		
