@@ -1,0 +1,58 @@
+<html>
+<script language="javascript">
+
+function clearform()
+{
+ document.fee.Std.value = '';
+ document.fee.Year.value = '';
+ document.fee.Division.value = '';
+}
+
+</script>
+<body>
+<div align="center">
+
+<h2>
+Jnana Prabodhini Prashala<br/>
+510, Sadashiv Peth, Pune - 30<br/>
+</h2><br/>
+<form name="fee" action="/fee_report/" method="post">
+
+<table>
+{{ form.as_table }}
+</table>
+<br/><b>{{ message }}</b><br/><br/>
+<input type="submit" value="Check Status"/>
+<input type="button" value="Clear Form" onClick="clearform()"/>
+</form>
+
+</div>
+
+<br/><br/>
+
+<div align=center>
+<h2>
+{{classmaster.AcademicYear}} / {{classmaster.Standard}} {{classmaster.Division}}
+</h2><br/>
+
+<table align="center" border="1" cellspacing="5" cellpadding="0">
+<tr><th>Student</th><th>Fee Type</th><th>Amount</th><th>Total</th><th>Balance</th></tr>
+
+{% for row in students %}
+<tr><td><font color={{row.Color}}>{{row.Student}}</font></td>
+
+{% for frow in row.FeeInfo %}
+<td><font color={{frow.Color}}>{{frow.Type}}</font></td>
+<td><font color={{frow.Color}}>{{frow.Amount}}</font></td>
+<td><font color={{frow.Color}}>{{frow.Total}}</font></td>
+<td><font color={{frow.Color}}>{{frow.Balance}}</font></td></tr>
+</font>
+<tr><td></td>
+{% endfor %}
+</tr>
+{% endfor %}
+</table>
+</div>
+
+</body>
+</html>
