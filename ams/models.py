@@ -196,4 +196,8 @@ class ReportForm(forms.Form):
 	Barcode = forms.ModelChoiceField(queryset=User.objects.all())
 	FromDate =  forms.DateField(widget=forms.DateTimeInput)
 	ToDate =  forms.DateField(widget=forms.DateTimeInput)
+
+class DailyReportForm(forms.Form):
+	Category = forms.ModelChoiceField(queryset=Category.objects.all(), required=False)
+	Date =  forms.DateField(widget=forms.DateTimeInput)
 		

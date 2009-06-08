@@ -317,3 +317,10 @@ class Library(models.Model):
     class Meta:
         verbose_name_plural = "Libraries"
     
+class Scholarship(models.Model):
+	StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
+	Amount = models.PositiveIntegerField()
+	Notes = models.CharField(max_length=200, blank=True, null=True)
+	def __unicode__(self):
+		return "%s - %d" % (self.StudentYearlyInformation, self.Amount)
+	

@@ -2,7 +2,7 @@ from jp_sms.students.models import StudentBasicInfo, StudentAdditionalInformatio
 from jp_sms.students.models import SubjectMaster, StudentYearlyInformation, ClassMaster, TestMapping
 from jp_sms.students.models import StudentTestMarks, AttendanceMaster, StudentAttendance, PhysicalFitnessInfo
 from jp_sms.students.models import SocialActivity, CoCurricular, CompetitiveExam, Competition
-from jp_sms.students.models import AbhivyaktiVikas, Project, Elocution, Library
+from jp_sms.students.models import AbhivyaktiVikas, Project, Elocution, Library, Scholarship
 from django.contrib.auth.models import User
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
@@ -94,6 +94,10 @@ class LibraryAdmin(admin.ModelAdmin):
     list_display = ('StudentYearlyInformation', 'BooksRead', 'Grade', 'PublicComment', 'PrivateComment')
     search_fields = ['StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName', 'PublicComment', 'PrivateComment']
 
+class ScholarshipAdmin(admin.ModelAdmin):
+	list_display = ('StudentYearlyInformation', 'Amount', 'Notes')
+	search_fields = ['StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName']
+	
 admin.site.register(AttendanceMaster, AttendanceMasterAdmin)
 admin.site.register(StudentAttendance, StudentAttendanceAdmin)
 admin.site.register(StudentTestMarks, StudentTestMarksAdmin)
@@ -114,3 +118,4 @@ admin.site.register(AbhivyaktiVikas, AbhivyaktiVikasAdmin)
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Elocution, ElocutionAdmin)
 admin.site.register(Library, LibraryAdmin)
+admin.site.register(Scholarship, ScholarshipAdmin)
