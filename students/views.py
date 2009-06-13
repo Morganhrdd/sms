@@ -118,14 +118,14 @@ PROJECT_TYPE_CHOICES = {
     'O': 'Open ended exploration',
 }
 
-ones = ["", "one ","two ","three ","four ", "five ", "six ","seven ","eight ","nine "]
+ones = ["", "One ","Two ","Three ","Four ", "Five ", "Six ","Seven ","Eight ","Nine "]
 
-tens = ["ten ","eleven ","twelve ","thirteen ", "fourteen ",
-"fifteen ","sixteen ","seventeen ","eighteen ","nineteen "]
+tens = ["Ten ","Eleven ","Twelve ","Thirteen ", "Fourteen ",
+"Fifteen ","Sixteen ","Seventeen ","Eighteen ","Nineteen "]
 
-twenties = ["","","twenty ","thirty ","forty ", "fifty ","sixty ","seventy ","eighty ","ninety "]
+twenties = ["","","Twenty ","Thirty ","Forty ", "Fifty ","Sixty ","Seventy ","Eighty ","Ninety "]
 
-thousands = ["","thousand ","million ", "billion ", "trillion "]
+thousands = ["","Thousand ","Million ", "Billion ", "Trillion "]
 
 # HTML Report:
 
@@ -1406,17 +1406,25 @@ def fillCertificate(student_yearly_info, Story):
     addCertificateTextToStory(Story, "This is to certify that <strong>" + studentName + "</strong> is/was a bona fide student of");
 
     dateOfRegistration = student_basic_info.DateOfRegistration;
+    fromYear = dateOfRegistration.year;
+
     terminationDate = student_basic_info.TerminationDate;
-    fromYear = str(dateOfRegistration.year);
     try:
         toYear = str(terminationDate.year);
     except:
         now_time = datetime.datetime.now();
         toYear = str(now_time.year);
+
+    admissionClass = "______"
+    student_yearly_infos = StudentYearlyInformation.objects.filter(StudentBasicInfo = student_basic_info)
+    for yearly_info in student_yearly_infos:
+        student_year = yearly_info.ClassMaster.AcademicYear.Year
+        if student_year != fromYear:
+            continue
+        admissionClass = str(student_yearly_info.ClassMaster.Standard) + "th"
     
-    admissionClass="[5th]"
     presentClass= str(student_yearly_info.ClassMaster.Standard) + "th"
-    addCertificateTextToStory(Story, "Jnana Prabodhini Prashala during the year " + "<strong>" + fromYear + "</strong>" + " to " + "<strong>" + toYear + "</strong>");
+    addCertificateTextToStory(Story, "Jnana Prabodhini Prashala during the year " + "<strong>" + str(fromYear) + "</strong>" + " to " + "<strong>" + toYear + "</strong>");
     addCertificateTextToStory(Story, "from " + "<strong>" + admissionClass + "</strong>" + " class to " + "<strong>" + presentClass + "</strong>" + " class.");
 
     genderMentionCapital = "He";
@@ -1427,8 +1435,10 @@ def fillCertificate(student_yearly_info, Story):
         genderBelong = "her"
         genderMentionSmall= "she";
     
-    cast ="[Cast]"
-    addCertificateTextToStory(Story, genderMentionCapital + " belongs to " + "<strong>" + cast + "</strong>" + " category");
+    caste = str(student_basic_info.Caste)
+    if caste == "None":
+        caste = "______________"
+    addCertificateTextToStory(Story, genderMentionCapital + " belongs to " + "<strong>" + caste + "</strong>" + " category");
 
     dateOfBirth = student_basic_info.DateOfBirth
     birthDate = dateOfBirth.strftime("%d %b %Y");
@@ -1441,8 +1451,9 @@ def fillCertificate(student_yearly_info, Story):
     addSignatureSpaceToStory(Story, "Principal","Jnana Prabodhini Prashala");
 
     Story.append(Spacer(1,0.1*inch))
+    Story.append(PageBreak())
 
-# PDF Certificate :	--------------------------------------------------
+# PDF School Leaving :	--------------------------------------------------
 
 def SchoolLeavingLaterPages(canvas, doc):
     canvas.saveState()
@@ -1483,7 +1494,7 @@ def schoolLeavingPDF(request):
         return response
     else:
         return HttpResponse ('<html><body>'
-                             + '<P><B><BIG><BIG>Bonafide Certificate in PDF format</BIG></BIG></B></P>'
+                             + '<P><B><BIG><BIG>School Leaving Certificate in PDF format</BIG></BIG></B></P>'
                              + '<form action="" method="POST">'
                              + '<BIG>Registration Numbers: </BIG><input type="text" name="registration_number_min" value="0" id="registration_number_min" size="5"></td>'
                              + '<BIG> to </BIG><input type="text" name="registration_number_max" value="9999" id="registration_number_max" size="5"><br /><br />'
@@ -1506,11 +1517,11 @@ def fillSchoolLeavingPdfData(Story, registration_nos, standard, division, year_o
             student_basic_info = StudentBasicInfo.objects.get(RegistrationNo = registration_no)
             student_yearly_infos = StudentYearlyInformation.objects.filter(StudentBasicInfo = student_basic_info)
             student_addtional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info.RegistrationNo)
+            #termination_year = student_basic_info.TerminationDate.year
         except:
             continue
         for student_yearly_info in student_yearly_infos:
             student_year = student_yearly_info.ClassMaster.AcademicYear.Year
-            #Year is hardcoded
             if student_year != year_option:
                 continue
             student_standard = student_yearly_info.ClassMaster.Standard
@@ -1579,23 +1590,28 @@ def fillSchoolLeaving(student_yearly_info, Story):
     date = now_time.strftime("%d %b %Y");
     addCertificateNumberTextToStory(Story, "Date : " + date);
 
+    terminationDate = student_basic_info.TerminationDate;
+    try:
+        terminationDate = terminationDate.strftime("%d %b %Y");
+    except:
+        terminationDate = "NOT AVAILABLE"
+        addSchoolLeavingTextToStory(Story, "CERTIFICATE IS NOT VALID as Date of Leaving School is not available")
 
     studentName = student_basic_info.FirstName + ' ' + student_basic_info.LastName;
 
     nationality = "[Indian]";
-    cast = "[Cast]";
+    caste = str(student_basic_info.Caste)
+    if caste == "None":
+        caste = ""
     place = "[Place]";
     lastSchool = "[Last School]";
 
     dateOfBirth = student_basic_info.DateOfBirth
     birthDate = dateOfBirth.strftime("%d/%m/%Y");
     birthDateInWords = int2word(dateOfBirth.day) + FULLMONTH_CHOICES[dateOfBirth.month] + " " + int2word(dateOfBirth.year);
-    birthDateInWords = birthDateInWords.upper();
 
     dateOfRegistration = student_basic_info.DateOfRegistration;
     dateOfRegistration = dateOfRegistration.strftime("%d %b %Y");
-    terminationDate = student_basic_info.TerminationDate;
-    terminationDate = terminationDate.strftime("%d %b %Y");
 
     progress = "[Progress]";
     conduct = "[Conduct]";
@@ -1606,7 +1622,7 @@ def fillSchoolLeaving(student_yearly_info, Story):
     data=(
             ["Name of the Pupil: " , studentName],
             ["Nationality: " , nationality],
-            ["Scheduled Caste or Tribe (if any): " , cast],
+            ["Scheduled Caste or Tribe (if any): " , caste],
             ["Place of Birth: " , place],
             ["Date of Birth (dd/mm/yyyy): " , birthDate],
             ["Date of Birth (in Words): " , birthDateInWords],
@@ -1633,7 +1649,7 @@ def fillSchoolLeaving(student_yearly_info, Story):
     addSignatureSpaceToStory(Story, "Principal","Jnana Prabodhini Prashala");
 
     Story.append(Spacer(1,0.1*inch))
-
+    Story.append(PageBreak())
 
 def int2word(n):
     """
@@ -1682,7 +1698,7 @@ def int2word(n):
         elif b2 > 1:
             nw = twenties[b2] + ones[b1] + t + nw
         if b3 > 0:
-            nw = ones[b3] + "hundred " + nw
+            nw = ones[b3] + "Hundred " + nw
     return nw
 
 marks_add = login_required(marks_add)
