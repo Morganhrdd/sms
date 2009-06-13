@@ -1408,7 +1408,12 @@ def fillCertificate(student_yearly_info, Story):
     dateOfRegistration = student_basic_info.DateOfRegistration;
     terminationDate = student_basic_info.TerminationDate;
     fromYear = str(dateOfRegistration.year);
-    toYear = str(terminationDate.year);
+    try:
+        toYear = str(terminationDate.year);
+    except:
+        now_time = datetime.datetime.now();
+        toYear = str(now_time.year);
+    
     admissionClass="[5th]"
     presentClass= str(student_yearly_info.ClassMaster.Standard) + "th"
     addCertificateTextToStory(Story, "Jnana Prabodhini Prashala during the year " + "<strong>" + fromYear + "</strong>" + " to " + "<strong>" + toYear + "</strong>");
