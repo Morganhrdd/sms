@@ -15,6 +15,7 @@ from reportlab.lib import colors
 import os
 import datetime
 from array import array
+from django.contrib.auth.decorators import login_required
 
 from jp_sms.fees.models import StudentBasicInfo, AcademicYear, ClassMaster, StudentYearlyInformation
 from jp_sms.students.models import Scholarship
@@ -387,3 +388,8 @@ def pageBorder(canvas):
     canvas.line(lmargin, PAGE_HEIGHT - margin, PAGE_WIDTH - rmargin, PAGE_HEIGHT - margin)
     canvas.line(PAGE_WIDTH - rmargin,  PAGE_HEIGHT - margin, PAGE_WIDTH - rmargin, (PAGE_HEIGHT/2) + margin)
     canvas.line(PAGE_WIDTH - rmargin, (PAGE_HEIGHT/2) + margin, lmargin, margin + (PAGE_HEIGHT/2))
+
+
+fee_receipt = login_required(fee_receipt)
+fee_report = login_required(fee_report)
+reprint_receipt = login_required(reprint_receipt)
