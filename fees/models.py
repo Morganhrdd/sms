@@ -52,3 +52,6 @@ class FeeReportForm(forms.Form):
 	Year = forms.CharField(required=True)
 	Division = forms.ChoiceField(choices=FEE_DIVISION_CHOICES)
 	Show = forms.ChoiceField(choices=FEE_FILTER_CHOICES)
+
+class FeeCollectionForm(forms.Form):
+	Date =  forms.DateField(widget=forms.DateTimeInput)

@@ -20,7 +20,7 @@ from django.contrib.auth.decorators import login_required
 from jp_sms.fees.models import StudentBasicInfo, AcademicYear, ClassMaster, StudentYearlyInformation
 from jp_sms.students.models import Scholarship
 from jp_sms.fees.models import FeeType, FeeReceipt
-from jp_sms.fees.models import FeeForm, FeeReportForm
+from jp_sms.fees.models import FeeForm, FeeReportForm, FeeCollectionForm
 
 from jp_sms.fees.num2word_EN import Num2Word_EN
 
@@ -244,6 +244,34 @@ def fee_report(request):
 		else:
 			return render_to_response('fees/feereport.html', {'form': form, 'message': message})
 		
+def fee_collection(request):
+	message = ""
+	if not request.POST:
+		form = FeeCollectionForm()
+		return render_to_response('fees/feecollection.html', {'form': form, 'message': message})
+	else:
+		form = FeeCollectionForm(request.POST)
+		if not form.is_valid():
+			return render_to_response('fees/feecollection.html', {'form': form, 'message': message})
+		
+		date = form.cleaned_data['Date']
+		frs = FeeReceipt.objects.filter(Date=date).filter(Status=1)
+		if frs:
+			feereceipts = []
+			totalcash = 0
+			totalcheque = 0
+			for fr in frs:
+				if fr.ChequeNo:
+					feereceipts.append({'receipt':fr, 'payment':fr.ChequeNo})
+					totalcheque += fr.Amount
+				else:
+					feereceipts.append({'receipt':fr, 'payment':'Cash'})
+					totalcash += fr.Amount
+			return render_to_response('fees/feecollection.html', {'form': form, 'message': message, 'receipts':feereceipts, 'date':date, 'totalcash':totalcash, 'totalcheque':totalcheque, 'grandtotal':totalcash + totalcheque})
+		else:
+			message = "No fee receipts for given date"
+			return render_to_response('fees/feecollection.html', {'form': form, 'message': message})
+
 
 def reprint_receipt(request):
 	if request.POST:
@@ -406,3 +434,4 @@ def pageBorder(canvas):
 fee_receipt = login_required(fee_receipt)
 fee_report = login_required(fee_report)
 reprint_receipt = login_required(reprint_receipt)
+fee_collection = login_required(fee_collection)
