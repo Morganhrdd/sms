@@ -52,15 +52,15 @@ Leave Application Form
 </div>
 <br/>
 
-<div id="LeaveBalance" name="LeaveBalance" style="position:absolute;left:200;top:430">
+<div id="LeaveBalance" name="LeaveBalance" style="position:absolute;left:100;top:430">
 <h3>
 Leave Balance
 </h3><br/>
 	<table border="1" cellspacing="5" cellpadding="0">
-	<tr><th>Leave type</th><th>Balance</th></tr>
-	<tr><td>Casual</td><td>{{ balance.1 }}</td></tr>
-	<tr><td>Sick</td><td>{{ balance.2 }}</td></tr>
-	<tr><td>Earned</td><td>{{ balance.3 }}</td></tr>
+	<tr><th>Leave type</th><th>Carry</th><th>Current</th><th>Balance</th></tr>
+	<tr><td>Casual</td><td>{{ carryforward.1 }}</td><td>{{ currentleaves.1 }}</td><td>{{ balance.1 }}</td></tr>
+	<tr><td>Sick</td><td>{{ carryforward.2 }}</td><td>{{ currentleaves.2 }}</td><td>{{ balance.2 }}</td></tr>
+	<tr><td>Earned</td><td>{{ carryforward.3 }}</td><td>{{ currentleaves.3 }}</td><td>{{ balance.3 }}</td></tr>
 	</table>
 </div>
 
