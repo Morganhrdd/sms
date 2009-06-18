@@ -322,7 +322,7 @@ function clockUpdate()
 <table>
 {% for row in come %}
 <tr>
-<td>{{ row.user.Barcode}}</td>
+<td><font color={{row.color}}>{{ row.user.Barcode}}</font></td>
 </tr>
 {% endfor %}
 </table>
@@ -334,7 +334,7 @@ function clockUpdate()
 <table>
 {% for row in gone %}
 <tr>
-<td>{{ row.user.Barcode}}</td>
+<td><font color={{row.color}}>{{ row.user.Barcode}}</font></td>
 </tr>
 {% endfor %}
 </table>
@@ -346,7 +346,7 @@ function clockUpdate()
 <table>
 {% for row in absent %}
 <tr>
-<td>{{ row.user.Barcode}} ({{ row.remark }})</td>
+<td><font color={{row.color}}>{{ row.user.Barcode}} ({{ row.remark }})</font></td>
 </tr>
 {% endfor %}
 </table>
