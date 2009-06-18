@@ -536,6 +536,8 @@ def app_leave(request):
 
 		data = []
 		balance = [0,0,0,0,0,0,0,0]
+		carryforward = [0,0,0,0,0,0,0,0]
+		currentleaves = [0,0,0,0,0,0,0,0]
 		for type in LEAVE_CHOICES:
 			leavetype = type[0]
 			lrule = LeaveRules.objects.filter(Category=category).filter(Type=leavetype)
@@ -543,9 +545,11 @@ def app_leave(request):
 				total = LeaveRules.objects.filter(Category=category).filter(Type=leavetype)[0].Days
 			else:
 				total = 0
+			currentleaves[leavetype] = total	
 			lvbalance = LeavesBalance.objects.filter(Barcode=barcode).filter(Type=leavetype)
 			if lvbalance:
 				total += lvbalance[0].Days
+				carryforward[leavetype] = lvbalance[0].Days
 				
 			pending = pendingleaves.filter(Type=leavetype).count()
 			approve = approveleaves.filter(Type=leavetype).count()
@@ -604,7 +608,8 @@ def app_leave(request):
 			balance[1] -= total_subtract
 
 		return render_to_response('ams/leaveapp.html', {'datedata':datedata,'form': form, 'data': data, 'message': message, 'abdays': abdays,
-									 'absentdays': absentdays, 'latedays': latedays, 'hfdays':hfdays, 'halfdays': halfdays, 'balance': balance})
+									 'absentdays': absentdays, 'latedays': latedays, 'hfdays':hfdays, 'halfdays': halfdays, 'balance': balance,
+									 'carryforward': carryforward, 'currentleaves': currentleaves})
 
 def monthly_report(request):
 	message = ""
