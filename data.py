@@ -32,28 +32,29 @@ def get_yrly_info(regno, year, std, div, class_type='P'):
 def reg_no():
     xls_file = raw_input('Enter filename: ')
     book = xlrd.open_workbook(xls_file)
-    sh = book.sheet_by_index(0)
-    for rx in range(1, 41):
+    sh = book.sheet_by_index(1)
+    for rx in range(0, 40):
         row = sh.row_values(rx)
         print rx, row
         a=StudentBasicInfo()
-        a.RegistrationNo = row[1]
-        a.DateOfRegistration = datetime.date(2009,4,30)
-        a.FirstName = row[3].capitalize()
-        a.LastName = row[4].capitalize()
-        #tmp = xlrd.xldate_as_tuple(row[18],0)
-        tmp = row[5].split('/')
-        print tmp
-        if tmp[2] == '00':
-            tmp[2] = '2000'
-        elif tmp[2] == '99':
-            tmp[2] = '1999'
-        elif tmp[2] == '98':
-            tmp[2] = '1998'
-        a.DateOfBirth = datetime.date(int(tmp[2]), int(tmp[0]), int(tmp[1]))
-        a.Gender = row[6]
-        a.FathersName = row[7].capitalize()
-        a.MothersName = row[8].capitalize()
+        a.RegistrationNo = row[0]
+        a.DateOfRegistration = datetime.date(2008,4,24)
+        a.FirstName = row[2].capitalize()
+        a.LastName = row[3].capitalize()
+        #tmp = xlrd.xldate_as_tuple(row[4],0)
+        #print tmp
+        tmp = row[4].split('/')
+        #if tmp[2] == '00':
+        #    tmp[2] = '2000'
+        #elif tmp[2] == '99':
+        #    tmp[2] = '1999'
+        #elif tmp[2] == '98':
+        #    tmp[2] = '1998'
+        a.DateOfBirth = datetime.date(int(tmp[2]), int(tmp[1]), int(tmp[0]))
+        a.Gender = row[5]
+        a.FathersName = row[6].capitalize()
+        #a.MothersName = row[8].capitalize()
+        a.Caste = row[9]
         a.save()
 
 def add_rollno():
@@ -1017,7 +1018,7 @@ def copy_yrly_info():
                 print yi_new
             except:
                 pass
-copy_yrly_info()
+#copy_yrly_info()
 #populate_abhivyakti()
 #populate_competitiveexam()
 #populate_competitions()
@@ -1026,7 +1027,7 @@ copy_yrly_info()
 #populate_project()
 #add_test()
 #add_marks()
-#reg_no()
+reg_no()
 #populate_fee_receipts('fee1.xls')
 
 sys.exit()
