@@ -1,12 +1,23 @@
 from django.db import models
 from django import forms
-from jp_sms.students.models import StudentBasicInfo, AcademicYear, ClassMaster, StudentYearlyInformation, STANDARD_CHOICES, DIVISION_CHOICES
+from jp_sms.students.models import StudentBasicInfo, AcademicYear, ClassMaster, StudentYearlyInformation, STANDARD_CHOICES
 
 # Create your models here.
 
 RECEIPT_CHOICES = (
     (1, 'Valid'),
     (2, 'Cancel'),
+)
+
+FEE_FILTER_CHOICES = (
+	(1, 'All'),
+	(2, 'Defaulters')
+)
+
+FEE_DIVISION_CHOICES = (
+    ('A', 'All'),
+    ('G', 'Girls'),
+    ('B', 'Boys'),
 )
 
 class FeeType(models.Model):
@@ -38,5 +49,6 @@ class FeeForm(forms.Form):
 	
 class FeeReportForm(forms.Form):
 	Std = forms.IntegerField(required=False)
-	Year = forms.CharField(required=False)
-	Division = forms.ChoiceField(choices=DIVISION_CHOICES)	
+	Year = forms.CharField(required=True)
+	Division = forms.ChoiceField(choices=FEE_DIVISION_CHOICES)
+	Show = forms.ChoiceField(choices=FEE_FILTER_CHOICES)

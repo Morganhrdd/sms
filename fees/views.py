@@ -183,54 +183,67 @@ def fee_report(request):
 			div = form.cleaned_data['Division']
 			year = form.cleaned_data['Year']
 			std = form.cleaned_data['Std']
-			cms = ClassMaster.objects.filter(AcademicYear=year).filter(Standard=std).filter(Division=div)
-			students = []
-			if cms:
-				studentinfo = StudentYearlyInformation.objects.filter(ClassMaster=cms[0])
-			else:
-				message = "Invalid class details!"
-				return render_to_response('fees/feereport.html', {'form': form, 'message': message})
+			show = form.cleaned_data['Show']
+			cms = ClassMaster.objects.filter(AcademicYear=year)
+			if std:
+				cms = cms.filter(Standard=std)
+			if div != 'A':
+				cms = cms.filter(Division=div)
 
-			if studentinfo:
-				for data in studentinfo:
-					hostel = data.Hostel
-					tschol = 0
-					scholarship = Scholarship.objects.filter(StudentYearlyInformation=data)
-					if scholarship:
-						for schol in scholarship:
-							tschol += schol.Amount
-					feetypes = FeeType.objects.filter(ClassMaster=data.ClassMaster)
-					feeinfo = []
-					color = ''
-					if feetypes:
-						for ftype in feetypes:
-							fcolor = ''
-							amount = ftype.Amount
-							if ftype.Type == 'Hostel':
-								if hostel == 1:
-									continue
-								elif hostel == 3:
-									amount = amount / 2
-							feereceipts = FeeReceipt.objects.filter(StudentYearlyInformation=data).filter(FeeType=ftype).filter(Status=1)
-							total = 0
-							if feereceipts:
-								for fr in feereceipts:
-									total += fr.Amount
-							if ftype.Type == 'School':
-								amount = amount - tschol
-							balance = amount - total
-							if balance > 0:
-								color = 'red'
-								fcolor = 'red'
-							feeinfo.append({'Type':ftype.Type, 'Amount':amount, 'Total':total,
-											 'Balance':balance, 'Color':fcolor})
-					students.append({'Student':data.StudentBasicInfo, 'FeeInfo': feeinfo, 'Color':color})															
-				return render_to_response('fees/feereport.html', {'form': form, 'message': message, 'students':students,
-											'classmaster': cms[0] })
-			else:
-				message = "No student records found!"
+			students = []
+			if not cms:
+				message = "No matching records found!"
 				return render_to_response('fees/feereport.html', {'form': form, 'message': message})
-									
+			else:
+				studentsfound = 0
+				for cm in cms.all():
+					studentinfo = StudentYearlyInformation.objects.filter(ClassMaster=cm)
+					if studentinfo:
+						studentsfound = 1
+						for data in studentinfo:
+							hostel = data.Hostel
+							tschol = 0
+							scholarship = Scholarship.objects.filter(StudentYearlyInformation=data)
+							if scholarship:
+								for schol in scholarship:
+									tschol += schol.Amount
+							feetypes = FeeType.objects.filter(ClassMaster=data.ClassMaster)
+							feeinfo = []
+							color = ''
+							if feetypes:
+								for ftype in feetypes:
+									fcolor = ''
+									amount = ftype.Amount
+									if ftype.Type == 'Hostel':
+										if hostel == 1:
+											continue
+										elif hostel == 3:
+											amount = amount / 2
+									feereceipts = FeeReceipt.objects.filter(StudentYearlyInformation=data).filter(FeeType=ftype).filter(Status=1)
+									total = 0
+									if feereceipts:
+										for fr in feereceipts:
+											total += fr.Amount
+									if ftype.Type == 'School':
+										amount = amount - tschol
+									balance = amount - total
+									if balance > 0:
+										color = 'red'
+										fcolor = 'red'
+									feeinfo.append({'Type':ftype.Type, 'Amount':amount, 'Total':total,
+													 'Balance':balance, 'Color':fcolor})
+							if show == '1' or color == 'red':
+								students.append({'Student':data.StudentBasicInfo, 'FeeInfo': feeinfo, 'Color':color, 'YearlyInfo':data})
+				
+				if studentsfound:
+					return render_to_response('fees/feereport.html', {'form': form, 'message': message, 'students':students,
+											'classmaster': cms[0] })
+				else:
+					message = "No student records found!"
+					return render_to_response('fees/feereport.html', {'form': form, 'message': message})
+		else:
+			return render_to_response('fees/feereport.html', {'form': form, 'message': message})
+		
 
 def reprint_receipt(request):
 	if request.POST:
