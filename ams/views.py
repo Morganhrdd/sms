@@ -299,80 +299,109 @@ def populate_user(request,message,template):
 	date = dt.date()
 
 	for usr in usersout:
+		user_out = 0
+		absent_remark = ''
+		color = ''
+		rem = ''
 		attrcd = Attendance.objects.filter(Date=date).filter(Barcode=usr.Barcode)
 		if attrcd:
-			gone.append({'user': usr})
+			user_out = 1
 			rem = attrcd[0].Remark
 			if rem == 'O':
-				absent.append({'user': usr, 'remark': 'OnLeave'})
+				absent_remark = 'OnLeave'
 			elif rem == 'D':
-				absent.append({'user': usr, 'remark': 'OnDuty'})
+				absent_remark = 'OnDuty'
 			elif rem == 'C':
-				absent.append({'user': usr, 'remark': 'Compensatory Off'})
+				absent_remark = 'Compensatory Off'
 			if rem == 'F':
 				leaves = Leaves.objects.filter(LeaveDate=date).filter(Barcode=usr.Barcode)
 				if leaves:
 					lchoice = leaves[0].Type
 					if lchoice == 5:
-						absent.append({'user': usr, 'remark': 'First Half'})
+						absent_remark = 'First Half'
 					elif lchoice == 6:
-						absent.append({'user': usr, 'remark': 'Second Half'})
+						absent_remark = 'Seconf Half'
+
 		lattrcd = LeaveAttendance.objects.filter(Date=date).filter(Barcode=usr.Barcode)
 		if lattrcd:
 			rem = lattrcd[0].Remark
 			if rem == 'O':
-				absent.append({'user': usr, 'remark': 'OnLeave'})
+				absent_remark = 'OnLeave'
 			elif rem == 'D':
-				absent.append({'user': usr, 'remark': 'OnDuty'})
+				absent_remark = 'OnDuty'
 			elif rem == 'C':
-				absent.append({'user': usr, 'remark': 'Compensatory Off'})
+				absent_remark = 'Compensatory Off'
 			if rem == 'F':
 				leaves = Leaves.objects.filter(LeaveDate=date).filter(Barcode=usr.Barcode)
 				if leaves:
 					lchoice = leaves[0].Type
 					if lchoice == 5:
-						absent.append({'user': usr, 'remark': 'First Half'})
+						absent_remark = 'First Half'
 					elif lchoice == 6:
-						absent.append({'user': usr, 'remark': 'Second Half'})
+						absent_remark = 'Seconf Half'
+
+		if absent_remark != '' and rem != 'F' and rem != 'D' and user_out == 1:
+			color = 'red'
+
+		if absent_remark != '':
+			absent.append({'user': usr, 'remark': absent_remark, 'color':color})
+		
+		if user_out == 1:
+			gone.append({'user': usr, 'color': color})
+
 		if not attrcd and not lattrcd:
 			yettocome.append({'user': usr})
 
 	for usr in usersin:
+		user_in = 0
+		absent_remark = ''
+		color = ''
+		rem = ''
 		attrcd = Attendance.objects.filter(Date=date).filter(Barcode=usr.Barcode)
 		if attrcd:
-			come.append	({'user': usr})
+			user_in = 1
 			rem = attrcd[0].Remark
 			if rem == 'O':
-				absent.append({'user': usr, 'remark': 'OnLeave'})
+				absent_remark = 'OnLeave'
 			elif rem == 'D':
-				absent.append({'user': usr, 'remark': 'OnDuty'})
+				absent_remark = 'OnDuty'
 			elif rem == 'C':
-				absent.append({'user': usr, 'remark': 'Compensatory Off'})
+				absent_remark = 'Compensatory Off'
 			if rem == 'F':
 				leaves = Leaves.objects.filter(LeaveDate=date).filter(Barcode=usr.Barcode)
 				if leaves:
 					lchoice = leaves[0].Type
 					if lchoice == 5:
-						absent.append({'user': usr, 'remark': 'First Half'})
+						absent_remark = 'First Half'
 					elif lchoice == 6:
-						absent.append({'user': usr, 'remark': 'Second Half'})
+						absent_remark = 'Second Half'
 		lattrcd = LeaveAttendance.objects.filter(Date=date).filter(Barcode=usr.Barcode)
 		if lattrcd:
 			rem = lattrcd[0].Remark
 			if rem == 'O':
-				absent.append({'user': usr, 'remark': 'OnLeave'})
+				absent_remark = 'OnLeave'
 			elif rem == 'D':
-				absent.append({'user': usr, 'remark': 'OnDuty'})
+				absent_remark = 'OnDuty'
 			elif rem == 'C':
-				absent.append({'user': usr, 'remark': 'Compensatory Off'})
+				absent_remark = 'Compensatory Off'
 			if rem == 'F':
 				leaves = Leaves.objects.filter(LeaveDate=date).filter(Barcode=usr.Barcode)
 				if leaves:
 					lchoice = leaves[0].Type
 					if lchoice == 5:
-						absent.append({'user': usr, 'remark': 'First Half'})
+						absent_remark = 'First Half'
 					elif lchoice == 6:
-						absent.append({'user': usr, 'remark': 'Second Half'})
+						absent_remark = 'Second Half'
+
+		if absent_remark != '' and rem != 'F' and rem != 'D' and user_in == 1:
+			color = 'red'
+
+		if absent_remark != '':
+			absent.append({'user': usr, 'remark': absent_remark, 'color':color})
+		
+		if user_in == 1:
+			come.append({'user': usr, 'color': color})
+
 		if not attrcd and not lattrcd:
 			usr.Status = 'O'
 			usr.save()
