@@ -1599,12 +1599,12 @@ def fillSchoolLeaving(student_yearly_info, Story):
 
     studentName = student_basic_info.FirstName + ' ' + student_basic_info.LastName;
 
-    nationality = "[Indian]";
+    nationality = student_basic_info.Nationality;
     caste = str(student_basic_info.Caste)
     if caste == "None":
         caste = ""
-    place = "[Place]";
-    lastSchool = "[Last School]";
+    place = student_basic_info.BirthPlace;
+    lastSchool = student_basic_info.PreviousSchool;
 
     dateOfBirth = student_basic_info.DateOfBirth
     birthDate = dateOfBirth.strftime("%d/%m/%Y");
@@ -1613,9 +1613,9 @@ def fillSchoolLeaving(student_yearly_info, Story):
     dateOfRegistration = student_basic_info.DateOfRegistration;
     dateOfRegistration = dateOfRegistration.strftime("%d %b %Y");
 
-    progress = "[Progress]";
-    conduct = "[Conduct]";
-    reason = "[Reason]";
+    progress = "";
+    conduct = "";
+    reason = student_basic_info.ReasonOfLeavingSchool;
 
     Story.append(Spacer(1,0.1*inch))
     data = []
