@@ -86,3 +86,6 @@ INSTALLED_APPS = (
     'jp_sms.ams',
     'jp_sms.fees',
 )
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 600
