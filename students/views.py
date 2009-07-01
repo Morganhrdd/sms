@@ -1516,8 +1516,6 @@ def fillSchoolLeavingPdfData(Story, registration_nos, standard, division, year_o
         try:
             student_basic_info = StudentBasicInfo.objects.get(RegistrationNo = registration_no)
             student_yearly_infos = StudentYearlyInformation.objects.filter(StudentBasicInfo = student_basic_info)
-            student_addtional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info.RegistrationNo)
-            #termination_year = student_basic_info.TerminationDate.year
         except:
             continue
         for student_yearly_info in student_yearly_infos:
@@ -1572,12 +1570,7 @@ def fillSchoolLeavingHeader(Story):
 
 def fillSchoolLeaving(student_yearly_info, Story):
     student_basic_info = student_yearly_info.StudentBasicInfo
-   
-    try:
-        student_addtional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info.RegistrationNo)
-    except:
-        return
-   
+     
     certificateNumber = str(student_basic_info.RegistrationNo);
     addCertificateNumberTextToStory(Story, "School Leaving Certificate No. : " + certificateNumber);
 
