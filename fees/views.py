@@ -218,11 +218,11 @@ def fee_report(request):
 							feeinfo = []
 							#color = ''
 							defaulter = 0
+							style_opentag = ''
+							style_closetag = ''
 							if feetypes:
 								for ftype in feetypes:
 									#fcolor = ''
-									style_opentag = ''
-									style_closetag = ''
 									fstyle_opentag = ''
 									fstyle_closetag = ''
 									amount = ftype.Amount
