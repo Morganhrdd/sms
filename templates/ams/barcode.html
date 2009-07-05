@@ -299,11 +299,11 @@ Barcode&nbsp;&nbsp;
 <th>Users:On Leave</th>
 <tr>
 
-<td align="center">
+<td align="center" valign="top">
 <table>
 {% for row in forgotcheckout %}
 <tr>
-<td>{{ row.user.Barcode}}({{ row.user.Date|date:"D d M Y"}})</td>
+<td><a href="/admin/ams/timerecords/add/?Barcode={{row.user.Barcode.Barcode}}&Type=O&Date={{row.user.Date}}">{{ row.user.Barcode}}({{ row.user.Date|date:"D d M Y"}})</a></td>
 </tr>
 {% endfor %}
 </table>
@@ -311,7 +311,7 @@ Barcode&nbsp;&nbsp;
 <td width="50">
 </td>
 
-<td align="center">
+<td align="center" valign="top">
 <table>
 {% for row in yettocome %}
 <tr>
@@ -323,7 +323,7 @@ Barcode&nbsp;&nbsp;
 <td width="50">
 </td>
 
-<td align="center">
+<td align="center" valign="top">
 <table>
 {% for row in come %}
 <tr>
@@ -335,7 +335,7 @@ Barcode&nbsp;&nbsp;
 <td width="50">
 </td>
 
-<td align="center">
+<td align="center" valign="top">
 <table>
 {% for row in gone %}
 <tr>
@@ -347,7 +347,7 @@ Barcode&nbsp;&nbsp;
 <td width="50">
 </td>
 
-<td align="center">
+<td align="center" valign="top">
 <table>
 {% for row in absent %}
 <tr>

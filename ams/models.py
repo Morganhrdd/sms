@@ -163,7 +163,7 @@ class Leaves(models.Model):
 class LeavesBalance(models.Model):
 	Barcode = models.ForeignKey(User)
 	Type = models.PositiveIntegerField(choices=LEAVE_CHOICES)
-	Days = models.PositiveIntegerField()
+	Days = models.FloatField()
 
 class LeaveRules(models.Model):
 	Category = models.ForeignKey(Category)
