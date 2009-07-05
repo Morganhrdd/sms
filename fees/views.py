@@ -163,10 +163,15 @@ def fee_receipt(request):
 									for fr in feereceipts:
 										feedateamount.append({'ReceiptNo':fr.ReceiptNumber, 'Date':fr.Date, 'Amount':fr.Amount})
 										total += fr.Amount
-								if ftype.Type == 'School':
-									amount = amount - tschol
-								feeinfo.append({'Type':ftype.Type, 'Amount':amount, 'FeeDateAmount': feedateamount, 'Total':total,
-												 'Balance':amount - total})
+								if ftype.Type == 'School' and tschol > 0:
+									total += tschol
+									scholarship = []
+									scholarship.append({'Amount': tschol})
+									feeinfo.append({'Type':ftype.Type, 'Amount':amount, 'FeeDateAmount': feedateamount, 'Total':total,
+										'Balance':amount - total, 'Scholarship': scholarship})
+								else:
+									feeinfo.append({'Type':ftype.Type, 'Amount':amount, 'FeeDateAmount': feedateamount, 'Total':total,
+										'Balance':amount - total})
 						years.append({'ClassMaster':data.ClassMaster, 'FeeInfo': feeinfo})															
 
 				return render_to_response('fees/feeform.html', {'form': form, 'message': message, 'date':date,
@@ -174,6 +179,8 @@ def fee_receipt(request):
 
 def fee_report(request):
 	message = ""
+	STYLE_OPEN_TAG = '<b>'
+	STYLE_CLOSE_TAG = '</b>'
 	if not request.POST:
 		form = FeeReportForm()
 		return render_to_response('fees/feereport.html', {'form': form, 'message': message})
@@ -209,10 +216,15 @@ def fee_report(request):
 									tschol += schol.Amount
 							feetypes = FeeType.objects.filter(ClassMaster=data.ClassMaster)
 							feeinfo = []
-							color = ''
+							#color = ''
+							defaulter = 0
 							if feetypes:
 								for ftype in feetypes:
-									fcolor = ''
+									#fcolor = ''
+									style_opentag = ''
+									style_closetag = ''
+									fstyle_opentag = ''
+									fstyle_closetag = ''
 									amount = ftype.Amount
 									if ftype.Type == 'Hostel':
 										if hostel == 1:
@@ -225,16 +237,25 @@ def fee_report(request):
 										for fr in feereceipts:
 											total += fr.Amount
 									if ftype.Type == 'School':
-										amount = amount - tschol
+										total += tschol
 									balance = amount - total
 									if balance > 0:
-										color = 'red'
-										fcolor = 'red'
+										defaulter = 1
+										#color = 'red'
+										#fcolor = 'red'
+										style_opentag = STYLE_OPEN_TAG
+										style_closetag = STYLE_CLOSE_TAG
+										fstyle_opentag = STYLE_OPEN_TAG
+										fstyle_closetag = STYLE_CLOSE_TAG
 									feeinfo.append({'Type':ftype.Type, 'Amount':amount, 'Total':total,
-													 'Balance':balance, 'Color':fcolor})
-							if show == '1' or color == 'red':
-								students.append({'Student':data.StudentBasicInfo, 'FeeInfo': feeinfo, 'Color':color, 'YearlyInfo':data})
-				
+										'Balance':balance, 'FStyleOpenTag':fstyle_opentag, 'FStyleCloseTag':fstyle_closetag})
+							if tschol > 0:
+								feeinfo.append({'Type':'Scholarship', 'Amount':tschol, 'Total':'-',
+													 'Balance':'-'})
+							if show == '1' or defaulter == 1:
+								students.append({'Student':data.StudentBasicInfo, 'FeeInfo': feeinfo,
+								'YearlyInfo':data, 'StyleOpenTag':style_opentag, 'StyleCloseTag':style_closetag})
+
 				if studentsfound:
 					return render_to_response('fees/feereport.html', {'form': form, 'message': message, 'students':students,
 											'classmaster': cms[0] })

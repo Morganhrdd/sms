@@ -197,7 +197,7 @@ def get_barcode(request):
 						remark = 'A'
 					elif time < timerule.HalfOut:
 						attendance = Attendance()
-						attendance.Barcode = barcode
+						attendance.Barcode = user
 						attendance.Remark = 'E'
 						attendance.Date = date
 						attendance.Year = AcademicYear.objects.filter(Status=1)[0]
@@ -216,7 +216,7 @@ def get_barcode(request):
 						remark = 'L'
 					else:
 						attendance = Attendance()
-						attendance.Barcode = barcode
+						attendance.Barcode = user
 						attendance.Remark = rem
 						attendance.Date = date
 						attendance.Year = AcademicYear.objects.filter(Status=1)[0]
@@ -224,7 +224,7 @@ def get_barcode(request):
 						
 						if time < timerule.HalfOut:
 							attendance = Attendance()
-							attendance.Barcode = barcode
+							attendance.Barcode = user
 							attendance.Remark = 'E'
 							attendance.Date = date
 							attendance.Year = AcademicYear.objects.filter(Status=1)[0]
@@ -251,7 +251,7 @@ def get_barcode(request):
 							tattendance.delete()
 						if time < timerule.TimeOut:
 							attendance = Attendance()
-							attendance.Barcode = barcode
+							attendance.Barcode = user
 							attendance.Remark = 'E'
 							attendance.Date = date
 							attendance.Year = AcademicYear.objects.filter(Status=1)[0]
@@ -420,12 +420,12 @@ def populate_user(request,message,template):
 					break
 			forgot.save()
 	
-	usersforgot = ForgotCheckout.objects.filter(Status=1)		
+	usersforgot = ForgotCheckout.objects.filter(Status=1).order_by('Date')		
 	for usr in usersforgot:
 		forgotcheckout.append({'user': usr})
 
 	# Find pending requests for template ams/display.html
-	pendingleaves = Leaves.objects.filter(Status=1)
+	pendingleaves = Leaves.objects.filter(Status=1).order_by('LeaveDate')
 	leaves = []
 	if pendingleaves:
 		for pleave in pendingleaves:
@@ -567,6 +567,7 @@ def app_leave(request):
 		balance = [0,0,0,0,0,0,0,0]
 		carryforward = [0,0,0,0,0,0,0,0]
 		currentleaves = [0,0,0,0,0,0,0,0]
+		takenleaves = [0,0,0,0,0,0,0,0]
 		for type in LEAVE_CHOICES:
 			leavetype = type[0]
 			lrule = LeaveRules.objects.filter(Category=category).filter(Type=leavetype)
@@ -583,6 +584,7 @@ def app_leave(request):
 			pending = pendingleaves.filter(Type=leavetype).count()
 			approve = approveleaves.filter(Type=leavetype).count()
 			balance[leavetype] = total - approve - pending
+			takenleaves[leavetype] = approve + pending
 			data.append({'type':type[1], 'total':total, 'approve': approve, 'pending':pending, 'balance':total - approve - pending })
 
 		approveenleaves = EncashLeaves.objects.filter(Barcode=barcode).filter(Status=2)
@@ -602,14 +604,11 @@ def app_leave(request):
 			leavetype = type[0]
 			pleaves = pendingleaves.filter(Type=leavetype)
 			for leave in pleaves:
-				print type[1]
-				print leave.LeaveDate
 				pendingdates.append(leave.LeaveDate)
 			aleaves = approveleaves.filter(Type=leavetype)
 			for leave in aleaves:
 				approvedates.append(leave.LeaveDate)
 			datedata.append({'type':type[1], 'approve': approvedates, 'pending':pendingdates})
-		print datedata
 			
 		adays = Attendance.objects.filter(Barcode=barcode).filter(Remark='A').filter(Year=acadyear)
 		latedays = Attendance.objects.filter(Barcode=barcode).filter(Remark='L').filter(Year=acadyear).count()
@@ -631,14 +630,18 @@ def app_leave(request):
 		total_subtract = (((latedays / 3) + halfdays + (-balance[5]) + (-balance[6])) / 2.0)  + absentdays
 		if total_subtract > balance[1]:
 			total_subtract -= balance[1]
+			takenleaves[1] = carryforward[1] + currentleaves[1]
+			takenleaves[3] = total_subtract
 			balance[1] = 0
 			balance[3] -= total_subtract
 		else:
 			balance[1] -= total_subtract
+			takenleaves[1] += total_subtract
 
 		return render_to_response('ams/leaveapp.html', {'datedata':datedata,'form': form, 'data': data, 'message': message, 'abdays': abdays,
-									 'absentdays': absentdays, 'latedays': latedays, 'hfdays':hfdays, 'halfdays': halfdays, 'balance': balance,
-									 'carryforward': carryforward, 'currentleaves': currentleaves})
+									 'absentdays': absentdays, 'latedays': latedays, 'hfdays':hfdays, 'halfdays': halfdays,
+									 'balance': balance, 'carryforward': carryforward, 'currentleaves': currentleaves,
+									 'takenleaves': takenleaves})
 
 def monthly_report(request):
 	message = ""

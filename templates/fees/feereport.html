@@ -40,13 +40,13 @@ Jnana Prabodhini Prashala<br/>
 <tr><th>Student</th><th>Class</th><th>Fee Type</th><th>Amount</th><th>Total</th><th>Balance</th></tr>
 
 {% for row in students %}
-<tr><td><font color={{row.Color}}>{{row.Student}}</font></td><td><font color={{row.Color}}>{{row.YearlyInfo.ClassMaster}}</font></td>
+<tr><td>{{row.StyleOpenTag|safe}} {{row.Student}} {{row.StyleCloseTag|safe}}</td><td>{{row.StyleOpenTag|safe}} {{row.YearlyInfo.ClassMaster}} {{row.StyleCloseTag|safe}}</td>
 
 {% for frow in row.FeeInfo %}
-<td><font color={{frow.Color}}>{{frow.Type}}</font></td>
-<td><font color={{frow.Color}}>{{frow.Amount}}</font></td>
-<td><font color={{frow.Color}}>{{frow.Total}}</font></td>
-<td><font color={{frow.Color}}>{{frow.Balance}}</font></td></tr>
+<td>{{frow.FStyleOpenTag|safe}} {{frow.Type}} {{frow.FStyleCloseTag|safe}}</td>
+<td>{{frow.FStyleOpenTag|safe}} {{frow.Amount}} {{frow.FStyleCloseTag|safe}}</td>
+<td>{{frow.FStyleOpenTag|safe}} {{frow.Total}} {{frow.FStyleCloseTag|safe}}</td>
+<td>{{frow.FStyleOpenTag|safe}} {{frow.Balance}} {{frow.FStyleCloseTag|safe}}</td></tr>
 </font>
 <tr><td></td><td></td>
 {% endfor %}
