@@ -164,11 +164,11 @@ def fee_receipt(request):
 										feedateamount.append({'ReceiptNo':fr.ReceiptNumber, 'Date':fr.Date, 'Amount':fr.Amount})
 										total += fr.Amount
 								if ftype.Type == 'School' and tschol > 0:
-									total += tschol
+									#total += tschol
 									scholarship = []
 									scholarship.append({'Amount': tschol})
 									feeinfo.append({'Type':ftype.Type, 'Amount':amount, 'FeeDateAmount': feedateamount, 'Total':total,
-										'Balance':amount - total, 'Scholarship': scholarship})
+										'Balance':amount - total - tschol, 'Scholarship': scholarship})
 								else:
 									feeinfo.append({'Type':ftype.Type, 'Amount':amount, 'FeeDateAmount': feedateamount, 'Total':total,
 										'Balance':amount - total})
@@ -236,9 +236,10 @@ def fee_report(request):
 									if feereceipts:
 										for fr in feereceipts:
 											total += fr.Amount
-									if ftype.Type == 'School':
-										total += tschol
 									balance = amount - total
+									if ftype.Type == 'School':
+										#total += tschol
+										balance -= tschol
 									if balance > 0:
 										defaulter = 1
 										#color = 'red'

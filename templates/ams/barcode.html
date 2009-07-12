@@ -303,7 +303,7 @@ Barcode&nbsp;&nbsp;
 <table>
 {% for row in forgotcheckout %}
 <tr>
-<td><a href="/admin/ams/timerecords/add/?Barcode={{row.user.Barcode.Barcode}}&Type=O&Date={{row.user.Date}}">{{ row.user.Barcode}}({{ row.user.Date|date:"D d M Y"}})</a></td>
+<td>{{ row.user.Barcode}}({{ row.user.Date|date:"D d M Y"}})</td>
 </tr>
 {% endfor %}
 </table>
