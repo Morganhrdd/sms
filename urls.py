@@ -23,6 +23,7 @@ urlpatterns = patterns('',
     (r'^schoolLeavingPDF/', 'students.views.schoolLeavingPDF'),
     (r'^fee_collection/', 'fees.views.fee_collection'),
     (r'^accounts/login/$', 'django.contrib.auth.views.login'),
+    (r'^ams_dayrules/', 'ams.views.add_dayrules'),
     #(r'^useradd/', views.user_add),
     # ... the rest of your URLs here ...
 )
