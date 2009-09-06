@@ -10,8 +10,11 @@ from array import array
 
 from jp_sms.ams.models import Category, User, UserStatus, TimeRecords, DayRules, TimeRules, Attendance, TempAttendance, ForgotCheckout
 from jp_sms.ams.models import Leaves, LeaveForm, LeaveRules, AcademicYear, LeaveAttendance, LeavesBalance, EncashLeaves, Overtime
-from jp_sms.ams.models import UserJoiningDate, ReportForm, DailyReportForm
-from jp_sms.ams.models import LEAVE_CHOICES, REMARK_CHOICES
+from jp_sms.ams.models import UserJoiningDate, ReportForm, DailyReportForm, DayRulesForm
+from jp_sms.ams.models import LEAVE_CHOICES, REMARK_CHOICES, DAY_CHOICES
+
+CATEGORY_ALL=Category.objects.get(Description='ALL')
+HOLIDAY_RULE='Holiday'
 
 def get_barcode(request):
 	message = ""
@@ -73,15 +76,19 @@ def get_barcode(request):
 		if not dayrule:
 			dayrule = DayRules.objects.filter(Date=date).filter(Category=category)
 			if not dayrule:
-				dayrule = DayRules.objects.filter(Day=day).filter(Barcode=barcode)
-				if not dayrule:
-					dayrule = DayRules.objects.filter(Day=day).filter(Category=category)
+				dayrule = DayRules.objects.filter(Date=date).filter(Category=CATEGORY_ALL)
+				if not dayrule:			
+					dayrule = DayRules.objects.filter(Day=day).filter(Barcode=barcode)
+					if not dayrule:
+						dayrule = DayRules.objects.filter(Day=day).filter(Category=category)
+						if not dayrule:
+							dayrule = DayRules.objects.filter(Day=day).filter(Category=CATEGORY_ALL)
 					
 		if dayrule:
 			timerule = dayrule[0].Type
 
 			if status == 'I':
-				if timerule.Type == 'Holiday':
+				if timerule.Type == HOLIDAY_RULE:
 					remark = 'S'
 					attendance = Attendance()
 					attendance.Barcode = user
@@ -167,10 +174,15 @@ def get_barcode(request):
 						if not dayruleh:
 							dayruleh = DayRules.objects.filter(Date=date).filter(Category=category)
 							if not dayruleh:
-								dayruleh = DayRules.objects.filter(Day=day).filter(Barcode=barcode)
+								dayruleh = DayRules.objects.filter(Date=date).filter(Category=CATEGORY_ALL)
 								if not dayruleh:
-									dayruleh = DayRules.objects.filter(Day=day).filter(Category=category)
-						if (dayruleh) and (dayruleh[0].Type.Type == 'Holiday'):
+									dayruleh = DayRules.objects.filter(Day=day).filter(Barcode=barcode)
+									if not dayruleh:
+										dayruleh = DayRules.objects.filter(Day=day).filter(Category=category)
+										if not dayruleh:
+											dayruleh = DayRules.objects.filter(Day=day).filter(Category=CATEGORY_ALL)
+											
+						if (dayruleh) and (dayruleh[0].Type.Type == HOLIDAY_RULE):
 							premark = 'S'
 						else:
 							leaveattendance = LeaveAttendance.objects.filter(Date=date).filter(Barcode=barcode)
@@ -280,7 +292,7 @@ def get_barcode(request):
 					message = message + " as " + tmprem[1]
  
 		else:
-			print "No day rule found"
+			message = "No day rule found. Contact administrator."
 			
 	return populate_user(request,message,'ams/barcode.html')		
 	
@@ -466,10 +478,15 @@ def app_leave(request):
 						if not dayruleh:
 							dayruleh = DayRules.objects.filter(Date=date).filter(Category=category)
 							if not dayruleh:
-								dayruleh = DayRules.objects.filter(Day=day).filter(Barcode=barcode.Barcode)
+								dayruleh = DayRules.objects.filter(Date=date).filter(Category=CATEGORY_ALL)
 								if not dayruleh:
-									dayruleh = DayRules.objects.filter(Day=day).filter(Category=category)
-						if (dayruleh) and (dayruleh[0].Type.Type == 'Holiday'):
+									dayruleh = DayRules.objects.filter(Day=day).filter(Barcode=barcode.Barcode)
+									if not dayruleh:
+										dayruleh = DayRules.objects.filter(Day=day).filter(Category=category)
+										if not dayruleh:
+											dayruleh = DayRules.objects.filter(Day=day).filter(Category=CATEGORY_ALL)
+											
+						if (dayruleh) and (dayruleh[0].Type.Type == HOLIDAY_RULE):
 							pass
 						else:
 							prevapp = Leaves.objects.filter(LeaveDate=date).filter(Barcode=barcode)
@@ -773,6 +790,109 @@ def daily_report(request):
 
 			return render_to_response('ams/dailyreport.html', {'form': form, 'message': message, 'report':report,
 									 'late':late, 'half':half, 'absent':abs, 'date':date})		
+
+def add_dayrules(request):
+	message = "";
+	if not request.POST:
+		form = DayRulesForm()
+		return render_to_response('ams/dayrules.html', {'form': form})
+	else:
+		form = DayRulesForm(request.POST)
+		if not form.is_valid():
+			return render_to_response('ams/dayrules.html', {'form': form})
+		if request.POST['addrules'] == '1':
+			if form.is_valid():
+				fdate = form.cleaned_data['FromDate']
+				tdate = form.cleaned_data['ToDate']
+				barcode = form.cleaned_data['Barcode']
+				category = form.cleaned_data['Category']
+				timerule = form.cleaned_data['Type']
+
+				if not timerule:
+					message = "Please supply time rule for adding dayrule"
+					return render_to_response('ams/dayrules.html', {'form': form, 'message': message})
+				if (not barcode) and (not category):
+					message = "Please supply category and/or user for adding dayrule"
+					return render_to_response('ams/dayrules.html', {'form': form, 'message': message})
+				if (not fdate) or (not tdate):
+					message = "Please supply both the dates for adding dayrule"
+					return render_to_response('ams/dayrules.html', {'form': form, 'message': message})
+				if fdate <= tdate:
+					date = fdate 
+					oneday = datetime.timedelta(1)
+					while 1:
+						dayrule = DayRules()
+						if category:
+							dayrule.Category = category
+						if barcode:
+							dayrule.Barcode = barcode.Barcode
+						dayrule.Date = date
+						dayrule.Type = timerule
+						dayrule.save()
+						
+						date = date + oneday
+						if date > tdate:
+							break
+				else:
+					message = "Enter correct dates!"
+				return render_to_response('ams/dayrules.html', {'form': form, 'message': message})
+		elif request.POST['addrules'] == '2':
+			if form.is_valid():
+				fdate = form.cleaned_data['FromDate']
+				tdate = form.cleaned_data['ToDate']
+				barcode = form.cleaned_data['Barcode']
+				category = form.cleaned_data['Category']
+				
+				if (not fdate) or (not tdate):
+					message = "Please supply both the dates for displaying dayrule"
+					return render_to_response('ams/dayrules.html', {'form': form, 'message': message})
+				
+				dater = []
+				dayr = []
+				categories = []
+				if (not barcode) and (not category):
+					categories = Category.objects.all()
+				elif barcode:
+					categories = Category.objects.filter(Id=barcode.Category.Id)
+				else:
+					categories = Category.objects.filter(Id=category.Id)
+					
+					
+				if fdate <= tdate:
+					for cat in categories:
+						date = fdate 
+						oneday = datetime.timedelta(1)
+						today = datetime.datetime.now().date()
+						while 1:
+							day = date.isoweekday()
+							if barcode:
+								daterules = DayRules.objects.filter(Date=date).filter(Barcode=barcode.Barcode)
+								if daterules:
+									dater.append({'dater':daterules[0], 'daystr':DAY_CHOICES[day-1][1]})
+
+							daterules = DayRules.objects.filter(Date=date).filter(Category=cat)
+							if daterules:
+								dater.append({'dater':daterules[0], 'daystr':DAY_CHOICES[day-1][1]})
+				
+							if barcode:
+								dayrules = DayRules.objects.filter(Day=day).filter(Barcode=barcode.Barcode)
+								if dayrules:
+									dayr.append({'dayr':dayrules[0], 'daystr':DAY_CHOICES[day-1][1]})
+
+							dayrules = DayRules.objects.filter(Day=day).filter(Category=cat)
+							if dayrules:
+								dayr.append({'dayr':dayrules[0], 'daystr':DAY_CHOICES[day-1][1]})
+	
+							date = date + oneday
+							if date > tdate:
+								break
+					return render_to_response('ams/dayrules.html', {'form': form, 'message': message, 'dayrules':dayr, 'daterules':dater})
+				else:
+					message = "Enter correct dates!"
+					return render_to_response('ams/dayrules.html', {'form': form, 'message': message})
+		else:
+			message = "Invalid option."
+			return render_to_response('ams/dayrules.html', {'form': form, 'message': message})
 
 def admin_home(request):
 	user = request.user

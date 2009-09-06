@@ -200,4 +200,10 @@ class ReportForm(forms.Form):
 class DailyReportForm(forms.Form):
 	Category = forms.ModelChoiceField(queryset=Category.objects.all(), required=False)
 	Date =  forms.DateField(widget=forms.DateTimeInput)
-		
+
+class DayRulesForm(forms.Form):
+	FromDate =  forms.DateField(widget=forms.DateTimeInput)
+	ToDate =  forms.DateField(widget=forms.DateTimeInput)
+	Category = forms.ModelChoiceField(queryset=Category.objects.all(), required=False)
+	Barcode = forms.ModelChoiceField(queryset=User.objects.all(), required=False)
+	Type = forms.ModelChoiceField(queryset=TimeRules.objects.all(), required=False)

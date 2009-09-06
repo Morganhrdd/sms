@@ -1,0 +1,69 @@
+<html>
+<script language="javascript">
+function statusform()
+{
+ document.dayrule.addrules.value = 2;
+ document.dayrule.submit();
+}
+
+function submitform()
+{
+ document.dayrule.addrules.value = 1;
+ document.dayrule.submit();
+}
+ 
+</script>
+<body>
+<div align="center">
+
+<h2>
+DayRules Form
+</h2><br/>
+
+<form name="dayrule" action="/ams_dayrules/" method="post">
+<table>
+{{ form.as_table }}
+</table>
+<br/><b>{{ message }}</b><br/><br/>
+<input type="submit" value="Add Rules" onClick="submitform()"/>
+<input type="submit" value="Check Status" onClick="statusform()"/>
+<input type="hidden" name="addrules" value="1"/>
+</form>
+
+</div>
+<br/>
+
+<div align="center">
+<h2>
+Date Rules
+</h2><br/>
+	<table border="1" cellspacing="5" cellpadding="0">
+		<tr><th>Date</th> <th>Day</th> <th>Barcode</th> <th>Category</th> <th>Time Rule</th> </tr>
+	
+			{% for row in daterules %}
+			<tr>
+				<td>{{ row.dater.Date}}</td><td>{{ row.daystr }}</td><td>{{ row.dater.Barcode }}</td>
+				<td>{{ row.dater.Category}}</td><td>{{ row.dater.Type }}</td>
+			</tr>
+			{% endfor %}
+	</table>
+</div>
+
+<div align="center">
+<h2>
+Day Rules
+</h2><br/>
+	<table border="1" cellspacing="5" cellpadding="0">
+		<tr><th>Day</th> <th>Barcode</th> <th>Category</th> <th>Time Rule</th> </tr>
+	
+			{% for row in dayrules %}
+			<tr>
+				<td>{{ row.daystr }}</td><td>{{ row.dayr.Barcode }}</td>
+				<td>{{ row.dayr.Category}}</td><td>{{ row.dayr.Type }}</td>
+			</tr>
+			{% endfor %}
+	</table>
+</div>
+
+</body>
+</html>
