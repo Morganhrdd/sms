@@ -95,6 +95,9 @@ Jnana Prabodhini Prashala<br/>
 {% for fda in frow.FeeDateAmount %}
 <tr><td></td><td></td><td><a href="javascript:printreceipt({{fda.ReceiptNo}})">{{fda.ReceiptNo}}</a></td><td>{{fda.Date}}</td><td>{{fda.Amount}}</td></tr>
 {% endfor %}
+{% for sfee in frow.SpecialFee %}
+<tr><td></td><td></td><td colspan=2>SpecialFee<td>{{sfee.Amount}}</td></tr>
+{% endfor %}
 {% for schol in frow.Scholarship %}
 <tr><td></td><td></td><td colspan=2>Scholarship<td>{{schol.Amount}}</td></tr>
 {% endfor %}
