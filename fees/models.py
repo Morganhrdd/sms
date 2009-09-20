@@ -20,6 +20,11 @@ FEE_DIVISION_CHOICES = (
     ('B', 'Boys'),
 )
 
+FEE_CHOICES = (
+	('1', 'Scholarship'),
+	('2', 'Special Fee'),
+)
+
 class FeeType(models.Model):
 	ClassMaster = models.ForeignKey(ClassMaster)
 	Type = models.CharField(max_length=30)
@@ -36,6 +41,15 @@ class FeeReceipt(models.Model):
 	ChequeNo = models.PositiveIntegerField(null=True,blank=True)
 	Bank = models.CharField(max_length=30,null=True,blank=True)
 	Status = models.PositiveIntegerField(choices=RECEIPT_CHOICES)
+	
+class ScholarshipOrFee(models.Model):
+	StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
+	FeeType = models.ForeignKey(FeeType)
+	Amount = models.PositiveIntegerField()
+	Type = models.PositiveIntegerField(choices=FEE_CHOICES)
+	Notes = models.CharField(max_length=200, blank=True, null=True)
+	def __unicode__(self):
+		return "%s - %d" % (self.StudentYearlyInformation, self.Amount)
 	
 class FeeForm(forms.Form):
 	RegNo = forms.IntegerField()

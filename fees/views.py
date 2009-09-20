@@ -18,7 +18,7 @@ from array import array
 from django.contrib.auth.decorators import login_required
 
 from jp_sms.fees.models import StudentBasicInfo, AcademicYear, ClassMaster, StudentYearlyInformation
-from jp_sms.students.models import Scholarship
+from jp_sms.fees.models import ScholarshipOrFee
 from jp_sms.fees.models import FeeType, FeeReceipt
 from jp_sms.fees.models import FeeForm, FeeReportForm, FeeCollectionForm
 
@@ -90,9 +90,19 @@ def fee_receipt(request):
 
 				ftypes = FeeType.objects.filter(ClassMaster=classmaster).filter(Type=feetype)
 				if not ftypes:
-					message = "Invalid Fee Type"
-					return render_to_response('fees/feeform.html', {'form': form, 'message': message, 'date':date,'receiptnumber':receiptnumber })
+					specialfeeqs = ScholarshipOrFee.objects.filter(StudentYearlyInformation=studentyearlyinfo[0]).filter(Type=2)
+					if specialfeeqs:
+						for specialfee in specialfeeqs:
+							if specialfee.FeeType.Type == feetype:
+								ftype = specialfee.FeeType
+								break
 					
+					if not ftype:
+						message = "Invalid Fee Type"
+						return render_to_response('fees/feeform.html', {'form': form, 'message': message, 'date':date,'receiptnumber':receiptnumber })
+				else:
+					ftype = ftypes[0]
+										
 				cheque = form.cleaned_data['ChequeNo']
 				bank = form.cleaned_data['Bank']
 				if cheque and (not bank):
@@ -116,7 +126,7 @@ def fee_receipt(request):
 				feereceipt.ReceiptNumber = id
 				feereceipt.StudentYearlyInformation = studentyearlyinfo[0]
 				feereceipt.Date = date
-				feereceipt.FeeType = ftypes[0]
+				feereceipt.FeeType = ftype
 				feereceipt.Amount = amount
 				feereceipt.ChequeNo = cheque
 				feereceipt.Bank = bank
@@ -141,15 +151,12 @@ def fee_receipt(request):
 				if classmaster:
 					for data in classmaster:
 						hostel = data.Hostel
-						tschol = 0
-						scholarship = Scholarship.objects.filter(StudentYearlyInformation=data)
-						if scholarship:
-							for schol in scholarship:
-								tschol += schol.Amount
 						feetypes = FeeType.objects.filter(ClassMaster=data.ClassMaster)
 						feeinfo = []
 						if feetypes:
 							for ftype in feetypes:
+								tschol = 0
+								tspecialfee = 0
 								amount = ftype.Amount
 								if ftype.Type == 'Hostel':
 									if hostel == 1:
@@ -163,15 +170,45 @@ def fee_receipt(request):
 									for fr in feereceipts:
 										feedateamount.append({'ReceiptNo':fr.ReceiptNumber, 'Date':fr.Date, 'Amount':fr.Amount})
 										total += fr.Amount
-								if ftype.Type == 'School' and tschol > 0:
+								scholarshipqs = ScholarshipOrFee.objects.filter(StudentYearlyInformation=data).filter(FeeType=ftype)
+								if scholarshipqs:
+									for schol in scholarshipqs:
+										if schol.Type == 1:
+											tschol += schol.Amount
+										else:
+											tspecialfee += schol.Amount
+
+								if tschol > 0:
 									#total += tschol
 									scholarship = []
 									scholarship.append({'Amount': tschol})
+								if tspecialfee > 0:
+									specialfee = []
+									specialfee.append({'Amount': tspecialfee})
+
+								if tschol > 0 or tspecialfee > 0:
 									feeinfo.append({'Type':ftype.Type, 'Amount':amount, 'FeeDateAmount': feedateamount, 'Total':total,
-										'Balance':amount - total - tschol, 'Scholarship': scholarship})
+										'Balance':amount - total + tspecialfee - tschol, 'Scholarship': scholarship, 'SpecialFee': specialfee})
 								else:
 									feeinfo.append({'Type':ftype.Type, 'Amount':amount, 'FeeDateAmount': feedateamount, 'Total':total,
 										'Balance':amount - total})
+
+						specialfeeqs = ScholarshipOrFee.objects.filter(StudentYearlyInformation=data).filter(Type=2)
+						if specialfeeqs:
+							for specialfee in specialfeeqs:
+								ftype = specialfee.FeeType
+								amount = specialfee.Amount
+								total = 0
+								feereceipts = FeeReceipt.objects.filter(StudentYearlyInformation=data).filter(FeeType=ftype).filter(Status=1)
+								feedateamount = []
+								total = 0
+								if feereceipts:
+									for fr in feereceipts:
+										feedateamount.append({'ReceiptNo':fr.ReceiptNumber, 'Date':fr.Date, 'Amount':fr.Amount})
+										total += fr.Amount
+								feeinfo.append({'Type':ftype.Type, 'Amount':amount, 'FeeDateAmount': feedateamount, 'Total':total,
+									'Balance':amount - total})
+
 						years.append({'ClassMaster':data.ClassMaster, 'FeeInfo': feeinfo})															
 
 				return render_to_response('fees/feeform.html', {'form': form, 'message': message, 'date':date,
@@ -209,20 +246,15 @@ def fee_report(request):
 						studentsfound = 1
 						for data in studentinfo:
 							hostel = data.Hostel
-							tschol = 0
-							scholarship = Scholarship.objects.filter(StudentYearlyInformation=data)
-							if scholarship:
-								for schol in scholarship:
-									tschol += schol.Amount
 							feetypes = FeeType.objects.filter(ClassMaster=data.ClassMaster)
 							feeinfo = []
-							#color = ''
 							defaulter = 0
 							style_opentag = ''
 							style_closetag = ''
 							if feetypes:
 								for ftype in feetypes:
-									#fcolor = ''
+									tschol = 0
+									tspecialfee = 0
 									fstyle_opentag = ''
 									fstyle_closetag = ''
 									amount = ftype.Amount
@@ -237,13 +269,17 @@ def fee_report(request):
 										for fr in feereceipts:
 											total += fr.Amount
 									balance = amount - total
-									if ftype.Type == 'School':
-										#total += tschol
-										balance -= tschol
+									scholarship = ScholarshipOrFee.objects.filter(StudentYearlyInformation=data).filter(FeeType=ftype)
+									if scholarship:
+										for schol in scholarship:
+											if schol.Type == 1:
+												tschol += schol.Amount
+											else:
+												tspecialfee += schol.Amount
+									balance += tspecialfee
+									balance -= tschol
 									if balance > 0:
 										defaulter = 1
-										#color = 'red'
-										#fcolor = 'red'
 										style_opentag = STYLE_OPEN_TAG
 										style_closetag = STYLE_CLOSE_TAG
 										fstyle_opentag = STYLE_OPEN_TAG
@@ -253,6 +289,33 @@ def fee_report(request):
 							if tschol > 0:
 								feeinfo.append({'Type':'Scholarship', 'Amount':tschol, 'Total':'-',
 													 'Balance':'-'})
+							if tspecialfee > 0:
+								feeinfo.append({'Type':'SpecialFee', 'Amount':tspecialfee, 'Total':'-',
+													 'Balance':'-'})
+
+							specialfeeqs = ScholarshipOrFee.objects.filter(StudentYearlyInformation=data).filter(Type=2)
+							if specialfeeqs:
+								for specialfee in specialfeeqs:
+									ftype = specialfee.FeeType
+									amount = specialfee.Amount
+									total = 0
+									feereceipts = FeeReceipt.objects.filter(StudentYearlyInformation=data).filter(FeeType=ftype).filter(Status=1)
+									feedateamount = []
+									total = 0
+									if feereceipts:
+										for fr in feereceipts:
+											feedateamount.append({'ReceiptNo':fr.ReceiptNumber, 'Date':fr.Date, 'Amount':fr.Amount})
+											total += fr.Amount
+									balance = amount - total
+									if balance > 0:
+										defaulter = 1
+										style_opentag = STYLE_OPEN_TAG
+										style_closetag = STYLE_CLOSE_TAG
+										fstyle_opentag = STYLE_OPEN_TAG
+										fstyle_closetag = STYLE_CLOSE_TAG
+									feeinfo.append({'Type':ftype.Type, 'Amount':amount, 'FeeDateAmount': feedateamount, 'Total':total,
+										'Balance':balance, 'FStyleOpenTag':fstyle_opentag, 'FStyleCloseTag':fstyle_closetag})
+
 							if show == '1' or defaulter == 1:
 								students.append({'Student':data.StudentBasicInfo, 'FeeInfo': feeinfo,
 								'YearlyInfo':data, 'StyleOpenTag':style_opentag, 'StyleCloseTag':style_closetag})

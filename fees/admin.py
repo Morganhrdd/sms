@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from jp_sms.fees.models import FeeType, FeeReceipt
+from jp_sms.fees.models import FeeType, FeeReceipt, ScholarshipOrFee
 import datetime
 
 class feetypeAdmin(admin.ModelAdmin):
@@ -19,5 +19,12 @@ class feereceiptAdmin(admin.ModelAdmin):
     search_fields = ['ReceiptNumber', 'StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__RegistrationNo']
     pass
 
+class scholarshiporfeeAdmin(admin.ModelAdmin):
+	list_display = ('StudentYearlyInformation', 'FeeType', 'Amount', 'Type', 'Notes')
+	list_filter = ['FeeType', 'StudentYearlyInformation', 'Type']
+	search_fields = ['StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName']
+	pass	
+
 admin.site.register(FeeType, feetypeAdmin)
 admin.site.register(FeeReceipt, feereceiptAdmin)
+admin.site.register(ScholarshipOrFee, scholarshiporfeeAdmin)

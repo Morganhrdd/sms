@@ -13,7 +13,10 @@ from jp_sms.ams.models import Leaves, LeaveForm, LeaveRules, AcademicYear, Leave
 from jp_sms.ams.models import UserJoiningDate, ReportForm, DailyReportForm, DayRulesForm
 from jp_sms.ams.models import LEAVE_CHOICES, REMARK_CHOICES, DAY_CHOICES
 
-CATEGORY_ALL=Category.objects.get(Description='ALL')
+catqs = Category.objects.filter(Description='ALL')
+if catqs:
+	CATEGORY_ALL = catqs[0]
+
 HOLIDAY_RULE='Holiday'
 
 def get_barcode(request):
