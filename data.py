@@ -29,6 +29,29 @@ def get_yrly_info(regno, year, std, div, class_type='P'):
         raise 'StudentYearlyInformation not found'
     
 
+
+def new_reg_no():
+    #xls_file = raw_input('Enter filename: ')
+    xls_file = 'Divekar.xls'
+    book = xlrd.open_workbook(xls_file)
+    sh = book.sheet_by_index(0)
+    for rx in range(51, 94):
+        row = sh.row_values(rx)
+        a=StudentBasicInfo()
+        a.DateOfRegistration = datetime.date(2009,11,2)
+        a.RegistrationNo = row[1]
+        (lname, fname, mname) = row[2].strip().split(' ')
+        a.FirstName = fname.capitalize()
+        a.LastName = lname.capitalize()
+        a.FathersName = mname.capitalize()
+        tmp = row[3].split('.')
+        a.DateOfBirth = datetime.date(int(tmp[2]), int(tmp[1]), int(tmp[0]))
+        a.Gender = row[4][0]
+        a.Caste = row[5]
+        a.Category = row[6]
+        print a
+        a.save()
+        
 def reg_no():
     xls_file = raw_input('Enter filename: ')
     book = xlrd.open_workbook(xls_file)
@@ -136,8 +159,8 @@ def add_additional_info():
     div = raw_input('Enter Division: ')
     std = raw_input('Enter Standard: ')
     book = xlrd.open_workbook(xls_file)
-    sh = book.sheet_by_name('Students Information')
-    for rx in range(0,40):
+    sh = book.sheet_by_name('Additional Information')
+    for rx in range(0,sh.nrows):
         row = sh.row_values(rx)
         regno = row[0]
         try:
@@ -1027,7 +1050,8 @@ def copy_yrly_info():
 #populate_project()
 #add_test()
 #add_marks()
-reg_no()
+#reg_no()
 #populate_fee_receipts('fee1.xls')
-
+#add_additional_info()
+new_reg_no()
 sys.exit()
