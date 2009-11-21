@@ -89,6 +89,7 @@ class StudentBasicInfo(models.Model):
     BirthPlace = models.CharField(max_length=50, blank=True)
     ReasonOfLeavingSchool = models.CharField(max_length=100, blank=True)
     PreviousSchool = models.CharField(max_length=200, blank=True)
+    Category = models.CharField(max_length=200, blank=True)
     def __unicode__(self):
         return "%d-%s %s" % (self.RegistrationNo, self.FirstName, self.LastName)
     
