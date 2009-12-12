@@ -82,6 +82,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
 	'django.contrib.admin',
+    'registration',
     'jp_sms.students',
     'jp_sms.ams',
     'jp_sms.fees',
@@ -89,3 +90,4 @@ INSTALLED_APPS = (
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE = 600
+ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value.

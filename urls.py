@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import *
 #from students import views
 # The next two lines enable the admin and load each admin.py file:
+from django.views.generic.simple import direct_to_template
 from django.contrib import admin
 admin.autodiscover()
 
@@ -22,8 +23,11 @@ urlpatterns = patterns('',
     (r'^certificatePDF/', 'students.views.certificatePDF'),
     (r'^schoolLeavingPDF/', 'students.views.schoolLeavingPDF'),
     (r'^fee_collection/', 'fees.views.fee_collection'),
-    (r'^accounts/login/$', 'django.contrib.auth.views.login'),
+    #(r'^accounts/login/$', 'django.contrib.auth.views.login'),
     (r'^ams_dayrules/', 'ams.views.add_dayrules'),
+    ##(r'^accounts/', include('registration.backends.default.urls')),
+    (r'^accounts/', include('registration.urls')),
+    (r'^$', direct_to_template,  { 'template': 'index.html' }, 'index'),
     #(r'^useradd/', views.user_add),
     # ... the rest of your URLs here ...
 )
