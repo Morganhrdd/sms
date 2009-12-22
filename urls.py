@@ -28,6 +28,7 @@ urlpatterns = patterns('',
     ##(r'^accounts/', include('registration.backends.default.urls')),
     (r'^accounts/', include('registration.urls')),
     (r'^$', direct_to_template,  { 'template': 'index.html' }, 'index'),
+    (r'^pravesh/add', 'pravesh.views.add'),
     #(r'^useradd/', views.user_add),
     # ... the rest of your URLs here ...
 )

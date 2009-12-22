@@ -86,6 +86,7 @@ INSTALLED_APPS = (
     'jp_sms.students',
     'jp_sms.ams',
     'jp_sms.fees',
+    'jp_sms.pravesh',
 )
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
