@@ -48,7 +48,8 @@ def add(request):
         hallticket_obj.SeatNumber = get_seatnumber()
         print "HALLTICKET", hallticket_obj
         hallticket_obj.save()
-        return render_to_response('pravesh/add.html', {'form':applicationform, 'message':'Successfully added %s' % (student_obj.FirstName)})
+        return redirect('/pravesh/hallticket/%s'%(hallticket_obj.SeatNumber))
+
 
 
 def display_hallticket(request, seatnumber):
