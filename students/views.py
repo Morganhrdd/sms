@@ -420,8 +420,12 @@ def marks_add(request):
         test_details = 'Standard: %s, Subject Name: %s, Academic Year: %s, TestType: %s, Max Marks: %s' % (subject.Standard, subject.Name, test.AcademicYear, test.TestType, test.MaximumMarks)
         for student in students.order_by('RollNo'):
             student_info = StudentBasicInfo.objects.get(RegistrationNo = student.StudentBasicInfo.RegistrationNo)
+            try:
+                marks_obtained = StudentTestMarks.objects.get(StudentYearlyInformation=student, TestMapping=test).MarksObtained        
+            except:
+                marks_obtained = ''
             name = '%s %s' % (student_info.FirstName, student_info.LastName)
-            data.append({'id':student.id, 'name': name, 'rollno':student.RollNo })
+            data.append({'id':student.id, 'name': name, 'rollno':student.RollNo, 'marks_obtained':marks_obtained })
         return render_to_response('students/AddMarks.html',Context({'test_details': test_details,'test_id':test_id, 'data':data}))
 
 # Used by HTML Report

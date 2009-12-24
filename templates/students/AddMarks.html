@@ -18,7 +18,7 @@
 			{% for row in data %}
 			<tr>
 				<td>{{ row.rollno}}</td><td>{{ row.name }}</td>
-				<td><input type="text" name="{{ row.id }}" value="" id="id_{{ row.id }}"></td><p/>
+				<td><input type="text" name="{{ row.id }}" value="{{ row.marks_obtained }}" id="id_{{ row.id }}"></td><p/>
 			</tr>
 			{% endfor %}
 			<input type="hidden" name="test_id" value="{{ test_id }}" id="some_name">
