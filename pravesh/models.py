@@ -19,11 +19,6 @@ PAYMODE_CHOICES = (
     ('DD', 'Demand Draft'),
 )
 # Create your models here.
-class DateTimeDetails(models.Model):
-    Start = models.DateTimeField()
-    End = models.DateTimeField()
-    def __unicode__(self):
-        return "%s to %s" % (self.Start.strftime('%d/%m/%y %H:%M'), self.End.strftime('%d/%m/%y %H:%M'))
 
 class ClassRoom(models.Model):
     Number = models.PositiveIntegerField()
@@ -36,10 +31,11 @@ class ClassRoom(models.Model):
 class Session(models.Model):
     Number = models.PositiveIntegerField()
     Name = models.CharField(max_length=20)
-    DateTimeDetails = models.ForeignKey(DateTimeDetails)
     classrooms = models.ManyToManyField(ClassRoom)
+    Start = models.DateTimeField()
+    End = models.DateTimeField()
     def __unicode__(self):
-        return "%s --- %s" % (self.Name, self.DateTimeDetails)
+        return "%s --- %s to %s" % (self.Name, self.Start, self.End)
 
 
 class Student(models.Model):
@@ -60,12 +56,16 @@ class Student(models.Model):
     CurrentStd = models.PositiveIntegerField(blank=True)
     PayMode = models.CharField(max_length=20, choices=PAYMODE_CHOICES)
     DDNo = models.CharField(max_length=30, blank=True)
+    def __unicode__(self):
+        return "%s %s" % (self.FirstName, self.LastName)
 
 class HallTicket(models.Model):
     Student = models.ForeignKey(Student)
     Session = models.ForeignKey(Session)
     ClassRoom = models.ForeignKey(ClassRoom)
-    SeatNumber = models.CharField(max_length=30)
+    SeatNumber = models.PositiveIntegerField()
+    def __unicode__(self):
+        return "%s %s %s %s" % (self.Student, self.Session, self.ClassRoom, self.SeatNumber)
 
 
 class ApplicationForm(forms.Form):
@@ -86,3 +86,8 @@ class ApplicationForm(forms.Form):
     CurrentStd = forms.IntegerField(required=False)
     PayMode = forms.ChoiceField(choices=PAYMODE_CHOICES)
     DDNo = forms.CharField(max_length=30, required=False)
+    
+class GenerateHallTicketForm(forms.Form):
+    FirstName = forms.CharField(max_length=30)
+    LastName = forms.CharField(max_length=30)
+    
