@@ -405,15 +405,25 @@ def marks_add(request):
             tests = TestMapping.objects.all()
             test_details = ''
             for test in tests:
-                test_details += '<a href="http://localhost:8000/marks_add/?test_id='+str(test.id)+ '">' + '%s' %(test) + '</a><br/>'
+                test_details += '<a href="http://localhost:8000/marks_add/?test_id='+str(test.id)+ '&div=B">' + '%s - B' %(test) + '</a><br/>'
+                test_details += '<a href="http://localhost:8000/marks_add/?test_id='+str(test.id)+ '&div=G">' + '%s - G' %(test) + '</a><br/>'
             return HttpResponse(test_details)
         test_id = request.GET['test_id']
+        div = request.GET['div']
         test = TestMapping.objects.get(id=test_id)
 
         subject = SubjectMaster.objects.get(id=test.SubjectMaster.id)
 
-        class_masters = ClassMaster.objects.filter(AcademicYear=test.AcademicYear, Standard=subject.Standard)
+        class_master = ClassMaster.objects.get(AcademicYear=test.AcademicYear, Standard=subject.Standard, Division=div)
         data = []
+        students = StudentYearlyInformation.objects.filter(ClassMaster=class_master.id)
+        test_details = 'Standard: %s, Subject Name: %s, Academic Year: %s, TestType: %s, Max Marks: %s' % (subject.Standard, subject.Name, test.AcademicYear, test.TestType, test.MaximumMarks)
+        for student in students.order_by('RollNo'):
+            student_info = StudentBasicInfo.objects.get(RegistrationNo = student.StudentBasicInfo.RegistrationNo)
+            name = '%s %s' % (student_info.FirstName, student_info.LastName)
+            data.append({'id':student.id, 'name': name, 'rollno':student.RollNo })
+        return render_to_response('students/AddMarks.html',Context({'test_details': test_details,'test_id':test_id, 'data':data}))
+        '''
         for class_master in class_masters:
             students = StudentYearlyInformation.objects.filter(ClassMaster=class_master.id)
             test_details = 'Standard: %s, Subject Name: %s, Academic Year: %s, TestType: %s, Max Marks: %s' % (subject.Standard, subject.Name, test.AcademicYear, test.TestType, test.MaximumMarks)
@@ -423,6 +433,7 @@ def marks_add(request):
                 print name
 	        data.append({'id':student.id, 'name': name, 'rollno':student.RollNo })
         return render_to_response('students/AddMarks.html',Context({'test_details': test_details,'test_id':test_id, 'data':data}))
+        '''
 
 # Used by HTML Report
 def attendance_add(request):
