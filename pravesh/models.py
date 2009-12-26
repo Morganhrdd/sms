@@ -63,7 +63,7 @@ class HallTicket(models.Model):
     Student = models.ForeignKey(Student)
     Session = models.ForeignKey(Session)
     ClassRoom = models.ForeignKey(ClassRoom)
-    SeatNumber = models.PositiveIntegerField()
+    SeatNumber = models.PositiveIntegerField(unique=True)
     def __unicode__(self):
         return "%s %s %s %s" % (self.Student, self.Session, self.ClassRoom, self.SeatNumber)
 
@@ -74,7 +74,7 @@ class ApplicationForm(forms.Form):
     LastName = forms.CharField(max_length=30)
     FatherName = forms.CharField(max_length=30, required=False)
     MotherName = forms.CharField(max_length=30, required=False)
-    Address = forms.CharField(max_length=30)
+    Address = forms.CharField(widget=forms.widgets.Textarea(attrs={'rows':4}),max_length=30)
     Pincode = forms.IntegerField(required=False) 
     PhoneHome = forms.IntegerField(required=False) 
     PhoneMobile = forms.IntegerField(required=False)
@@ -90,4 +90,5 @@ class ApplicationForm(forms.Form):
 class GenerateHallTicketForm(forms.Form):
     FirstName = forms.CharField(max_length=30)
     LastName = forms.CharField(max_length=30)
+
     

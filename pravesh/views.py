@@ -9,12 +9,11 @@ from jp_sms.pravesh.models import HallTicket, Session, ClassRoom, Student
 # Create your views here.
 
 MEDIUM = {'E':'English', 'M':'Marathi'}
-
+        
 def add(request):
-    print get_seatnumber()
     if not request.POST:
         applicationform = ApplicationForm()
-        return render_to_response('pravesh/add.html', {'form': applicationform})
+        return render_to_response('pravesh/add.html', {'form': applicationform, 'button_name':'Add'})
     else:
         applicationform = ApplicationForm(request.POST)
         if not applicationform.is_valid():
@@ -51,11 +50,43 @@ def add(request):
         hallticket_obj.save()
         return redirect('/pravesh/hallticket/%s'%(hallticket_obj.SeatNumber))
 
+#
+def edit(request, seatnumber):
+    try:
+        hallticket_obj = HallTicket.objects.get(SeatNumber=seatnumber)
+        data = {}
+        data['FirstName'] = hallticket_obj.Student.FirstName
+        data['MiddleName'] = hallticket_obj.Student.MiddleName
+        data['LastName'] = hallticket_obj.Student.LastName
+        data['FatherName'] = hallticket_obj.Student.FatherName
+        data['MotherName'] = hallticket_obj.Student.MotherName
+        data['Address'] = hallticket_obj.Student.Address
+        data['Pincode'] = hallticket_obj.Student.Pincode
+        data['PhoneHome'] = hallticket_obj.Student.PhoneHome
+        data['PhoneMobile'] = hallticket_obj.Student.PhoneMobile
+        data['Email'] = hallticket_obj.Student.Email
+        data['Medium'] = hallticket_obj.Student.Medium
+        data['Gender'] = hallticket_obj.Student.Gender
+        data['DateOfBirth'] = hallticket_obj.Student.DateOfBirth
+        data['CurrentSchool'] = hallticket_obj.Student.CurrentSchool
+        data['CurrentStd'] = hallticket_obj.Student.CurrentStd
+        data['PayMode'] = hallticket_obj.Student.PayMode
+        data['DDNo'] = hallticket_obj.Student.DDNo
+        applicationform = ApplicationForm(initial=data)
+        return render_to_response('pravesh/add.html', {'form':applicationform, 'button_name':'Update'})
+    except:
+        return render_to_response('pravesh/add.html', {'message':'Record not found'})
+    try:
+        hallticket_obj = HallTicket.objects.filter(SeatNumber=seatnumber)
+        applicationform = ApplicationForm()
+        applicationform.FirstName = hallticket_obj.Student.FirstName
+        return render_to_response('pravesh/add.html', {'form':applicationform})
+    except:
+        return redirect('/pravesh/')
 
 
 def display_hallticket(request, seatnumber):
-    hallticket_obj = HallTicket.objects.filter(SeatNumber=seatnumber)
-    print hallticket_obj
+
     try:
         hallticket_obj = HallTicket.objects.get(SeatNumber=seatnumber)
         data = {}
@@ -78,6 +109,17 @@ def index(request):
     return render_to_response('pravesh/index.html',{'data':data})
     
 
+def edit_hallticket(request, seatnumber):
+    if not request.POST:
+        genform = GenerateHallTicketForm()
+        return render_to_response('pravesh/generate_hallticket.html',{'form':genform})
+    data = {}
+    if request.POST['FirstName']:
+        data['Student__FirstName__icontains'] = request.POST['FirstName']
+    if request.POST['LastName']:
+        data['Student__LastName__icontains'] = request.POST['LastName']
+    hallticket_objs = HallTicket.objects.filter(**data)
+    
 def generate_hallticket(request):
     genform = GenerateHallTicketForm()
     if not request.POST:

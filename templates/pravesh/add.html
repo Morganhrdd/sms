@@ -1,11 +1,13 @@
 <html>
 <body>
     <br/><b>{{ message }}</b><br/><br/>
+    {% if form %}
     <form name="add" action="/pravesh/add/" method="post">
         <table>
             {{ form.as_table }}
         </table>
-        <input type="submit" value="Add"/>
+        <input type="submit" value="{{button_name}}"/>
     </form>
+    {% endif %}
 </body>
 </html>
