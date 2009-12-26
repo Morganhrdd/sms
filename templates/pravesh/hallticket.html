@@ -1,0 +1,90 @@
+<html>
+<body>
+    {% if not msg %}
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <TABLE cellSpacing=0 cellPadding=5 width="50%" border=0 style="WIDTH: 50%" align=center>
+
+        <TBODY>
+
+            <TR>
+                <TD width="50%">
+                    <B> Name of Student: </B>
+                </TD>
+                <TD width="50%">
+                    <font size="4" face="Verdana">
+                        {{ data.firstname }} &nbsp; {{ data.middlename }} &nbsp; {{ data.lastname }}
+                    </font>
+                    </TD>
+                </TR>
+
+                <TR>
+                    <TD width="50%">
+                        <B> Seat number: </B>
+                    </TD>
+                    <TD width="50%">
+                        <font size="5" face="Verdana">
+                            {{ data.hall_id}}
+                    </TD>
+                </TR>
+                <TR>
+                    <TD width="50%">
+                        <B> Medium of test: </B>
+                    </TD>
+                    <TD width="50%">
+                        {{ data.medium }}
+                    </TD>
+                </TR>
+                <TR>
+                    <TD width="50%">
+                         <B> Date of test: </B>
+                    </TD>
+                    <TD width="50%">
+                     <STRONG>
+                         {{ data.date}}
+                     </STRONG>
+                    </TD>
+                </TR>
+                <TR>
+                    <TD width="50%">
+                         <B> Session: </B>
+                    </TD>
+                    <TD width="50%">
+                        {{ data.session }}
+                    </TD>
+                </TR>
+                <TR>
+                    <TD width="50%">
+                         <B> Time of test: </B>
+                    </TD>
+                    <TD width="50%">
+                     <STRONG>
+                         {{ data.session_time}}
+                     </STRONG>
+                    </TD>
+                </TR>
+                <TR>
+                    <TD width="50%" colspan="2" align="center">
+                        <A HREF='javascript:window.print()'>Good Luck</A>
+                    </TD>
+                </TR>
+            </TBODY>
+
+        </TABLE>
+        {% else %}
+            <h2>{{ msg|safe }}</h2>
+        {% endif %}
+        <BR>
+</body>
+</html>

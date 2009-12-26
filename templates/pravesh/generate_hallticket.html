@@ -1,0 +1,22 @@
+<html>
+<body>
+    <H1>Generate Hall Ticket</H1>
+    <hr />
+    <br />
+    <B><U>Enter details for which hall ticket is to be generated</U></B>
+    <BR /><BR />
+
+    <form name="add" action="" method="post">
+        <table cellSpacing=0 cellPadding=5 width="50%" border=0 style="WIDTH: 50%" align=center>
+            {{ form.as_table }}
+        </table>
+        <input type="submit" value="Go"/>
+    </form>
+    {% for hallticket_obj in hallticket_objs %}
+    <li>
+        <a href='/pravesh/hallticket/{{hallticket_obj.SeatNumber}}'>{{ hallticket_obj.Student.FirstName }} {{ hallticket_obj.Student.LastName }}</a>
+    </li>
+    {% endfor %}
+
+</body>
+</html>
