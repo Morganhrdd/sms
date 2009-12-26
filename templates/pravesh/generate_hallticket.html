@@ -1,9 +1,9 @@
 <html>
 <body>
-    <H1>Generate Hall Ticket</H1>
+    <H1>Search Hall Ticket</H1>
     <hr />
     <br />
-    <B><U>Enter details for which hall ticket is to be generated</U></B>
+    <B><U>Enter details</U></B>
     <BR /><BR />
 
     <form name="add" action="" method="post">
@@ -14,7 +14,12 @@
     </form>
     {% for hallticket_obj in hallticket_objs %}
     <li>
-        <a href='/pravesh/hallticket/{{hallticket_obj.SeatNumber}}'>{{ hallticket_obj.Student.FirstName }} {{ hallticket_obj.Student.LastName }}</a>
+        {{ hallticket_obj.Student.FirstName }} {{ hallticket_obj.Student.LastName }}
+        <a href='/pravesh/hallticket/{{hallticket_obj.SeatNumber}}'>Print</a>
+        <a href='/admin/pravesh/hallticket/{{hallticket_obj.SeatNumber}}'>Edit Hallticket</a>
+        <a href='/pravesh/hallticket/{{hallticket_obj.SeatNumber}}/edit'>Edit Info</a>
+        
+        
     </li>
     {% endfor %}
 
