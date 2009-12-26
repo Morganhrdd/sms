@@ -1,0 +1,49 @@
+<!-- Main Page -->
+<HTML> <LINK REL=StyleSheet HREF="images/style.css" TYPE="text/css">
+
+    <BODY>
+        <CENTER>
+            <H1><U>JNANA PRABODHINI PRASHALA</U></H1>
+            <H3>WELCOME</H3>
+            <HR /> 
+            <BR />
+
+            <TABLE cellSpacing=0 cellPadding=5 width="50%" border=0 style="WIDTH: 50%" align=center>
+                <TBODY>
+                    <TR>
+                        <TD>
+                            <B>1. <a href='{{ data.add_url }}'> Make a new student's entry</a></B>
+                        </TD>
+                    </TR>
+                    <TR>
+                        <TD>
+                            <B>2. Edit a student's entry</B>
+                        </TD>
+                        <TD>
+                            <FORM name="edit_entry" method="POST" id="edit_entry" action="/pravesh">
+                                <INPUT type="submit" name="data" id="data" value="Edit student's Information"/>
+                            </FORM>
+                        </TD>
+                    </TR>
+                    <TR>
+                        <TD>
+                            <B>3. <a href='{{ data.generate_hallticket_url }}'>Generate admit card for a student</a></B>
+                        </TD>
+                    </TR>
+                    <TR>
+                        <TD>
+                            <B>4. Display Records </B>
+                        </TD>
+                        <TD>
+                            <FORM name="disp_rec" method="POST" id="disp_rec" action="display_record.php">
+                                <INPUT type="submit" name="disp_rec" id="disp_rec" value="Display Records"/>
+                            </FORM>
+                        </TD>
+                    </TR>
+                </TBODY>
+            </TABLE>
+        </CENTER>
+        <BR />
+        <HR />
+    </BODY>
+</HTML>
