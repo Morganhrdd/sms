@@ -3,6 +3,7 @@ from django.shortcuts import render_to_response, redirect
 from django.http import HttpResponse 
 from django.template import Context
 from django.template.loader import get_template
+from django.contrib.auth.decorators import login_required
 from jp_sms.pravesh.models import ApplicationForm, GenerateHallTicketForm
 from jp_sms.pravesh.models import HallTicket, Session, ClassRoom, Student
 # Create your views here.
@@ -126,3 +127,8 @@ def get_session(medium=None):
             return session_obj
     return None
     pass
+
+add = login_required(add)
+display_hallticket = login_required(display_hallticket)
+generate_hallticket = login_required(generate_hallticket)
+index = login_required(index)

@@ -1694,5 +1694,5 @@ def int2word(n):
 
 marks_add = login_required(marks_add)
 report=login_required(report)
-reportPDE=login_required(reportPDF)
+reportPDF=login_required(reportPDF)
 certificatePDF = login_required(certificatePDF)
