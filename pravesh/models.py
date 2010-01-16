@@ -20,22 +20,24 @@ PAYMODE_CHOICES = (
 )
 # Create your models here.
 
+class Session(models.Model):
+    Number = models.PositiveIntegerField()
+    Name = models.CharField(max_length=20)
+    Start = models.DateTimeField()
+    End = models.DateTimeField()
+    def __unicode__(self):
+        return "%s --- %s to %s" % (self.Name, self.Start, self.End)
+
+
 class ClassRoom(models.Model):
     Number = models.PositiveIntegerField()
     Medium = models.CharField(max_length=5)
     Name = models.CharField(max_length=30)
     Capacity = models.PositiveIntegerField()
+    Session = models.ForeignKey(Session)
     def __unicode__(self):
         return "%s --- %s --- %s" % (self.Name, self.Medium, self.Capacity)
 
-class Session(models.Model):
-    Number = models.PositiveIntegerField()
-    Name = models.CharField(max_length=20)
-    classrooms = models.ManyToManyField(ClassRoom)
-    Start = models.DateTimeField()
-    End = models.DateTimeField()
-    def __unicode__(self):
-        return "%s --- %s to %s" % (self.Name, self.Start, self.End)
 
 
 class Student(models.Model):
@@ -61,11 +63,10 @@ class Student(models.Model):
 
 class HallTicket(models.Model):
     Student = models.ForeignKey(Student)
-    Session = models.ForeignKey(Session)
     ClassRoom = models.ForeignKey(ClassRoom)
-    SeatNumber = models.PositiveIntegerField(unique=True)
+    SeatNumber = models.PositiveIntegerField()
     def __unicode__(self):
-        return "%s %s %s %s" % (self.Student, self.Session, self.ClassRoom, self.SeatNumber)
+        return "%s %s %s %s" % (self.Student, self.ClassRoom.Session, self.ClassRoom, self.SeatNumber)
 
 
 class ApplicationForm(forms.Form):
@@ -91,4 +92,16 @@ class GenerateHallTicketForm(forms.Form):
     FirstName = forms.CharField(max_length=30)
     LastName = forms.CharField(max_length=30)
 
+class Exam(models.Model):
+    Name = models.CharField(max_length=30, primary_key=True)
+    Medium = models.CharField(max_length=5)
+
+class QuestionAnswerKey(models.Model):
+    Exam = models.ForeignKey(Exam, unique=True)
+    Number = models.PositiveIntegerField(unique=True)
+    Answer = models.CharField(max_length=10)
     
+class ExamResponse(models.Model):
+    Student = models.ForeignKey(Student)
+    QuestionAnswerKey = models.ForeignKey(QuestionAnswerKey)
+    Answer = models.CharField(max_length=10)

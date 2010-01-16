@@ -7,6 +7,9 @@
             {{ form.as_table }}
         </table>
         <input type="submit" value="{{button_name}}"/>
+        {% if edit %}
+        <input type="hidden" id="edit" name="edit" value="{{ edit }}">
+        {% endif %}
     </form>
     {% endif %}
 </body>

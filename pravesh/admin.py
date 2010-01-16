@@ -16,7 +16,7 @@ class StudentAdmin(admin.ModelAdmin):
     search_fields = ['FirstName', 'LastName', 'Email', 'Gender']
 
 class HallTicketAdmin(admin.ModelAdmin):
-    list_display = ['Student', 'Session','ClassRoom', 'SeatNumber']
+    list_display = ['Student', 'ClassRoom', 'SeatNumber']
     search_fields = ['Student__FirstName', 'Student__LastName', 'SeatNumber']
 
 admin.site.register(ClassRoom, ClassRoomAdmin)

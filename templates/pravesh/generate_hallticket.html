@@ -16,8 +16,8 @@
     <li>
         {{ hallticket_obj.Student.FirstName }} {{ hallticket_obj.Student.LastName }}
         <a href='/pravesh/hallticket/{{hallticket_obj.SeatNumber}}'>Print</a>
-        <a href='/admin/pravesh/hallticket/{{hallticket_obj.SeatNumber}}'>Edit Hallticket</a>
-        <a href='/pravesh/hallticket/{{hallticket_obj.SeatNumber}}/edit'>Edit Info</a>
+        <a href='/admin/pravesh/hallticket/{{hallticket_obj.pk}}'>Edit Hallticket</a>
+        <a href='/pravesh/student/{{hallticket_obj.Student.id}}/edit'>Edit Info</a>
         
         
     </li>
