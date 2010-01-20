@@ -81,13 +81,47 @@ def add_rollno():
 
 def add_test():
     print "Testmaster"
-    yr = AcademicYear.objects.get(Year='2008-2009')
-    xls_file = raw_input('Enter filename: ')
-    div = raw_input('Enter Division: ')
-    std = raw_input('Enter Standard: ')
+    yr = AcademicYear.objects.get(Year='2009-2010')
+    #xls_file = raw_input('Enter filename: ')
+    xls_file = 'tm.xls'
     book = xlrd.open_workbook(xls_file)
-    
     sh = book.sheet_by_index(0)
+    for rx in range(0,276):
+        row = sh.row_values(rx)
+        (std, subject) = row[0].split(' - ')
+        teacher = row[3]
+        test_type = row[1]
+        max_mark = row[2]
+        try:
+            SubObj = SubjectMaster.objects.get(Standard=std, Name=subject)
+        except:
+            print 'unable to get subject. adding: ', subject
+            SubObj = SubjectMaster()
+            SubObj.Standard = std
+            SubObj.Name = subject[:3]
+            SubObj.save()
+        #
+        try:
+            TeacherObj = Teacher.objects.get(Name=teacher)
+        except:
+            print 'unable to get teacher.'
+            print teacher
+            continue
+        #
+        try:
+            TestMappingObj = TestMapping.objects.get(SubjectMaster=SubObj, TestType=test_type, MaximumMarks=max_mark, Teacher=TeacherObj, AcademicYear = yr)
+            print test, max_mark, teacher, yr, 'already in DB'
+        except:
+            TestMappingObj = TestMapping()
+        TestMappingObj.SubjectMaster = SubObj
+        TestMappingObj.TestType = test_type
+        TestMappingObj.MaximumMarks = max_mark
+        TestMappingObj.Teacher = TeacherObj
+        TestMappingObj.AcademicYear = yr
+        #TestMappingObj.save()
+        print 'Added: ', subject, max_mark, teacher, yr
+        
+    return
     row = sh.row_values(0)
     tests = row[5:]
     row = sh.row_values(1)
@@ -130,7 +164,7 @@ def add_test():
 
 def add_additional_info():
     print "Additional Info"
-    yr = AcademicYear.objects.get(Year='2008-2009')
+    yr = AcademicYear.objects.get(Year='2009-2010')
     #for xls, std, div in zip(["../Data.xls"], [9], ['B']):
     xls_file = raw_input('Enter filename: ')
     div = raw_input('Enter Division: ')
@@ -1027,7 +1061,7 @@ def copy_yrly_info():
 #populate_project()
 #add_test()
 #add_marks()
-reg_no()
+#reg_no()
 #populate_fee_receipts('fee1.xls')
 
 sys.exit()

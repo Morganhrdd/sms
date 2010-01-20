@@ -7,12 +7,21 @@ from django.contrib.auth.decorators import login_required
 from jp_sms.pravesh.models import ApplicationForm, GenerateHallTicketForm
 from jp_sms.pravesh.models import HallTicket, Session, ClassRoom, Student
 # Create your views here.
-#TBR
+
 import httplib
 import datetime
 import urllib
-#
+
 MEDIUM = {'E':'English', 'M':'Marathi'}
+
+def sms_send(user=None, password=None, senderid=None, nos=None, msg=None, schedule=None):
+    for no in nos:
+        params = urllib.urlencode({'user': user, 'pwd': password, 'senderid': senderid, 'mobileno':str(no), 'msgtext': msg, 'priority':'High'})
+        conn = httplib.HTTPConnection('bulksmsindia.mobi', 80, timeout=10)
+        conn.request("GET", "/sendurl.asp?%s"%(params))
+        response = conn.getresponse()
+        print no, response.status, response.reason, response.read()
+        conn.close()
         
 def add(request):
     if not request.POST:
