@@ -54,7 +54,6 @@ def add(request):
             hallticket_obj.Student = student_obj
             hallticket_obj.ClassRoom = ClassRoom.objects.get(pk=x['classroom'])
             hallticket_obj.SeatNumber = x['seatnumber']
-            print "HALLTICKET", hallticket_obj
             hallticket_obj.save()
             return redirect('/pravesh/hallticket/%s'%(hallticket_obj.pk))
         return redirect('/pravesh')
@@ -159,7 +158,6 @@ def get_seatnumber(medium=None):
     for s in sessions:
         #retval['session'] = s
         classrooms = data[s].keys()
-        print data
         classrooms.sort()
         for c in classrooms:
             retval['classroom'] = c
