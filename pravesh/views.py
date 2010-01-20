@@ -105,6 +105,7 @@ def display_hallticket(request, pk):
         data['date'] = hallticket_obj.ClassRoom.Session.Start.strftime('%d-%b-%Y')
         data['session'] = hallticket_obj.ClassRoom.Session.Name
         data['session_time'] = '%s to %s' % (hallticket_obj.ClassRoom.Session.Start.strftime('%H:%M'), hallticket_obj.ClassRoom.Session.End.strftime('%H:%M'))
+        date['classroom'] = hallticket_obj.ClassRoom.Name
         return render_to_response('pravesh/hallticket.html', {'data':data})
     except:
         return render_to_response('pravesh/hallticket.html', {'msg': 'Seat number [<i>%s</i>] does not exists' % (pk)})
