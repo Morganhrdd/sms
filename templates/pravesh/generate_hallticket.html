@@ -16,7 +16,7 @@
     {% for hallticket_obj in hallticket_objs %}
     <li>
         {{ hallticket_obj.Student.FirstName }} {{ hallticket_obj.Student.LastName }}
-        <a href='/pravesh/hallticket/{{hallticket_obj.SeatNumber}}'>Print</a>
+        <a href='/pravesh/hallticket/{{hallticket_obj.pk}}'>Print</a>
         <a href='/pravesh/student/{{hallticket_obj.Student.id}}/edit'>Edit Info</a>
         
         
