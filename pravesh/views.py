@@ -11,6 +11,10 @@ from jp_sms.pravesh.models import HallTicket, Session, ClassRoom, Student
 import httplib
 import datetime
 import urllib
+import logging
+
+LOG_FILENAME = '/tmp/sms.log'
+logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG)
 
 MEDIUM = {'E':'English', 'M':'Marathi'}
 
@@ -20,7 +24,7 @@ def sms_send(user=None, password=None, senderid=None, nos=None, msg=None, schedu
         conn = httplib.HTTPConnection('bulksmsindia.mobi', 80, timeout=10)
         conn.request("GET", "/sendurl.asp?%s"%(params))
         response = conn.getresponse()
-        print no, response.status, response.reason, response.read()
+        logging.debug('Number: %s, Status: %s, Reason: %s, Output: %s' % (no, response.status, response.reason, response.read())
         conn.close()
         
 def add(request):
@@ -30,9 +34,11 @@ def add(request):
     else:
         applicationform = ApplicationForm(request.POST)
         if not applicationform.is_valid():
-            return render_to_response('pravesh/add.html', {'form': applicationform})
+            return render_to_response('pravesh/add.html', {'form': applicationform, 'button_name':'Add'})
         if request.POST['PayMode'] == 'DD' and not request.POST['DDNo']:
-            return render_to_response('pravesh/add.html', {'form': applicationform, 'message':'DD Number is mandatory'})
+            return render_to_response('pravesh/add.html', {'form': applicationform, 'message':'DD Number is mandatory', 'button_name':'Add'})
+        if not request.POST['PhoneMobile'].startswith('9') or len(request.POST.['PhoneMobile']) != 10:
+            return render_to_response('pravesh/add.html', {'form': applicationform, 'message':'Mobile number must start with 9 and must be 10 digit', 'button_name':'Add'})
         if request.POST.has_key('edit'):
             student_obj = Student(pk=request.POST['edit'])
         else:
