@@ -126,6 +126,26 @@ Leave Status
 	{% endfor %}
 </table>
 <tr><td> Late </td> <td> {{ latedays }}</td></tr>
+<tr>
+<td colspan=2 align="center">
+<table name="innerltdays">
+	{% for row in ltdays %}
+	<tr>
+		<td>{{ row.date}}</td>
+	</tr>
+	{% endfor %}
+</table>
+</td>
+</tr>
+<tr><td> Forgot Checkout </td> <td> {{ forgotdays }}</td></tr>
+<tr>
+<td colspan=2 align="center">
+<table name="innerfcdays">
+	{% for row in fcdays %}
+	<tr>
+		<td>{{ row.date}}</td>
+	</tr>
+	{% endfor %}
 </table>
 </td>
 </tr>

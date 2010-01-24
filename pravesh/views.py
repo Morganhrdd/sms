@@ -24,7 +24,7 @@ def sms_send(user=None, password=None, senderid=None, nos=None, msg=None, schedu
         conn = httplib.HTTPConnection('bulksmsindia.mobi', 80, timeout=10)
         conn.request("GET", "/sendurl.asp?%s"%(params))
         response = conn.getresponse()
-        logging.debug('Number: %s, Status: %s, Reason: %s, Output: %s' % (no, response.status, response.reason, response.read())
+        logging.debug('Number: %s, Status: %s, Reason: %s, Output: %s' % (no, response.status, response.reason, response.read()))
         conn.close()
         
 def add(request):

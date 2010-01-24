@@ -631,12 +631,18 @@ def app_leave(request):
 			datedata.append({'type':type[1], 'approve': approvedates, 'pending':pendingdates})
 			
 		adays = Attendance.objects.filter(Barcode=barcode).filter(Remark='A').filter(Year=acadyear)
-		latedays = Attendance.objects.filter(Barcode=barcode).filter(Remark='L').filter(Year=acadyear).count()
+		ldays = Attendance.objects.filter(Barcode=barcode).filter(Remark__in=('L','E')).filter(Year=acadyear)
+		fdays = ForgotCheckout.objects.filter(Barcode=barcode)
 		hdays = Attendance.objects.filter(Barcode=barcode).filter(Remark='H').filter(Year=acadyear)
 		abdays = []
 		hfdays = []
+		ltdays = []
+		fcdays = []
+		counts = [0,0,0,0,0,0,0,0,0,0,0,0,0]
 		absentdays = 0
 		halfdays = 0
+		forgotdays = 0
+		latedays = 0
 		for day in adays:
 			if not Leaves.objects.filter(Barcode=barcode).filter(LeaveDate=day.Date).filter(Type__in=(1,2,3)):
 				abdays.append({'date':day.Date})
@@ -646,8 +652,20 @@ def app_leave(request):
 				hfdays.append({'date':day.Date})
 				halfdays += 1
 			
+		for day in ldays:
+			ltdays.append({'date':day.Date})
+			counts[day.Date.month] += 1
+			latedays += 1
+
+		for day in fdays:
+			fcdays.append({'date':day.Date})
+			forgotdays += 1
 		
-		total_subtract = (((latedays / 3) + halfdays + (-balance[5]) + (-balance[6])) / 2.0)  + absentdays
+		late = 0
+		for cnt in counts:
+			late = late + (cnt/3)
+			
+		total_subtract = ((late + halfdays + (-balance[5]) + (-balance[6])) / 2.0)  + absentdays
 		if total_subtract > balance[1]:
 			total_subtract -= balance[1]
 			takenleaves[1] = carryforward[1] + currentleaves[1]
@@ -659,9 +677,9 @@ def app_leave(request):
 			takenleaves[1] += total_subtract
 
 		return render_to_response('ams/leaveapp.html', {'datedata':datedata,'form': form, 'data': data, 'message': message, 'abdays': abdays,
-									 'absentdays': absentdays, 'latedays': latedays, 'hfdays':hfdays, 'halfdays': halfdays,
+									 'absentdays': absentdays, 'latedays': latedays, 'ltdays': ltdays, 'hfdays':hfdays, 'halfdays': halfdays,
 									 'balance': balance, 'carryforward': carryforward, 'currentleaves': currentleaves,
-									 'takenleaves': takenleaves})
+									 'takenleaves': takenleaves, 'forgotdays': forgotdays, 'fcdays': fcdays})
 
 def monthly_report(request):
 	message = ""

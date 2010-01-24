@@ -268,7 +268,7 @@ function clockUpdate()
 <th>User (Date)</th>
 {% for row in leaves %}
 <tr>
-<td><a href="/admin/ams/leaves/" target="blank">{{ row.leave.Barcode}} ({{ row.leave.LeaveDate|date:"D d M Y"}})</a></td>
+<td><a href="/admin/ams/leaves/{{row.leave.pk}}" target="_blank">{{ row.leave.Barcode}} ({{ row.leave.LeaveDate|date:"D d M Y"}})</a></td>
 </tr>
 {% endfor %}
 </table>
@@ -298,7 +298,7 @@ function clockUpdate()
 <table>
 {% for row in forgotcheckout %}
 <tr>
-<td><a href="/admin/ams/timerecords/add/?Barcode={{row.user.Barcode.Barcode}}&Type=O&Date={{row.user.Date}}">{{ row.user.Barcode}}({{ row.user.Date|date:"D d M Y"}})</a></td>
+<td><a href="/admin/ams/timerecords/add/?Barcode={{row.user.Barcode.Barcode}}&Type=O&Date={{row.user.Date}}" target='_blank'>{{ row.user.Barcode}}({{ row.user.Date|date:"D d M Y"}})</a></td>
 </tr>
 {% endfor %}
 </table>
