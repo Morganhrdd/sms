@@ -24,7 +24,7 @@ def sms_send(user=None, password=None, senderid=None, nos=None, msg=None, schedu
         conn = httplib.HTTPConnection('bulksmsindia.mobi', 80, timeout=10)
         conn.request("GET", "/sendurl.asp?%s"%(params))
         response = conn.getresponse()
-        logging.debug('Number: %s, Status: %s, Reason: %s, Output: %s' % (no, response.status, response.reason, response.read())
+        logging.debug('Number: %s, Status: %s, Reason: %s, Output: %s' % (no, response.status, response.reason, response.read()))
         conn.close()
         
 def add(request):
@@ -37,8 +37,6 @@ def add(request):
             return render_to_response('pravesh/add.html', {'form': applicationform, 'button_name':'Add'})
         if request.POST['PayMode'] == 'DD' and not request.POST['DDNo']:
             return render_to_response('pravesh/add.html', {'form': applicationform, 'message':'DD Number is mandatory', 'button_name':'Add'})
-        if not request.POST['PhoneMobile'].startswith('9') or len(request.POST.['PhoneMobile']) != 10:
-            return render_to_response('pravesh/add.html', {'form': applicationform, 'message':'Mobile number must start with 9 and must be 10 digit', 'button_name':'Add'})
         if request.POST.has_key('edit'):
             student_obj = Student(pk=request.POST['edit'])
         else:
