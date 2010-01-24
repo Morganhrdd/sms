@@ -30,7 +30,7 @@ class FeeType(models.Model):
 	Type = models.CharField(max_length=30)
 	Amount = models.PositiveIntegerField()
 	def __unicode__(self):
-		return "%s, %d" % (self.Type, self.Amount)
+		return "%s %s, %d" % (self.ClassMaster, self.Type, self.Amount)
 				
 class FeeReceipt(models.Model):
 	ReceiptNumber = models.PositiveIntegerField(primary_key=True)
