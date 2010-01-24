@@ -265,9 +265,11 @@ def fee_report(request):
 											amount = amount / 2
 									feereceipts = FeeReceipt.objects.filter(StudentYearlyInformation=data).filter(FeeType=ftype).filter(Status=1)
 									total = 0
+									receipts = []
 									if feereceipts:
 										for fr in feereceipts:
 											total += fr.Amount
+											receipts.append({'receipt': fr})
 									balance = amount - total
 									scholarship = ScholarshipOrFee.objects.filter(StudentYearlyInformation=data).filter(FeeType=ftype)
 									if scholarship:
@@ -285,7 +287,9 @@ def fee_report(request):
 										fstyle_opentag = STYLE_OPEN_TAG
 										fstyle_closetag = STYLE_CLOSE_TAG
 									feeinfo.append({'Type':ftype.Type, 'Amount':amount, 'Total':total,
-										'Balance':balance, 'FStyleOpenTag':fstyle_opentag, 'FStyleCloseTag':fstyle_closetag})
+										'Balance':balance, 'FStyleOpenTag':fstyle_opentag, 'FStyleCloseTag':fstyle_closetag,
+										'Receipts':receipts})
+										
 							if tschol > 0:
 								feeinfo.append({'Type':'Scholarship', 'Amount':tschol, 'Total':'-',
 													 'Balance':'-'})
