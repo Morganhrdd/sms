@@ -669,7 +669,7 @@ def app_leave(request):
 		if total_subtract > balance[1]:
 			total_subtract -= balance[1]
 			takenleaves[1] = carryforward[1] + currentleaves[1]
-			takenleaves[3] = total_subtract
+			takenleaves[3] += total_subtract
 			balance[1] = 0
 			balance[3] -= total_subtract
 		else:
@@ -677,7 +677,7 @@ def app_leave(request):
 			takenleaves[1] += total_subtract
 
 		return render_to_response('ams/leaveapp.html', {'datedata':datedata,'form': form, 'data': data, 'message': message, 'abdays': abdays,
-									 'absentdays': absentdays, 'latedays': latedays, 'ltdays': ltdays, 'hfdays':hfdays, 'halfdays': halfdays,
+									 'absentdays': absentdays, 'latedays': late, 'ltdays': ltdays, 'hfdays':hfdays, 'halfdays': halfdays,
 									 'balance': balance, 'carryforward': carryforward, 'currentleaves': currentleaves,
 									 'takenleaves': takenleaves, 'forgotdays': forgotdays, 'fcdays': fcdays})
 
