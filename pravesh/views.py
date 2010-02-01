@@ -1,4 +1,4 @@
-from django.db.models import Q, Max
+from django.db.models import Q, Count
 from django.shortcuts import render_to_response, redirect
 from django.http import HttpResponse 
 from django.template import Context
@@ -6,6 +6,7 @@ from django.template.loader import get_template
 from django.contrib.auth.decorators import login_required
 from jp_sms.pravesh.models import ApplicationForm, GenerateHallTicketForm
 from jp_sms.pravesh.models import HallTicket, Session, ClassRoom, Student
+
 # Create your views here.
 
 import httplib
@@ -124,6 +125,16 @@ def display_hallticket(request, pk):
 
 def index(request):
     data = {}
+    data['stats'] = {}
+    data['stats']['MM'] = Student.objects.filter(Gender='M', Medium='M').aggregate(Count('Gender'))['Gender__count']
+    data['stats']['ME'] = Student.objects.filter(Gender='M', Medium='E').aggregate(Count('Gender'))['Gender__count']
+    data['stats']['FM'] = Student.objects.filter(Gender='F', Medium='M').aggregate(Count('Gender'))['Gender__count']
+    data['stats']['FE'] = Student.objects.filter(Gender='F', Medium='E').aggregate(Count('Gender'))['Gender__count']
+    data['stats']['MMFM'] = data['stats']['MM'] + data['stats']['FM']
+    data['stats']['MEFE'] = data['stats']['ME'] + data['stats']['FE']
+    data['stats']['MMME'] = data['stats']['MM'] + data['stats']['ME']
+    data['stats']['FMFE'] = data['stats']['FM'] + data['stats']['FE']
+    data['stats']['MMMEFMFE'] = data['stats']['MMME'] + data['stats']['FMFE']
     data['add_url'] = '/pravesh/add'
     data['generate_hallticket_url'] = '/pravesh/generate_hallticket'
     return render_to_response('pravesh/index.html',{'data':data})
