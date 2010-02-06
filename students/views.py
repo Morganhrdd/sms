@@ -3,11 +3,13 @@ from django.db.models import Q
 from django.shortcuts import render_to_response
 from django.http import HttpResponse 
 from jp_sms.students.models import TestMapping, StudentTestMarks, StudentYearlyInformation, StudentBasicInfo
-from jp_sms.students.models import SubjectMaster, ClassMaster, SubjectMaster, AttendanceMaster
+from jp_sms.students.models import SubjectMaster, ClassMaster, SubjectMaster, AttendanceMaster, AcademicYear
 from jp_sms.students.models import StudentAttendance, StudentAdditionalInformation,CoCurricular
 from jp_sms.students.models import SocialActivity,PhysicalFitnessInfo,AbhivyaktiVikas
+from jp_sms.students.models import SearchDetailsForm, CompetitionDetailsForm
 from jp_sms.students.models import Project,Elocution,Library,Competition,CompetitiveExam,STANDARD_CHOICES
 from django.template import Context
+from django.core.context_processors import csrf
 from django.template.loader import get_template
 from reportlab.pdfgen import canvas
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer,Image,Table,TableStyle,Frame,PageBreak
@@ -24,6 +26,7 @@ from django.utils.safestring import mark_safe
 import time
 import datetime
 import string
+from pprint import pprint
 
 PAGE_HEIGHT=defaultPageSize[1]; PAGE_WIDTH=defaultPageSize[0]
 styles = getSampleStyleSheet()
@@ -360,7 +363,7 @@ def report(request):
                                          'PublicComment':soc_act_data.PublicComment})
         if(len(social_activities) > 0):
             cumulative_social_grade=GRADE_CHOICES[int(round(cumulative_social_grade_sum/len(social_activities)))]        
-        print cumulative_social_grade
+        #print cumulative_social_grade
 
         
         return render_to_response('students/Marks_Report.html',Context({'student_data':student_data ,
@@ -389,7 +392,6 @@ def marks_add(request):
         test_id = request.POST['test_id']
         keys.remove('test_id')
         for key in keys:
-            print request.POST[key]
             test = TestMapping.objects.get(id=test_id)
             student = StudentYearlyInformation.objects.get(id=key)
             a = StudentTestMarks.objects.filter(StudentYearlyInformation=student, TestMapping=test)
@@ -399,7 +401,7 @@ def marks_add(request):
             a.StudentYearlyInformation = student
             a.MarksObtained = request.POST[key]
             a.save()
-        return HttpResponse('Successfully added record.<br/>\n<a href="http://localhost:8000/marks_add">Select test for entering data</a>')
+        return HttpResponse('Successfully added record.<br/>\n<a href="/marks_add">Select test for entering data</a>')
     else:
         if not request.GET.has_key('test_id'):
             tests = TestMapping.objects.all()
@@ -428,13 +430,68 @@ def marks_add(request):
             data.append({'id':student.id, 'name': name, 'rollno':student.RollNo, 'marks_obtained':marks_obtained })
         return render_to_response('students/AddMarks.html',Context({'test_details': test_details,'test_id':test_id, 'data':data}))
 
+def competition_add(request):
+    c = {}
+    c.update(csrf(request))
+    if not request.POST:
+        genform = SearchDetailsForm()
+        return render_to_response('students/AddCompetition.html',{'form':genform})
+    else:
+        c = {}
+        c.update(csrf(request))
+        genform = SearchDetailsForm(request.POST)
+        if request.POST.has_key('RegistrationNo'):
+            regno = request.POST['RegistrationNo']
+            student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
+            name = '%s %s' % (student_info.FirstName, student_info.LastName)
+            yr = request.POST['Year']
+            yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
+            # store data
+            if request.POST.has_key('pk'):
+                pk = request.POST['pk']
+                delete = request.POST['Delete']
+                if pk and delete in ('Y', 'y'):
+                    Competition.objects.get(pk=pk).delete()
+                if delete not in ('Y', 'y'):
+                    if pk:
+                        competition_obj = Competition.objects.get(pk=pk)
+                    else:
+                        competition_obj = Competition()
+                    competition_obj.StudentYearlyInformation = yearly_info
+                    competition_obj.Organizer = request.POST['Organizer']
+                    competition_obj.Subject = request.POST['Subject']
+                    competition_obj.Date = request.POST['Date']
+                    competition_obj.Achievement = request.POST['Achievement']
+                    competition_obj.Guide = request.POST['Guide']
+                    competition_obj.PublicComment = request.POST['PublicComment']
+                    competition_obj.PrivateComment = request.POST['PrivateComment']
+                    competition_obj.save()
+            # end store data
+            competition_objs = Competition.objects.filter(StudentYearlyInformation=yearly_info)
+            data = []
+            for competition_obj in competition_objs:
+                tmp = {}
+                tmp['pk'] = competition_obj.pk
+                tmp['Subject'] = competition_obj.Subject
+                tmp['Organizer'] = competition_obj.Organizer
+                tmp['Date'] = competition_obj.Date
+                tmp['Achievement'] = competition_obj.Achievement
+                tmp['Guide'] = competition_obj.Guide
+                tmp['PublicComment'] = competition_obj.PublicComment
+                tmp['PrivateComment'] = competition_obj.PrivateComment
+                x = CompetitionDetailsForm(initial=tmp)
+                data.append(x)
+            data.append(CompetitionDetailsForm(initial={'Delete':'Y'}))
+            return render_to_response('students/AddCompetition.html',{'form':genform,'data':data,'name':name}, c)
+        return render_to_response('students/AddCompetition.html',{'form':genform}, c)
+
+    
 # Used by HTML Report
 def attendance_add(request):
     if request.POST:
         keys = request.POST.keys()
         attendance_id = request.POST['attendance_id']
         keys.remove('attendance_id')
-        print attendance_id
         for key in keys:
             attendance_master = AttendanceMaster.objects.get(id = attendance_id)
             student = StudentYearlyInformation.objects.get(id = key)
@@ -445,13 +502,13 @@ def attendance_add(request):
             a.StudentYearlyInformation = student
             a.ActualAttendance = request.POST[key]
             a.save()
-        return HttpResponse('Successfully added record.<br/>\n<a href="http://localhost:8000/attendance_add">Select test for entering data</a>')
+        return HttpResponse('Successfully added record.<br/>\n<a href="/attendance_add">Select test for entering data</a>')
     else:
         if not request.GET.has_key('attendance_id'):
             attendancemaster = AttendanceMaster.objects.all()
             attendance_details = ''
             for attendance in attendancemaster:
-                attendance_details += '<a href="http://localhost:8000/attendance_add/?attendance_id='+str(attendance.id)+'">'+'%s' %(attendance) + '</a><br/>'
+                attendance_details += '<a href="/attendance_add/?attendance_id='+str(attendance.id)+'">'+'%s' %(attendance) + '</a><br/>'
             return HttpResponse(attendance_details)
         attendance_id = request.GET['attendance_id']
         attendance = AttendanceMaster.objects.get(id=attendance_id)
@@ -529,14 +586,14 @@ def reportPDF(request):
         while registration_number <= registration_number_max:
             registration_numbers.append(registration_number)
             registration_number = registration_number + 1
-        print registration_numbers
+        #print registration_numbers
         Story = []
         fillPdfData(Story, registration_numbers, part_option, standard, division, year_option)
-        print 'Filled'
+        #print 'Filled'
         response = HttpResponse(mimetype='application/pdf')        
         doc = SimpleDocTemplate(response)        
         doc.build(Story, onFirstPage=laterPages, onLaterPages=laterPages)
-        print 'PDF Build'
+        #print 'PDF Build'
         return response
     else:
         return HttpResponse ('<html><body>'
@@ -576,7 +633,7 @@ def fillPdfData(Story, registration_nos, part_option, standard, division, year_o
             student_division = student_yearly_info.ClassMaster.Division
             if ((division == 'B') or (division == 'G')) and (student_division != division):
                 continue               
-            print 'Filling ' + str(registration_no)
+            #print 'Filling ' + str(registration_no)
             if part_option == 0:
                 fillStaticAndYearlyInfo(student_yearly_info, Story)
                 fillAcademicReport(student_yearly_info, Story)
@@ -1298,14 +1355,14 @@ def certificatePDF(request):
         while registration_number <= registration_number_max:
             registration_numbers.append(registration_number)
             registration_number = registration_number + 1
-        print registration_numbers
+        #print registration_numbers
         Story = []
         fillCertificatePdfData(Story, registration_numbers, standard, division, year_option)
-        print 'Filled'
+        #print 'Filled'
         response = HttpResponse(mimetype='application/pdf')        
         doc = SimpleDocTemplate(response)        
         doc.build(Story, onFirstPage=CertificateLaterPages, onLaterPages=CertificateLaterPages)
-        print 'PDF Build'
+        #print 'PDF Build'
         return response
     else:
         return HttpResponse ('<html><body>'
@@ -1344,7 +1401,7 @@ def fillCertificatePdfData(Story, registration_nos, standard, division, year_opt
             student_division = student_yearly_info.ClassMaster.Division
             if ((division == 'B') or (division == 'G')) and (student_division != division):
                 continue               
-            print 'Filling ' + str(registration_no)
+            #print 'Filling ' + str(registration_no)
             fillCertificateHeader(Story);
             fillCertificate(student_yearly_info, Story);
 
@@ -1481,14 +1538,14 @@ def schoolLeavingPDF(request):
         while registration_number <= registration_number_max:
             registration_numbers.append(registration_number)
             registration_number = registration_number + 1
-        print registration_numbers
+        #print registration_numbers
         Story = []
         fillSchoolLeavingPdfData(Story, registration_numbers, standard, division, year_option)
-        print 'Filled'
+        #print 'Filled'
         response = HttpResponse(mimetype='application/pdf')        
         doc = SimpleDocTemplate(response)        
         doc.build(Story, onFirstPage=SchoolLeavingLaterPages, onLaterPages=SchoolLeavingLaterPages)
-        print 'PDF Build'
+        #print 'PDF Build'
         return response
     else:
         return HttpResponse ('<html><body>'
@@ -1526,7 +1583,7 @@ def fillSchoolLeavingPdfData(Story, registration_nos, standard, division, year_o
             student_division = student_yearly_info.ClassMaster.Division
             if ((division == 'B') or (division == 'G')) and (student_division != division):
                 continue               
-            print 'Filling ' + str(registration_no)
+            #print 'Filling ' + str(registration_no)
             fillSchoolLeavingHeader(Story);
             fillSchoolLeaving(student_yearly_info, Story);
 
@@ -1693,6 +1750,8 @@ def int2word(n):
     return nw
 
 marks_add = login_required(marks_add)
+competition_add = login_required(competition_add)
+attendance_add = login_required(attendance_add)
 report=login_required(report)
 reportPDF=login_required(reportPDF)
 certificatePDF = login_required(certificatePDF)
