@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib import admin
 from django.contrib.auth.models import User
+from django import forms
 
 CLASS_MASTER_CHOICES = (
     ('P', 'Prashala'),
@@ -322,3 +323,22 @@ class Library(models.Model):
     class Meta:
         verbose_name_plural = "Libraries"
     
+class SearchDetailsForm(forms.Form):
+    Year = forms.CharField(max_length=9)
+    RegistrationNo = forms.IntegerField()
+    #Std = forms.CharField(max_length=9)
+    #Division = forms.CharField(max_length=9)
+    #FromRollNo = forms.IntegerField(required=False)
+    #ToRollNo = forms.IntegerField(required=False)
+
+class CompetitionDetailsForm(forms.Form):
+    pkwidget = forms.HiddenInput()
+    pk=forms.IntegerField(widget=pkwidget, required=False)
+    Organizer = forms.CharField(max_length=50)
+    Subject = forms.CharField(max_length=30)
+    Date = forms.DateField()
+    Achievement = forms.CharField(max_length=20, required=False)
+    Guide = forms.CharField(max_length=30, required=False)
+    PublicComment = forms.CharField(max_length=200, required=False)
+    PrivateComment = forms.CharField(max_length=200, required=False)
+    Delete = forms.CharField(required=False)
