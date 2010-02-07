@@ -68,6 +68,7 @@ PROJECT_TYPE_CHOICES = (
     ('CP', 'Creative production'),
     ('AC', 'Appreciation-criticism'),
     ('O', 'Open ended exploration'),
+    ('N', 'None')
 )
 
 HOSTEL_CHOICES = (
@@ -336,8 +337,8 @@ class CompetitionDetailsForm(forms.Form):
     Date = forms.DateField()
     Achievement = forms.CharField(max_length=20, required=False)
     Guide = forms.CharField(max_length=30, required=False)
-    PublicComment = forms.CharField(max_length=200, required=False)
-    PrivateComment = forms.CharField(max_length=200, required=False)
+    PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     Delete = forms.CharField(required=False)
 
 class ElocutionDetailsForm(forms.Form):
@@ -349,6 +350,36 @@ class ElocutionDetailsForm(forms.Form):
     Understanding = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
     Skill = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
     Presentation = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
-    PublicComment = forms.CharField(max_length=200, required=False)
-    PrivateComment = forms.CharField(max_length=200, required=False)
+    PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    Delete = forms.CharField(required=False)
+
+class ProjectDetailsForm(forms.Form):
+    pkwidget = forms.HiddenInput()
+    pk=forms.IntegerField(widget=pkwidget, required=False)
+    Title = forms.CharField(max_length=50)
+    Type = forms.ChoiceField(choices=PROJECT_TYPE_CHOICES, initial='N')
+    Subject = forms.CharField(max_length=50)
+    ProblemSelection = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    Review = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    Planning = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    Documentation = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    Communication = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    Delete = forms.CharField(required=False)
+    
+
+class AbhivyaktiVikasDetailsForm(forms.Form):
+    pkwidget = forms.HiddenInput()
+    pk=forms.IntegerField(widget=pkwidget, required=False)
+    MediumOfExpression = forms.CharField(max_length=10)
+    Teacher = forms.ModelChoiceField(Teacher.objects.all())
+    Participation = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    ReadinessToLearn = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    ContinuityInWork = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    SkillDevelopment = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    Creativity = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     Delete = forms.CharField(required=False)
