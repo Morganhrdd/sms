@@ -6,8 +6,8 @@ from jp_sms.students.models import TestMapping, StudentTestMarks, StudentYearlyI
 from jp_sms.students.models import SubjectMaster, ClassMaster, SubjectMaster, AttendanceMaster, AcademicYear
 from jp_sms.students.models import StudentAttendance, StudentAdditionalInformation,CoCurricular
 from jp_sms.students.models import SocialActivity,PhysicalFitnessInfo,AbhivyaktiVikas,Teacher
-from jp_sms.students.models import SearchDetailsForm, CompetitionDetailsForm, ElocutionDetailsForm
-from jp_sms.students.models import ProjectDetailsForm, AbhivyaktiVikasDetailsForm
+from jp_sms.students.models import SearchDetailsForm, CompetitionDetailsForm, ElocutionDetailsForm, CoCurricularDetailsForm
+from jp_sms.students.models import ProjectDetailsForm, AbhivyaktiVikasDetailsForm, CompetitiveExamDetailsForm
 from jp_sms.students.models import Project,Elocution,Library,Competition,CompetitiveExam,STANDARD_CHOICES
 from django.template import Context
 from django.core.context_processors import csrf
@@ -432,6 +432,7 @@ def marks_add(request):
             data.append({'id':student.id, 'name': name, 'rollno':student.RollNo, 'marks_obtained':marks_obtained })
         return render_to_response('students/AddMarks.html',Context({'test_details': test_details,'test_id':test_id, 'data':data}))
 
+@csrf_exempt
 def competition_add(request):
     c = {}
     c.update(csrf(request))
@@ -484,8 +485,8 @@ def competition_add(request):
                 x = CompetitionDetailsForm(initial=tmp)
                 data.append(x)
             data.append(CompetitionDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddCompetition.html',{'form':genform,'data':data,'name':name}, c)
-        return render_to_response('students/AddCompetition.html',{'form':genform}, c)
+            return render_to_response('students/AddCompetition.html',{'form':genform,'data':data,'name':name})
+        return render_to_response('students/AddCompetition.html',{'form':genform})
 
 
 #
@@ -663,6 +664,116 @@ def abhivyaktivikas_add(request):
             data.append(AbhivyaktiVikasDetailsForm(initial={'Delete':'Y'}))
             return render_to_response('students/AddAbhivyaktiVikas.html',{'form':genform,'data':data,'name':name})
         return render_to_response('students/AddAbhivyaktiVikas.html',{'form':genform})
+
+#
+@csrf_exempt
+def competitiveexam_add(request):
+    c = {}
+    c.update(csrf(request))
+    if not request.POST:
+        genform = SearchDetailsForm()
+        return render_to_response('students/AddCompetitiveExam.html',{'form':genform})
+    else:
+        c = {}
+        c.update(csrf(request))
+        genform = SearchDetailsForm(request.POST)
+        if request.POST.has_key('RegistrationNo'):
+            regno = request.POST['RegistrationNo']
+            student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
+            name = '%s %s' % (student_info.FirstName, student_info.LastName)
+            yr = request.POST['Year']
+            yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
+            # store data
+            if request.POST.has_key('pk'):
+                pk = request.POST['pk']
+                delete = request.POST['Delete']
+                if pk and delete in ('Y', 'y'):
+                    CompetitiveExam.objects.get(pk=pk).delete()
+                if delete not in ('Y', 'y'):
+                    if pk:
+                        competitiveexam_obj = CompetitiveExam.objects.get(pk=pk)
+                    else:
+                        competitiveexam_obj = CompetitiveExam()
+                    competitiveexam_obj.StudentYearlyInformation = yearly_info
+                    competitiveexam_obj.Name = request.POST['Name']
+                    competitiveexam_obj.Subject = request.POST['Subject']
+                    competitiveexam_obj.Level = request.POST['Level']
+                    competitiveexam_obj.Date = request.POST['Date']
+                    competitiveexam_obj.Grade = request.POST['Grade']
+                    competitiveexam_obj.PublicComment = request.POST['PublicComment']
+                    competitiveexam_obj.PrivateComment = request.POST['PrivateComment']
+                    competitiveexam_obj.save()
+            # end store data
+            competitiveexam_objs = CompetitiveExam.objects.filter(StudentYearlyInformation=yearly_info)
+            data = []
+            for competitiveexam_obj in competitiveexam_objs:
+                tmp = {}
+                tmp['pk'] = competitiveexam_obj.pk
+                tmp['Name'] = competitiveexam_obj.Name
+                tmp['Subject'] = competitiveexam_obj.Subject
+                tmp['Level'] = competitiveexam_obj.Level
+                tmp['Date'] = competitiveexam_obj.Date
+                tmp['Grade'] = competitiveexam_obj.Grade
+                tmp['PublicComment'] = competitiveexam_obj.PublicComment
+                tmp['PrivateComment'] = competitiveexam_obj.PrivateComment
+                x = CompetitiveExamDetailsForm(initial=tmp)
+                data.append(x)
+            data.append(CompetitionDetailsForm(initial={'Delete':'Y'}))
+            return render_to_response('students/AddCompetitiveExam.html',{'form':genform,'data':data,'name':name})
+        return render_to_response('students/AddCompetitiveExam.html',{'form':genform})
+
+#
+@csrf_exempt
+def cocurricular_add(request):
+    if not request.POST:
+        genform = SearchDetailsForm()
+        return render_to_response('students/AddCocurricular.html',{'form':genform})
+    else:
+        genform = SearchDetailsForm(request.POST)
+        if request.POST.has_key('RegistrationNo'):
+            regno = request.POST['RegistrationNo']
+            student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
+            name = '%s %s' % (student_info.FirstName, student_info.LastName)
+            yr = request.POST['Year']
+            yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
+            # store data
+            if request.POST.has_key('pk'):
+                pk = request.POST['pk']
+                delete = request.POST['Delete']
+                if pk and delete in ('Y', 'y'):
+                    CoCurricular.objects.get(pk=pk).delete()
+                if delete not in ('Y', 'y'):
+                    if pk:
+                        cocurricular_obj = CoCurricular.objects.get(pk=pk)
+                    else:
+                        cocurricular_obj = CompetitiveExam()
+                    cocurricular_obj.StudentYearlyInformation = yearly_info
+                    cocurricular_obj.Activity = request.POST['Activity']
+                    cocurricular_obj.Objectives = request.POST['Objectives']
+                    cocurricular_obj.Date = request.POST['Date']
+                    cocurricular_obj.Guide = request.POST['Guide']
+                    cocurricular_obj.Grade = request.POST['Grade']
+                    cocurricular_obj.PublicComment = request.POST['PublicComment']
+                    cocurricular_obj.PrivateComment = request.POST['PrivateComment']
+                    cocurricular_obj.save()
+            # end store data
+            cocurricular_objs = CoCurricular.objects.filter(StudentYearlyInformation=yearly_info)
+            data = []
+            for cocurricular_obj in cocurricular_objs:
+                tmp = {}
+                tmp['pk'] = cocurricular_obj.pk
+                tmp['Activity'] = cocurricular_obj.Activity
+                tmp['Objectives'] = cocurricular_obj.Objectives
+                tmp['Date'] = cocurricular_obj.Date
+                tmp['Guide'] = cocurricular_obj.Guide
+                tmp['Grade'] = cocurricular_obj.Grade
+                tmp['PublicComment'] = cocurricular_obj.PublicComment
+                tmp['PrivateComment'] = cocurricular_obj.PrivateComment
+                x = CoCurricularDetailsForm(initial=tmp)
+                data.append(x)
+            data.append(CoCurricularDetailsForm(initial={'Delete':'Y'}))
+            return render_to_response('students/AddCocurricular.html',{'form':genform,'data':data,'name':name})
+        return render_to_response('students/AddCocurricular.html',{'form':genform})
 
 # Used by HTML Report
 def attendance_add(request):

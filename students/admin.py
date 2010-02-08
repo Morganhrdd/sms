@@ -72,11 +72,11 @@ class CoCurricularAdmin(admin.ModelAdmin):
 
 class CompetitiveExamAdmin(admin.ModelAdmin):
     list_display = ('StudentYearlyInformation', 'Name', 'Subject', 'Level', 'Date', 'Grade')
-    search_fields = ('StudentYearlyInformation__StudentBasicInfo__FirstName', 'Name', 'Subject', 'Level')
+    search_fields = ('StudentYearlyInformation__StudentBasicInfo__FirstName', 'Name', 'Subject', 'Level', 'StudentYearlyInformation__StudentBasicInfo__RegistrationNo')
 
 class CompetitionAdmin(admin.ModelAdmin):
     list_display = ('StudentYearlyInformation', 'Organizer', 'Subject', 'Date', 'Achievement', 'Guide')
-    search_fields = ('StudentYearlyInformation__StudentBasicInfo__FirstName', 'Subject', 'Guide', 'Organizer')
+    search_fields = ('StudentYearlyInformation__StudentBasicInfo__FirstName', 'Subject', 'Guide', 'Organizer', 'StudentYearlyInformation__StudentBasicInfo__RegistrationNo')
 
 class AbhivyaktiVikasAdmin(admin.ModelAdmin):
     list_display = ('StudentYearlyInformation', 'MediumOfExpression', 'Teacher', 'Participation', 'ReadinessToLearn', 'ContinuityInWork', 'SkillDevelopment', 'Creativity')
