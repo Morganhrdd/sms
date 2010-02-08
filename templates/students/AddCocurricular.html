@@ -19,7 +19,7 @@
         </form>
         {% if data %}
 	    {% for f in data %}
-        <form action="" method="POST">{% csrf_token %}
+        <form action="" method="POST">
 			<hr />
 		    {{ form.Year }}
 		    {{ form.RegistrationNo }} {{ name }}
