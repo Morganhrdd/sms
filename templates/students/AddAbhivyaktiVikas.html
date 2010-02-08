@@ -10,7 +10,7 @@
 <body>
  	<br/>	
 	    {{ msg }}
-		<form action="" method="POST">{% csrf_token %}
+		<form action="" method="POST">
 		    <table cellSpacing=0 cellPadding=5 width="50%" border=0 style="WIDTH: 50%" align=center>
                 {{ form.as_table }}
             </table>
@@ -19,7 +19,7 @@
         </form>
         {% if data %}
 	    {% for f in data %}
-        <form action="" method="POST">{% csrf_token %}
+        <form action="" method="POST">
 			<hr />
 		    {{ form.Year }}
 		    {{ form.RegistrationNo }} {{ name }}
