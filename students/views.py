@@ -6,8 +6,9 @@ from jp_sms.students.models import TestMapping, StudentTestMarks, StudentYearlyI
 from jp_sms.students.models import SubjectMaster, ClassMaster, SubjectMaster, AttendanceMaster, AcademicYear
 from jp_sms.students.models import StudentAttendance, StudentAdditionalInformation,CoCurricular
 from jp_sms.students.models import SocialActivity,PhysicalFitnessInfo,AbhivyaktiVikas,Teacher
-from jp_sms.students.models import SearchDetailsForm, CompetitionDetailsForm, ElocutionDetailsForm, CoCurricularDetailsForm
+from jp_sms.students.models import SearchDetailsForm, CompetitionDetailsForm, ElocutionDetailsForm
 from jp_sms.students.models import ProjectDetailsForm, AbhivyaktiVikasDetailsForm, CompetitiveExamDetailsForm
+from jp_sms.students.models import CoCurricularDetailsForm, SocialActivityDetailsForm
 from jp_sms.students.models import Project,Elocution,Library,Competition,CompetitiveExam,STANDARD_CHOICES
 from django.template import Context
 from django.core.context_processors import csrf
@@ -746,7 +747,7 @@ def cocurricular_add(request):
                     if pk:
                         cocurricular_obj = CoCurricular.objects.get(pk=pk)
                     else:
-                        cocurricular_obj = CompetitiveExam()
+                        cocurricular_obj = CoCurricular()
                     cocurricular_obj.StudentYearlyInformation = yearly_info
                     cocurricular_obj.Activity = request.POST['Activity']
                     cocurricular_obj.Objectives = request.POST['Objectives']
@@ -774,6 +775,59 @@ def cocurricular_add(request):
             data.append(CoCurricularDetailsForm(initial={'Delete':'Y'}))
             return render_to_response('students/AddCocurricular.html',{'form':genform,'data':data,'name':name})
         return render_to_response('students/AddCocurricular.html',{'form':genform})
+
+#
+@csrf_exempt
+def socialactivity_add(request):
+    if not request.POST:
+        genform = SearchDetailsForm()
+        return render_to_response('students/AddSocialActivity.html',{'form':genform})
+    else:
+        genform = SearchDetailsForm(request.POST)
+        if request.POST.has_key('RegistrationNo'):
+            regno = request.POST['RegistrationNo']
+            student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
+            name = '%s %s' % (student_info.FirstName, student_info.LastName)
+            yr = request.POST['Year']
+            yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
+            # store data
+            if request.POST.has_key('pk'):
+                pk = request.POST['pk']
+                delete = request.POST['Delete']
+                if pk and delete in ('Y', 'y'):
+                    SocialActivity.objects.get(pk=pk).delete()
+                if delete not in ('Y', 'y'):
+                    if pk:
+                        socialactivity_obj = SocialActivity.objects.get(pk=pk)
+                    else:
+                        socialactivity_obj = SocialActivity()
+                    socialactivity_obj.StudentYearlyInformation = yearly_info
+                    socialactivity_obj.Activity = request.POST['Activity']
+                    socialactivity_obj.Objectives = request.POST['Objectives']
+                    socialactivity_obj.Date = request.POST['Date']
+                    socialactivity_obj.Organizer = request.POST['Organizer']
+                    socialactivity_obj.Grade = request.POST['Grade']
+                    socialactivity_obj.PublicComment = request.POST['PublicComment']
+                    socialactivity_obj.PrivateComment = request.POST['PrivateComment']
+                    socialactivity_obj.save()
+            # end store data
+            socialactivity_objs = SocialActivity.objects.filter(StudentYearlyInformation=yearly_info)
+            data = []
+            for socialactivity_obj in socialactivity_objs:
+                tmp = {}
+                tmp['pk'] = socialactivity_obj.pk
+                tmp['Activity'] = socialactivity_obj.Activity
+                tmp['Objectives'] = socialactivity_obj.Objectives
+                tmp['Date'] = socialactivity_obj.Date
+                tmp['Organizer'] = socialactivity_obj.Organizer
+                tmp['Grade'] = socialactivity_obj.Grade
+                tmp['PublicComment'] = socialactivity_obj.PublicComment
+                tmp['PrivateComment'] = socialactivity_obj.PrivateComment
+                x = SocialActivityDetailsForm(initial=tmp)
+                data.append(x)
+            data.append(CoCurricularDetailsForm(initial={'Delete':'Y'}))
+            return render_to_response('students/AddSocialActivity.html',{'form':genform,'data':data,'name':name})
+        return render_to_response('students/AddSocialActivity.html',{'form':genform})
 
 # Used by HTML Report
 def attendance_add(request):
@@ -2046,6 +2100,7 @@ abhivyaktivikas_add = login_required(abhivyaktivikas_add)
 project_add = login_required(project_add)
 competitiveexam_add = login_required(competitiveexam_add)
 cocurricular_add = login_required(cocurricular_add)
+socialactivity_add = login_required(socialactivity_add)
 report=login_required(report)
 reportPDF=login_required(reportPDF)
 certificatePDF = login_required(certificatePDF)

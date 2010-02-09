@@ -30,7 +30,7 @@ urlpatterns = patterns('',
     (r'^project_add/', 'students.views.project_add'),
     (r'^abhivyaktivikas_add/', 'students.views.abhivyaktivikas_add'),
     (r'^competitiveexam_add/', 'students.views.competitiveexam_add'),
-    (r'^cocurricular_add/', 'students.views.cocurricular_add'),
+    (r'^socialactivity_add/', 'students.views.socialactivity_add'),
     ##(r'^accounts/', include('registration.backends.default.urls')),
     (r'^accounts/', include('registration.urls')),
     (r'^$', direct_to_template,  { 'template': 'index.html' }, 'index'),
@@ -42,3 +42,4 @@ urlpatterns = patterns('',
     #(r'^useradd/', views.user_add),
     # ... the rest of your URLs here ...
 )
+(r'^cocurricular_add/', 'students.views.cocurricular_add'),
