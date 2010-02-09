@@ -407,4 +407,16 @@ class CoCurricularDetailsForm(forms.Form):
     PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     Delete = forms.CharField(required=False)
+
+class SocialActivityDetailsForm(forms.Form):
+    pkwidget = forms.HiddenInput()
+    pk=forms.IntegerField(widget=pkwidget, required=False)
+    Activity = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), max_length=50)
+    Objectives = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), max_length=200)
+    Date = forms.DateField()
+    Organizer = forms.CharField(max_length=30, required=False)
+    Grade = forms.CharField(max_length=20, required=False)
+    PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    Delete = forms.CharField(required=False)
     
