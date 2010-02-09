@@ -8,7 +8,7 @@ from jp_sms.students.models import StudentAttendance, StudentAdditionalInformati
 from jp_sms.students.models import SocialActivity,PhysicalFitnessInfo,AbhivyaktiVikas,Teacher
 from jp_sms.students.models import SearchDetailsForm, CompetitionDetailsForm, ElocutionDetailsForm
 from jp_sms.students.models import ProjectDetailsForm, AbhivyaktiVikasDetailsForm, CompetitiveExamDetailsForm
-from jp_sms.students.models import CoCurricularDetailsForm, SocialActivityDetailsForm
+from jp_sms.students.models import CoCurricularDetailsForm, SocialActivityDetailsForm, PhysicalFitnessInfoDetailsForm
 from jp_sms.students.models import Project,Elocution,Library,Competition,CompetitiveExam,STANDARD_CHOICES
 from django.template import Context
 from django.core.context_processors import csrf
@@ -828,6 +828,92 @@ def socialactivity_add(request):
             data.append(CoCurricularDetailsForm(initial={'Delete':'Y'}))
             return render_to_response('students/AddSocialActivity.html',{'form':genform,'data':data,'name':name})
         return render_to_response('students/AddSocialActivity.html',{'form':genform})
+
+#
+@csrf_exempt
+def physicalfitnessinfo_add(request):
+    if not request.POST:
+        genform = SearchDetailsForm()
+        return render_to_response('students/AddPhysicalFitnessInfo.html',{'form':genform})
+    else:
+        genform = SearchDetailsForm(request.POST)
+        if request.POST.has_key('RegistrationNo'):
+            regno = request.POST['RegistrationNo']
+            student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
+            name = '%s %s' % (student_info.FirstName, student_info.LastName)
+            yr = request.POST['Year']
+            yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
+            # store data
+            if request.POST.has_key('pk'):
+                pk = request.POST['pk']
+                delete = request.POST['Delete']
+                if pk and delete in ('Y', 'y'):
+                    PhysicalFitnessInfo.objects.get(pk=pk).delete()
+                if delete not in ('Y', 'y'):
+                    if pk:
+                        physicalfitnessinfo_obj = PhysicalFitnessInfo.objects.get(pk=pk)
+                    else:
+                        physicalfitnessinfo_obj = PhysicalFitnessInfo()
+                    physicalfitnessinfo_obj.StudentYearlyInformation = yearly_info
+
+
+                    physicalfitnessinfo_obj.Weight = request.POST['Weight']
+                    physicalfitnessinfo_obj.Height = request.POST['Height']
+                    physicalfitnessinfo_obj.FlexibleForwardBending = request.POST['FlexibleForwardBending']
+                    physicalfitnessinfo_obj.FlexibleBackwardBending = request.POST['FlexibleBackwardBending']
+                    physicalfitnessinfo_obj.SBJ = request.POST['SBJ']
+                    physicalfitnessinfo_obj.VerticleJump = request.POST['VerticleJump']
+                    physicalfitnessinfo_obj.BallThrow = request.POST['BallThrow']
+                    physicalfitnessinfo_obj.ShuttleRun = request.POST['ShuttleRun']
+                    physicalfitnessinfo_obj.SitUps = request.POST['SitUps']
+                    physicalfitnessinfo_obj.Sprint = request.POST['Sprint']
+                    physicalfitnessinfo_obj.Running400m = request.POST['Running400m']
+                    physicalfitnessinfo_obj.ShortPutThrow = request.POST['ShortPutThrow']
+                    physicalfitnessinfo_obj.Split = request.POST['Split']
+                    physicalfitnessinfo_obj.BodyMassIndex = request.POST['SBodyMassIndexplit']
+                    physicalfitnessinfo_obj.Balancing = request.POST['Balancing']
+                    physicalfitnessinfo_obj.PublicComment = request.POST['PublicComment']
+                    physicalfitnessinfo_obj.PrivateComment = request.POST['PrivateComment']
+                    physicalfitnessinfo_obj.Pathak = request.POST['Pathak']
+                    physicalfitnessinfo_obj.Pratod = request.POST['Pratod']
+                    physicalfitnessinfo_obj.Margadarshak = request.POST['Margadarshak']
+                    physicalfitnessinfo_obj.SpecialSport = request.POST['SpecialSport']
+                    physicalfitnessinfo_obj.Grade = request.POST['Grade']
+                    physicalfitnessinfo_obj.save()
+            # end store data
+            physicalfitnessinfo_objs = PhysicalFitnessInfo.objects.filter(StudentYearlyInformation=yearly_info)
+            data = []
+            for physicalfitnessinfo_obj in physicalfitnessinfo_objs:
+                tmp = {}
+                tmp['pk'] = physicalfitnessinfo_obj.pk
+                tmp['Weight'] = physicalfitnessinfo_obj.Weight
+                tmp['Height'] = physicalfitnessinfo_obj.Height
+                tmp['FlexibleForwardBending'] = physicalfitnessinfo_obj.FlexibleForwardBending
+                tmp['FlexibleBackwardBending'] = physicalfitnessinfo_obj.FlexibleBackwardBending
+                tmp['SBJ'] = physicalfitnessinfo_obj.SBJ
+                tmp['VerticleJump'] = physicalfitnessinfo_obj.VerticleJump
+                tmp['BallThrow'] = physicalfitnessinfo_obj.BallThrow
+                tmp['ShuttleRun'] = physicalfitnessinfo_obj.ShuttleRun
+                tmp['SitUps'] = physicalfitnessinfo_obj.SitUps
+                tmp['Sprint'] = physicalfitnessinfo_obj.Sprint
+                tmp['Running400m'] = physicalfitnessinfo_obj.Running400m
+                tmp['ShortPutThrow'] = physicalfitnessinfo_obj.ShortPutThrow
+                tmp['Split'] = physicalfitnessinfo_obj.Split
+                tmp['BodyMassIndex'] = physicalfitnessinfo_obj.BodyMassIndex
+                tmp['Balancing'] = physicalfitnessinfo_obj.Balancing
+                tmp['PublicComment'] = physicalfitnessinfo_obj.PublicComment
+                tmp['PrivateComment'] = physicalfitnessinfo_obj.PrivateComment
+                tmp['Pathak'] = physicalfitnessinfo_obj.Pathak
+                tmp['Pratod'] = physicalfitnessinfo_obj.Pratod
+                tmp['Margadarshak'] = physicalfitnessinfo_obj.Margadarshak
+                tmp['SpecialSport'] = physicalfitnessinfo_obj.SpecialSport
+                tmp['Grade'] = physicalfitnessinfo_obj.Grade            
+                x = PhysicalFitnessInfoDetailsForm(initial=tmp)
+                data.append(x)
+            if not len(data):
+                data.append(PhysicalFitnessInfoDetailsForm(initial={'Delete':'Y'}))
+            return render_to_response('students/AddPhysicalFitnessInfo.html',{'form':genform,'data':data,'name':name})
+        return render_to_response('students/AddPhysicalFitnessInfo.html',{'form':genform})
 
 # Used by HTML Report
 def attendance_add(request):
