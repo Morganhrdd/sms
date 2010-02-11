@@ -394,44 +394,43 @@ def marks_add(request):
         keys = request.POST.keys()
         test_id = request.POST['test_id']
         keys.remove('test_id')
-        for key in keys:
+        if request.user.is_superuser or request.user.email == test.Teacher.Email:
             test = TestMapping.objects.get(id=test_id)
-            student = StudentYearlyInformation.objects.get(id=key)
-            a = StudentTestMarks.objects.filter(StudentYearlyInformation=student, TestMapping=test)
-            a.delete()
-            a = StudentTestMarks()
-            a.TestMapping = test
-            a.StudentYearlyInformation = student
-            a.MarksObtained = request.POST[key]
-            a.save()
-        return HttpResponse('Successfully added record.<br/>\n<a href="/marks_add">Select test for entering data</a>')
+            for key in keys:
+                student = StudentYearlyInformation.objects.get(id=key)
+                a = StudentTestMarks.objects.filter(StudentYearlyInformation=student, TestMapping=test)
+                a.delete()
+                a = StudentTestMarks()
+                a.TestMapping = test
+                a.StudentYearlyInformation = student
+                a.MarksObtained = request.POST[key]
+                a.save()
+            return HttpResponse('Successfully added record.<br/>\n<a href="/marks_add">Select test for entering data</a>')
+        else:
+            return HttpResponse('Permission denied')
     else:
         if not request.GET.has_key('test_id'):
             tests = TestMapping.objects.all()
             test_details = ''
             for test in tests:
-                test_details += '<a href="/marks_add/?test_id='+str(test.id)+ '&div=B">' + '%s - B' %(test) + '</a><br/>'
-                test_details += '<a href="/marks_add/?test_id='+str(test.id)+ '&div=G">' + '%s - G' %(test) + '</a><br/>'
+                if request.user.is_superuser or request.user.email == test.Teacher.Email:
+                    test_details += '<a href="/marks_add/?test_id='+str(test.id)+'">' + '%s --- %s' %(test, test.AcademicYear) + '</a><br />'
+            if not test_details:
+                return HttpResponse('Nothing to add/modify')
             return HttpResponse(test_details)
         test_id = request.GET['test_id']
-        div = request.GET['div']
+        #div = request.GET['div']
         test = TestMapping.objects.get(id=test_id)
-
         subject = SubjectMaster.objects.get(id=test.SubjectMaster.id)
-
-        class_master = ClassMaster.objects.get(AcademicYear=test.AcademicYear, Standard=subject.Standard, Division=div)
         data = []
-        students = StudentYearlyInformation.objects.filter(ClassMaster=class_master.id)
+        student_test_marks_objs = StudentTestMarks.objects.filter(TestMapping = test).order_by('StudentYearlyInformation__ClassMaster','StudentYearlyInformation__RollNo')
         test_details = 'Standard: %s, Subject Name: %s, Academic Year: %s, TestType: %s, Max Marks: %s' % (subject.Standard, subject.Name, test.AcademicYear, test.TestType, test.MaximumMarks)
-        for student in students.order_by('RollNo'):
-            student_info = StudentBasicInfo.objects.get(RegistrationNo = student.StudentBasicInfo.RegistrationNo)
-            try:
-                marks_obtained = StudentTestMarks.objects.get(StudentYearlyInformation=student, TestMapping=test).MarksObtained        
-            except:
-                marks_obtained = ''
-            name = '%s %s' % (student_info.FirstName, student_info.LastName)
-            data.append({'id':student.id, 'name': name, 'rollno':student.RollNo, 'marks_obtained':marks_obtained })
-        return render_to_response('students/AddMarks.html',Context({'test_details': test_details,'test_id':test_id, 'data':data}))
+        for student_test_mark_obj in student_test_marks_objs:
+            name = '%s %s' % (student_test_mark_obj.StudentYearlyInformation.StudentBasicInfo.FirstName, student_test_mark_obj.StudentYearlyInformation.StudentBasicInfo.LastName)
+            rollno = student_test_mark_obj.StudentYearlyInformation.RollNo
+            data.append({'id':student_test_mark_obj.StudentYearlyInformation.id, 'name':name, 'rollno':rollno,'marks_obtained':student_test_mark_obj.MarksObtained})
+        return render_to_response('students/AddMarks.html',Context({'test_details': test_details,'test_id':test_id, 'data':data}))        
+
 
 @csrf_exempt
 def competition_add(request):
