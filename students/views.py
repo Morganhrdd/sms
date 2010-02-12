@@ -203,7 +203,7 @@ def report(request):
 ##    cummulative_maxmarks=0
 ##    for subject_item in subjects_data.keys():
 ##        subject_data = subjects_data[subject_item]
-###        addSubHeaderToStory(Story,subject_item);
+###        addSubHeaderToStory(Story,subject_item)
 ##        data = []
 ##        data.append(['','Test Type','Marks','Maximum Marks'])
 ##        cummulative_subject_marks=0
@@ -1088,7 +1088,7 @@ def addTableToStory(Story,data,align):
         ('INNERGRID', (0,0), (-1,-1), 0.25, colors.gray),
         ('BOX', (0,0), (-1,-1), 0.25, colors.gray)])
     table=Table(data)
-    table.setStyle(table_style);
+    table.setStyle(table_style)
     table.hAlign=align
     Story.append(table)
     Story.append(Spacer(1,0.1*inch))
@@ -1143,7 +1143,7 @@ def fillLetterHead(Story):
     margin=0.7*inch
     column_widths=((PAGE_WIDTH-2*(margin))*0.9)
     table=Table(data, colWidths=column_widths)
-    table.setStyle(table_style);
+    table.setStyle(table_style)
     table.hAlign = 'CENTER'
     Story.append(table)
 
@@ -1238,7 +1238,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
     table_style = TableStyle([
         ('FONT', (0,0), (-1,0), 'Times-Roman'),
         ('FONTSIZE',(0,0),(-1,-1),10)])
-    table.setStyle(table_style);
+    table.setStyle(table_style)
     table.hAlign='LEFT'
     Story.append(table)
     Story.append(Spacer(1,0.2*inch))
@@ -1337,7 +1337,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
         cumulative_attendance_percentage = str(round((float(cummulative_attendance) / cummulative_workingdays_attendance * 100),2)) + "%"
     
     # Cumulative Grade Table
-    addSubHeaderToStory(Story,"Report Summary");
+    addSubHeaderToStory(Story,"Report Summary")
     data = []
     data=(
             ['Category','Performance'],
@@ -1377,7 +1377,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
     Story.append(PageBreak())
 
 def fillAcademicReport(student_yearly_info, Story):
-    addMainHeaderToStory(Story, "Part 2: Academic Performance");
+    addMainHeaderToStory(Story, "Part 2: Academic Performance")
 
     subjects_data = {}
     student_test_data = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
@@ -1452,7 +1452,7 @@ def fillAcademicReport(student_yearly_info, Story):
     addSubHeaderToStory(Story, 'Percentage: ' + str(percentage) + "%")
                                          
     Story.append(Spacer(1,0.5*inch))
-    addSubHeaderToStory(Story, "School Attendance");
+    addSubHeaderToStory(Story, "School Attendance")
     fillStudentAttendance(student_yearly_info, Story, 'P')
 
     class_teacher = student_yearly_info.ClassMaster.Teacher.Name
@@ -1460,16 +1460,16 @@ def fillAcademicReport(student_yearly_info, Story):
     Story.append(PageBreak())
 
 def fillCoCurricularReport(student_yearly_info, Story):
-    addMainHeaderToStory(Story, "Part 3: Co-curricular Activity Report");
+    addMainHeaderToStory(Story, "Part 3: Co-curricular Activity Report")
 
     # Abhivyakti Report
     addSubHeaderToStory(Story,"Self Expression through Arts")
     abhivyaktiVikass = AbhivyaktiVikas.objects.filter(StudentYearlyInformation=student_yearly_info)
     if len(abhivyaktiVikass) == 0:
-        addNormalTextToStory(Story,'No Activities');
+        addNormalTextToStory(Story,'No Activities')
     i=0
     for abhivyaktiVikas in abhivyaktiVikass:
-        i = i + 1;
+        i = i + 1
         mediumOfExpression = abhivyaktiVikas.MediumOfExpression
         teacher_name = abhivyaktiVikas.Teacher.Name
         participation = GRADE_CHOICES[abhivyaktiVikas.Participation]
@@ -1479,15 +1479,15 @@ def fillCoCurricularReport(student_yearly_info, Story):
         creativity = GRADE_CHOICES[abhivyaktiVikas.Creativity]
         comment = abhivyaktiVikas.PublicComment
         
-        addNormalTextToStory(Story,'<strong>' + 'Abhivyakti' + ' ' + str(i) + '</strong>');                
-        addNormalTextToStory(Story,'Medium of Expression' + '' + ' : ' + mediumOfExpression);
-        addNormalTextToStory(Story,'Teacher' + ' : ' + teacher_name);
+        addNormalTextToStory(Story,'<strong>' + 'Abhivyakti' + ' ' + str(i) + '</strong>')                
+        addNormalTextToStory(Story,'Medium of Expression' + '' + ' : ' + mediumOfExpression)
+        addNormalTextToStory(Story,'Teacher' + ' : ' + teacher_name)
         Story.append(Spacer(1,0.2*inch))
         data = []
         data.append(['Participation','Readiness to Learn','Perseverence','Skill Development','Creativity'])
         data.append([participation,readinessToLearn,continuityInWork,skillDevelopment,creativity])
         addTableToStory(Story, data, 'CENTER')
-        addNormalTextToStory(Story,'Comment' + ' : ' + comment);
+        addNormalTextToStory(Story,'Comment' + ' : ' + comment)
         Story.append(Spacer(1,0.2*inch))
 
     addSignatureSpaceToStory(Story,"Incharge", "Abhivyakti")
@@ -1497,10 +1497,10 @@ def fillCoCurricularReport(student_yearly_info, Story):
     addSubHeaderToStory(Story,"Competitive Examinations")
     competitive_exams = CompetitiveExam.objects.filter(StudentYearlyInformation=student_yearly_info)
     if len(competitive_exams) == 0:
-        addNormalTextToStory(Story,'No Activities');
+        addNormalTextToStory(Story,'No Activities')
     i=0
     for competitive_exam in competitive_exams:
-        i = i + 1;
+        i = i + 1
         name = competitive_exam.Name
         subject = competitive_exam.Subject
         level = competitive_exam.Level
@@ -1511,12 +1511,12 @@ def fillCoCurricularReport(student_yearly_info, Story):
             grade = competitive_exam.Grade
         comment = competitive_exam.PublicComment
         
-        addNormalTextToStory(Story,'<strong>' + 'Competitive Exam' + ' ' + str(i) + '</strong>');     
+        addNormalTextToStory(Story,'<strong>' + 'Competitive Exam' + ' ' + str(i) + '</strong>')     
         data = []
         data.append(['Name','Subject','Level','Date','Performance'])
         data.append([name,subject,level,date,grade])
         addTableToStory(Story, data, 'CENTER')
-        addNormalTextToStory(Story,'Comment' + ' : ' + comment);
+        addNormalTextToStory(Story,'Comment' + ' : ' + comment)
         Story.append(Spacer(1,0.2*inch))
     
     addSignatureSpaceToStory(Story,"Incharge", "Competitive Exams")
@@ -1526,10 +1526,10 @@ def fillCoCurricularReport(student_yearly_info, Story):
     addSubHeaderToStory(Story,"Competitions")    
     competitions = Competition.objects.filter(StudentYearlyInformation=student_yearly_info)
     if len(competitions) == 0:
-        addNormalTextToStory(Story,'No Activities');
+        addNormalTextToStory(Story,'No Activities')
     i=0
     for competition in competitions:
-        i = i + 1;
+        i = i + 1
         organizer = competition.Organizer
         subject = competition.Subject
         date = competition.Date
@@ -1542,7 +1542,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         data.append(['Organizer','Subject','Date','Achievement','Guide'])
         data.append([organizer,subject,date,achievement,guide])
         addTableToStory(Story, data, 'CENTER')
-        addNormalTextToStory(Story,'Comment' + ' : ' + comment);
+        addNormalTextToStory(Story,'Comment' + ' : ' + comment)
         Story.append(Spacer(1,0.2*inch))
         
     addSignatureSpaceToStory(Story,"Incharge", "Competition")
@@ -1552,10 +1552,10 @@ def fillCoCurricularReport(student_yearly_info, Story):
     addSubHeaderToStory(Story,"Projects")
     projects = Project.objects.filter(StudentYearlyInformation=student_yearly_info)
     if len(projects) == 0:
-        addNormalTextToStory(Story,'No Activities');
+        addNormalTextToStory(Story,'No Activities')
     i=0
     for project in projects:
-        i = i + 1;
+        i = i + 1
         title = project.Title
         project_type = PROJECT_TYPE_CHOICES[project.Type]
         subject = project.Subject
@@ -1567,15 +1567,15 @@ def fillCoCurricularReport(student_yearly_info, Story):
         comment = project.PublicComment
         
         addNormalTextToStory(Story,'<strong>' + 'Project'+ ' ' + str(i) + '</strong>')
-        addNormalTextToStory(Story,'Title' + ' : ' + title);
-        addNormalTextToStory(Story,'Type' + ' : ' + project_type);
-        addNormalTextToStory(Story,'Subject' + ' : ' + subject);
+        addNormalTextToStory(Story,'Title' + ' : ' + title)
+        addNormalTextToStory(Story,'Type' + ' : ' + project_type)
+        addNormalTextToStory(Story,'Subject' + ' : ' + subject)
         Story.append(Spacer(1,0.1*inch))
         data = []
-        data.append(['ProblemSelection','Review of topic','Planning','Documentation','Communication']);
+        data.append(['ProblemSelection','Review of topic','Planning','Documentation','Communication'])
         data.append([problem_selection,review,planning,documentation,communication])
         addTableToStory(Story, data, 'CENTER')
-        addNormalTextToStory(Story,'Comment' + ' : ' + comment);
+        addNormalTextToStory(Story,'Comment' + ' : ' + comment)
         Story.append(Spacer(1,0.2*inch))
         
     addSignatureSpaceToStory(Story,"Incharge", "Projects")
@@ -1585,10 +1585,10 @@ def fillCoCurricularReport(student_yearly_info, Story):
     addSubHeaderToStory(Story,"Elocutions")
     elocutions = Elocution.objects.filter(StudentYearlyInformation=student_yearly_info)
     if len(elocutions) == 0:
-        addNormalTextToStory(Story,'No Activities');
+        addNormalTextToStory(Story,'No Activities')
     i=0
     for elocution in elocutions:
-        i = i + 1;
+        i = i + 1
         title = elocution.Title
         memory = GRADE_CHOICES[elocution.Memory]
         content = GRADE_CHOICES[elocution.Content]
@@ -1598,27 +1598,27 @@ def fillCoCurricularReport(student_yearly_info, Story):
         comment = elocution.PublicComment
 
         addNormalTextToStory(Story,'<strong>' + 'Elocution'+ ' ' + str(i) + '</strong>')
-        addNormalTextToStory(Story,'Title' + ' : ' + title);
+        addNormalTextToStory(Story,'Title' + ' : ' + title)
         data = []
-        data.append(['Memory','Content','Understanding','Skill','Presentation']);
+        data.append(['Memory','Content','Understanding','Skill','Presentation'])
         data.append([memory,content,understanding,skill,presentation])
         addTableToStory(Story, data, 'CENTER')
-        addNormalTextToStory(Story,'Comment' + ' : ' + comment);
+        addNormalTextToStory(Story,'Comment' + ' : ' + comment)
         Story.append(Spacer(1,0.2*inch))
         
     addSignatureSpaceToStory(Story,"Incharge", "Elocution")
     Story.append(Spacer(1,0.5*inch))
 
     # Other CoCurricular Activities
-    addSubHeaderToStory(Story, "Other Co-curricular Activities");
+    addSubHeaderToStory(Story, "Other Co-curricular Activities")
     coCurriculars = CoCurricular.objects.filter(StudentYearlyInformation=student_yearly_info)
     if len(coCurriculars) == 0:
-        addNormalTextToStory(Story,'No Activities');
+        addNormalTextToStory(Story,'No Activities')
     data = []
     data.append(['','Activity','Objectives','Date','Guide','Grade'])
     i=0
     for coCurricular in coCurriculars:
-        i = i + 1;
+        i = i + 1
         activity = coCurricular.Activity
         objectives = coCurricular.Objectives
         date = coCurricular.Date
@@ -1630,12 +1630,12 @@ def fillCoCurricularReport(student_yearly_info, Story):
         comment = coCurricular.PublicComment
 
         addNormalTextToStory(Story,'<strong>' + 'Activity'+ ' ' + str(i) + '</strong>')
-        addNormalTextToStory(Story,'Activity' + ' : ' + activity);
-        addNormalTextToStory(Story,'Objectives' + ' : ' + objectives);
-        addNormalTextToStory(Story,'Date' + ' : ' + str(date));
-        addNormalTextToStory(Story,'Guide' + ' : ' + guide);
-        addNormalTextToStory(Story,'Grade' + ' : ' + grade);
-        addNormalTextToStory(Story,'Comment' + ' : ' + comment);
+        addNormalTextToStory(Story,'Activity' + ' : ' + activity)
+        addNormalTextToStory(Story,'Objectives' + ' : ' + objectives)
+        addNormalTextToStory(Story,'Date' + ' : ' + str(date))
+        addNormalTextToStory(Story,'Guide' + ' : ' + guide)
+        addNormalTextToStory(Story,'Grade' + ' : ' + grade)
+        addNormalTextToStory(Story,'Comment' + ' : ' + comment)
         Story.append(Spacer(1,0.2*inch))
 
     Story.append(PageBreak())
@@ -1672,17 +1672,17 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         comment = physical_fitness_info.PublicComment
 
         data = []
-        data.append(['W','H','FFB','FBB','SBJ','VJ','BT','SR','SU','S','400m','SP','BMI','B']);
+        data.append(['W','H','FFB','FBB','SBJ','VJ','BT','SR','SU','S','400m','SP','BMI','B'])
         data.append([weight, height, ffb, fbb, sbj, verticle_jump, ball_throw,
                      shuttle_run, sit_ups, sprint, running_400m, short_put, bmi, balancing])
         addTableToStory(Story, data, 'CENTER')
-        addNormalTextToStory(Story,'Special Sport' + ' : ' + special_sport);
-        addNormalTextToStory(Story,'House' + ' : ' + pathak);
+        addNormalTextToStory(Story,'Special Sport' + ' : ' + special_sport)
+        addNormalTextToStory(Story,'House' + ' : ' + pathak)
         Story.append(Spacer(1,0.2*inch))
         pratod = physical_fitness_info.Pratod
         Story.append(Spacer(1,0.2*inch))
     except:
-        addNormalTextToStory(Story,'N/A');
+        addNormalTextToStory(Story,'N/A')
         pratod = ''
         grade = '-'
         comment = ''
@@ -1692,15 +1692,15 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
     fillStudentAttendance(student_yearly_info, Story, 'D')
     
     Story.append(Spacer(1,0.1*inch))
-    addNormalTextToStory(Story,'<strong>' + 'Grade' + ' : ' + grade + '</strong>');        
-    addNormalTextToStory(Story,'Comment' + ' : ' + comment);
+    addNormalTextToStory(Story,'<strong>' + 'Grade' + ' : ' + grade + '</strong>')
+    addNormalTextToStory(Story,'Comment' + ' : ' + comment)
     Story.append(Spacer(1,0.25*inch))
     
     # Social Activities
     addSubHeaderToStory(Story,"Social Activities")
     social_activities = SocialActivity.objects.filter(StudentYearlyInformation=student_yearly_info)
     if len(social_activities) == 0:
-        addNormalTextToStory(Story,'No Activities');
+        addNormalTextToStory(Story,'No Activities')
     i=0
     for social_activity in social_activities:
         i = i + 1
@@ -1715,12 +1715,12 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         comment = social_activity.PublicComment
 
         addNormalTextToStory(Story,'<strong>' + 'Activity'+ ' ' + str(i) + '</strong>')
-        addNormalTextToStory(Story,'Activity' + ' : ' + activity);
-        addNormalTextToStory(Story,'Objectives' + ' : ' + objectives);
-        addNormalTextToStory(Story,'Date' + ' : ' + str(date));
-        addNormalTextToStory(Story,'Organizer' + ' : ' + organizer);
-        addNormalTextToStory(Story,'Grade' + ' : ' + grade);
-        addNormalTextToStory(Story,'Comment' + ' : ' + comment);
+        addNormalTextToStory(Story,'Activity' + ' : ' + activity)
+        addNormalTextToStory(Story,'Objectives' + ' : ' + objectives)
+        addNormalTextToStory(Story,'Date' + ' : ' + str(date))
+        addNormalTextToStory(Story,'Organizer' + ' : ' + organizer)
+        addNormalTextToStory(Story,'Grade' + ' : ' + grade)
+        addNormalTextToStory(Story,'Comment' + ' : ' + comment)
         Story.append(Spacer(1,0.2*inch))
     Story.append(Spacer(1,0.5*inch))
                  
@@ -1737,7 +1737,7 @@ def fillLibraryReport(student_yearly_info, Story):
     data.append(['','Books Read','Grade','Comment'])
     i=0
     for library in libraries:
-        i = i + 1;
+        i = i + 1
         books_read = library.BooksRead
         try:
             grade = GRADE_CHOICES[library.Grade]
@@ -1748,7 +1748,7 @@ def fillLibraryReport(student_yearly_info, Story):
     addTableToStory(Story, data, 'CENTER')
     
     Story.append(Spacer(1,1*inch))
-    addSignatureSpaceToStory(Story, "","Librarian");
+    addSignatureSpaceToStory(Story, "","Librarian")
     Story.append(PageBreak())
 
 # PDF Certificate :	--------------------------------------------------
@@ -1832,8 +1832,8 @@ def fillCertificatePdfData(Story, registration_nos, standard, division, year_opt
             if ((division == 'B') or (division == 'G')) and (student_division != division):
                 continue               
             #print 'Filling ' + str(registration_no)
-            fillCertificateHeader(Story);
-            fillCertificate(student_yearly_info, Story);
+            fillCertificateHeader(Story)
+            fillCertificate(student_yearly_info, Story)
 
 def fillCertificateHeader(Story):
     style = ParagraphStyle(name='styleName', fontName ='Times-Bold', fontSize = 18, alignment=TA_CENTER)
@@ -1865,7 +1865,7 @@ def fillCertificateHeader(Story):
     margin=0.7*inch
     column_widths=((PAGE_WIDTH-2*(margin))*0.9)
     table=Table(data, colWidths=column_widths)
-    table.setStyle(table_style);
+    table.setStyle(table_style)
     table.hAlign = 'CENTER'
     Story.append(table)
 
@@ -1874,35 +1874,35 @@ def fillCertificateHeader(Story):
 def fillCertificate(student_yearly_info, Story):
     student_basic_info = student_yearly_info.StudentBasicInfo
      
-    certificateNumber = str(student_basic_info.RegistrationNo);
-    addCertificateNumberTextToStory(Story, "Certificate No. : " + certificateNumber);
+    certificateNumber = str(student_basic_info.RegistrationNo)
+    addCertificateNumberTextToStory(Story, "Certificate No. : " + certificateNumber)
 
-    schoolRegistrationNumber = str(student_basic_info.RegistrationNo);
-    addCertificateNumberTextToStory(Story, "School Registration No. : " + schoolRegistrationNumber);
+    schoolRegistrationNumber = str(student_basic_info.RegistrationNo)
+    addCertificateNumberTextToStory(Story, "School Registration No. : " + schoolRegistrationNumber)
 
     Story.append(Spacer(1,0.2*inch))
 
-    now_time = datetime.datetime.now();
-    date = now_time.strftime("%d %b %Y");
-    addCertificateNumberTextToStory(Story, "Date : " + date);
+    now_time = datetime.datetime.now()
+    date = now_time.strftime("%d %b %Y")
+    addCertificateNumberTextToStory(Story, "Date : " + date)
     
     Story.append(Spacer(1,0.7*inch))
-    studentName = student_basic_info.FirstName + ' ' + student_basic_info.LastName;
-    addCertificateTextToStory(Story, "This is to certify that <strong>" + studentName + "</strong> is/was a bona fide student of");
+    studentName = student_basic_info.FirstName + ' ' + student_basic_info.LastName
+    addCertificateTextToStory(Story, "This is to certify that <strong>" + studentName + "</strong> is/was a bona fide student of")
 
-    dateOfRegistration = student_basic_info.DateOfRegistration;
-    fromYear = dateOfRegistration.year;
+    dateOfRegistration = student_basic_info.DateOfRegistration
+    fromYear = dateOfRegistration.year
 
-    terminationDate = student_basic_info.TerminationDate;
+    terminationDate = student_basic_info.TerminationDate
     try:
-        toYear = str(terminationDate.year);
+        toYear = str(terminationDate.year)
     except:
-#        now_time = datetime.datetime.now();
-#        toYear = str(now_time.year);
-        toYear = "till date";
+#        now_time = datetime.datetime.now()
+#        toYear = str(now_time.year)
+        toYear = "till date"
 
     admissionClass = "______"
-    admission_year = fromYear + "-" + str(int(fromYear) + 1);    
+    admission_year = str(fromYear) + "-" + str(int(fromYear) + 1)    
     student_yearly_infos = StudentYearlyInformation.objects.filter(StudentBasicInfo = student_basic_info)
     for yearly_info in student_yearly_infos:
         student_year = yearly_info.ClassMaster.AcademicYear.Year
@@ -1910,31 +1910,31 @@ def fillCertificate(student_yearly_info, Story):
             admissionClass = str(student_yearly_info.ClassMaster.Standard) + "th"
     
     presentClass= str(student_yearly_info.ClassMaster.Standard) + "th"
-    addCertificateTextToStory(Story, "Jnana Prabodhini Prashala during the year " + "<strong>" + str(fromYear) + "</strong>" + " to " + "<strong>" + toYear + "</strong>");
-    addCertificateTextToStory(Story, "from " + "<strong>" + admissionClass + "</strong>" + " class to " + "<strong>" + presentClass + "</strong>" + " class.");
+    addCertificateTextToStory(Story, "Jnana Prabodhini Prashala during the year " + "<strong>" + str(fromYear) + "</strong>" + " to " + "<strong>" + toYear + "</strong>")
+    addCertificateTextToStory(Story, "from " + "<strong>" + admissionClass + "</strong>" + " class to " + "<strong>" + presentClass + "</strong>" + " class.")
 
-    genderMentionCapital = "He";
+    genderMentionCapital = "He"
     genderBelong = "his"
-    genderMentionSmall= "he";
+    genderMentionSmall= "he"
     if student_basic_info.Gender == "F":
-        genderMentionCapital = "She";
+        genderMentionCapital = "She"
         genderBelong = "her"
-        genderMentionSmall= "she";
+        genderMentionSmall= "she"
     
     caste = str(student_basic_info.Caste)
     if caste == "None":
         caste = "______________"
-    addCertificateTextToStory(Story, genderMentionCapital + " belongs to " + "<strong>" + caste + "</strong>" + " category");
+    addCertificateTextToStory(Story, genderMentionCapital + " belongs to " + "<strong>" + caste + "</strong>" + " category")
 
     dateOfBirth = student_basic_info.DateOfBirth
-    birthDate = dateOfBirth.strftime("%d %b %Y");
-    addCertificateTextToStory(Story, "According to our school record, " + genderBelong + " birth date is " + "<strong>" + birthDate +"</strong>");
+    birthDate = dateOfBirth.strftime("%d %b %Y")
+    addCertificateTextToStory(Story, "According to our school record, " + genderBelong + " birth date is " + "<strong>" + birthDate +"</strong>")
 
-    addCertificateTextToStory(Story, "To the best of my knowledge and belief, " + genderMentionSmall + " bears good moral character.");
+    addCertificateTextToStory(Story, "To the best of my knowledge and belief, " + genderMentionSmall + " bears good moral character.")
 
     Story.append(Spacer(1,0.7*inch))
     
-    addSignatureSpaceToStory(Story, "Principal","Jnana Prabodhini Prashala");
+    addSignatureSpaceToStory(Story, "Principal","Jnana Prabodhini Prashala")
 
     Story.append(Spacer(1,0.1*inch))
     Story.append(PageBreak())
@@ -2015,8 +2015,8 @@ def fillSchoolLeavingPdfData(Story, registration_nos, standard, division, year_o
             if ((division == 'B') or (division == 'G')) and (student_division != division):
                 continue               
             #print 'Filling ' + str(registration_no)
-            fillSchoolLeavingHeader(Story);
-            fillSchoolLeaving(student_yearly_info, Story);
+            fillSchoolLeavingHeader(Story)
+            fillSchoolLeaving(student_yearly_info, Story)
 
 def fillSchoolLeavingHeader(Story):
     style = ParagraphStyle(name='styleName', fontName ='Times-Bold', fontSize = 18, alignment=TA_CENTER)
@@ -2048,7 +2048,7 @@ def fillSchoolLeavingHeader(Story):
     margin=0.7*inch
     column_widths=((PAGE_WIDTH-2*(margin))*0.9)
     table=Table(data, colWidths=column_widths)
-    table.setStyle(table_style);
+    table.setStyle(table_style)
     table.hAlign = 'CENTER'
     Story.append(table)
 
@@ -2057,44 +2057,44 @@ def fillSchoolLeavingHeader(Story):
 def fillSchoolLeaving(student_yearly_info, Story):
     student_basic_info = student_yearly_info.StudentBasicInfo
      
-    certificateNumber = str(student_basic_info.RegistrationNo);
-    addCertificateNumberTextToStory(Story, "School Leaving Certificate No. : " + certificateNumber);
+    certificateNumber = str(student_basic_info.RegistrationNo)
+    addCertificateNumberTextToStory(Story, "School Leaving Certificate No. : " + certificateNumber)
 
-    schoolRegistrationNumber = str(student_basic_info.RegistrationNo);
-    addCertificateNumberTextToStory(Story, "School Registration No. : " + schoolRegistrationNumber);
+    schoolRegistrationNumber = str(student_basic_info.RegistrationNo)
+    addCertificateNumberTextToStory(Story, "School Registration No. : " + schoolRegistrationNumber)
 
     Story.append(Spacer(1,0.2*inch))
 
-    now_time = datetime.datetime.now();
-    date = now_time.strftime("%d %b %Y");
-    addCertificateNumberTextToStory(Story, "Date : " + date);
+    now_time = datetime.datetime.now()
+    date = now_time.strftime("%d %b %Y")
+    addCertificateNumberTextToStory(Story, "Date : " + date)
 
-    terminationDate = student_basic_info.TerminationDate;
+    terminationDate = student_basic_info.TerminationDate
     try:
-        terminationDate = terminationDate.strftime("%d %b %Y");
+        terminationDate = terminationDate.strftime("%d %b %Y")
     except:
         terminationDate = "NOT AVAILABLE"
         addSchoolLeavingTextToStory(Story, "CERTIFICATE IS NOT VALID as Date of Leaving School is not available")
 
-    studentName = student_basic_info.FirstName + ' ' + student_basic_info.LastName;
+    studentName = student_basic_info.FirstName + ' ' + student_basic_info.LastName
 
-    nationality = student_basic_info.Nationality;
+    nationality = student_basic_info.Nationality
     caste = str(student_basic_info.Caste)
     if caste == "None":
         caste = ""
-    place = student_basic_info.BirthPlace;
-    lastSchool = student_basic_info.PreviousSchool;
+    place = student_basic_info.BirthPlace
+    lastSchool = student_basic_info.PreviousSchool
 
     dateOfBirth = student_basic_info.DateOfBirth
-    birthDate = dateOfBirth.strftime("%d/%m/%Y");
-    birthDateInWords = int2word(dateOfBirth.day) + FULLMONTH_CHOICES[dateOfBirth.month] + " " + int2word(dateOfBirth.year);
+    birthDate = dateOfBirth.strftime("%d/%m/%Y")
+    birthDateInWords = int2word(dateOfBirth.day) + FULLMONTH_CHOICES[dateOfBirth.month] + " " + int2word(dateOfBirth.year)
 
-    dateOfRegistration = student_basic_info.DateOfRegistration;
-    dateOfRegistration = dateOfRegistration.strftime("%d %b %Y");
+    dateOfRegistration = student_basic_info.DateOfRegistration
+    dateOfRegistration = dateOfRegistration.strftime("%d %b %Y")
 
-    progress = "";
-    conduct = "";
-    reason = student_basic_info.ReasonOfLeavingSchool;
+    progress = ""
+    conduct = ""
+    reason = student_basic_info.ReasonOfLeavingSchool
 
     Story.append(Spacer(1,0.1*inch))
     data = []
@@ -2116,16 +2116,16 @@ def fillSchoolLeaving(student_yearly_info, Story):
     table_style = TableStyle([
         ('FONT', (0,0), (-1,0), 'Times-Roman'),
         ('FONTSIZE',(0,0),(-1,-1),10)])
-    table.setStyle(table_style);
+    table.setStyle(table_style)
     table.hAlign='LEFT'
     Story.append(table)
     Story.append(Spacer(1,0.2*inch))
 
-    addSchoolLeavingTextToStory(Story, "Certified that the above information is in accordance with the School Register.");
+    addSchoolLeavingTextToStory(Story, "Certified that the above information is in accordance with the School Register.")
 
     Story.append(Spacer(1,0.7*inch))
     
-    addSignatureSpaceToStory(Story, "Principal","Jnana Prabodhini Prashala");
+    addSignatureSpaceToStory(Story, "Principal","Jnana Prabodhini Prashala")
 
     Story.append(Spacer(1,0.1*inch))
     Story.append(PageBreak())

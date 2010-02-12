@@ -2,7 +2,8 @@ from jp_sms.students.models import StudentBasicInfo, StudentAdditionalInformatio
 from jp_sms.students.models import SubjectMaster, StudentYearlyInformation, ClassMaster, TestMapping
 from jp_sms.students.models import StudentTestMarks, AttendanceMaster, StudentAttendance, PhysicalFitnessInfo
 from jp_sms.students.models import SocialActivity, CoCurricular, CompetitiveExam, Competition
-from jp_sms.students.models import AbhivyaktiVikas, Project, Elocution, Library
+from jp_sms.students.models import AbhivyaktiVikas, Project, Elocution, Library, WorkExperience
+from jp_sms.students.models import ThinkingSkill, SocialSkill, EmotionalSkill, AttitudeTowardsSchool, Values
 from django.contrib.auth.models import User
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
@@ -83,16 +84,39 @@ class AbhivyaktiVikasAdmin(admin.ModelAdmin):
     search_fields = ('StudentYearlyInformation__StudentBasicInfo__FirstName', 'MediumOfExpression', 'Teacher__Name', 'StudentYearlyInformation__StudentBasicInfo__RegistrationNo')
 
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('StudentYearlyInformation', 'Title', 'Type', 'Subject', 'ProblemSelection', 'Review', 'Planning', 'Documentation', 'Communication')
+    list_display = ('StudentYearlyInformation', 'Title', 'Type', 'Subject', 'ProblemSelection', 'Review', 'Planning', 'ExecutionAndHardWork', 'Documentation', 'Communication')
     search_fields = ['Title', 'StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName', 'Subject', 'Type', 'StudentYearlyInformation__StudentBasicInfo__RegistrationNo']
 
 class ElocutionAdmin(admin.ModelAdmin):
-    list_display = ('Title', 'StudentYearlyInformation', 'Memory', 'Content', 'Understanding', 'Skill', 'Presentation',)
+    list_display = ('Title', 'StudentYearlyInformation', 'Memory', 'Content', 'Understanding', 'Pronunciation', 'Presentation',)
     search_fields = ['Title', 'StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName']
 
 class LibraryAdmin(admin.ModelAdmin):
     list_display = ('StudentYearlyInformation', 'BooksRead', 'Grade', 'PublicComment', 'PrivateComment')
     search_fields = ['StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName', 'PublicComment', 'PrivateComment']
+
+class WorkExperienceAdmin(admin.ModelAdmin):
+    list_display = ('StudentYearlyInformation', 'Teacher', 'Task', 'Communication', 'Confidence', 'Invlovement')
+    search_fields = ['StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName']
+
+class PhysicalEducationAdmin(admin.ModelAdmin):
+    list_display = ('StudentYearlyInformation', 'Name', 'Pratod', 'AbilityToWorkInTeam', 'Cooperation', 'LeadershipSkill')
+    search_fields = ['StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName']
+class ThinkingSkillAdmin(admin.ModelAdmin):   
+    search_fields = ['StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName']
+
+class SocialSkillAdmin(admin.ModelAdmin):
+    search_fields = ['StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName']
+
+class EmotionalSkillAdmin(admin.ModelAdmin):
+    search_fields = ['StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName']
+
+class AttitudeTowardsSchoolAdmin(admin.ModelAdmin):
+    search_fields = ['StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName']
+
+class ValuesAdmin(admin.ModelAdmin):
+    search_fields = ['StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName']
+
 
 admin.site.register(AttendanceMaster, AttendanceMasterAdmin)
 admin.site.register(StudentAttendance, StudentAttendanceAdmin)
@@ -114,3 +138,9 @@ admin.site.register(AbhivyaktiVikas, AbhivyaktiVikasAdmin)
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Elocution, ElocutionAdmin)
 admin.site.register(Library, LibraryAdmin)
+admin.site.register(WorkExperience, WorkExperienceAdmin)
+admin.site.register(ThinkingSkill, ThinkingSkillAdmin)
+admin.site.register(SocialSkill, SocialSkillAdmin)
+admin.site.register(EmotionalSkill, EmotionalSkillAdmin)
+admin.site.register(AttitudeTowardsSchool, AttitudeTowardsSchoolAdmin)
+admin.site.register(Values, ValuesAdmin)
