@@ -310,7 +310,7 @@ class Elocution(models.Model):
     Memory = models.CharField(max_length=1, choices=GRADE_CHOICES)
     Content = models.CharField(max_length=1, choices=GRADE_CHOICES)
     Understanding = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    Skill = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    Pronunciation = models.CharField(max_length=1, choices=GRADE_CHOICES)
     Presentation = models.CharField(max_length=1, choices=GRADE_CHOICES)
     PublicComment = models.CharField(max_length=200)
     PrivateComment = models.CharField(max_length=200)
@@ -325,7 +325,77 @@ class Library(models.Model):
     PrivateComment = models.CharField(max_length=200)
     class Meta:
         verbose_name_plural = "Libraries"
-    
+
+class WorkExperience(models.Model):
+    StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
+    Teacher = models.ForeignKey(Teacher)
+    Task = models.CharField(max_length=200)
+    Communication = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    Confidence = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    Invlovement = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    PublicComment = models.CharField(max_length=200)
+    PrivateComment = models.CharField(max_length=200)
+
+class PhysicalEducation(models.Model):
+    StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
+    Name = models.CharField(max_length=50)
+    Pratod = models.CharField(max_length=50,blank=True, null=True)
+    AbilityToWorkInTeam = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    Cooperation = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    LeadershipSkill = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    PublicComment = models.CharField(max_length=200)
+    PrivateComment = models.CharField(max_length=200)
+
+class ThinkingSkill(models.Model):
+    StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
+    Teacher = models.ForeignKey(Teacher)
+    Inquiry = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    LogicalThinking = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    Creativity = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    DecisionMakingAndProblemSolving = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    PublicComment = models.CharField(max_length=200)
+    PrivateComment = models.CharField(max_length=200)
+
+class SocialSkill(models.Model):
+    StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
+    Teacher = models.ForeignKey(Teacher)
+    Communication = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    InterPersonal = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    TeamWork = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    PublicComment = models.CharField(max_length=200)
+    PrivateComment = models.CharField(max_length=200)
+
+class EmotionalSkill(models.Model):
+    StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
+    Teacher = models.ForeignKey(Teacher)
+    Empathy = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    Expression = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    Management = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    PublicComment = models.CharField(max_length=200)
+    PrivateComment = models.CharField(max_length=200)
+
+class AttitudeTowardsSchool(models.Model):
+    StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
+    Teacher = models.ForeignKey(Teacher)
+    SchoolTeachers = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    SchoolMates = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    SchoolPrograms = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    SchoolEnvironment = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    PublicComment = models.CharField(max_length=200)
+    PrivateComment = models.CharField(max_length=200)
+
+class Values(models.Model):
+    StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
+    Teacher = models.ForeignKey(Teacher)
+    Obedience = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    Honesty = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    Equality = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    Responsibility = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    PublicComment = models.CharField(max_length=200)
+    PrivateComment = models.CharField(max_length=200)
+    class Meta:
+        verbose_name_plural = "Values"
+
 class SearchDetailsForm(forms.Form):
     Year = forms.CharField(max_length=9)
     RegistrationNo = forms.IntegerField()
