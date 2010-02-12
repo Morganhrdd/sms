@@ -824,7 +824,7 @@ def socialactivity_add(request):
                 tmp['PrivateComment'] = socialactivity_obj.PrivateComment
                 x = SocialActivityDetailsForm(initial=tmp)
                 data.append(x)
-            data.append(CoCurricularDetailsForm(initial={'Delete':'Y'}))
+            data.append(SocialActivityDetailsForm(initial={'Delete':'Y'}))
             return render_to_response('students/AddSocialActivity.html',{'form':genform,'data':data,'name':name})
         return render_to_response('students/AddSocialActivity.html',{'form':genform})
 
