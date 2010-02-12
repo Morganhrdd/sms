@@ -581,6 +581,7 @@ def project_add(request):
                     project_obj.Review = request.POST['Review'] or '0'
                     project_obj.Planning = request.POST['Planning'] or '0'
                     project_obj.Documentation = request.POST['Documentation'] or '0'
+                    project_obj.ExecutionAndHardWork = request.POST['ExecutionAndHardWork'] or '0'
                     project_obj.PublicComment = request.POST['PublicComment']
                     project_obj.PrivateComment = request.POST['PrivateComment']
                     project_obj.save()
@@ -597,6 +598,7 @@ def project_add(request):
                 tmp['Review'] = project_obj.Review
                 tmp['Planning'] = project_obj.Planning
                 tmp['Documentation'] = project_obj.Documentation
+                tmp['ExecutionAndHardWork'] = project_obj.ExecutionAndHardWork
                 tmp['Communication'] = project_obj.Communication
                 tmp['PublicComment'] = project_obj.PublicComment
                 tmp['PrivateComment'] = project_obj.PrivateComment
