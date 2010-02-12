@@ -869,7 +869,7 @@ def physicalfitnessinfo_add(request):
                     physicalfitnessinfo_obj.Running400m = request.POST['Running400m']
                     physicalfitnessinfo_obj.ShortPutThrow = request.POST['ShortPutThrow']
                     physicalfitnessinfo_obj.Split = request.POST['Split']
-                    physicalfitnessinfo_obj.BodyMassIndex = request.POST['SBodyMassIndexplit']
+                    physicalfitnessinfo_obj.BodyMassIndex = request.POST['BodyMassIndex']
                     physicalfitnessinfo_obj.Balancing = request.POST['Balancing']
                     physicalfitnessinfo_obj.PublicComment = request.POST['PublicComment']
                     physicalfitnessinfo_obj.PrivateComment = request.POST['PrivateComment']
