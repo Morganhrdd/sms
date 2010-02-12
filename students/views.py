@@ -718,7 +718,7 @@ def competitiveexam_add(request):
                 tmp['PrivateComment'] = competitiveexam_obj.PrivateComment
                 x = CompetitiveExamDetailsForm(initial=tmp)
                 data.append(x)
-            data.append(CompetitionDetailsForm(initial={'Delete':'Y'}))
+            data.append(CompetitiveExamDetailsForm(initial={'Delete':'Y'}))
             return render_to_response('students/AddCompetitiveExam.html',{'form':genform,'data':data,'name':name})
         return render_to_response('students/AddCompetitiveExam.html',{'form':genform})
 
