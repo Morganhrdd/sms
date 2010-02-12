@@ -1902,12 +1902,12 @@ def fillCertificate(student_yearly_info, Story):
         toYear = "till date";
 
     admissionClass = "______"
+    admission_year = fromYear + "-" + str(int(fromYear) + 1);    
     student_yearly_infos = StudentYearlyInformation.objects.filter(StudentBasicInfo = student_basic_info)
     for yearly_info in student_yearly_infos:
         student_year = yearly_info.ClassMaster.AcademicYear.Year
-        if student_year != fromYear:
-            continue
-        admissionClass = str(student_yearly_info.ClassMaster.Standard) + "th"
+        if student_year == admission_year:
+            admissionClass = str(student_yearly_info.ClassMaster.Standard) + "th"
     
     presentClass= str(student_yearly_info.ClassMaster.Standard) + "th"
     addCertificateTextToStory(Story, "Jnana Prabodhini Prashala during the year " + "<strong>" + str(fromYear) + "</strong>" + " to " + "<strong>" + toYear + "</strong>");
