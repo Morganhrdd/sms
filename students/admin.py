@@ -103,15 +103,19 @@ class PhysicalEducationAdmin(admin.ModelAdmin):
     list_display = ('StudentYearlyInformation', 'Name', 'Pratod', 'AbilityToWorkInTeam', 'Cooperation', 'LeadershipSkill')
     search_fields = ['StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName']
 class ThinkingSkillAdmin(admin.ModelAdmin):   
+    list_display = ('StudentYearlyInformation', 'Teacher', 'Inquiry','LogicalThinking', 'Creativity', 'DecisionMakingAndProblemSolving')
     search_fields = ['StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName']
 
 class SocialSkillAdmin(admin.ModelAdmin):
+    list_display = ('StudentYearlyInformation', 'Teacher', 'Communication', 'InterPersonal', 'TeamWork')
     search_fields = ['StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName']
 
 class EmotionalSkillAdmin(admin.ModelAdmin):
+    list_display = ('StudentYearlyInformation', 'Teacher', 'Empathy', 'Expression', 'Management')
     search_fields = ['StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName']
 
 class AttitudeTowardsSchoolAdmin(admin.ModelAdmin):
+    list_display = ('StudentYearlyInformation', 'Teacher', 'SchoolTeachers', 'SchoolMates', 'SchoolPrograms', 'SchoolEnvironment')    
     search_fields = ['StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName']
 
 class ValuesAdmin(admin.ModelAdmin):
