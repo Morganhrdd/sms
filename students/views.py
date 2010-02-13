@@ -1907,7 +1907,7 @@ def fillCertificate(student_yearly_info, Story):
     for yearly_info in student_yearly_infos:
         student_year = yearly_info.ClassMaster.AcademicYear.Year
         if student_year == admission_year:
-            admissionClass = str(student_yearly_info.ClassMaster.Standard) + "th"
+            admissionClass = str(yearly_info.ClassMaster.Standard) + "th"
     
     presentClass= str(student_yearly_info.ClassMaster.Standard) + "th"
     addCertificateTextToStory(Story, "Jnana Prabodhini Prashala during the year " + "<strong>" + str(fromYear) + "</strong>" + " to " + "<strong>" + toYear + "</strong>")
