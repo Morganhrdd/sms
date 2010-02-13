@@ -1,0 +1,85 @@
+<!-- Main Page -->
+<HTML> <LINK REL=StyleSheet HREF="images/style.css" TYPE="text/css">
+
+    <BODY>
+        <CENTER>
+            <H1><U>JNANA PRABODHINI PRASHALA</U></H1>
+            <H3>WELCOME</H3>
+            <HR /> 
+            <BR />
+
+            <TABLE cellSpacing=0 cellPadding=5 width="50%" border=0 style="WIDTH: 50%" align=center>
+                <TBODY>
+                    <TR>
+                        <TD>
+                            <B>1. <a href='{{ data.add_url }}'> Make a new student's entry</a></B>
+                        </TD>
+                    </TR>
+                    <TR>
+                        <TD>
+                            <B>2. <a href='{{ data.generate_hallticket_url }}'>Generate admit card, edit details for a student</a></B>
+                        </TD>
+                    </TR>
+                </TBODY>
+            </TABLE>
+            <TABLE cellSpacing=0 cellPadding=5 width="50%" border=0 style="WIDTH: 50%" align=center>
+                <TBODY>
+                    <TR>
+                        <TD>
+                        </TD>
+                        <TD>
+                            Male
+                        </TD>
+                        <TD>
+                            Female
+                        </TD>
+                    </TR>
+                    <TR>
+                        <TD>
+                            Marathi
+                        </TD>
+                        <TD>
+                            {{ data.stats.MM }}
+                        </TD>
+                        <TD>
+                            {{ data.stats.FM }}
+                        </TD>
+                        <TD>
+                            <strong> {{ data.stats.MMFM }} </strong>
+                        </TD>
+                    </TR>
+                    <TR>
+                        <TD>
+                            English
+                        </TD>
+                        <TD>
+                            {{ data.stats.ME }}
+                        </TD>
+                        <TD>
+                            {{ data.stats.FE }}
+                        </TD>
+                        <TD>
+                            <strong> {{ data.stats.MEFE }} </strong>
+                        </TD>
+                    </TR>
+                    <TR>
+                        <TD>
+                        </TD>
+                        <TD>
+                            <strong> {{ data.stats.MMME }} </strong>
+                        </TD>
+                        <TD>
+                            <strong> {{ data.stats.FMFE }} </strong>
+                        </TD>
+                        <TD>
+                            <strong> <font color='BLUE'> {{ data.stats.MMMEFMFE}} </font> </strong>
+                        </TD>
+                    </TR>
+                </TBODY>
+            </TABLE>
+        
+        </CENTER>
+        <BR />
+        <HR />
+    </BODY>
+</HTML>
