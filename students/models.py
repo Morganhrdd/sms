@@ -332,7 +332,7 @@ class WorkExperience(models.Model):
     Task = models.CharField(max_length=200)
     Communication = models.CharField(max_length=1, choices=GRADE_CHOICES)
     Confidence = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    Invlovement = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    Involvement = models.CharField(max_length=1, choices=GRADE_CHOICES)
     PublicComment = models.CharField(max_length=200)
     PrivateComment = models.CharField(max_length=200)
 
@@ -518,11 +518,86 @@ class PhysicalFitnessInfoDetailsForm(forms.Form):
     SpecialSport = forms.CharField(max_length=50, required=False)
     Grade = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
     Delete = forms.CharField(required=False)
-    '''
-    Pathak = models.CharField(max_length=50,blank=True, null=True)
-    Pratod = models.CharField(max_length=50,blank=True, null=True)
-    Margadarshak = models.CharField(max_length=50,blank=True, null=True)
-    SpecialSport = models.CharField(max_length=50,blank=True, null=True)
-    Grade = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    '''
+
+class WorkExperienceDetailsForm(forms.Form):
+    pkwidget = forms.HiddenInput()
+    pk=forms.IntegerField(widget=pkwidget, required=False)
+    Teacher = forms.ModelChoiceField(Teacher.objects.all())
+    Task = forms.CharField(max_length=200)
+    Communication = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    Confidence = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    Involvement = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    Delete = forms.CharField(required=False)
+
+class PhysicalEducationDetailsForm(forms.Form):
+    pkwidget = forms.HiddenInput()
+    pk=forms.IntegerField(widget=pkwidget, required=False)
+    Name = forms.CharField(max_length=50)
+    Pratod = forms.CharField(max_length=50, required=False)
+    AbilityToWorkInTeam = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    Cooperation = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    LeadershipSkill = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    Delete = forms.CharField(required=False)
+
+class ThinkingSkillDetailsForm(forms.Form):
+    pkwidget = forms.HiddenInput()
+    pk=forms.IntegerField(widget=pkwidget, required=False)
+    Teacher = forms.ModelChoiceField(Teacher.objects.all())
+    Inquiry = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    LogicalThinking = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    Creativity = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    DecisionMakingAndProblemSolving = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    Delete = forms.CharField(required=False)
+
+class SocialSkillForm(forms.Form):
+    pkwidget = forms.HiddenInput()
+    pk=forms.IntegerField(widget=pkwidget, required=False)
+    Teacher = forms.ModelChoiceField(Teacher.objects.all())
+    Communication = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    InterPersonal = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    TeamWork = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    Delete = forms.CharField(required=False)
+
+class EmotionalSkillDetailsForm(forms.Form):
+    pkwidget = forms.HiddenInput()
+    pk=forms.IntegerField(widget=pkwidget, required=False)
+    Teacher = forms.ModelChoiceField(Teacher.objects.all())
+    Empathy = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    Expression = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    Management = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    Delete = forms.CharField(required=False)
+
+class AttitudeTowardsSchoolDetailsForm(forms.Form):
+    pkwidget = forms.HiddenInput()
+    pk=forms.IntegerField(widget=pkwidget, required=False)
+    Teacher = forms.ModelChoiceField(Teacher.objects.all())
+    SchoolTeachers = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    SchoolMates = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    SchoolPrograms = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    SchoolEnvironment = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    Delete = forms.CharField(required=False)
+
+class ValuesDetailsForm(forms.Form):
+    pkwidget = forms.HiddenInput()
+    pk=forms.IntegerField(widget=pkwidget, required=False)
+    Teacher = forms.ModelChoiceField(Teacher.objects.all())
+    Obedience = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    Honesty = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    Equality = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    Responsibility = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    Delete = forms.CharField(required=False)
     
