@@ -977,7 +977,7 @@ def physicaleducation_add(request):
 def thinkingskill_add(request):
     if not request.POST:
         genform = SearchDetailsForm()
-        return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
+        return render_to_response('students/AddThinkingSkill.html',{'form':genform})
     else:
         c = {}
         c.update(csrf(request))
@@ -1025,15 +1025,15 @@ def thinkingskill_add(request):
                 x = ThinkingSkillDetailsForm(initial=tmp)
                 data.append(x)
             data.append(ThinkingSkillDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddPhysicalEducation.html',{'form':genform,'data':data,'name':name})
-        return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
+            return render_to_response('students/AddThinkingSkill.html',{'form':genform,'data':data,'name':name})
+        return render_to_response('students/AddThinkingSkill.html',{'form':genform})
 
 #
 @csrf_exempt
 def socialskill_add(request):
     if not request.POST:
         genform = SearchDetailsForm()
-        return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
+        return render_to_response('students/AddSocialSkill.html',{'form':genform})
     else:
         c = {}
         c.update(csrf(request))
@@ -1079,15 +1079,15 @@ def socialskill_add(request):
                 x = SocialSkillDetailsForm(initial=tmp)
                 data.append(x)
             data.append(SocialSkillDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddPhysicalEducation.html',{'form':genform,'data':data,'name':name})
-        return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
+            return render_to_response('students/AddSocialSkill.html',{'form':genform,'data':data,'name':name})
+        return render_to_response('students/AddSocialSkill.html',{'form':genform})
 
 #
 @csrf_exempt
 def attitudetowardsschool_add(request):
     if not request.POST:
         genform = SearchDetailsForm()
-        return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
+        return render_to_response('students/AddAttitudeTowardsSchool.html',{'form':genform})
     else:
         c = {}
         c.update(csrf(request))
@@ -1134,14 +1134,14 @@ def attitudetowardsschool_add(request):
                 x = AttitudeTowardsSchoolDetailsForm(initial=tmp)
                 data.append(x)
             data.append(AttitudeTowardsSchoolDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddPhysicalEducation.html',{'form':genform,'data':data,'name':name})
-        return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
+            return render_to_response('students/AddAttitudeTowardsSchool.html',{'form':genform,'data':data,'name':name})
+        return render_to_response('students/AddAttitudeTowardsSchool.html',{'form':genform})
 #
 @csrf_exempt
 def emotionalskill_add(request):
     if not request.POST:
         genform = SearchDetailsForm()
-        return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
+        return render_to_response('students/AddEmotionalSkill.html',{'form':genform})
     else:
         c = {}
         c.update(csrf(request))
@@ -1187,15 +1187,15 @@ def emotionalskill_add(request):
                 x = EmotionalSkillDetailsForm(initial=tmp)
                 data.append(x)
             data.append(EmotionalSkillDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddPhysicalEducation.html',{'form':genform,'data':data,'name':name})
-        return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
+            return render_to_response('students/AddEmotionalSkill.html',{'form':genform,'data':data,'name':name})
+        return render_to_response('students/AddEmotionalSkill.html',{'form':genform})
 
 #
 @csrf_exempt
 def values_add(request):
     if not request.POST:
         genform = SearchDetailsForm()
-        return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
+        return render_to_response('students/AddValues.html',{'form':genform})
     else:
         c = {}
         c.update(csrf(request))
@@ -1243,8 +1243,8 @@ def values_add(request):
                 x = ValuesDetailsForm(initial=tmp)
                 data.append(x)
             data.append(ValuesDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddPhysicalEducation.html',{'form':genform,'data':data,'name':name})
-        return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
+            return render_to_response('students/AddValues.html',{'form':genform,'data':data,'name':name})
+        return render_to_response('students/AddValues.html',{'form':genform})
 # Used by HTML Report
 def attendance_add(request):
     if request.POST:
@@ -2518,7 +2518,13 @@ project_add = login_required(project_add)
 competitiveexam_add = login_required(competitiveexam_add)
 cocurricular_add = login_required(cocurricular_add)
 socialactivity_add = login_required(socialactivity_add)
+workexperience_add = login_required(workexperience_add)
 physicalfitnessinfo_add = login_required(physicalfitnessinfo_add)
+thinkingskill_add = login_required(thinkingskill_add)
+socialskill_add = login_required(socialskill_add)
+attitudetowardsschool_add = login_required(attitudetowardsschool_add)
+emotionalskill_add = login_required(emotionalskill_add)
+values_add = login_required(values_add)
 report=login_required(report)
 reportPDF=login_required(reportPDF)
 certificatePDF = login_required(certificatePDF)
