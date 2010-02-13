@@ -96,7 +96,7 @@ class LibraryAdmin(admin.ModelAdmin):
     search_fields = ['StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName', 'PublicComment', 'PrivateComment']
 
 class WorkExperienceAdmin(admin.ModelAdmin):
-    list_display = ('StudentYearlyInformation', 'Teacher', 'Task', 'Communication', 'Confidence', 'Invlovement')
+    list_display = ('StudentYearlyInformation', 'Teacher', 'Task', 'Communication', 'Confidence', 'Involvement')
     search_fields = ['StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName']
 
 class PhysicalEducationAdmin(admin.ModelAdmin):
