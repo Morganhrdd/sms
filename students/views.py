@@ -6,11 +6,13 @@ from jp_sms.students.models import TestMapping, StudentTestMarks, StudentYearlyI
 from jp_sms.students.models import SubjectMaster, ClassMaster, SubjectMaster, AttendanceMaster, AcademicYear
 from jp_sms.students.models import StudentAttendance, StudentAdditionalInformation,CoCurricular
 from jp_sms.students.models import SocialActivity,PhysicalFitnessInfo,AbhivyaktiVikas,Teacher
-from jp_sms.students.models import WorkExperience
-from jp_sms.students.models import SearchDetailsForm, CompetitionDetailsForm, ElocutionDetailsForm
+from jp_sms.students.models import WorkExperience, PhysicalEducation, ThinkingSkill, SocialSkill, EmotionalSkill
+from jp_sms.students.models import AttitudeTowardsSchool, Values
+from jp_sms.students.models import SearchDetailsForm, CompetitionDetailsForm, ElocutionDetailsForm, ValuesDetailsForm
 from jp_sms.students.models import ProjectDetailsForm, AbhivyaktiVikasDetailsForm, CompetitiveExamDetailsForm
 from jp_sms.students.models import CoCurricularDetailsForm, SocialActivityDetailsForm, PhysicalFitnessInfoDetailsForm
-from jp_sms.students.models import WorkExperienceDetailsForm
+from jp_sms.students.models import WorkExperienceDetailsForm, PhysicalEducationDetailsForm, ThinkingSkillDetailsForm
+from jp_sms.students.models import SocialSkillDetailsForm, EmotionalSkillDetailsForm, AttitudeTowardsSchoolDetailsForm
 from jp_sms.students.models import Project,Elocution,Library,Competition,CompetitiveExam,STANDARD_CHOICES
 from django.template import Context
 from django.core.context_processors import csrf
@@ -913,6 +915,336 @@ def workexperience_add(request):
             return render_to_response('students/AddWorkExperience.html',{'form':genform,'data':data,'name':name})
         return render_to_response('students/AddWorkExperience.html',{'form':genform})
 
+#
+@csrf_exempt
+def physicaleducation_add(request):
+    if not request.POST:
+        genform = SearchDetailsForm()
+        return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
+    else:
+        c = {}
+        c.update(csrf(request))
+        genform = SearchDetailsForm(request.POST)
+        if request.POST.has_key('RegistrationNo'):
+            regno = request.POST['RegistrationNo']
+            student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
+            name = '%s %s' % (student_info.FirstName, student_info.LastName)
+            yr = request.POST['Year']
+            yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
+            # store data
+            if request.POST.has_key('pk'):
+                pk = request.POST['pk']
+                delete = request.POST['Delete']
+                if pk and delete in ('Y', 'y'):
+                    PhysicalEducation.objects.get(pk=pk).delete()
+                if delete not in ('Y', 'y'):
+                    if pk:
+                        physicaleducation_obj = PhysicalEducation.objects.get(pk=pk)
+                    else:
+                        physicaleducation_obj = PhysicalEducation()
+                    physicaleducation_obj.StudentYearlyInformation = yearly_info
+                    physicaleducation_obj.Name = request.POST['Name']
+                    physicaleducation_obj.Pratod = request.POST['Pratod']
+                    physicaleducation_obj.AbilityToWorkInTeam = request.POST['AbilityToWorkInTeam'] or '0'
+                    physicaleducation_obj.Cooperation = request.POST['Cooperation'] or '0'
+                    physicaleducation_obj.LeadershipSkill = request.POST['LeadershipSkill'] or '0'
+                    physicaleducation_obj.PublicComment = request.POST['PublicComment']
+                    physicaleducation_obj.PrivateComment = request.POST['PrivateComment']
+                    physicaleducation_obj.save()
+            # end store data
+            physicaleducation_objs = PhysicalEducation.objects.filter(StudentYearlyInformation=yearly_info)
+            data = []
+            teacher_objs = Teacher.objects.all()
+            for physicaleducation_obj in physicaleducation_objs:
+                tmp = {}
+                tmp['pk'] = physicaleducation_obj.pk
+                tmp['Name'] = physicaleducation_obj.Name
+                tmp['Pratod'] = physicaleducation_obj.Pratod
+                tmp['AbilityToWorkInTeam'] = physicaleducation_obj.AbilityToWorkInTeam
+                tmp['Cooperation'] = physicaleducation_obj.Cooperation
+                tmp['LeadershipSkill'] = physicaleducation_obj.LeadershipSkill
+                tmp['PublicComment'] = physicaleducation_obj.PublicComment
+                tmp['PrivateComment'] = physicaleducation_obj.PrivateComment
+                x = PhysicalEducationDetailsForm(initial=tmp)
+                data.append(x)
+            if not len(data):
+                data.append(PhysicalEducationDetailsForm(initial={'Delete':'Y'}))
+            return render_to_response('students/AddPhysicalEducation.html',{'form':genform,'data':data,'name':name})
+        return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
+
+#
+@csrf_exempt
+def thinkingskill_add(request):
+    if not request.POST:
+        genform = SearchDetailsForm()
+        return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
+    else:
+        c = {}
+        c.update(csrf(request))
+        genform = SearchDetailsForm(request.POST)
+        if request.POST.has_key('RegistrationNo'):
+            regno = request.POST['RegistrationNo']
+            student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
+            name = '%s %s' % (student_info.FirstName, student_info.LastName)
+            yr = request.POST['Year']
+            yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
+            # store data
+            if request.POST.has_key('pk'):
+                pk = request.POST['pk']
+                delete = request.POST['Delete']
+                if pk and delete in ('Y', 'y'):
+                    ThinkingSkill.objects.get(pk=pk).delete()
+                if delete not in ('Y', 'y'):
+                    if pk:
+                        thinkingskill_obj = ThinkingSkill.objects.get(pk=pk)
+                    else:
+                        thinkingskill_obj = ThinkingSkill()
+                    thinkingskill_obj.StudentYearlyInformation = yearly_info
+                    thinkingskill_obj.Teacher = Teacher.objects.get(Name=request.POST['Teacher'])
+                    thinkingskill_obj.Inquiry = request.POST['Inquiry'] or '0'
+                    thinkingskill_obj.LogicalThinking = request.POST['LogicalThinking'] or '0'
+                    thinkingskill_obj.Creativity = request.POST['Creativity'] or '0'
+                    thinkingskill_obj.DecisionMakingAndProblemSolving = request.POST['DecisionMakingAndProblemSolving'] or '0'
+                    thinkingskill_obj.PublicComment = request.POST['PublicComment']
+                    thinkingskill_obj.PrivateComment = request.POST['PrivateComment']
+                    thinkingskill_obj.save()
+            # end store data
+            thinkingskill_objs = ThinkingSkill.objects.filter(StudentYearlyInformation=yearly_info)
+            data = []
+            teacher_objs = Teacher.objects.all()
+            for thinkingskill_obj in thinkingskill_objs:
+                tmp = {}
+                tmp['pk'] = thinkingskill_obj.pk
+                tmp['Teacher'] = thinkingskill_obj.Teacher
+                tmp['Inquiry'] = thinkingskill_obj.Inquiry
+                tmp['LogicalThinking'] = thinkingskill_obj.LogicalThinking
+                tmp['Creativity'] = thinkingskill_obj.Creativity
+                tmp['DecisionMakingAndProblemSolving'] = thinkingskill_obj.DecisionMakingAndProblemSolving
+                tmp['PublicComment'] = thinkingskill_obj.PublicComment
+                tmp['PrivateComment'] = thinkingskill_obj.PrivateComment
+                x = ThinkingSkillDetailsForm(initial=tmp)
+                data.append(x)
+            data.append(ThinkingSkillDetailsForm(initial={'Delete':'Y'}))
+            return render_to_response('students/AddPhysicalEducation.html',{'form':genform,'data':data,'name':name})
+        return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
+
+#
+@csrf_exempt
+def socialskill_add(request):
+    if not request.POST:
+        genform = SearchDetailsForm()
+        return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
+    else:
+        c = {}
+        c.update(csrf(request))
+        genform = SearchDetailsForm(request.POST)
+        if request.POST.has_key('RegistrationNo'):
+            regno = request.POST['RegistrationNo']
+            student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
+            name = '%s %s' % (student_info.FirstName, student_info.LastName)
+            yr = request.POST['Year']
+            yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
+            # store data
+            if request.POST.has_key('pk'):
+                pk = request.POST['pk']
+                delete = request.POST['Delete']
+                if pk and delete in ('Y', 'y'):
+                    SocialSkill.objects.get(pk=pk).delete()
+                if delete not in ('Y', 'y'):
+                    if pk:
+                        socialskill_obj = SocialSkill.objects.get(pk=pk)
+                    else:
+                        socialskill_obj = SocialSkill()
+                    socialskill_obj.StudentYearlyInformation = yearly_info
+                    socialskill_obj.Teacher = Teacher.objects.get(Name=request.POST['Teacher'])
+                    socialskill_obj.Communication = request.POST['Communication'] or '0'
+                    socialskill_obj.InterPersonal = request.POST['InterPersonal'] or '0'
+                    socialskill_obj.TeamWork = request.POST['TeamWork'] or '0'
+                    socialskill_obj.PublicComment = request.POST['PublicComment']
+                    socialskill_obj.PrivateComment = request.POST['PrivateComment']
+                    socialskill_obj.save()
+            # end store data
+            socialskill_objs = SocialSkill.objects.filter(StudentYearlyInformation=yearly_info)
+            data = []
+            teacher_objs = Teacher.objects.all()
+            for socialskill_obj in socialskill_objs:
+                tmp = {}
+                tmp['pk'] = socialskill_obj.pk
+                tmp['Teacher'] = socialskill_obj.Teacher
+                tmp['Communication'] = socialskill_obj.Communication
+                tmp['InterPersonal'] = socialskill_obj.InterPersonal
+                tmp['TeamWork'] = socialskill_obj.TeamWork
+                tmp['PublicComment'] = socialskill_obj.PublicComment
+                tmp['PrivateComment'] = socialskill_obj.PrivateComment
+                x = SocialSkillDetailsForm(initial=tmp)
+                data.append(x)
+            data.append(SocialSkillDetailsForm(initial={'Delete':'Y'}))
+            return render_to_response('students/AddPhysicalEducation.html',{'form':genform,'data':data,'name':name})
+        return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
+
+#
+@csrf_exempt
+def attitudetowardsschool_add(request):
+    if not request.POST:
+        genform = SearchDetailsForm()
+        return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
+    else:
+        c = {}
+        c.update(csrf(request))
+        genform = SearchDetailsForm(request.POST)
+        if request.POST.has_key('RegistrationNo'):
+            regno = request.POST['RegistrationNo']
+            student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
+            name = '%s %s' % (student_info.FirstName, student_info.LastName)
+            yr = request.POST['Year']
+            yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
+            # store data
+            if request.POST.has_key('pk'):
+                pk = request.POST['pk']
+                delete = request.POST['Delete']
+                if pk and delete in ('Y', 'y'):
+                    AttitudeTowardsSchool.objects.get(pk=pk).delete()
+                if delete not in ('Y', 'y'):
+                    if pk:
+                        attitudetowardsschool_obj = AttitudeTowardsSchool.objects.get(pk=pk)
+                    else:
+                        attitudetowardsschool_obj = AttitudeTowardsSchool()
+                    attitudetowardsschool_obj.StudentYearlyInformation = yearly_info
+                    attitudetowardsschool_obj.Teacher = Teacher.objects.get(Name=request.POST['Teacher'])
+                    attitudetowardsschool_obj.SchoolTeachers = request.POST['SchoolTeachers'] or '0'
+                    attitudetowardsschool_obj.SchoolMates = request.POST['SchoolMates'] or '0'
+                    attitudetowardsschool_obj.SchoolPrograms = request.POST['SchoolPrograms'] or '0'
+                    attitudetowardsschool_obj.SchoolEnvironment = request.POST['SchoolEnvironment'] or '0'
+                    attitudetowardsschool_obj.PublicComment = request.POST['PublicComment']
+                    attitudetowardsschool_obj.PrivateComment = request.POST['PrivateComment']
+                    attitudetowardsschool_obj.save()
+            # end store data
+            attitudetowardsschool_objs = AttitudeTowardsSchool.objects.filter(StudentYearlyInformation=yearly_info)
+            data = []
+            teacher_objs = Teacher.objects.all()
+            for attitudetowardsschool_obj in attitudetowardsschool_objs:
+                tmp = {}
+                tmp['pk'] = attitudetowardsschool_obj.pk
+                tmp['Teacher'] = attitudetowardsschool_obj.Teacher
+                tmp['Empathy'] = attitudetowardsschool_obj.Empathy
+                tmp['Expression'] = attitudetowardsschool_obj.Expression
+                tmp['Management'] = attitudetowardsschool_obj.Management
+                tmp['PublicComment'] = attitudetowardsschool_obj.PublicComment
+                tmp['PrivateComment'] = attitudetowardsschool_obj.PrivateComment
+                x = AttitudeTowardsSchoolDetailsForm(initial=tmp)
+                data.append(x)
+            data.append(AttitudeTowardsSchoolDetailsForm(initial={'Delete':'Y'}))
+            return render_to_response('students/AddPhysicalEducation.html',{'form':genform,'data':data,'name':name})
+        return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
+#
+@csrf_exempt
+def emotionalskill_add(request):
+    if not request.POST:
+        genform = SearchDetailsForm()
+        return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
+    else:
+        c = {}
+        c.update(csrf(request))
+        genform = SearchDetailsForm(request.POST)
+        if request.POST.has_key('RegistrationNo'):
+            regno = request.POST['RegistrationNo']
+            student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
+            name = '%s %s' % (student_info.FirstName, student_info.LastName)
+            yr = request.POST['Year']
+            yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
+            # store data
+            if request.POST.has_key('pk'):
+                pk = request.POST['pk']
+                delete = request.POST['Delete']
+                if pk and delete in ('Y', 'y'):
+                    EmotionalSkill.objects.get(pk=pk).delete()
+                if delete not in ('Y', 'y'):
+                    if pk:
+                        emotionalskill_obj = EmotionalSkill.objects.get(pk=pk)
+                    else:
+                        emotionalskill_obj = EmotionalSkill()
+                    emotionalskill_obj.StudentYearlyInformation = yearly_info
+                    emotionalskill_obj.Teacher = Teacher.objects.get(Name=request.POST['Teacher'])
+                    emotionalskill_obj.Empathy = request.POST['Empathy'] or '0'
+                    emotionalskill_obj.Expression = request.POST['Expression'] or '0'
+                    emotionalskill_obj.Management = request.POST['Management'] or '0'
+                    emotionalskill_obj.PublicComment = request.POST['PublicComment']
+                    emotionalskill_obj.PrivateComment = request.POST['PrivateComment']
+                    emotionalskill_obj.save()
+            # end store data
+            emotionalskill_objs = EmotionalSkill.objects.filter(StudentYearlyInformation=yearly_info)
+            data = []
+            teacher_objs = Teacher.objects.all()
+            for emotionalskill_obj in emotionalskill_objs:
+                tmp = {}
+                tmp['pk'] = emotionalskill_obj.pk
+                tmp['Teacher'] = emotionalskill_obj.Teacher
+                tmp['Empathy'] = emotionalskill_obj.Empathy
+                tmp['Expression'] = emotionalskill_obj.Expression
+                tmp['Management'] = emotionalskill_obj.Management
+                tmp['PublicComment'] = emotionalskill_obj.PublicComment
+                tmp['PrivateComment'] = emotionalskill_obj.PrivateComment
+                x = EmotionalSkillDetailsForm(initial=tmp)
+                data.append(x)
+            data.append(EmotionalSkillDetailsForm(initial={'Delete':'Y'}))
+            return render_to_response('students/AddPhysicalEducation.html',{'form':genform,'data':data,'name':name})
+        return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
+
+#
+@csrf_exempt
+def values_add(request):
+    if not request.POST:
+        genform = SearchDetailsForm()
+        return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
+    else:
+        c = {}
+        c.update(csrf(request))
+        genform = SearchDetailsForm(request.POST)
+        if request.POST.has_key('RegistrationNo'):
+            regno = request.POST['RegistrationNo']
+            student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
+            name = '%s %s' % (student_info.FirstName, student_info.LastName)
+            yr = request.POST['Year']
+            yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
+            # store data
+            if request.POST.has_key('pk'):
+                pk = request.POST['pk']
+                delete = request.POST['Delete']
+                if pk and delete in ('Y', 'y'):
+                    Values.objects.get(pk=pk).delete()
+                if delete not in ('Y', 'y'):
+                    if pk:
+                        values_obj = Values.objects.get(pk=pk)
+                    else:
+                        values_obj = Values()
+                    values_obj.StudentYearlyInformation = yearly_info
+                    values_obj.Teacher = Teacher.objects.get(Name=request.POST['Teacher'])
+                    values_obj.Obedience = request.POST['Obedience'] or '0'
+                    values_obj.Honesty = request.POST['Honesty'] or '0'
+                    values_obj.Equality = request.POST['Equality'] or '0'
+                    values_obj.Responsibility = request.POST['Responsibility'] or '0'
+                    values_obj.PublicComment = request.POST['PublicComment']
+                    values_obj.PrivateComment = request.POST['PrivateComment']
+                    values_obj.save()
+            # end store data
+            values_objs = Values.objects.filter(StudentYearlyInformation=yearly_info)
+            data = []
+            teacher_objs = Teacher.objects.all()
+            for values_obj in values_objs:
+                tmp = {}
+                tmp['pk'] = values_obj.pk
+                tmp['Teacher'] = values_obj.Teacher
+                tmp['Obedience'] = values_obj.Obedience
+                tmp['Honesty'] = values_obj.Honesty
+                tmp['Equality'] = values_obj.Equality
+                tmp['Report'] = values_obj.Report
+                tmp['PublicComment'] = values_obj.PublicComment
+                tmp['PrivateComment'] = values_obj.PrivateComment
+                x = ValuesDetailsForm(initial=tmp)
+                data.append(x)
+            data.append(ValuesDetailsForm(initial={'Delete':'Y'}))
+            return render_to_response('students/AddPhysicalEducation.html',{'form':genform,'data':data,'name':name})
+        return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
 # Used by HTML Report
 def attendance_add(request):
     if request.POST:

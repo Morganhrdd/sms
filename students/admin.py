@@ -2,7 +2,7 @@ from jp_sms.students.models import StudentBasicInfo, StudentAdditionalInformatio
 from jp_sms.students.models import SubjectMaster, StudentYearlyInformation, ClassMaster, TestMapping
 from jp_sms.students.models import StudentTestMarks, AttendanceMaster, StudentAttendance, PhysicalFitnessInfo
 from jp_sms.students.models import SocialActivity, CoCurricular, CompetitiveExam, Competition
-from jp_sms.students.models import AbhivyaktiVikas, Project, Elocution, Library, WorkExperience
+from jp_sms.students.models import AbhivyaktiVikas, Project, Elocution, Library, WorkExperience, PhysicalEducation
 from jp_sms.students.models import ThinkingSkill, SocialSkill, EmotionalSkill, AttitudeTowardsSchool, Values
 from django.contrib.auth.models import User
 from django.contrib import admin
@@ -143,6 +143,7 @@ admin.site.register(Project, ProjectAdmin)
 admin.site.register(Elocution, ElocutionAdmin)
 admin.site.register(Library, LibraryAdmin)
 admin.site.register(WorkExperience, WorkExperienceAdmin)
+admin.site.register(PhysicalEducation, PhysicalEducationAdmin)
 admin.site.register(ThinkingSkill, ThinkingSkillAdmin)
 admin.site.register(SocialSkill, SocialSkillAdmin)
 admin.site.register(EmotionalSkill, EmotionalSkillAdmin)

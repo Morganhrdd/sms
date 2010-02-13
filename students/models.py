@@ -555,7 +555,7 @@ class ThinkingSkillDetailsForm(forms.Form):
     PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     Delete = forms.CharField(required=False)
 
-class SocialSkillForm(forms.Form):
+class SocialSkillDetailsForm(forms.Form):
     pkwidget = forms.HiddenInput()
     pk=forms.IntegerField(widget=pkwidget, required=False)
     Teacher = forms.ModelChoiceField(Teacher.objects.all())
