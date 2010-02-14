@@ -419,7 +419,7 @@ class ElocutionDetailsForm(forms.Form):
     Memory = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
     Content = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
     Understanding = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
-    Skill = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    Pronunciation = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
     Presentation = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
     PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
