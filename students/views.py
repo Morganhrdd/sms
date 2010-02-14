@@ -464,7 +464,7 @@ def elocution_add(request):
                     elocution_obj.Memory = request.POST['Memory'] or '0'
                     elocution_obj.Content = request.POST['Content'] or '0'
                     elocution_obj.Understanding = request.POST['Understanding'] or '0'
-                    elocution_obj.Skill = request.POST['Skill'] or '0'
+                    elocution_obj.Pronunciation = request.POST['Pronunciation'] or '0'
                     elocution_obj.Presentation = request.POST['Presentation'] or '0'
                     elocution_obj.PublicComment = request.POST['PublicComment']
                     elocution_obj.PrivateComment = request.POST['PrivateComment']
