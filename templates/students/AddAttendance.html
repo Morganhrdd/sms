@@ -19,7 +19,7 @@
 			{% for row in data %}
 			<tr>
 				<td>{{ row.roll_no }}</td> <td>{{ row.name }}</td>
-				<td><input type="text" name="{{ row.id }}" value="" id="id_{{ row.id }}"></td><p/>
+				<td><input type="text" name="{{ row.id }}" value="{{ row.attendance }}" id="id_{{ row.id }}"></td><p/>
 			</tr>
 			{% endfor %}
 			<input type="hidden" name="attendance_id" value="{{ attendance_id }}" id="some_name">

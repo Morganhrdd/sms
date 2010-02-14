@@ -1273,14 +1273,18 @@ def attendance_add(request):
                 return HttpResponse('Nothing to add/modify')
             return HttpResponse(attendance_details)
         attendance_id = request.GET['attendance_id']
-        attendance = AttendanceMaster.objects.get(id=attendance_id)
-        students = StudentYearlyInformation.objects.filter(ClassMaster=attendance.ClassMaster)
+        attendance_obj = AttendanceMaster.objects.get(id=attendance_id)
+        students = StudentYearlyInformation.objects.filter(ClassMaster=attendance.ClassMaster).order_by('RollNo')
         data = []
         for student in students:
             student_info = StudentBasicInfo.objects.get(RegistrationNo = student.StudentBasicInfo.RegistrationNo)
             name = '%s %s' % (student_info.FirstName, student_info.LastName)
-            data.append({'id':student.id,'roll_no':student.RollNo, 'name':name})
-        return render_to_response('students/AddAttendance.html',Context({'attendance_id':attendance_id, 'attendance_details':attendance.ClassMaster, 'data':data}))
+            try:
+                attendance = StudentAttendance.objects.get(StudentYearlyInformation=student, AttendanceMaster=attendance_obj).ActualAttendance
+            except:
+                attendance = ''
+            data.append({'id':student.id,'roll_no':student.RollNo, 'name':name, 'attendance':attendance})
+        return render_to_response('students/AddAttendance.html',Context({'attendance_id':attendance_id, 'attendance_details':attendance_obj.ClassMaster, 'data':data}))
     return HttpResponse()
 
 # PDF Report :	--------------------------------------------------
