@@ -253,13 +253,13 @@ def report(request):
         cumulative_elocution_grade_sum=0
         cumulative_elocution_grade=0
         for elo_row in elocution:
-            elocution_grade_row_sum=int(GRADE_NUM[elo_row.Memory])+int(GRADE_NUM[elo_row.Content])+int(GRADE_NUM[elo_row.Understanding])+int(GRADE_NUM[elo_row.Skill])+int(GRADE_NUM[elo_row.Presentation])
+            elocution_grade_row_sum=int(GRADE_NUM[elo_row.Memory])+int(GRADE_NUM[elo_row.Content])+int(GRADE_NUM[elo_row.Understanding])+int(GRADE_NUM[elo_row.Pronunciation])+int(GRADE_NUM[elo_row.Presentation])
             cumulative_elocution_grade_sum=cumulative_elocution_grade_sum+(int(elocution_grade_row_sum/5))
             elocution_data.append({'Title':elo_row.Title ,
                                          'Memory':GRADE_CHOICES[elo_row.Memory] ,
                                          'Content':GRADE_CHOICES[elo_row.Content] ,
                                          'Understanding':GRADE_CHOICES[elo_row.Understanding] ,
-                                         'Skill':GRADE_CHOICES[elo_row.Skill] ,
+                                         'Pronunciation':GRADE_CHOICES[elo_row.Pronunciation] ,
                                          'Presentation':GRADE_CHOICES[elo_row.Presentation],
                                          'PublicComment':elo_row.PublicComment})
         if(len(elocution) > 0):
@@ -479,7 +479,7 @@ def elocution_add(request):
                 tmp['Memory'] = elocution_obj.Memory
                 tmp['Content'] = elocution_obj.Content
                 tmp['Understanding'] = elocution_obj.Understanding
-                tmp['Skill'] = elocution_obj.Skill
+                tmp['Pronunciation'] = elocution_obj.Pronunciation
                 tmp['Presentation'] = elocution_obj.Presentation
                 tmp['PublicComment'] = elocution_obj.PublicComment
                 tmp['PrivateComment'] = elocution_obj.PrivateComment
@@ -1628,7 +1628,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
     cumulative_elocution_grade_sum=0
     cumulative_elocution_grade='-'
     for elo_row in elocutions:
-        elocution_grade_row_sum=int(GRADE_NUM[elo_row.Memory])+int(GRADE_NUM[elo_row.Content])+int(GRADE_NUM[elo_row.Understanding])+int(GRADE_NUM[elo_row.Skill])+int(GRADE_NUM[elo_row.Presentation])
+        elocution_grade_row_sum=int(GRADE_NUM[elo_row.Memory])+int(GRADE_NUM[elo_row.Content])+int(GRADE_NUM[elo_row.Understanding])+int(GRADE_NUM[elo_row.Pronunciation])+int(GRADE_NUM[elo_row.Presentation])
         cumulative_elocution_grade_sum=cumulative_elocution_grade_sum+(int(elocution_grade_row_sum/5))
     if len(elocutions) > 0:
         cumulative_elocution_grade=GRADE_CHOICES[int(round(cumulative_elocution_grade_sum/len(elocutions)))]
@@ -1820,7 +1820,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         addNormalTextToStory(Story,'Teacher' + ' : ' + teacher_name)
         Story.append(Spacer(1,0.2*inch))
         data = []
-        data.append(['Participation','Readiness to Learn','Perseverence','Skill Development','Creativity'])
+        data.append(['Participation','Readiness to Learn','Perseverence','Pronunciation Development','Creativity'])
         data.append([participation,readinessToLearn,continuityInWork,skillDevelopment,creativity])
         addTableToStory(Story, data, 'CENTER')
         addNormalTextToStory(Story,'Comment' + ' : ' + comment)
@@ -1929,15 +1929,15 @@ def fillCoCurricularReport(student_yearly_info, Story):
         memory = GRADE_CHOICES[elocution.Memory]
         content = GRADE_CHOICES[elocution.Content]
         understanding = GRADE_CHOICES[elocution.Understanding]
-        skill = GRADE_CHOICES[elocution.Skill]
+        pronunciation = GRADE_CHOICES[elocution.Pronunciation]
         presentation = GRADE_CHOICES[elocution.Presentation]
         comment = elocution.PublicComment
 
         addNormalTextToStory(Story,'<strong>' + 'Elocution'+ ' ' + str(i) + '</strong>')
         addNormalTextToStory(Story,'Title' + ' : ' + title)
         data = []
-        data.append(['Memory','Content','Understanding','Skill','Presentation'])
-        data.append([memory,content,understanding,skill,presentation])
+        data.append(['Memory','Content','Understanding','Pronunciation','Presentation'])
+        data.append([memory,content,understanding,pronunciation,presentation])
         addTableToStory(Story, data, 'CENTER')
         addNormalTextToStory(Story,'Comment' + ' : ' + comment)
         Story.append(Spacer(1,0.2*inch))
