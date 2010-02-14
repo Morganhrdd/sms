@@ -1274,7 +1274,7 @@ def attendance_add(request):
             return HttpResponse(attendance_details)
         attendance_id = request.GET['attendance_id']
         attendance_obj = AttendanceMaster.objects.get(id=attendance_id)
-        students = StudentYearlyInformation.objects.filter(ClassMaster=attendance.ClassMaster).order_by('RollNo')
+        students = StudentYearlyInformation.objects.filter(ClassMaster=attendance_obj.ClassMaster).order_by('RollNo')
         data = []
         for student in students:
             student_info = StudentBasicInfo.objects.get(RegistrationNo = student.StudentBasicInfo.RegistrationNo)
