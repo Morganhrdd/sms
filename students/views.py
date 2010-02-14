@@ -1267,7 +1267,10 @@ def attendance_add(request):
             attendancemaster = AttendanceMaster.objects.all()
             attendance_details = ''
             for attendance in attendancemaster:
-                attendance_details += '<a href="/attendance_add/?attendance_id='+str(attendance.id)+'">'+'%s' %(attendance) + '</a><br/>'
+                if request.user.is_superuser or request.user.email == attendance.ClassMaster.Teacher.Email:
+                    attendance_details += '<a href="/attendance_add/?attendance_id='+str(attendance.id)+'">'+'%s' %(attendance) + '</a><br/>'
+            if not attendance_details:
+                return HttpResponse('Nothing to add/modify')
             return HttpResponse(attendance_details)
         attendance_id = request.GET['attendance_id']
         attendance = AttendanceMaster.objects.get(id=attendance_id)
