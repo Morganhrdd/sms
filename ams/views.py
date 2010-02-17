@@ -12,6 +12,7 @@ from jp_sms.ams.models import Category, User, UserStatus, TimeRecords, DayRules,
 from jp_sms.ams.models import Leaves, LeaveForm, LeaveRules, AcademicYear, LeaveAttendance, LeavesBalance, EncashLeaves, Overtime
 from jp_sms.ams.models import UserJoiningDate, ReportForm, DailyReportForm, DayRulesForm
 from jp_sms.ams.models import LEAVE_CHOICES, REMARK_CHOICES, DAY_CHOICES
+from django.contrib.auth.decorators import login_required
 
 catqs = Category.objects.filter(Description='ALL')
 if catqs:
@@ -922,3 +923,8 @@ def admin_home(request):
 	else:
 		print "not superuser"
 		
+
+ams_display = login_required(ams_display)
+app_leave = login_required(app_leave)
+daily_report = login_required(daily_report)
+monthly_report = login_required(monthly_report)
