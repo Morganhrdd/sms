@@ -46,6 +46,7 @@ urlpatterns = patterns('',
     (r'^pravesh/hallticket/(\d+)/?$','pravesh.views.display_hallticket'),
     (r'^pravesh/student/(\d+)/edit/?$','pravesh.views.edit'),
     (r'^pravesh/generate_hallticket','pravesh.views.generate_hallticket'),
+    (r'^pravesh/generate_report','pravesh.views.generate_classreport'),
     (r'^pravesh/?','pravesh.views.index'),
     #(r'^useradd/', views.user_add),
     # ... the rest of your URLs here ...
