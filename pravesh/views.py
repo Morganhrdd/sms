@@ -137,6 +137,7 @@ def index(request):
     data['stats']['MMMEFMFE'] = data['stats']['MMME'] + data['stats']['FMFE']
     data['add_url'] = '/pravesh/add'
     data['generate_hallticket_url'] = '/pravesh/generate_hallticket'
+    data['generate_report_url'] = '/pravesh/generate_report'
     return render_to_response('pravesh/index.html',{'data':data})
     
 
@@ -190,7 +191,17 @@ def get_seatnumber(medium=None):
                 return retval
     raise Exception("ERROR")
 
+def generate_classreport(request):
+    try:
+        medium = request.GET['medium']
+        number = request.GET['number']
+        data = HallTicket.objects.filter(ClassRoom__Medium = medium, ClassRoom__Number = number).order_by('SeatNumber')
+        return render_to_response('pravesh/display_report.html', {'data':data})
+    except:
+        data = ClassRoom.objects.all()
+        return render_to_response('pravesh/display_report.html', {'classrooms':data})
 add = login_required(add)
 display_hallticket = login_required(display_hallticket)
 generate_hallticket = login_required(generate_hallticket)
 index = login_required(index)
+generate_classreport = login_required(generate_classreport)
