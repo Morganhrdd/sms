@@ -2112,9 +2112,8 @@ def certificatePDF(request):
         keys = request.POST.keys()
         registration_number_min = int(request.POST['registration_number_min'])
         registration_number_max = int(request.POST['registration_number_max'])
-        standard = int(request.POST['standard'])
-        division = request.POST['division']
-        year_option = request.POST['year_option']
+        standard = 0 #int(request.POST['standard'])
+        division = "-" #request.POST['division']
 
         registration_numbers = []
         registration_number = registration_number_min
@@ -2123,7 +2122,7 @@ def certificatePDF(request):
             registration_number = registration_number + 1
         #print registration_numbers
         Story = []
-        fillCertificatePdfData(Story, registration_numbers, standard, division, year_option)
+        fillCertificatePdfData(Story, registration_numbers, standard, division)
         #print 'Filled'
         response = HttpResponse(mimetype='application/pdf')        
         doc = SimpleDocTemplate(response)        
@@ -2136,20 +2135,19 @@ def certificatePDF(request):
                              + '<form action="" method="POST">'
                              + '<BIG>Registration Numbers: </BIG><input type="text" name="registration_number_min" value="0" id="registration_number_min" size="5"></td>'
                              + '<BIG> to </BIG><input type="text" name="registration_number_max" value="9999" id="registration_number_max" size="5"><br /><br />'
-                             + '<BIG>Standard</BIG>: <input type="text" name="standard" value="0" id="standard" size="3"><br /><br />'
-                             + '<BIG>Division </BIG>: <input type="text" name="division" value="-" id="division" size="3"><br /><br />'
-                             + 'Year: <input type="text" name="year_option" value="2008-2009" id="year_option" size="10"><br /><br />'                        
+                             #+ '<BIG>Standard</BIG>: <input type="text" name="standard" value="0" id="standard" size="3"><br /><br />'
+                             #+ '<BIG>Division </BIG>: <input type="text" name="division" value="-" id="division" size="3"><br /><br />'
                              + '<input type="submit" value="Enter" />'
                              + '</form>'
                              + '<br /><br />'
-                             + 'Standard - 5 to 10 for respective Standard, any other value for All<br />'
-                             + 'Division - B for Boys, G for Girls, any other value for for Both<br /><br />'
+                             #+ 'Standard - 5 to 10 for respective Standard, any other value for All<br />'
+                             #+ 'Division - B for Boys, G for Girls, any other value for for Both<br /><br />'
                              + '<P>An unsaved PDF file will be generated.'
                              + '<br />It will contain 1 page per valid registration number.'
                              + '<br />At bottom-right, the number after letter P is the page number in this PDF document</P>'
                              + '</body></html>')
 
-def fillCertificatePdfData(Story, registration_nos, standard, division, year_option):
+def fillCertificatePdfData(Story, registration_nos, standard, division):
     for registration_no in registration_nos:
         try:
             student_basic_info = StudentBasicInfo.objects.get(RegistrationNo = registration_no)
@@ -2157,10 +2155,6 @@ def fillCertificatePdfData(Story, registration_nos, standard, division, year_opt
         except:
             continue
         for student_yearly_info in student_yearly_infos:
-            student_year = student_yearly_info.ClassMaster.AcademicYear.Year
-            #Year is hardcoded
-            if student_year != year_option:
-                continue
             student_standard = student_yearly_info.ClassMaster.Standard
             if (standard >= 5) and (standard <= 10) and (student_standard != standard):
                 continue
