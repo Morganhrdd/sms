@@ -178,12 +178,12 @@ def fee_receipt(request):
 										else:
 											tspecialfee += schol.Amount
 
+								scholarship = []
+								specialfee = []
 								if tschol > 0:
 									#total += tschol
-									scholarship = []
 									scholarship.append({'Amount': tschol})
 								if tspecialfee > 0:
-									specialfee = []
 									specialfee.append({'Amount': tspecialfee})
 
 								if tschol > 0 or tspecialfee > 0:
