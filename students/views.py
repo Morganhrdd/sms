@@ -2135,13 +2135,9 @@ def certificatePDF(request):
                              + '<form action="" method="POST">'
                              + '<BIG>Registration Numbers: </BIG><input type="text" name="registration_number_min" value="0" id="registration_number_min" size="5"></td>'
                              + '<BIG> to </BIG><input type="text" name="registration_number_max" value="9999" id="registration_number_max" size="5"><br /><br />'
-                             #+ '<BIG>Standard</BIG>: <input type="text" name="standard" value="0" id="standard" size="3"><br /><br />'
-                             #+ '<BIG>Division </BIG>: <input type="text" name="division" value="-" id="division" size="3"><br /><br />'
                              + '<input type="submit" value="Enter" />'
                              + '</form>'
                              + '<br /><br />'
-                             #+ 'Standard - 5 to 10 for respective Standard, any other value for All<br />'
-                             #+ 'Division - B for Boys, G for Girls, any other value for for Both<br /><br />'
                              + '<P>An unsaved PDF file will be generated.'
                              + '<br />It will contain 1 page per valid registration number.'
                              + '<br />At bottom-right, the number after letter P is the page number in this PDF document</P>'
@@ -2151,19 +2147,10 @@ def fillCertificatePdfData(Story, registration_nos, standard, division):
     for registration_no in registration_nos:
         try:
             student_basic_info = StudentBasicInfo.objects.get(RegistrationNo = registration_no)
-            student_yearly_infos = StudentYearlyInformation.objects.filter(StudentBasicInfo = student_basic_info)
         except:
             continue
-        for student_yearly_info in student_yearly_infos:
-            student_standard = student_yearly_info.ClassMaster.Standard
-            if (standard >= 5) and (standard <= 10) and (student_standard != standard):
-                continue
-            student_division = student_yearly_info.ClassMaster.Division
-            if ((division == 'B') or (division == 'G')) and (student_division != division):
-                continue               
-            #print 'Filling ' + str(registration_no)
-            fillCertificateHeader(Story)
-            fillCertificate(student_yearly_info, Story)
+        fillCertificateHeader(Story)
+        fillCertificate(student_basic_info, Story)
 
 def fillCertificateHeader(Story):
     style = ParagraphStyle(name='styleName', fontName ='Times-Bold', fontSize = 18, alignment=TA_CENTER)
@@ -2201,9 +2188,7 @@ def fillCertificateHeader(Story):
 
     Story.append(Spacer(1,0.1*inch))
 
-def fillCertificate(student_yearly_info, Story):
-    student_basic_info = student_yearly_info.StudentBasicInfo
-     
+def fillCertificate(student_basic_info, Story):     
     certificateNumber = str(student_basic_info.RegistrationNo)
     addCertificateNumberTextToStory(Story, "Certificate No. : " + certificateNumber)
 
@@ -2225,23 +2210,37 @@ def fillCertificate(student_yearly_info, Story):
 
     terminationDate = student_basic_info.TerminationDate
     try:
-        toYear = str(terminationDate.year)
+        toYear = terminationDate.year
+        toYearStr = str(toYear)
     except:
-#        now_time = datetime.datetime.now()
-#        toYear = str(now_time.year)
-        toYear = "till date"
+        now_time = datetime.datetime.now()
+        toYear = now_time.year
+        toYearStr = "till date"
+
+    student_yearly_infos = StudentYearlyInformation.objects.filter(StudentBasicInfo = student_basic_info)
 
     admissionClass = "______"
-    admission_year = str(fromYear) + "-" + str(int(fromYear) + 1)    
-    student_yearly_infos = StudentYearlyInformation.objects.filter(StudentBasicInfo = student_basic_info)
+    admission_year1 = str(int(fromYear) - 1) + "-" + str(fromYear)
+    admission_year2 = str(fromYear) + "-" + str(int(fromYear) + 1)
     for yearly_info in student_yearly_infos:
         student_year = yearly_info.ClassMaster.AcademicYear.Year
-        if student_year == admission_year:
+        if student_year == admission_year1:
             admissionClass = str(yearly_info.ClassMaster.Standard) + "th"
+        else if student_year == admission_year2:
+            admissionClass = str(yearly_info.ClassMaster.Standard) + "th"
+
+    terminationClass = "______"
+    terminationYear1 = str(toYear) + "-" + str(int(toYear) + 1)
+    terminationYear2 = str(int(toYear) - 1) + "-" + str(toYear)
+    for yearly_info in student_yearly_infos:
+        student_year = yearly_info.ClassMaster.AcademicYear.Year
+        if student_year == terminationYear1:
+            terminationClass = str(yearly_info.ClassMaster.Standard) + "th"
+        else if student_year == terminationYear2:
+            terminationClass = str(yearly_info.ClassMaster.Standard) + "th"
     
-    presentClass= str(student_yearly_info.ClassMaster.Standard) + "th"
-    addCertificateTextToStory(Story, "Jnana Prabodhini Prashala during the year " + "<strong>" + str(fromYear) + "</strong>" + " to " + "<strong>" + toYear + "</strong>")
-    addCertificateTextToStory(Story, "from " + "<strong>" + admissionClass + "</strong>" + " class to " + "<strong>" + presentClass + "</strong>" + " class.")
+    addCertificateTextToStory(Story, "Jnana Prabodhini Prashala during the year " + "<strong>" + str(fromYear) + "</strong>" + " to " + "<strong>" + toYearStr + "</strong>")
+    addCertificateTextToStory(Story, "from " + "<strong>" + admissionClass + "</strong>" + " class to " + "<strong>" + terminationClass + "</strong>" + " class.")
 
     genderMentionCapital = "He"
     genderBelong = "his"
