@@ -2226,7 +2226,7 @@ def fillCertificate(student_basic_info, Story):
         student_year = yearly_info.ClassMaster.AcademicYear.Year
         if student_year == admission_year1:
             admissionClass = str(yearly_info.ClassMaster.Standard) + "th"
-        else if student_year == admission_year2:
+        elif student_year == admission_year2:
             admissionClass = str(yearly_info.ClassMaster.Standard) + "th"
 
     terminationClass = "______"
@@ -2236,7 +2236,7 @@ def fillCertificate(student_basic_info, Story):
         student_year = yearly_info.ClassMaster.AcademicYear.Year
         if student_year == terminationYear1:
             terminationClass = str(yearly_info.ClassMaster.Standard) + "th"
-        else if student_year == terminationYear2:
+        elif student_year == terminationYear2:
             terminationClass = str(yearly_info.ClassMaster.Standard) + "th"
     
     addCertificateTextToStory(Story, "Jnana Prabodhini Prashala during the year " + "<strong>" + str(fromYear) + "</strong>" + " to " + "<strong>" + toYearStr + "</strong>")
