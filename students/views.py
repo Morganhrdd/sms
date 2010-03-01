@@ -137,6 +137,7 @@ twenties = ["","","Twenty ","Thirty ","Forty ", "Fifty ","Sixty ","Seventy ","Ei
 
 thousands = ["","Thousand ","Million ", "Billion ", "Trillion "]
 
+
 # HTML Report:
 
 def report(request):
@@ -377,14 +378,10 @@ def marks_add(request):
 
 @csrf_exempt
 def competition_add(request):
-    c = {}
-    c.update(csrf(request))
     if not request.POST:
         genform = SearchDetailsForm()
         return render_to_response('students/AddCompetition.html',{'form':genform})
     else:
-        c = {}
-        c.update(csrf(request))
         genform = SearchDetailsForm(request.POST)
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
@@ -1000,7 +997,7 @@ def thinkingskill_add(request):
                     else:
                         thinkingskill_obj = ThinkingSkill()
                     thinkingskill_obj.StudentYearlyInformation = yearly_info
-                    thinkingskill_obj.Teacher = Teacher.objects.get(Name=request.POST['Teacher'])
+                    thinkingskill_obj.Teacher = Teacher.objects.get(pk=request.POST['Teacher'])
                     thinkingskill_obj.Inquiry = request.POST['Inquiry'] or '0'
                     thinkingskill_obj.LogicalThinking = request.POST['LogicalThinking'] or '0'
                     thinkingskill_obj.Creativity = request.POST['Creativity'] or '0'
@@ -1009,23 +1006,27 @@ def thinkingskill_add(request):
                     thinkingskill_obj.PrivateComment = request.POST['PrivateComment']
                     thinkingskill_obj.save()
             # end store data
-            thinkingskill_objs = ThinkingSkill.objects.filter(StudentYearlyInformation=yearly_info)
+            delete = ''
+            # error handling to be done for teacher_obj
+            teacher_obj = Teacher.objects.get(Email=request.user.email)
+            try:
+                thinkingskill_obj = ThinkingSkill.objects.get(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
+            except:
+                thinkingskill_obj = ThinkingSkill(StudentYearlyInformation=yearly_info,Teacher=teacher_obj)
+                delete = 'Y'
             data = []
-            teacher_objs = Teacher.objects.all()
-            for thinkingskill_obj in thinkingskill_objs:
-                tmp = {}
-                tmp['pk'] = thinkingskill_obj.pk
-                tmp['Teacher'] = thinkingskill_obj.Teacher
-                tmp['Inquiry'] = thinkingskill_obj.Inquiry
-                tmp['LogicalThinking'] = thinkingskill_obj.LogicalThinking
-                tmp['Creativity'] = thinkingskill_obj.Creativity
-                tmp['DecisionMakingAndProblemSolving'] = thinkingskill_obj.DecisionMakingAndProblemSolving
-                tmp['PublicComment'] = thinkingskill_obj.PublicComment
-                tmp['PrivateComment'] = thinkingskill_obj.PrivateComment
-                x = ThinkingSkillDetailsForm(initial=tmp)
-                data.append(x)
-            data.append(ThinkingSkillDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddThinkingSkill.html',{'form':genform,'data':data,'name':name})
+            tmp = {}
+            tmp['pk'] = thinkingskill_obj.pk
+            tmp['Inquiry'] = thinkingskill_obj.Inquiry
+            tmp['LogicalThinking'] = thinkingskill_obj.LogicalThinking
+            tmp['Creativity'] = thinkingskill_obj.Creativity
+            tmp['DecisionMakingAndProblemSolving'] = thinkingskill_obj.DecisionMakingAndProblemSolving
+            tmp['PublicComment'] = thinkingskill_obj.PublicComment
+            tmp['PrivateComment'] = thinkingskill_obj.PrivateComment
+            tmp['Delete'] = delete
+            x = ThinkingSkillDetailsForm(initial=tmp)
+            data.append(x)
+            return render_to_response('students/AddThinkingSkill.html',{'form':genform,'data':data,'name':name,'teacher':teacher_obj})
         return render_to_response('students/AddThinkingSkill.html',{'form':genform})
 
 #

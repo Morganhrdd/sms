@@ -19,6 +19,7 @@
 
         </form>
         {% if data %}
+        <strong>Teacher</strong>: {{ teacher }} <br />
 	    {% for f in data %}
         <form action="" method="POST">
 			<hr />
@@ -27,6 +28,7 @@
                 <table>
                         {{ f.as_table }}
         	    </table>
+        	<input type="hidden" name="Teacher" value="{{ teacher }}"/>
 		    <input type="submit" value="Save" />
 	    </form>
 	    {% endfor %}
