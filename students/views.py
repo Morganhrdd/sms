@@ -1091,8 +1091,6 @@ def attitudetowardsschool_add(request):
         genform = SearchDetailsForm()
         return render_to_response('students/AddAttitudeTowardsSchool.html',{'form':genform})
     else:
-        c = {}
-        c.update(csrf(request))
         genform = SearchDetailsForm(request.POST)
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
@@ -1121,22 +1119,28 @@ def attitudetowardsschool_add(request):
                     attitudetowardsschool_obj.PrivateComment = request.POST['PrivateComment']
                     attitudetowardsschool_obj.save()
             # end store data
-            attitudetowardsschool_objs = AttitudeTowardsSchool.objects.filter(StudentYearlyInformation=yearly_info)
+            delete = ''
+            # error handling to be done for teacher_obj
+            teacher_obj = Teacher.objects.get(Email=request.user.email)
+            try:
+                attitudetowardsschool_obj = AttitudeTowardsSchool.objects.get(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
+            except:
+                attitudetowardsschool_obj = AttitudeTowardsSchool(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
+                delete = 'Y'
             data = []
-            teacher_objs = Teacher.objects.all()
-            for attitudetowardsschool_obj in attitudetowardsschool_objs:
-                tmp = {}
-                tmp['pk'] = attitudetowardsschool_obj.pk
-                tmp['Teacher'] = attitudetowardsschool_obj.Teacher
-                tmp['Empathy'] = attitudetowardsschool_obj.Empathy
-                tmp['Expression'] = attitudetowardsschool_obj.Expression
-                tmp['Management'] = attitudetowardsschool_obj.Management
-                tmp['PublicComment'] = attitudetowardsschool_obj.PublicComment
-                tmp['PrivateComment'] = attitudetowardsschool_obj.PrivateComment
-                x = AttitudeTowardsSchoolDetailsForm(initial=tmp)
-                data.append(x)
-            data.append(AttitudeTowardsSchoolDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddAttitudeTowardsSchool.html',{'form':genform,'data':data,'name':name})
+            tmp = {}
+            tmp['pk'] = attitudetowardsschool_obj.pk
+            tmp['Teacher'] = attitudetowardsschool_obj.Teacher
+            tmp['SchoolTeachers'] = attitudetowardsschool_obj.SchoolTeachers
+            tmp['SchoolMates'] = attitudetowardsschool_obj.SchoolMates
+            tmp['SchoolPrograms'] = attitudetowardsschool_obj.SchoolPrograms
+            tmp['SchoolEnvironment'] = attitudetowardsschool_obj.SchoolEnvironment
+            tmp['PublicComment'] = attitudetowardsschool_obj.PublicComment
+            tmp['PrivateComment'] = attitudetowardsschool_obj.PrivateComment
+            tmp['Delete'] = delete
+            x = AttitudeTowardsSchoolDetailsForm(initial=tmp)
+            data.append(x)
+            return render_to_response('students/AddAttitudeTowardsSchool.html',{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj})
         return render_to_response('students/AddAttitudeTowardsSchool.html',{'form':genform})
 #
 @csrf_exempt
@@ -1145,8 +1149,6 @@ def emotionalskill_add(request):
         genform = SearchDetailsForm()
         return render_to_response('students/AddEmotionalSkill.html',{'form':genform})
     else:
-        c = {}
-        c.update(csrf(request))
         genform = SearchDetailsForm(request.POST)
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
@@ -1174,22 +1176,26 @@ def emotionalskill_add(request):
                     emotionalskill_obj.PrivateComment = request.POST['PrivateComment']
                     emotionalskill_obj.save()
             # end store data
-            emotionalskill_objs = EmotionalSkill.objects.filter(StudentYearlyInformation=yearly_info)
+            delete = ''
+            # error handling to be done for teacher_obj
+            teacher_obj = Teacher.objects.get(Email=request.user.email)
+            try:
+                emotionalskill_obj = EmotionalSkill.objects.get(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
+            except:
+                emotionalskill_obj = EmotionalSkill(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
             data = []
-            teacher_objs = Teacher.objects.all()
-            for emotionalskill_obj in emotionalskill_objs:
-                tmp = {}
-                tmp['pk'] = emotionalskill_obj.pk
-                tmp['Teacher'] = emotionalskill_obj.Teacher
-                tmp['Empathy'] = emotionalskill_obj.Empathy
-                tmp['Expression'] = emotionalskill_obj.Expression
-                tmp['Management'] = emotionalskill_obj.Management
-                tmp['PublicComment'] = emotionalskill_obj.PublicComment
-                tmp['PrivateComment'] = emotionalskill_obj.PrivateComment
-                x = EmotionalSkillDetailsForm(initial=tmp)
-                data.append(x)
-            data.append(EmotionalSkillDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddEmotionalSkill.html',{'form':genform,'data':data,'name':name})
+            tmp = {}
+            tmp['pk'] = emotionalskill_obj.pk
+            tmp['Teacher'] = emotionalskill_obj.Teacher
+            tmp['Empathy'] = emotionalskill_obj.Empathy
+            tmp['Expression'] = emotionalskill_obj.Expression
+            tmp['Management'] = emotionalskill_obj.Management
+            tmp['PublicComment'] = emotionalskill_obj.PublicComment
+            tmp['PrivateComment'] = emotionalskill_obj.PrivateComment
+            tmp['Delete'] = delete
+            x = EmotionalSkillDetailsForm(initial=tmp)
+            data.append(x)
+            return render_to_response('students/AddEmotionalSkill.html',{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj})
         return render_to_response('students/AddEmotionalSkill.html',{'form':genform})
 
 #
@@ -1199,8 +1205,6 @@ def values_add(request):
         genform = SearchDetailsForm()
         return render_to_response('students/AddValues.html',{'form':genform})
     else:
-        c = {}
-        c.update(csrf(request))
         genform = SearchDetailsForm(request.POST)
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
@@ -1229,23 +1233,28 @@ def values_add(request):
                     values_obj.PrivateComment = request.POST['PrivateComment']
                     values_obj.save()
             # end store data
-            values_objs = Values.objects.filter(StudentYearlyInformation=yearly_info)
+            delete = ''
+            # error handling to be done for teacher_obj
+            teacher_obj = Teacher.objects.get(Email=request.user.email)
+            try:
+                values_obj = Values.objects.get(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
+            except:
+                values_obj = Values(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
+                delete = 'Y'
             data = []
-            teacher_objs = Teacher.objects.all()
-            for values_obj in values_objs:
-                tmp = {}
-                tmp['pk'] = values_obj.pk
-                tmp['Teacher'] = values_obj.Teacher
-                tmp['Obedience'] = values_obj.Obedience
-                tmp['Honesty'] = values_obj.Honesty
-                tmp['Equality'] = values_obj.Equality
-                tmp['Report'] = values_obj.Report
-                tmp['PublicComment'] = values_obj.PublicComment
-                tmp['PrivateComment'] = values_obj.PrivateComment
-                x = ValuesDetailsForm(initial=tmp)
-                data.append(x)
-            data.append(ValuesDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddValues.html',{'form':genform,'data':data,'name':name})
+            tmp = {}
+            tmp['pk'] = values_obj.pk
+            tmp['Teacher'] = values_obj.Teacher
+            tmp['Obedience'] = values_obj.Obedience
+            tmp['Honesty'] = values_obj.Honesty
+            tmp['Equality'] = values_obj.Equality
+            tmp['Responsibility'] = values_obj.Responsibility
+            tmp['PublicComment'] = values_obj.PublicComment
+            tmp['PrivateComment'] = values_obj.PrivateComment
+            tmp['Delete'] = delete
+            x = ValuesDetailsForm(initial=tmp)
+            data.append(x)
+            return render_to_response('students/AddValues.html',{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj})
         return render_to_response('students/AddValues.html',{'form':genform})
 # Used by HTML Report
 def attendance_add(request):
