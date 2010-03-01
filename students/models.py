@@ -51,13 +51,13 @@ EXAM_CHOICES = (
 )
 
 GRADE_CHOICES = (
-    ('6', 'Outstanding'),
-    ('5', 'Excellent'),
-    ('4', 'Good'),
-    ('3', 'Satisfactory'),
-    ('2', 'Needs Improvement'),
+    ('0', 'None'),
     ('1', 'Unsatisfactory'),
-    ('0', 'None')
+    ('2', 'Needs Improvement'),
+    ('3', 'Satisfactory'),
+    ('4', 'Good'),
+    ('5', 'Excellent'),
+    ('6', 'Outstanding'),
 )
 
 PROJECT_TYPE_CHOICES = (
@@ -130,7 +130,7 @@ class AcademicYear(models.Model):
 
 class Teacher(models.Model):
     Name = models.CharField(max_length=60, primary_key=True)
-    Email = models.EmailField()
+    Email = models.EmailField(unique=True)
     ResidenceNo = models.CharField(max_length=15)
     MobileNo = models.CharField(max_length=15)
     def __unicode__(self):
@@ -546,7 +546,7 @@ class PhysicalEducationDetailsForm(forms.Form):
 class ThinkingSkillDetailsForm(forms.Form):
     pkwidget = forms.HiddenInput()
     pk=forms.IntegerField(widget=pkwidget, required=False)
-    Teacher = forms.ModelChoiceField(Teacher.objects.all())
+    #Teacher = forms.ModelChoiceField(Teacher.objects.all())
     Inquiry = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
     LogicalThinking = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
     Creativity = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
