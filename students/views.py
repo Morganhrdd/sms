@@ -976,8 +976,6 @@ def thinkingskill_add(request):
         genform = SearchDetailsForm()
         return render_to_response('students/AddThinkingSkill.html',{'form':genform})
     else:
-        c = {}
-        c.update(csrf(request))
         genform = SearchDetailsForm(request.POST)
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
@@ -1026,7 +1024,7 @@ def thinkingskill_add(request):
             tmp['Delete'] = delete
             x = ThinkingSkillDetailsForm(initial=tmp)
             data.append(x)
-            return render_to_response('students/AddThinkingSkill.html',{'form':genform,'data':data,'name':name,'teacher':teacher_obj})
+            return render_to_response('students/AddThinkingSkill.html',{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj})
         return render_to_response('students/AddThinkingSkill.html',{'form':genform})
 
 #
@@ -1036,8 +1034,6 @@ def socialskill_add(request):
         genform = SearchDetailsForm()
         return render_to_response('students/AddSocialSkill.html',{'form':genform})
     else:
-        c = {}
-        c.update(csrf(request))
         genform = SearchDetailsForm(request.POST)
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
@@ -1065,22 +1061,27 @@ def socialskill_add(request):
                     socialskill_obj.PrivateComment = request.POST['PrivateComment']
                     socialskill_obj.save()
             # end store data
-            socialskill_objs = SocialSkill.objects.filter(StudentYearlyInformation=yearly_info)
+            delete = ''
+            # error handling to be done for teacher_obj
+            teacher_obj = Teacher.objects.get(Email=request.user.email)
+            try:
+                socialskill_obj = SocialSkill.objects.get(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
+            except:
+                socialskill_obj = SocialSkill(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
+                delete = 'Y'
             data = []
-            teacher_objs = Teacher.objects.all()
-            for socialskill_obj in socialskill_objs:
-                tmp = {}
-                tmp['pk'] = socialskill_obj.pk
-                tmp['Teacher'] = socialskill_obj.Teacher
-                tmp['Communication'] = socialskill_obj.Communication
-                tmp['InterPersonal'] = socialskill_obj.InterPersonal
-                tmp['TeamWork'] = socialskill_obj.TeamWork
-                tmp['PublicComment'] = socialskill_obj.PublicComment
-                tmp['PrivateComment'] = socialskill_obj.PrivateComment
-                x = SocialSkillDetailsForm(initial=tmp)
-                data.append(x)
-            data.append(SocialSkillDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddSocialSkill.html',{'form':genform,'data':data,'name':name})
+            tmp = {}
+            tmp['pk'] = socialskill_obj.pk
+            tmp['Teacher'] = socialskill_obj.Teacher
+            tmp['Communication'] = socialskill_obj.Communication
+            tmp['InterPersonal'] = socialskill_obj.InterPersonal
+            tmp['TeamWork'] = socialskill_obj.TeamWork
+            tmp['PublicComment'] = socialskill_obj.PublicComment
+            tmp['PrivateComment'] = socialskill_obj.PrivateComment
+            tmp['Delete'] = delete
+            x = SocialSkillDetailsForm(initial=tmp)
+            data.append(x)
+            return render_to_response('students/AddSocialSkill.html',{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj})
         return render_to_response('students/AddSocialSkill.html',{'form':genform})
 
 #

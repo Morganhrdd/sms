@@ -546,7 +546,6 @@ class PhysicalEducationDetailsForm(forms.Form):
 class ThinkingSkillDetailsForm(forms.Form):
     pkwidget = forms.HiddenInput()
     pk=forms.IntegerField(widget=pkwidget, required=False)
-    #Teacher = forms.ModelChoiceField(Teacher.objects.all())
     Inquiry = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
     LogicalThinking = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
     Creativity = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
@@ -558,7 +557,6 @@ class ThinkingSkillDetailsForm(forms.Form):
 class SocialSkillDetailsForm(forms.Form):
     pkwidget = forms.HiddenInput()
     pk=forms.IntegerField(widget=pkwidget, required=False)
-    Teacher = forms.ModelChoiceField(Teacher.objects.all())
     Communication = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
     InterPersonal = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
     TeamWork = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
