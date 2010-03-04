@@ -72,7 +72,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    '/Users/shantanoo/repo/jp_sms/templates'
+    "D:/Chinmay/JPP/jp_sms/templates"
     #'C:/Documents and Settings/aditya/Desktop/JPP/latest/jp_sms/templates'
     #'C:/Users/aloks/Work/jp_sms/templates'
 )
