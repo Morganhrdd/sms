@@ -15,8 +15,6 @@ from jp_sms.students.models import WorkExperienceDetailsForm, PhysicalEducationD
 from jp_sms.students.models import SocialSkillDetailsForm, EmotionalSkillDetailsForm, AttitudeTowardsSchoolDetailsForm
 from jp_sms.students.models import Project,Elocution,Library,Competition,CompetitiveExam,STANDARD_CHOICES
 from django.template import Context
-from django.core.context_processors import csrf
-from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import get_template
 from reportlab.pdfgen import canvas
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer,Image,Table,TableStyle,Frame,PageBreak
@@ -376,7 +374,6 @@ def marks_add(request):
         return render_to_response('students/AddMarks.html',Context({'test_details': test_details,'test_id':test_id, 'data':data}))
 
 
-@csrf_exempt
 def competition_add(request):
     if not request.POST:
         genform = SearchDetailsForm()
@@ -430,14 +427,11 @@ def competition_add(request):
 
 
 #
-@csrf_exempt
 def elocution_add(request):
     if not request.POST:
         genform = SearchDetailsForm()
         return render_to_response('students/AddElocution.html',{'form':genform})
     else:
-        c = {}
-        c.update(csrf(request))
         genform = SearchDetailsForm(request.POST)
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
@@ -487,14 +481,11 @@ def elocution_add(request):
         return render_to_response('students/AddElocution.html',{'form':genform})
 
 #
-@csrf_exempt
 def project_add(request):
     if not request.POST:
         genform = SearchDetailsForm()
         return render_to_response('students/AddProject.html',{'form':genform})
     else:
-        c = {}
-        c.update(csrf(request))
         genform = SearchDetailsForm(request.POST)
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
@@ -548,14 +539,11 @@ def project_add(request):
             return render_to_response('students/AddProject.html',{'form':genform,'data':data,'name':name})
         return render_to_response('students/AddProject.html',{'form':genform})
 #
-@csrf_exempt
 def abhivyaktivikas_add(request):
     if not request.POST:
         genform = SearchDetailsForm()
         return render_to_response('students/AddAbhivyaktiVikas.html',{'form':genform})
     else:
-        c = {}
-        c.update(csrf(request))
         genform = SearchDetailsForm(request.POST)
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
@@ -608,16 +596,11 @@ def abhivyaktivikas_add(request):
         return render_to_response('students/AddAbhivyaktiVikas.html',{'form':genform})
 
 #
-@csrf_exempt
 def competitiveexam_add(request):
-    c = {}
-    c.update(csrf(request))
     if not request.POST:
         genform = SearchDetailsForm()
         return render_to_response('students/AddCompetitiveExam.html',{'form':genform})
     else:
-        c = {}
-        c.update(csrf(request))
         genform = SearchDetailsForm(request.POST)
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
@@ -665,7 +648,6 @@ def competitiveexam_add(request):
         return render_to_response('students/AddCompetitiveExam.html',{'form':genform})
 
 #
-@csrf_exempt
 def cocurricular_add(request):
     if not request.POST:
         genform = SearchDetailsForm()
@@ -718,7 +700,6 @@ def cocurricular_add(request):
         return render_to_response('students/AddCocurricular.html',{'form':genform})
 
 #
-@csrf_exempt
 def socialactivity_add(request):
     if not request.POST:
         genform = SearchDetailsForm()
@@ -771,7 +752,6 @@ def socialactivity_add(request):
         return render_to_response('students/AddSocialActivity.html',{'form':genform})
 
 #
-@csrf_exempt
 def physicalfitnessinfo_add(request):
     if not request.POST:
         genform = SearchDetailsForm()
@@ -857,14 +837,11 @@ def physicalfitnessinfo_add(request):
         return render_to_response('students/AddPhysicalFitnessInfo.html',{'form':genform})
 
 #
-@csrf_exempt
 def workexperience_add(request):
     if not request.POST:
         genform = SearchDetailsForm()
         return render_to_response('students/AddWorkExperience.html',{'form':genform})
     else:
-        c = {}
-        c.update(csrf(request))
         genform = SearchDetailsForm(request.POST)
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
@@ -913,14 +890,11 @@ def workexperience_add(request):
         return render_to_response('students/AddWorkExperience.html',{'form':genform})
 
 #
-@csrf_exempt
 def physicaleducation_add(request):
     if not request.POST:
         genform = SearchDetailsForm()
         return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
     else:
-        c = {}
-        c.update(csrf(request))
         genform = SearchDetailsForm(request.POST)
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
@@ -970,7 +944,6 @@ def physicaleducation_add(request):
         return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
 
 #
-@csrf_exempt
 def thinkingskill_add(request):
     if not request.POST:
         genform = SearchDetailsForm()
@@ -1028,7 +1001,6 @@ def thinkingskill_add(request):
         return render_to_response('students/AddThinkingSkill.html',{'form':genform})
 
 #
-@csrf_exempt
 def socialskill_add(request):
     if not request.POST:
         genform = SearchDetailsForm()
@@ -1085,7 +1057,6 @@ def socialskill_add(request):
         return render_to_response('students/AddSocialSkill.html',{'form':genform})
 
 #
-@csrf_exempt
 def attitudetowardsschool_add(request):
     if not request.POST:
         genform = SearchDetailsForm()
@@ -1143,7 +1114,6 @@ def attitudetowardsschool_add(request):
             return render_to_response('students/AddAttitudeTowardsSchool.html',{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj})
         return render_to_response('students/AddAttitudeTowardsSchool.html',{'form':genform})
 #
-@csrf_exempt
 def emotionalskill_add(request):
     if not request.POST:
         genform = SearchDetailsForm()
@@ -1199,7 +1169,6 @@ def emotionalskill_add(request):
         return render_to_response('students/AddEmotionalSkill.html',{'form':genform})
 
 #
-@csrf_exempt
 def values_add(request):
     if not request.POST:
         genform = SearchDetailsForm()
@@ -1582,7 +1551,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
     Story.append(table)
     Story.append(Spacer(1,0.2*inch))
 
-    #Cummulative Academics
+    # Cummulative Academics
     marks = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
     cumulative_marks=0
     cumulative_maximum_marks=0
@@ -1698,7 +1667,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
 
     Story.append(Spacer(1,0.7*inch))
 
-    #signature
+    # Signature
     data = []
     data=(
             ['Supervisor','Vice Principal','Principal'],
@@ -1949,13 +1918,38 @@ def fillCoCurricularReport(student_yearly_info, Story):
     addSignatureSpaceToStory(Story,"Incharge", "Elocution")
     Story.append(Spacer(1,0.5*inch))
 
+    # Work Experience
+    addSubHeaderToStory(Story, "Work Experiences")
+    workExperiences = WorkExperience.objects.filter(StudentYearlyInformation=student_yearly_info)
+    if len(workExperiences) == 0:
+        addNormalTextToStory(Story,'No Activities')
+    i=0
+    for workEx in workExperiences:
+        i = i + 1
+        teacher = workEx.Teacher
+        task = workEx.Task
+        communication = GRADE_CHOICES[workEx.Communication]
+        confidence = GRADE_CHOICES[workEx.Confidence]
+        involvement = GRADE_CHOICES[workEx.Involvement]
+        comment = workEx.PublicComment
+
+        addNormalTextToStory(Story,'<strong>' + 'Work Experience'+ ' ' + str(i) + '</strong>')
+        addNormalTextToStory(Story,'Teacher' + ' : ' + teacher)
+        addNormalTextToStory(Story,'Task' + ' : ' + task)
+        addNormalTextToStory(Story,'Communication' + ' : ' + communication)
+        addNormalTextToStory(Story,'Confidence' + ' : ' + confidence)
+        addNormalTextToStory(Story,'Involvement' + ' : ' + involvement)
+        addNormalTextToStory(Story,'Comment' + ' : ' + comment)
+        Story.append(Spacer(1,0.2*inch))
+
+    addSignatureSpaceToStory(Story,"Incharge", "Work Experience")
+    Story.append(Spacer(1,0.5*inch))
+
     # Other CoCurricular Activities
     addSubHeaderToStory(Story, "Other Co-curricular Activities")
     coCurriculars = CoCurricular.objects.filter(StudentYearlyInformation=student_yearly_info)
     if len(coCurriculars) == 0:
         addNormalTextToStory(Story,'No Activities')
-    data = []
-    data.append(['','Activity','Objectives','Date','Guide','Grade'])
     i=0
     for coCurricular in coCurriculars:
         i = i + 1
@@ -1977,6 +1971,11 @@ def fillCoCurricularReport(student_yearly_info, Story):
         addNormalTextToStory(Story,'Grade' + ' : ' + grade)
         addNormalTextToStory(Story,'Comment' + ' : ' + comment)
         Story.append(Spacer(1,0.2*inch))
+
+    Story.append(PageBreak())
+
+def fillSkillsReport(student_yearly_info, Story):
+    addMainHeaderToStory(Story, "Part 3.1: Skills Report")
 
     Story.append(PageBreak())
 
@@ -2116,22 +2115,19 @@ def certificatePDF(request):
         keys = request.POST.keys()
         registration_number_min = int(request.POST['registration_number_min'])
         registration_number_max = int(request.POST['registration_number_max'])
-        standard = 0 #int(request.POST['standard'])
-        division = "-" #request.POST['division']
+        standard = 0 
+        division = "-"
 
         registration_numbers = []
         registration_number = registration_number_min
         while registration_number <= registration_number_max:
             registration_numbers.append(registration_number)
             registration_number = registration_number + 1
-        #print registration_numbers
         Story = []
         fillCertificatePdfData(Story, registration_numbers, standard, division)
-        #print 'Filled'
         response = HttpResponse(mimetype='application/pdf')
         doc = SimpleDocTemplate(response)
         doc.build(Story, onFirstPage=CertificateLaterPages, onLaterPages=CertificateLaterPages)
-        #print 'PDF Build'
         return response
     else:
         return HttpResponse ('<html><body>'
