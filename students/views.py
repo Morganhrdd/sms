@@ -1935,7 +1935,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
     i=0
     for workEx in workExperiences:
         i = i + 1
-        teacher = workEx.Teacher
+        teacherName = workEx.Teacher.Name
         task = workEx.Task
         communication = GRADE_CHOICES[workEx.Communication]
         confidence = GRADE_CHOICES[workEx.Confidence]
@@ -1943,7 +1943,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         comment = workEx.PublicComment
 
         addNormalTextToStory(Story,'<strong>' + 'Work Experience'+ ' ' + str(i) + '</strong>')
-        addNormalTextToStory(Story,'Teacher' + ' : ' + teacher)
+        addNormalTextToStory(Story,'Teacher' + ' : ' + teacherName)
         addNormalTextToStory(Story,'Task' + ' : ' + task)
         addNormalTextToStory(Story,'Communication' + ' : ' + communication)
         addNormalTextToStory(Story,'Confidence' + ' : ' + confidence)
@@ -2002,7 +2002,7 @@ def fillSkillsReport(student_yearly_info, Story):
         decisionMaking = decisionMaking + GRADE_NUM[thinkingSkill.DecisionMakingAndProblemSolving]
 
         #individual grades
-        addNormalTextToStory(Story,'Teacher' + ' : ' + thinkingSkill.Teacher)
+        addNormalTextToStory(Story,'Teacher' + ' : ' + thinkingSkill.Teacher.Name)
         addNormalTextToStory(Story,' Inquiry' + ' : ' + thinkingSkill.Inquiry)
         addNormalTextToStory(Story,' LogicalThinking' + ' : ' + GRADE_CHOICES[thinkingSkill.LogicalThinking])
         addNormalTextToStory(Story,' Creativity' + ' : ' + GRADE_CHOICES[thinkingSkill.Creativity])
