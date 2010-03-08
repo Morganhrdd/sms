@@ -1992,32 +1992,87 @@ def fillSkillsReport(student_yearly_info, Story):
     if len(thinkingSkills) == 0:
         addNormalTextToStory(Story,'No data available')
     i=0
+    inquiry=0
     logicalThinking = 0
     creativity = 0
     decisionMaking = 0
+    #add up grades by teachers
     for thinkingSkill in thinkingSkills:
-        #add up grades by teachers
+        inquiry = inquiry + GRADE_NUM[thinkingSkill.Inquiry]
         logicalThinking = logicalThinking + GRADE_NUM[thinkingSkill.LogicalThinking]
         creativity = creativity + GRADE_NUM[thinkingSkill.Creativity]
         decisionMaking = decisionMaking + GRADE_NUM[thinkingSkill.DecisionMakingAndProblemSolving]
-
-        #individual grades
-        addNormalTextToStory(Story,'Teacher' + ' : ' + thinkingSkill.Teacher.Name)
-        addNormalTextToStory(Story,' Inquiry' + ' : ' + thinkingSkill.Inquiry)
-        addNormalTextToStory(Story,' LogicalThinking' + ' : ' + GRADE_CHOICES[thinkingSkill.LogicalThinking])
-        addNormalTextToStory(Story,' Creativity' + ' : ' + GRADE_CHOICES[thinkingSkill.Creativity])
-        addNormalTextToStory(Story,' DecisionMakingAndProblemSolving' + ' : ' + GRADE_CHOICES[thinkingSkill.DecisionMakingAndProblemSolving])
-        addNormalTextToStory(Story,' Comment' + ' : ' + thinkingSkill.PublicComment)
-        Story.append(Spacer(1,0.1*inch))
-        
-    Story.append(Spacer(1,0.1*inch))
     
     #total grades
+    addNormalTextToStory(Story,'Inquiry' + ' : ' + GRADE_CHOICES[inquiry])
     addNormalTextToStory(Story,'LogicalThinking' + ' : ' + GRADE_CHOICES[logicalThinking])
     addNormalTextToStory(Story,'Creativity' + ' : ' + GRADE_CHOICES[creativity])
     addNormalTextToStory(Story,'DecisionMakingAndProblemSolving' + ' : ' + GRADE_CHOICES[decisionMaking])
-    #addNormalTextToStory(Story,'Skill Grade' + ' : ' + GRADE_CHOICES[int((logicalThinking + creativity + decisionMaking) / 3)])
-        
+    Story.append(Spacer(1,0.05*inch))
+    addNormalTextToStory(Story,'Skill Grade' + ' : ' + GRADE_CHOICES[round((inquiry + logicalThinking + creativity + decisionMaking) / 4.0)])
+    Story.append(Spacer(1,0.1*inch))
+
+    addNormalTextToStory(Story,'Comments:')
+    for thinkingSkill in thinkingSkills:
+        addNormalTextToStory(Story, str(i) + '. ' + thinkingSkill.PublicComment)
+    Story.append(Spacer(1,0.2*inch))
+
+    # Social Skill
+    addSubHeaderToStory(Story, "Social Skill")
+    socialSkills = SocialSkill.objects.filter(StudentYearlyInformation=student_yearly_info)
+    if len(socialSkills) == 0:
+        addNormalTextToStory(Story,'No data available')
+    i=0
+    communication=0
+    interPersonal=0
+    teamWork=0
+    #add up grades by teachers
+    for socialSkill in socialSkills:
+        communication = communication + GRADE_NUM[socialSkill.Communication]
+        interPersonal = interPersonal + GRADE_NUM[socialSkill.InterPersonal]
+        teamWork = teamWork + GRADE_NUM[socialSkill.TeamWork]
+   
+    #total grades
+    addNormalTextToStory(Story,'Communication' + ' : ' + GRADE_CHOICES[communication])
+    addNormalTextToStory(Story,'InterPersonal' + ' : ' + GRADE_CHOICES[interPersonal])
+    addNormalTextToStory(Story,'TeamWork' + ' : ' + GRADE_CHOICES[teamWork])
+    Story.append(Spacer(1,0.05*inch))
+    addNormalTextToStory(Story,'Skill Grade' + ' : ' + GRADE_CHOICES[round((communication + interPersonal + teamWork) / 3.0)])
+    Story.append(Spacer(1,0.1*inch))
+
+    addNormalTextToStory(Story,'Comments:')
+    for socialSkill in socialSkills:
+        addNormalTextToStory(Story, str(i) + '. ' + socialSkill.PublicComment)
+    Story.append(Spacer(1,0.2*inch))
+
+
+
+    # Emotional Skill
+    addSubHeaderToStory(Story, "Emotional Skill")
+    emotionalSkills = EmotionalSkill.objects.filter(StudentYearlyInformation=student_yearly_info)
+    if len(emotionalSkills) == 0:
+        addNormalTextToStory(Story,'No data available')
+    i=0
+    empathy=0
+    expression=0
+    management=0
+    #add up grades by teachers
+    for emotionalSkill in emotionalSkills:
+        empathy = empathy + GRADE_NUM[emotionalSkill.Empathy]
+        expression = expression + GRADE_NUM[emotionalSkill.Expression]
+        management = management + GRADE_NUM[emotionalSkill.Management]
+   
+    #total grades
+    addNormalTextToStory(Story,'Empathy' + ' : ' + GRADE_CHOICES[empathy])
+    addNormalTextToStory(Story,'Expression' + ' : ' + GRADE_CHOICES[expression])
+    addNormalTextToStory(Story,'Management' + ' : ' + GRADE_CHOICES[management])
+    Story.append(Spacer(1,0.05*inch))
+    addNormalTextToStory(Story,'Skill Grade' + ' : ' + GRADE_CHOICES[round((empathy + expression + management) / 3.0)])
+    Story.append(Spacer(1,0.1*inch))
+    
+    addNormalTextToStory(Story,'Comments:')
+    for emotionalSkill in emotionalSkills:
+        addNormalTextToStory(Story, str(i) + '. ' + emotionalSkill.PublicComment)
     Story.append(Spacer(1,0.2*inch))
 
     Story.append(PageBreak())
