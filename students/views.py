@@ -1991,7 +1991,7 @@ def fillSkillsReport(student_yearly_info, Story):
     thinkingSkills = ThinkingSkill.objects.filter(StudentYearlyInformation=student_yearly_info)
     if len(thinkingSkills) == 0:
         addNormalTextToStory(Story,'No data available')
-    i=0
+        
     inquiry=0
     logicalThinking = 0
     creativity = 0
@@ -2009,12 +2009,16 @@ def fillSkillsReport(student_yearly_info, Story):
     addNormalTextToStory(Story,'Creativity' + ' : ' + GRADE_CHOICES[creativity])
     addNormalTextToStory(Story,'DecisionMakingAndProblemSolving' + ' : ' + GRADE_CHOICES[decisionMaking])
     Story.append(Spacer(1,0.05*inch))
-    addNormalTextToStory(Story,'Skill Grade' + ' : ' + GRADE_CHOICES[round((inquiry + logicalThinking + creativity + decisionMaking) / 4.0)])
+    addNormalTextToStory(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + GRADE_CHOICES[round((inquiry + logicalThinking + creativity + decisionMaking) / 4.0)])
     Story.append(Spacer(1,0.1*inch))
 
     addNormalTextToStory(Story,'Comments:')
+    i=0
     for thinkingSkill in thinkingSkills:
-        addNormalTextToStory(Story, str(i) + '. ' + thinkingSkill.PublicComment)
+        comment = thinkingSkill.PublicComment
+        if comment != "":
+            i=i+1
+            addNormalTextToStory(Story, str(i) + '. ' + comment)
     Story.append(Spacer(1,0.2*inch))
 
     # Social Skill
@@ -2022,7 +2026,7 @@ def fillSkillsReport(student_yearly_info, Story):
     socialSkills = SocialSkill.objects.filter(StudentYearlyInformation=student_yearly_info)
     if len(socialSkills) == 0:
         addNormalTextToStory(Story,'No data available')
-    i=0
+
     communication=0
     interPersonal=0
     teamWork=0
@@ -2037,12 +2041,16 @@ def fillSkillsReport(student_yearly_info, Story):
     addNormalTextToStory(Story,'InterPersonal' + ' : ' + GRADE_CHOICES[interPersonal])
     addNormalTextToStory(Story,'TeamWork' + ' : ' + GRADE_CHOICES[teamWork])
     Story.append(Spacer(1,0.05*inch))
-    addNormalTextToStory(Story,'Skill Grade' + ' : ' + GRADE_CHOICES[round((communication + interPersonal + teamWork) / 3.0)])
+    addNormalTextToStory(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + GRADE_CHOICES[round((communication + interPersonal + teamWork) / 3.0)])
     Story.append(Spacer(1,0.1*inch))
 
     addNormalTextToStory(Story,'Comments:')
+    i=0
     for socialSkill in socialSkills:
-        addNormalTextToStory(Story, str(i) + '. ' + socialSkill.PublicComment)
+        comment = socialSkill.PublicComment
+        if comment != "":
+            i=i+1
+            addNormalTextToStory(Story, str(i) + '. ' + comment)
     Story.append(Spacer(1,0.2*inch))
 
 
@@ -2052,7 +2060,7 @@ def fillSkillsReport(student_yearly_info, Story):
     emotionalSkills = EmotionalSkill.objects.filter(StudentYearlyInformation=student_yearly_info)
     if len(emotionalSkills) == 0:
         addNormalTextToStory(Story,'No data available')
-    i=0
+
     empathy=0
     expression=0
     management=0
@@ -2067,13 +2075,92 @@ def fillSkillsReport(student_yearly_info, Story):
     addNormalTextToStory(Story,'Expression' + ' : ' + GRADE_CHOICES[expression])
     addNormalTextToStory(Story,'Management' + ' : ' + GRADE_CHOICES[management])
     Story.append(Spacer(1,0.05*inch))
-    addNormalTextToStory(Story,'Skill Grade' + ' : ' + GRADE_CHOICES[round((empathy + expression + management) / 3.0)])
+    addNormalTextToStory(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + GRADE_CHOICES[round((empathy + expression + management) / 3.0)])
     Story.append(Spacer(1,0.1*inch))
     
     addNormalTextToStory(Story,'Comments:')
+    i=0
     for emotionalSkill in emotionalSkills:
-        addNormalTextToStory(Story, str(i) + '. ' + emotionalSkill.PublicComment)
+        comment = emotionalSkill.PublicComment
+        if comment != "":
+            i=i+1
+            addNormalTextToStory(Story, str(i) + '. ' + comment)
     Story.append(Spacer(1,0.2*inch))
+
+
+
+    # Attitude Towards School
+    addSubHeaderToStory(Story, "Attitude Towards School")
+    attitudeTowardsSchools = AttitudeTowardsSchool.objects.filter(StudentYearlyInformation=student_yearly_info)
+    if len(attitudeTowardsSchools) == 0:
+        addNormalTextToStory(Story,'No data available')
+
+    schoolTeachers=0
+    schoolMates=0
+    schoolPrograms=0
+    schoolEnvironment=0
+    #add up grades by teachers
+    for attitudeTowardsSchool in attitudeTowardsSchools:
+        schoolTeachers = schoolTeachers + GRADE_NUM[attitudeTowardsSchool.SchoolTeachers]
+        schoolMates = schoolMates + GRADE_NUM[attitudeTowardsSchool.SchoolMates]
+        schoolPrograms = schoolPrograms + GRADE_NUM[attitudeTowardsSchool.SchoolPrograms]
+        schoolEnvironment = schoolEnvironment + GRADE_NUM[attitudeTowardsSchool.SchoolEnvironment]
+        
+    #total grades
+    addNormalTextToStory(Story,'SchoolTeachers' + ' : ' + GRADE_CHOICES[schoolTeachers])
+    addNormalTextToStory(Story,'SchoolMates' + ' : ' + GRADE_CHOICES[schoolMates])
+    addNormalTextToStory(Story,'SchoolPrograms' + ' : ' + GRADE_CHOICES[schoolPrograms])
+    addNormalTextToStory(Story,'SchoolEnvironment' + ' : ' + GRADE_CHOICES[schoolEnvironment])
+    Story.append(Spacer(1,0.05*inch))
+    addNormalTextToStory(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + GRADE_CHOICES[round((schoolTeachers + schoolMates + schoolPrograms + schoolEnvironment) / 4.0)])
+    Story.append(Spacer(1,0.1*inch))
+    
+    addNormalTextToStory(Story,'Comments:')
+    i=0
+    for attitudeTowardsSchool in attitudeTowardsSchools:
+        comment = attitudeTowardsSchool.PublicComment
+        if comment != "":
+            i=i+1
+            addNormalTextToStory(Story, str(i) + '. ' + comment)
+    Story.append(Spacer(1,0.2*inch))
+
+
+
+    # Values
+    addSubHeaderToStory(Story, "Values")
+    valuess = Values.objects.filter(StudentYearlyInformation=student_yearly_info)
+    if len(valuess) == 0:
+        addNormalTextToStory(Story,'No data available')
+
+    #add up grades by teachers
+    obedience=0
+    honesty=0
+    equality=0
+    responsibility=0
+    for values in valuess:
+        obedience = obedience + GRADE_NUM[values.Obedience]
+        honesty = honesty + GRADE_NUM[values.Honesty]
+        equality = equality + GRADE_NUM[values.Equality]
+        responsibility = responsibility + GRADE_NUM[values.Responsibility]
+        
+    #total grades
+    addNormalTextToStory(Story,'Obedience' + ' : ' + GRADE_CHOICES[obedience])
+    addNormalTextToStory(Story,'Honesty' + ' : ' + GRADE_CHOICES[honesty])
+    addNormalTextToStory(Story,'Equality' + ' : ' + GRADE_CHOICES[equality])
+    addNormalTextToStory(Story,'Responsibility' + ' : ' + GRADE_CHOICES[responsibility])
+    Story.append(Spacer(1,0.05*inch))
+    addNormalTextToStory(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + GRADE_CHOICES[round((obedience + honesty + equality + responsibility) / 4.0)])
+    Story.append(Spacer(1,0.1*inch))
+    
+    addNormalTextToStory(Story,'Comments:')
+    i=0
+    for values in valuess:
+        comment = values.PublicComment
+        if comment != "":
+            i=i+1
+            addNormalTextToStory(Story, str(i) + '. ' + comment)
+    Story.append(Spacer(1,0.2*inch))
+    
 
     Story.append(PageBreak())
 
