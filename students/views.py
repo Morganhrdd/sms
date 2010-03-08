@@ -1380,6 +1380,7 @@ def fillPdfData(Story, registration_nos, part_option, standard, division, year_o
                 fillStaticAndYearlyInfo(student_yearly_info, Story)
                 fillAcademicReport(student_yearly_info, Story)
                 fillCoCurricularReport(student_yearly_info, Story)
+                fillSkillsReport(student_yearly_info, Story)
                 fillOutdoorActivityReport(student_yearly_info, Story)
             if part_option == 1:
                 fillStaticAndYearlyInfo(student_yearly_info, Story)
@@ -1985,10 +1986,60 @@ def fillCoCurricularReport(student_yearly_info, Story):
 def fillSkillsReport(student_yearly_info, Story):
     addMainHeaderToStory(Story, "Part 3.1: Skills Report")
 
+    # Thinking Skill
+    addSubHeaderToStory(Story, "Thinking Skill")
+    thinkingSkills = ThinkingSkill.objects.filter(StudentYearlyInformation=student_yearly_info)
+    if len(thinkingSkills) == 0:
+        addNormalTextToStory(Story,'No data available')
+    i=0
+    logicalThinking = 0
+    creativity = 0
+    decisionMaking = 0
+    for thinkingSkill in thinkingSkills:
+        #add up grades by teachers
+        logicalThinking = logicalThinking + GRADE_NUM[thinkingSkill.LogicalThinking]
+        creativity = creativity + GRADE_NUM[thinkingSkill.Creativity]
+        decisionMaking = decisionMaking + GRADE_NUM[thinkingSkill.DecisionMakingAndProblemSolving]
+
+        #individual grades
+        addNormalTextToStory(Story,'Teacher' + ' : ' + thinkingSkill.Teacher)
+        addNormalTextToStory(Story,' Inquiry' + ' : ' + thinkingSkill.Inquiry)
+        addNormalTextToStory(Story,' LogicalThinking' + ' : ' + GRADE_CHOICES[thinkingSkill.LogicalThinking])
+        addNormalTextToStory(Story,' Creativity' + ' : ' + GRADE_CHOICES[thinkingSkill.Creativity])
+        addNormalTextToStory(Story,' DecisionMakingAndProblemSolving' + ' : ' + GRADE_CHOICES[thinkingSkill.DecisionMakingAndProblemSolving])
+        addNormalTextToStory(Story,' Comment' + ' : ' + thinkingSkill.PublicComment)
+        Story.append(Spacer(1,0.1*inch))
+        
+    Story.append(Spacer(1,0.1*inch))
+    
+    #total grades
+    addNormalTextToStory(Story,'LogicalThinking' + ' : ' + GRADE_CHOICES[logicalThinking])
+    addNormalTextToStory(Story,'Creativity' + ' : ' + GRADE_CHOICES[creativity])
+    addNormalTextToStory(Story,'DecisionMakingAndProblemSolving' + ' : ' + GRADE_CHOICES[decisionMaking])
+    #addNormalTextToStory(Story,'Skill Grade' + ' : ' + GRADE_CHOICES[int((logicalThinking + creativity + decisionMaking) / 3)])
+        
+    Story.append(Spacer(1,0.2*inch))
+
     Story.append(PageBreak())
 
 def fillOutdoorActivityReport(student_yearly_info, Story):
     addMainHeaderToStory(Story, "Part 4: Outdoor Activity Report")
+
+    # Physical Education
+    addSubHeaderToStory(Story, "Physical Education")
+    try:
+        physicalEducation = PhysicalEducation.objects.get(StudentYearlyInformation=student_yearly_info)
+        
+        addNormalTextToStory(Story,'Name' + ' : ' + physicalEducation.Name)
+        addNormalTextToStory(Story,'Pratod' + ' : ' + physicalEducation.Pratod)
+        addNormalTextToStory(Story,'Ability to work in team' + ' : ' + GRADE_CHOICES[physicalEducation.AbilityToWorkInTeam])
+        addNormalTextToStory(Story,'Cooperation' + ' : ' + GRADE_CHOICES[physicalEducation.Cooperation])
+        addNormalTextToStory(Story,'Leadership skill' + ' : ' + GRADE_CHOICES[physicalEducation.LeadershipSkill])
+        addNormalTextToStory(Story,'Comment' + ' : ' + physicalEducation.PublicComment)
+    except:
+        addNormalTextToStory(Story,'N/A')
+    Story.append(Spacer(1,0.2*inch))
+    
     pratod = ''
     # Physical Fitness Report
     addSubHeaderToStory(Story, "Physical Fitness Report")
