@@ -366,6 +366,14 @@ def marks_add(request):
         subject = SubjectMaster.objects.get(id=test.SubjectMaster.id)
         data = []
         student_test_marks_objs = StudentTestMarks.objects.filter(TestMapping = test).order_by('StudentYearlyInformation__ClassMaster','StudentYearlyInformation__RollNo')
+        if not len(student_test_marks_objs):
+            for student in StudentYearlyInformation.objects.filter(ClassMaster__Standard=subject.Standard, ClassMaster__AcademicYear=test.AcademicYear):
+                x = StudentTestMarks()
+                x.StudentYearlyInformation = student
+                x.TestMapping = test
+                x.MarksObtained = 0
+                x.save()
+            student_test_marks_objs = StudentTestMarks.objects.filter(TestMapping = test).order_by('StudentYearlyInformation__ClassMaster','StudentYearlyInformation__RollNo')
         test_details = 'Standard: %s, Subject Name: %s, Academic Year: %s, TestType: %s, Max Marks: %s' % (subject.Standard, subject.Name, test.AcademicYear, test.TestType, test.MaximumMarks)
         for student_test_mark_obj in student_test_marks_objs:
             name = '%s %s' % (student_test_mark_obj.StudentYearlyInformation.StudentBasicInfo.FirstName, student_test_mark_obj.StudentYearlyInformation.StudentBasicInfo.LastName)
