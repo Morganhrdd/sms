@@ -202,9 +202,9 @@ class StudentAttendance(models.Model):
 class PhysicalFitnessInfo(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
     Weight = models.FloatField(blank=True, null=True)
-    Height = models.PositiveIntegerField(blank=True, null=True)
-    FlexibleForwardBending = models.IntegerField(blank=True, null=True)
-    FlexibleBackwardBending = models.IntegerField(blank=True, null=True)
+    Height = models.FloatField(blank=True, null=True)
+    FlexibleForwardBending = models.FloatField(blank=True, null=True)
+    FlexibleBackwardBending = models.FloatField(blank=True, null=True)
     SBJ = models.FloatField(blank=True, null=True)
     VerticleJump = models.FloatField(blank=True, null=True)
     BallThrow = models.FloatField(blank=True, null=True)
