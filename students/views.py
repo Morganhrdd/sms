@@ -384,7 +384,7 @@ def marks_add(request):
 
 def competition_add(request):
     if not request.POST:
-        genform = SearchDetailsForm()
+        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
         return render_to_response('students/AddCompetition.html',{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
@@ -437,7 +437,7 @@ def competition_add(request):
 #
 def elocution_add(request):
     if not request.POST:
-        genform = SearchDetailsForm()
+        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
         return render_to_response('students/AddElocution.html',{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
@@ -491,7 +491,7 @@ def elocution_add(request):
 #
 def project_add(request):
     if not request.POST:
-        genform = SearchDetailsForm()
+        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
         return render_to_response('students/AddProject.html',{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
@@ -549,7 +549,7 @@ def project_add(request):
 #
 def abhivyaktivikas_add(request):
     if not request.POST:
-        genform = SearchDetailsForm()
+        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
         return render_to_response('students/AddAbhivyaktiVikas.html',{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
@@ -606,7 +606,7 @@ def abhivyaktivikas_add(request):
 #
 def competitiveexam_add(request):
     if not request.POST:
-        genform = SearchDetailsForm()
+        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
         return render_to_response('students/AddCompetitiveExam.html',{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
@@ -658,7 +658,7 @@ def competitiveexam_add(request):
 #
 def cocurricular_add(request):
     if not request.POST:
-        genform = SearchDetailsForm()
+        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
         return render_to_response('students/AddCocurricular.html',{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
@@ -710,7 +710,7 @@ def cocurricular_add(request):
 #
 def socialactivity_add(request):
     if not request.POST:
-        genform = SearchDetailsForm()
+        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
         return render_to_response('students/AddSocialActivity.html',{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
@@ -762,7 +762,7 @@ def socialactivity_add(request):
 #
 def physicalfitnessinfo_add(request):
     if not request.POST:
-        genform = SearchDetailsForm()
+        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
         return render_to_response('students/AddPhysicalFitnessInfo.html',{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
@@ -847,7 +847,7 @@ def physicalfitnessinfo_add(request):
 #
 def workexperience_add(request):
     if not request.POST:
-        genform = SearchDetailsForm()
+        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
         return render_to_response('students/AddWorkExperience.html',{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
@@ -900,7 +900,7 @@ def workexperience_add(request):
 #
 def physicaleducation_add(request):
     if not request.POST:
-        genform = SearchDetailsForm()
+        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
         return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
@@ -954,7 +954,7 @@ def physicaleducation_add(request):
 #
 def thinkingskill_add(request):
     if not request.POST:
-        genform = SearchDetailsForm()
+        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
         return render_to_response('students/AddThinkingSkill.html',{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
@@ -1011,7 +1011,7 @@ def thinkingskill_add(request):
 #
 def socialskill_add(request):
     if not request.POST:
-        genform = SearchDetailsForm()
+        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
         return render_to_response('students/AddSocialSkill.html',{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
@@ -1067,7 +1067,7 @@ def socialskill_add(request):
 #
 def attitudetowardsschool_add(request):
     if not request.POST:
-        genform = SearchDetailsForm()
+        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
         return render_to_response('students/AddAttitudeTowardsSchool.html',{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
@@ -1124,8 +1124,8 @@ def attitudetowardsschool_add(request):
 #
 def emotionalskill_add(request):
     if not request.POST:
-        genform = SearchDetailsForm()
-        return render_to_response('students/AddEmotionalSkill.html',{'form':genform})
+        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
+        r_to_response('students/AddEmotionalSkill.html',{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
         if request.POST.has_key('RegistrationNo'):
@@ -1179,7 +1179,7 @@ def emotionalskill_add(request):
 #
 def values_add(request):
     if not request.POST:
-        genform = SearchDetailsForm()
+        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
         return render_to_response('students/AddValues.html',{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
