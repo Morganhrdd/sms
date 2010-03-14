@@ -398,7 +398,9 @@ class Values(models.Model):
 
 class SearchDetailsForm(forms.Form):
     Year = forms.CharField(max_length=9)
-    RegistrationNo = forms.IntegerField()
+    RegistrationNo = forms.IntegerField(required=False)
+    FirstName = forms.CharField(required=False)
+    LastName = forms.CharField(required=False)
 
 class CompetitionDetailsForm(forms.Form):
     pkwidget = forms.HiddenInput()

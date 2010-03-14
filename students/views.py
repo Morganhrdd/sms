@@ -388,6 +388,9 @@ def competition_add(request):
         return render_to_response('students/AddCompetition.html',{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
+        msg = search_reg_no(request=request)
+        if msg:
+            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg})
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -441,6 +444,9 @@ def elocution_add(request):
         return render_to_response('students/AddElocution.html',{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
+        msg = search_reg_no(request=request)
+        if msg:
+            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg})
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -495,6 +501,9 @@ def project_add(request):
         return render_to_response('students/AddProject.html',{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
+        msg = search_reg_no(request=request)
+        if msg:
+            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg})
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -553,6 +562,9 @@ def abhivyaktivikas_add(request):
         return render_to_response('students/AddAbhivyaktiVikas.html',{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
+        msg = search_reg_no(request=request)
+        if msg:
+            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg})
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -610,6 +622,9 @@ def competitiveexam_add(request):
         return render_to_response('students/AddCompetitiveExam.html',{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
+        msg = search_reg_no(request=request)
+        if msg:
+            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg})
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -662,6 +677,9 @@ def cocurricular_add(request):
         return render_to_response('students/AddCocurricular.html',{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
+        msg = search_reg_no(request=request)
+        if msg:
+            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg})
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -714,6 +732,9 @@ def socialactivity_add(request):
         return render_to_response('students/AddSocialActivity.html',{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
+        msg = search_reg_no(request=request)
+        if msg:
+            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg})
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -766,6 +787,9 @@ def physicalfitnessinfo_add(request):
         return render_to_response('students/AddPhysicalFitnessInfo.html',{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
+        msg = search_reg_no(request=request)
+        if msg:
+            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg})
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -845,12 +869,32 @@ def physicalfitnessinfo_add(request):
         return render_to_response('students/AddPhysicalFitnessInfo.html',{'form':genform})
 
 #
+def search_reg_no(request=None):
+    if not request:
+        return
+    if not request.POST['RegistrationNo'] and (request.POST.has_key('FirstName') or request.POST.has_key('LastName')):
+        tmp = {}
+        if request.POST['FirstName']:
+            tmp['FirstName'] = request.POST['FirstName']
+        if request.POST['LastName']:
+            tmp['LastName'] = request.POST['LastName']
+        students_basic_info = StudentBasicInfo.objects.filter(**tmp)
+        msg = ''
+        for x in students_basic_info:
+            msg += '<br /> %s %s %s' % (x.RegistrationNo, x.FirstName, x.LastName)
+        msg += '<br />'
+        return msg
+    
 def workexperience_add(request):
+    respage = 'students/AddWorkExperience.html'
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response('students/AddWorkExperience.html',{'form':genform})
+        return render_to_response(respage,{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
+        msg = search_reg_no(request=request)
+        if msg:
+            return render_to_response(respage,{'form':genform,'msg':msg})
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -894,16 +938,20 @@ def workexperience_add(request):
                 x = WorkExperienceDetailsForm(initial=tmp)
                 data.append(x)
             data.append(WorkExperienceDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddWorkExperience.html',{'form':genform,'data':data,'name':name})
-        return render_to_response('students/AddWorkExperience.html',{'form':genform})
+            return render_to_response(respage,{'form':genform,'data':data,'name':name})
+        return render_to_response(respage,{'form':genform})
 
 #
 def physicaleducation_add(request):
+    respage = 'students/AddPhysicalEducation.html'
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
+        return render_to_response(respage,{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
+        msg = search_reg_no(request=request)
+        if msg:
+            return render_to_response(respage,{'form':genform,'msg':msg})
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -948,16 +996,20 @@ def physicaleducation_add(request):
                 data.append(x)
             if not len(data):
                 data.append(PhysicalEducationDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddPhysicalEducation.html',{'form':genform,'data':data,'name':name})
-        return render_to_response('students/AddPhysicalEducation.html',{'form':genform})
+            return render_to_response(respage,{'form':genform,'data':data,'name':name})
+        return render_to_response(respage,{'form':genform})
 
 #
 def thinkingskill_add(request):
+    respage = 'students/AddThinkingSkill.html'
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response('students/AddThinkingSkill.html',{'form':genform})
+        return render_to_response(respage,{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
+        msg = search_reg_no(request=request)
+        if msg:
+            return render_to_response(respage,{'form':genform,'msg':msg})
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -1005,16 +1057,20 @@ def thinkingskill_add(request):
             tmp['Delete'] = delete
             x = ThinkingSkillDetailsForm(initial=tmp)
             data.append(x)
-            return render_to_response('students/AddThinkingSkill.html',{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj})
-        return render_to_response('students/AddThinkingSkill.html',{'form':genform})
+            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj})
+        return render_to_response(respage,{'form':genform})
 
 #
 def socialskill_add(request):
+    respage = 'students/AddSocialSkill.html'
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response('students/AddSocialSkill.html',{'form':genform})
+        return render_to_response(respage,{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
+        msg = search_reg_no(request=request)
+        if msg:
+            return render_to_response(respage,{'form':genform,'msg':msg})
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -1066,11 +1122,15 @@ def socialskill_add(request):
 
 #
 def attitudetowardsschool_add(request):
+    respage = 'students/AddAttitudeTowardsSchool.html'
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response('students/AddAttitudeTowardsSchool.html',{'form':genform})
+        return render_to_response(respage,{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
+        msg = search_reg_no(request=request)
+        if msg:
+            return render_to_response(respage,{'form':genform,'msg':msg})
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -1119,15 +1179,19 @@ def attitudetowardsschool_add(request):
             tmp['Delete'] = delete
             x = AttitudeTowardsSchoolDetailsForm(initial=tmp)
             data.append(x)
-            return render_to_response('students/AddAttitudeTowardsSchool.html',{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj})
-        return render_to_response('students/AddAttitudeTowardsSchool.html',{'form':genform})
+            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj})
+        return render_to_response(respage,{'form':genform})
 #
 def emotionalskill_add(request):
+    respage = 'students/AddEmotionalSkill.html'
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        r_to_response('students/AddEmotionalSkill.html',{'form':genform})
+        return render_to_response(respage,{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
+        msg = search_reg_no(request=request)
+        if msg:
+            return render_to_response(respage,{'form':genform,'msg':msg})
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -1173,16 +1237,20 @@ def emotionalskill_add(request):
             tmp['Delete'] = delete
             x = EmotionalSkillDetailsForm(initial=tmp)
             data.append(x)
-            return render_to_response('students/AddEmotionalSkill.html',{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj})
-        return render_to_response('students/AddEmotionalSkill.html',{'form':genform})
+            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj})
+        return render_to_response(respage,{'form':genform})
 
 #
 def values_add(request):
+    respage = 'students/AddValues.html'
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response('students/AddValues.html',{'form':genform})
+        return render_to_response(respage,{'form':genform})
     else:
         genform = SearchDetailsForm(request.POST)
+        msg = search_reg_no(request=request)
+        if msg:
+            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg})
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -1231,8 +1299,8 @@ def values_add(request):
             tmp['Delete'] = delete
             x = ValuesDetailsForm(initial=tmp)
             data.append(x)
-            return render_to_response('students/AddValues.html',{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj})
-        return render_to_response('students/AddValues.html',{'form':genform})
+            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj})
+        return render_to_response(respage,{'form':genform})
 # Used by HTML Report
 def attendance_add(request):
     if request.POST:
