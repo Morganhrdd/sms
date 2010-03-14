@@ -10,7 +10,7 @@
 <body>
     <a href="/">Home</a>
  	<br/>
-	    {{ msg }}
+	    {{ msg|safe }}
 		<form action="" method="POST">
 		    <table cellSpacing=0 cellPadding=5 width="50%" border=0 style="WIDTH: 50%" align=center>
                 {{ form.as_table }}
