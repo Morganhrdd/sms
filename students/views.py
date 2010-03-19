@@ -1,6 +1,6 @@
 # Create your views here.
 from django.db.models import Q
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, redirect
 from django.http import HttpResponse
 from jp_sms.students.models import TestMapping, StudentTestMarks, StudentYearlyInformation, StudentBasicInfo
 from jp_sms.students.models import SubjectMaster, ClassMaster, SubjectMaster, AttendanceMaster, AcademicYear
