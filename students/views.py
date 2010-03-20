@@ -1314,7 +1314,14 @@ def display_report(request, regno=None, year=None):
     student_yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo=student_basic_info_obj, ClassMaster__AcademicYear=year, ClassMaster__Type='P')
     classmaster = student_yearly_info.ClassMaster
     attendance_objs = StudentAttendance.objects.filter(AttendanceMaster__ClassMaster=classmaster, StudentYearlyInformation=student_yearly_info)
-    return render_to_response(respage,{'basic_info':student_basic_info_obj, 'additional_info':student_addtional_info, 'yearly_info':student_yearly_info,'attendance':attendance_objs})
+    physical_fitness_info_obj = PhysicalFitnessInfo.objects.get(StudentYearlyInformation=student_yearly_info)
+    data = {}
+    data['basic_info'] = student_basic_info_obj
+    data['additional_info'] = student_addtional_info
+    data['yearly_info'] = student_yearly_info
+    data['attendance'] = attendance_objs
+    data['physical_fitness'] = physical_fitness_info_obj
+    return render_to_response(respage,**data)
 # Used by HTML Report
 def attendance_add(request):
     if request.POST:
