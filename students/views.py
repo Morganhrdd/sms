@@ -1301,6 +1301,20 @@ def values_add(request):
             data.append(x)
             return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj})
         return render_to_response(respage,{'form':genform})
+    
+
+def display_report(request, regno=None, year=None):
+    respage = 'students/DisplayReport.html'
+    student_basic_info_obj = StudentBasicInfo.objects.get(RegistrationNo=regno)
+    year = AcademicYear.objects.get(Year=year)
+    try:
+        student_addtional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info_obj)
+    except:
+        student_addtional_info = StudentAdditionalInformation()
+    student_yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo=student_basic_info_obj, ClassMaster__AcademicYear=year, ClassMaster__Type='P')
+    classmaster = student_yearly_info.ClassMaster
+    attendance_obj = StudentAttendance.objects.filter(AttendanceMaster__ClassMaster=classmaster, StudentYearlyInformation=student_yearly_info)
+    return render_to_response(respage,{'basic_info':student_basic_info_obj, 'additional_info':student_addtional_info, 'yearly_info':student_yearly_info})
 # Used by HTML Report
 def attendance_add(request):
     if request.POST:
@@ -2797,3 +2811,4 @@ values_add = login_required(values_add)
 report=login_required(report)
 reportPDF=login_required(reportPDF)
 certificatePDF = login_required(certificatePDF)
+display_report = login_required(display_report)
