@@ -60,6 +60,13 @@ GRADE_CHOICES = (
     ('6', 'Outstanding'),
 )
 
+GRADE_CHOICES_3 = (
+    ('0', 'None'),
+    ('1', 'Satisfactory'),
+    ('2', 'Good'),
+    ('3', 'Outstanding'),
+)
+
 PROJECT_TYPE_CHOICES = (
     ('CC', 'Collection, Classification'),
     ('MM', 'Model Making'),
@@ -222,7 +229,7 @@ class PhysicalFitnessInfo(models.Model):
     Pratod = models.CharField(max_length=50,blank=True, null=True)
     Margadarshak = models.CharField(max_length=50,blank=True, null=True)
     SpecialSport = models.CharField(max_length=50,blank=True, null=True)
-    Grade = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    Grade = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
     class Meta:
         verbose_name_plural = "Physical Fitness Information"
 
@@ -295,23 +302,23 @@ class Project(models.Model):
     Title = models.CharField(max_length=30)
     Type = models.CharField(max_length=2, choices=PROJECT_TYPE_CHOICES)
     Subject = models.CharField(max_length=30)
-    ProblemSelection = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    Review = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    Planning = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    ExecutionAndHardWork = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    Documentation = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    Communication = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    ProblemSelection = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
+    Review = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
+    Planning = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
+    ExecutionAndHardWork = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
+    Documentation = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
+    Communication = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
     PublicComment = models.CharField(max_length=200)
     PrivateComment = models.CharField(max_length=200)
 
 class Elocution(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
     Title = models.CharField(max_length=30)
-    Memory = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    Content = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    Understanding = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    Pronunciation = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    Presentation = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    Memory = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
+    Content = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
+    Understanding = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
+    Pronunciation = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
+    Presentation = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
     PublicComment = models.CharField(max_length=200)
     PrivateComment = models.CharField(max_length=200)
     def __unicode__(self):
@@ -377,20 +384,20 @@ class EmotionalSkill(models.Model):
 class AttitudeTowardsSchool(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
     Teacher = models.ForeignKey(Teacher)
-    SchoolTeachers = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    SchoolMates = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    SchoolPrograms = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    SchoolEnvironment = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    SchoolTeachers = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
+    SchoolMates = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
+    SchoolPrograms = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
+    SchoolEnvironment = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
     PublicComment = models.CharField(max_length=200)
     PrivateComment = models.CharField(max_length=200)
 
 class Values(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
     Teacher = models.ForeignKey(Teacher)
-    Obedience = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    Honesty = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    Equality = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    Responsibility = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    Obedience = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
+    Honesty = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
+    Equality = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
+    Responsibility = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
     PublicComment = models.CharField(max_length=200)
     PrivateComment = models.CharField(max_length=200)
     class Meta:
@@ -418,11 +425,11 @@ class ElocutionDetailsForm(forms.Form):
     pkwidget = forms.HiddenInput()
     pk=forms.IntegerField(widget=pkwidget, required=False)
     Title = forms.CharField(max_length=50)
-    Memory = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
-    Content = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
-    Understanding = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
-    Pronunciation = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
-    Presentation = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    Memory = forms.ChoiceField(choices=GRADE_CHOICES_3, initial='0')
+    Content = forms.ChoiceField(choices=GRADE_CHOICES_3, initial='0')
+    Understanding = forms.ChoiceField(choices=GRADE_CHOICES_3, initial='0')
+    Pronunciation = forms.ChoiceField(choices=GRADE_CHOICES_3, initial='0')
+    Presentation = forms.ChoiceField(choices=GRADE_CHOICES_3, initial='0')
     PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     Delete = forms.CharField(required=False)
@@ -433,12 +440,12 @@ class ProjectDetailsForm(forms.Form):
     Title = forms.CharField(max_length=50)
     Type = forms.ChoiceField(choices=PROJECT_TYPE_CHOICES, initial='N')
     Subject = forms.CharField(max_length=50)
-    ProblemSelection = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
-    Review = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
-    Planning = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
-    ExecutionAndHardWork = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
-    Documentation = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
-    Communication = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    ProblemSelection = forms.ChoiceField(choices=GRADE_CHOICES_3, initial='0')
+    Review = forms.ChoiceField(choices=GRADE_CHOICES_3, initial='0')
+    Planning = forms.ChoiceField(choices=GRADE_CHOICES_3, initial='0')
+    ExecutionAndHardWork = forms.ChoiceField(choices=GRADE_CHOICES_3, initial='0')
+    Documentation = forms.ChoiceField(choices=GRADE_CHOICES_3, initial='0')
+    Communication = forms.ChoiceField(choices=GRADE_CHOICES_3, initial='0')
     PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     Delete = forms.CharField(required=False)
@@ -518,7 +525,7 @@ class PhysicalFitnessInfoDetailsForm(forms.Form):
     Pratod = forms.CharField(max_length=50, required=False)
     Margadarshak = forms.CharField(max_length=50, required=False)
     SpecialSport = forms.CharField(max_length=50, required=False)
-    Grade = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    Grade = forms.ChoiceField(choices=GRADE_CHOICES_3, initial='0')
     Delete = forms.CharField(required=False)
 
 class WorkExperienceDetailsForm(forms.Form):
@@ -579,10 +586,10 @@ class EmotionalSkillDetailsForm(forms.Form):
 class AttitudeTowardsSchoolDetailsForm(forms.Form):
     pkwidget = forms.HiddenInput()
     pk=forms.IntegerField(widget=pkwidget, required=False)
-    SchoolTeachers = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
-    SchoolMates = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
-    SchoolPrograms = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
-    SchoolEnvironment = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    SchoolTeachers = forms.ChoiceField(choices=GRADE_CHOICES_3, initial='0')
+    SchoolMates = forms.ChoiceField(choices=GRADE_CHOICES_3, initial='0')
+    SchoolPrograms = forms.ChoiceField(choices=GRADE_CHOICES_3, initial='0')
+    SchoolEnvironment = forms.ChoiceField(choices=GRADE_CHOICES_3, initial='0')
     PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     Delete = forms.CharField(required=False)
@@ -590,10 +597,10 @@ class AttitudeTowardsSchoolDetailsForm(forms.Form):
 class ValuesDetailsForm(forms.Form):
     pkwidget = forms.HiddenInput()
     pk=forms.IntegerField(widget=pkwidget, required=False)
-    Obedience = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
-    Honesty = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
-    Equality = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
-    Responsibility = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
+    Obedience = forms.ChoiceField(choices=GRADE_CHOICES_3, initial='0')
+    Honesty = forms.ChoiceField(choices=GRADE_CHOICES_3, initial='0')
+    Equality = forms.ChoiceField(choices=GRADE_CHOICES_3, initial='0')
+    Responsibility = forms.ChoiceField(choices=GRADE_CHOICES_3, initial='0')
     PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     Delete = forms.CharField(required=False)
