@@ -1321,7 +1321,7 @@ def display_report(request, regno=None, year=None):
     data['yearly_info'] = student_yearly_info
     data['attendance'] = attendance_objs
     data['physical_fitness'] = physical_fitness_info_obj
-    return render_to_response(respage,**data)
+    return render_to_response(respage,data)
 # Used by HTML Report
 def attendance_add(request):
     if request.POST:
