@@ -914,10 +914,10 @@ def workexperience_add(request):
                         workexperience_obj = WorkExperience()
                     workexperience_obj.StudentYearlyInformation = yearly_info
                     workexperience_obj.Teacher = Teacher.objects.get(Name=request.POST['Teacher'])
-                    workexperience_obj.Obedience = request.POST['Obedience']
-                    workexperience_obj.Honesty = request.POST['Honesty'] or '0'
-                    workexperience_obj.Equality = request.POST['Equality'] or '0'
-                    workexperience_obj.Responsibility = request.POST['Responsibility'] or '0'
+                    workexperience_obj.Task = request.POST['Task']
+                    workexperience_obj.Communication = request.POST['Communication'] or '0'
+                    workexperience_obj.Confidence = request.POST['Confidence'] or '0'
+                    workexperience_obj.Involvement = request.POST['Involvement'] or '0'
                     workexperience_obj.PublicComment = request.POST['PublicComment']
                     workexperience_obj.PrivateComment = request.POST['PrivateComment']
                     workexperience_obj.save()
@@ -929,10 +929,10 @@ def workexperience_add(request):
                 tmp = {}
                 tmp['pk'] = workexperience_obj.pk
                 tmp['Teacher'] = workexperience_obj.Teacher
-                tmp['Obedience'] = workexperience_obj.Obedience
-                tmp['Honesty'] = workexperience_obj.Honesty
-                tmp['Equality'] = workexperience_obj.Equality
-                tmp['Responsibility'] = workexperience_obj.Responsibility
+                tmp['Task'] = workexperience_obj.Task
+                tmp['Communication'] = workexperience_obj.Communication
+                tmp['Confidence'] = workexperience_obj.Confidence
+                tmp['Involvement'] = workexperience_obj.Involvement
                 tmp['PublicComment'] = workexperience_obj.PublicComment
                 tmp['PrivateComment'] = workexperience_obj.PrivateComment
                 x = WorkExperienceDetailsForm(initial=tmp)
@@ -1303,7 +1303,10 @@ def values_add(request):
         return render_to_response(respage,{'form':genform})
     
 
+
 def display_report(request, regno=None, year=None):
+    if request.user.username != str(regno) and not request.user.is_superuser:
+        return redirect('/')
     respage = 'students/DisplayReport.html'
     student_basic_info_obj = StudentBasicInfo.objects.get(RegistrationNo=regno)
     year = AcademicYear.objects.get(Year=year)
@@ -1314,7 +1317,10 @@ def display_report(request, regno=None, year=None):
     student_yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo=student_basic_info_obj, ClassMaster__AcademicYear=year, ClassMaster__Type='P')
     classmaster = student_yearly_info.ClassMaster
     attendance_objs = StudentAttendance.objects.filter(AttendanceMaster__ClassMaster=classmaster, StudentYearlyInformation=student_yearly_info)
-    physical_fitness_info_obj = PhysicalFitnessInfo.objects.get(StudentYearlyInformation=student_yearly_info)
+    try:
+        physical_fitness_info_obj = PhysicalFitnessInfo.objects.get(StudentYearlyInformation=student_yearly_info)
+    except:
+        physical_fitness_info_obj = PhysicalFitnessInfo()
     data = {}
     data['basic_info'] = student_basic_info_obj
     data['additional_info'] = student_addtional_info
