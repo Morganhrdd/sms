@@ -2134,7 +2134,7 @@ def fillSkillsReport(student_yearly_info, Story):
     #total grades
     addNormalTextToStory(Story,'Communication' + ' : ' + GRADE_CHOICES[communication])
     addNormalTextToStory(Story,'InterPersonal' + ' : ' + GRADE_CHOICES[interPersonal])
-    addNormalTextToStory(Story,'TeamWork' + ' : ' + GRADE_CHOICES[teamWork])
+    addNormalTextToStory(Story,'Working in group' + ' : ' + GRADE_CHOICES[teamWork])
     Story.append(Spacer(1,0.05*inch))
     addNormalTextToStory(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + GRADE_CHOICES[round((communication + interPersonal + teamWork) / 3.0)])
     Story.append(Spacer(1,0.1*inch))
@@ -2166,7 +2166,7 @@ def fillSkillsReport(student_yearly_info, Story):
         management = management + GRADE_NUM[emotionalSkill.Management]
    
     #total grades
-    addNormalTextToStory(Story,'Empathy' + ' : ' + GRADE_CHOICES[empathy])
+    addNormalTextToStory(Story,'Emotional control' + ' : ' + GRADE_CHOICES[empathy])
     addNormalTextToStory(Story,'Expression' + ' : ' + GRADE_CHOICES[expression])
     addNormalTextToStory(Story,'Management' + ' : ' + GRADE_CHOICES[management])
     Story.append(Spacer(1,0.05*inch))
@@ -2295,6 +2295,7 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         sprint = physical_fitness_info.Sprint
         running_400m = physical_fitness_info.Running400m
         short_put = physical_fitness_info.ShortPutThrow
+        split = physical_fitness_info.Split
         bmi = physical_fitness_info.BodyMassIndex
         bmi = round(float(weight) / (float(height / 100.0) * float(height / 100.0)), 2)
         balancing = physical_fitness_info.Balancing
@@ -2307,9 +2308,9 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         comment = physical_fitness_info.PublicComment
 
         data = []
-        data.append(['W','H','FFB','FBB','SBJ','VJ','BT','SR','SU','S','400m','SP','BMI','B'])
+        data.append(['W','H','FFB','FBB','SBJ','VJ','BT','SR','SU','S','400m','SP', 'Spl','BMI','B'])
         data.append([weight, height, ffb, fbb, sbj, verticle_jump, ball_throw,
-                     shuttle_run, sit_ups, sprint, running_400m, short_put, bmi, balancing])
+                     shuttle_run, sit_ups, sprint, running_400m, short_put, split, bmi, balancing])
         addTableToStory(Story, data, 'CENTER')
         addNormalTextToStory(Story,'Special Sport' + ' : ' + special_sport)
         addNormalTextToStory(Story,'House' + ' : ' + pathak)
