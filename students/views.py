@@ -553,7 +553,7 @@ def project_add(request):
                 x = ProjectDetailsForm(initial=tmp)
                 data.append(x)
             data.append(ProjectDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddProject.html',{'form':genform, 'data':data, 'name':name, ,'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
+            return render_to_response('students/AddProject.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
         return render_to_response('students/AddProject.html',{'form':genform})
 #
 def abhivyaktivikas_add(request):
@@ -612,7 +612,7 @@ def abhivyaktivikas_add(request):
                 x = AbhivyaktiVikasDetailsForm(initial=tmp)
                 data.append(x)
             data.append(AbhivyaktiVikasDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddAbhivyaktiVikas.html',{'form':genform, 'data':data, 'name':name, ,'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
+            return render_to_response('students/AddAbhivyaktiVikas.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
         return render_to_response('students/AddAbhivyaktiVikas.html',{'form':genform})
 
 #
@@ -667,7 +667,7 @@ def competitiveexam_add(request):
                 x = CompetitiveExamDetailsForm(initial=tmp)
                 data.append(x)
             data.append(CompetitiveExamDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddCompetitiveExam.html',{'form':genform, 'data':data, 'name':name, ,'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
+            return render_to_response('students/AddCompetitiveExam.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
         return render_to_response('students/AddCompetitiveExam.html',{'form':genform})
 
 #
@@ -722,7 +722,7 @@ def cocurricular_add(request):
                 x = CoCurricularDetailsForm(initial=tmp)
                 data.append(x)
             data.append(CoCurricularDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddCocurricular.html',{'form':genform, 'data':data, 'name':name, ,'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
+            return render_to_response('students/AddCocurricular.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
         return render_to_response('students/AddCocurricular.html',{'form':genform})
 
 #
@@ -777,7 +777,7 @@ def socialactivity_add(request):
                 x = SocialActivityDetailsForm(initial=tmp)
                 data.append(x)
             data.append(SocialActivityDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddSocialActivity.html',{'form':genform, 'data':data, 'name':name, ,'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
+            return render_to_response('students/AddSocialActivity.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
         return render_to_response('students/AddSocialActivity.html',{'form':genform})
 
 #
@@ -865,7 +865,7 @@ def physicalfitnessinfo_add(request):
                 data.append(x)
             if not len(data):
                 data.append(PhysicalFitnessInfoDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddPhysicalFitnessInfo.html',{'form':genform, 'data':data, 'name':name, ,'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
+            return render_to_response('students/AddPhysicalFitnessInfo.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
         return render_to_response('students/AddPhysicalFitnessInfo.html',{'form':genform})
 
 #
@@ -938,7 +938,7 @@ def workexperience_add(request):
                 x = WorkExperienceDetailsForm(initial=tmp)
                 data.append(x)
             data.append(WorkExperienceDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, ,'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
+            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
         return render_to_response(respage,{'form':genform})
 
 #
@@ -996,7 +996,7 @@ def physicaleducation_add(request):
                 data.append(x)
             if not len(data):
                 data.append(PhysicalEducationDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, ,'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
+            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
         return render_to_response(respage,{'form':genform})
 
 #
@@ -1057,7 +1057,7 @@ def thinkingskill_add(request):
             tmp['Delete'] = delete
             x = ThinkingSkillDetailsForm(initial=tmp)
             data.append(x)
-            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, ,'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
+            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
         return render_to_response(respage,{'form':genform})
 
 #
@@ -1117,7 +1117,7 @@ def socialskill_add(request):
             tmp['Delete'] = delete
             x = SocialSkillDetailsForm(initial=tmp)
             data.append(x)
-            return render_to_response('students/AddSocialSkill.html',{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, ,'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
+            return render_to_response('students/AddSocialSkill.html',{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
         return render_to_response('students/AddSocialSkill.html',{'form':genform})
 
 #
@@ -1179,7 +1179,7 @@ def attitudetowardsschool_add(request):
             tmp['Delete'] = delete
             x = AttitudeTowardsSchoolDetailsForm(initial=tmp)
             data.append(x)
-            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, ,'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
+            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
         return render_to_response(respage,{'form':genform})
 #
 def emotionalskill_add(request):
@@ -1237,7 +1237,7 @@ def emotionalskill_add(request):
             tmp['Delete'] = delete
             x = EmotionalSkillDetailsForm(initial=tmp)
             data.append(x)
-            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, ,'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
+            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
         return render_to_response(respage,{'form':genform})
 
 #
@@ -1299,7 +1299,7 @@ def values_add(request):
             tmp['Delete'] = delete
             x = ValuesDetailsForm(initial=tmp)
             data.append(x)
-            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, ,'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
+            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
         return render_to_response(respage,{'form':genform})
     
 
