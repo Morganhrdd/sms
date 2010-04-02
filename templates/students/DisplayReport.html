@@ -247,7 +247,17 @@
             <td>{{physical_fitness.Grade}}</td>
         </tr>        
     </table>
-
+    <h1>Test Marks</h1>
+    <table border=1>
+        {% for x in test_marks %}
+        <tr>
+            <td><strong>{{ x.TestMapping.SubjectMaster.Name }}</strong></td>
+            <td>{{ x.TestMapping.TestType }}</td>
+            <td>{{ x.MarksObtained }}</td>
+            <td>{{ x.TestMapping.MaximumMarks }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 </body>
 </html>
 <tr>
