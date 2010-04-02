@@ -1324,6 +1324,10 @@ def display_report(request, regno=None, year=None):
     test_marks_objs = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
     socialactivity_objs = SocialActivity.objects.filter(StudentYearlyInformation=student_yearly_info)
     cocurricular_objs = CoCurricular.objects.filter(StudentYearlyInformation=student_yearly_info)
+    competitiveexam_objs = CompetitiveExam.objects.filter(StudentYearlyInformation=student_yearly_info)
+    competition_objs = Competition.objects.filter(StudentYearlyInformation=student_yearly_info)
+    abhivyaktivikas_objs = AbhivyaktiVikas.objects.filter(StudentYearlyInformation=student_yearly_info)
+    project_objs = Project.objects.filter(StudentYearlyInformation=student_yearly_info)
     data = {}
     data['basic_info'] = student_basic_info_obj
     data['additional_info'] = student_addtional_info
@@ -1333,6 +1337,10 @@ def display_report(request, regno=None, year=None):
     data['test_marks'] = test_marks_objs
     data['socialactivity'] = socialactivity_objs
     data['cocurricular'] = cocurricular_objs
+    data['competitiveexam'] = competitiveexam_objs
+    data['competition'] = competition_objs
+    data['abhivyaktivikas'] = abhivyaktivikas_objs
+    data['project'] = project_objs
     return render_to_response(respage,data)
 # Used by HTML Report
 def attendance_add(request):
