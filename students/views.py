@@ -1327,6 +1327,13 @@ def display_report(request, regno=None, year=None):
     project_objs = Project.objects.filter(StudentYearlyInformation=student_yearly_info)
     elocution_objs = Elocution.objects.filter(StudentYearlyInformation=student_yearly_info)
     library_objs = Library.objects.filter(StudentYearlyInformation=student_yearly_info)
+    workexperience_objs = WorkExperience.objects.filter(StudentYearlyInformation=student_yearly_info)
+    physicaleducation_objs = PhysicalEducation.objects.filter(StudentYearlyInformation=student_yearly_info)
+    thinkingskill_objs = ThinkingSkill.objects.filter(StudentYearlyInformation=student_yearly_info)
+    socialskill_objs = SocialSkill.objects.filter(StudentYearlyInformation=student_yearly_info)
+    emotionalskill_objs = EmotionalSkill.objects.filter(StudentYearlyInformation=student_yearly_info)
+    attitudetowardsschool_objs = AttitudeTowardsSchool.objects.filter(StudentYearlyInformation=student_yearly_info)
+    values_objs = Values.objects.filter(StudentYearlyInformation=student_yearly_info)
     data = {}
     data['basic_info'] = student_basic_info_obj
     data['additional_info'] = student_addtional_info
@@ -1342,6 +1349,13 @@ def display_report(request, regno=None, year=None):
     data['project'] = project_objs
     data['elocution'] = elocution_objs
     data['library'] = library_objs
+    data['workexperience'] = workexperience_objs
+    data['physicaleducation'] = physicaleducation_objs
+    data['thinkingskill'] = thinkingskill_objs
+    data['socialskill'] = socialactivity_objs
+    data['emotionalskill'] = emotionalskill_objs
+    data['attitudetowardsschool'] = attitudetowardsschool_objs
+    data['values'] = values_objs
     return render_to_response(respage,data)
 # Used by HTML Report
 def attendance_add(request):
