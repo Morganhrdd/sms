@@ -1317,10 +1317,7 @@ def display_report(request, regno=None, year=None):
     student_yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo=student_basic_info_obj, ClassMaster__AcademicYear=year, ClassMaster__Type='P')
     classmaster = student_yearly_info.ClassMaster
     attendance_objs = StudentAttendance.objects.filter(AttendanceMaster__ClassMaster=classmaster, StudentYearlyInformation=student_yearly_info)
-    try:
-        physical_fitness_info_obj = PhysicalFitnessInfo.objects.get(StudentYearlyInformation=student_yearly_info)
-    except:
-        physical_fitness_info_obj = PhysicalFitnessInfo()
+    physical_fitness_info_obj = PhysicalFitnessInfo.objects.filter(StudentYearlyInformation=student_yearly_info)
     test_marks_objs = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
     socialactivity_objs = SocialActivity.objects.filter(StudentYearlyInformation=student_yearly_info)
     cocurricular_objs = CoCurricular.objects.filter(StudentYearlyInformation=student_yearly_info)

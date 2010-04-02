@@ -161,92 +161,94 @@
         {% endfor %}
     </table>
     <h1>Physical Fitness Info</h1>
+    {% for x in physical_fitness %}
     <table border=1>
         <tr>
             <td>Weight</td>
-            <td>{{physical_fitness.Weight}}</td>
+            <td>{{x.Weight}}</td>
         </tr>
         <tr>
             <td>Height</td>
-            <td>{{physical_fitness.Height}}</td>
+            <td>{{x.Height}}</td>
         </tr>
         <tr>
             <td>FlexibleForwardBending</td>
-            <td>{{physical_fitness.FlexibleForwardBending}}</td>
+            <td>{{x.FlexibleForwardBending}}</td>
         </tr>
         <tr>
             <td>FlexibleBackwardBending</td>
-            <td>{{physical_fitness.FlexibleBackwardBending}}</td>
+            <td>{{x.FlexibleBackwardBending}}</td>
         </tr>
         <tr>
             <td>SBJ</td>
-            <td>{{physical_fitness.SBJ}}</td}>
+            <td>{{x.SBJ}}</td}>
         </tr>
         <tr>
             <td>VerticleJump</td>
-            <td>{{physical_fitness.VerticleJump}}</td}>
+            <td>{{x.VerticleJump}}</td}>
         </tr>
         <tr>
             <td>BallThrow</td>
-            <td>{{physical_fitness.BallThrow}}</td>
+            <td>{{x.BallThrow}}</td>
         </tr>
         <tr>
             <td>ShuttleRun</td>
-            <td>{{physical_fitness.ShuttleRun}}</td}>
+            <td>{{x.ShuttleRun}}</td}>
         </tr>
         <tr>
             <td>SitUps</td>
-            <td>{{physical_fitness.SitUps}}</td>
+            <td>{{x.SitUps}}</td>
         </tr>
         <tr>
             <td>Sprint</td>
-            <td>{{physical_fitness.Sprint}}</td>
+            <td>{{x.Sprint}}</td>
         </tr>
         <tr>
             <td>Running400m</td>
-            <td>{{physical_fitness.Running400m}}</td>
+            <td>{{x.Running400m}}</td>
         </tr>
         <tr>
             <td>ShortPutThrow</td>
-            <td>{{physical_fitness.ShortPutThrow}}</td>
+            <td>{{x.ShortPutThrow}}</td>
         </tr>
         <tr>
             <td>Split</td>
-            <td>{{physical_fitness.Split}}</td>
+            <td>{{x.Split}}</td>
         </tr>
         <tr>
             <td>BodyMassIndex</td>
-            <td>{{physical_fitness.BodyMassIndex}}</td>
+            <td>{{x.BodyMassIndex}}</td>
         </tr>
         <tr>
-            <td></td>
-            <td>{{physical_fitness.Balancing}}</td>
+            <td>Balancing</td>
+            <td>{{x.Balancing}}</td>
         </tr>
         <tr>
             <td>PublicComment</td>
-            <td>{{physical_fitness.PublicComment}}</td>
+            <td>{{x.PublicComment}}</td>
         </tr>
         <tr>
             <td>Pathak</td>
-            <td>{{physical_fitness.Pathak}}</td>
+            <td>{{x.Pathak}}</td>
         </tr>
         <tr>
             <td>Pratod</td>
-            <td>{{physical_fitness.Pratod}}</td>
+            <td>{{x.Pratod}}</td>
         </tr>
         <tr>
             <td>Margadarshak</td>
-            <td>{{physical_fitness.Margadarshak}}</td>
+            <td>{{x.Margadarshak}}</td>
         </tr>
         <tr>
             <td>SpecialSport</td>
-            <td>{{physical_fitness.SpecialSport}}</td>
+            <td>{{x.SpecialSport}}</td>
         </tr>
         <tr>
             <td>Grade</td>
-            <td>{{physical_fitness.Grade}}</td>
+            <td>{{x.Grade}}</td>
         </tr>        
     </table>
+    {% endfor %}
     <h1>Test Marks</h1>
     <table border=1>
         {% for x in test_marks %}
