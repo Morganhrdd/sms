@@ -1328,6 +1328,8 @@ def display_report(request, regno=None, year=None):
     competition_objs = Competition.objects.filter(StudentYearlyInformation=student_yearly_info)
     abhivyaktivikas_objs = AbhivyaktiVikas.objects.filter(StudentYearlyInformation=student_yearly_info)
     project_objs = Project.objects.filter(StudentYearlyInformation=student_yearly_info)
+    elocution_objs = Elocution.objects.filter(StudentYearlyInformation=student_yearly_info)
+    library_objs = Library.objects.filter(StudentYearlyInformation=student_yearly_info)
     data = {}
     data['basic_info'] = student_basic_info_obj
     data['additional_info'] = student_addtional_info
@@ -1341,6 +1343,8 @@ def display_report(request, regno=None, year=None):
     data['competition'] = competition_objs
     data['abhivyaktivikas'] = abhivyaktivikas_objs
     data['project'] = project_objs
+    data['elocution'] = elocution_objs
+    data['library'] = library_objs
     return render_to_response(respage,data)
 # Used by HTML Report
 def attendance_add(request):

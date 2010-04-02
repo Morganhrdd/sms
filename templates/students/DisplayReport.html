@@ -460,7 +460,56 @@
         </tr>
     </table>
     {% endfor %}
-
+    <h1>Elocution</h1>
+    {% for x in elocution %}
+    <table border=1>
+        <tr>
+            <td>Title</td>
+            <td>{{ x.Title }}</td>
+        </tr>
+        <tr>
+            <td>Memory</td>
+            <td>{{ x.Memory }}</td>
+        </tr>
+        <tr>
+            <td>Content</td>
+            <td>{{ x.Content }}</td>
+        </tr>
+        <tr>
+            <td>Understanding</td>
+            <td>{{ x.Understanding}}</td>
+        </tr>
+        <tr>
+            <td>Pronunciation</td>
+            <td>{{ x.Pronunciation }}</td>
+        </tr>
+        <tr>
+            <td>Presentation</td>
+            <td>{{ x.Presentation }}</td>
+        </tr>
+        <tr>
+            <td>PublicComment</td>
+            <td>{{ x.PublicComment }}</td>
+        </tr>
+    </table>
+    {% endfor %}
+    <h1>Library</h1>
+    {% for x in library %}
+    <table border=1>
+        <tr>
+            <td>BooksRead</td>
+            <td>{{ x.BooksRead }}</td>
+        </tr>
+        <tr>
+            <td>Grade</td>
+            <td>{{ x.Grade }}</td>
+        </tr>
+        <tr>
+            <td>PublicComment</td>
+            <td>{{ x.PublicComment }}</td>
+        </tr>
+    </table>
+    {% endfor %}
 </body>
 </html>
 <tr>
