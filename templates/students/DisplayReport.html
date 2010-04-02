@@ -258,6 +258,35 @@
         </tr>
         {% endfor %}
     </table>
+    <h1>Social Ativity</h1>
+    <table border=1>
+        {% for x in socialactivity %}
+        <tr>
+            <td>Activity</td>
+            <td>{{ x.Activity }}</td>
+        </tr>
+        <tr>
+            <td>Objectives</td>
+            <td>{{ x.Objectives }}</td>
+        </tr>
+        <tr>
+            <td>Date</td>
+            <td>{{ x.Date }}</td>
+        </tr>
+        <tr>
+            <td>Organizer</td>
+            <td>{{ x.Organizer }}</td>
+        </tr>
+        <tr>
+            <td>Grade</td>
+            <td>{{ x.Grade }}</td>
+        </tr>
+        <tr>
+            <td>PublicComment</td>
+            <td>{{ x.PublicComment }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 </body>
 </html>
 <tr>
