@@ -1321,12 +1321,14 @@ def display_report(request, regno=None, year=None):
         physical_fitness_info_obj = PhysicalFitnessInfo.objects.get(StudentYearlyInformation=student_yearly_info)
     except:
         physical_fitness_info_obj = PhysicalFitnessInfo()
+    test_marks_objs = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
     data = {}
     data['basic_info'] = student_basic_info_obj
     data['additional_info'] = student_addtional_info
     data['yearly_info'] = student_yearly_info
     data['attendance'] = attendance_objs
     data['physical_fitness'] = physical_fitness_info_obj
+    data['test_marks'] = test_marks_objs
     return render_to_response(respage,data)
 # Used by HTML Report
 def attendance_add(request):
