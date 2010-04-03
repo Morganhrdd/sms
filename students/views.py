@@ -1352,7 +1352,7 @@ def display_report(request, regno=None, year=None):
     data['workexperience'] = workexperience_objs
     data['physicaleducation'] = physicaleducation_objs
     data['thinkingskill'] = thinkingskill_objs
-    data['socialskill'] = socialactivity_objs
+    data['socialskill'] = socialskill_objs
     data['emotionalskill'] = emotionalskill_objs
     data['attitudetowardsschool'] = attitudetowardsschool_objs
     data['values'] = values_objs
