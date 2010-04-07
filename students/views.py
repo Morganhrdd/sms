@@ -1305,7 +1305,7 @@ def values_add(request):
 
 
 def display_report(request, regno=None, year=None):
-    if request.user.username != str(regno) and not request.user.is_superuser:
+    if request.user.username != str(regno) and not request.user.is_superuser and request.user.is_active:
         return redirect('/')
     respage = 'students/DisplayReport.html'
     student_basic_info_obj = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -2115,7 +2115,7 @@ def fillSkillsReport(student_yearly_info, Story):
     thinkingSkills = ThinkingSkill.objects.filter(StudentYearlyInformation=student_yearly_info)
     if len(thinkingSkills) == 0:
         addNormalTextToStory(Story,'No data available')
-    else    
+    else:
         inquiry=0
         logicalThinking = 0
         creativity = 0
@@ -2152,7 +2152,7 @@ def fillSkillsReport(student_yearly_info, Story):
     socialSkills = SocialSkill.objects.filter(StudentYearlyInformation=student_yearly_info)
     if len(socialSkills) == 0:
         addNormalTextToStory(Story,'No data available')
-    else
+    else:
         communication=0
         interPersonal=0
         teamWork=0
@@ -2188,7 +2188,7 @@ def fillSkillsReport(student_yearly_info, Story):
     emotionalSkills = EmotionalSkill.objects.filter(StudentYearlyInformation=student_yearly_info)
     if len(emotionalSkills) == 0:
         addNormalTextToStory(Story,'No data available')
-    else
+    else:
         empathy=0
         expression=0
         management=0
@@ -2224,7 +2224,7 @@ def fillSkillsReport(student_yearly_info, Story):
     attitudeTowardsSchools = AttitudeTowardsSchool.objects.filter(StudentYearlyInformation=student_yearly_info)
     if len(attitudeTowardsSchools) == 0:
         addNormalTextToStory(Story,'No data available')
-    else
+    else:
         schoolTeachers=0
         schoolMates=0
         schoolPrograms=0
@@ -2263,7 +2263,7 @@ def fillSkillsReport(student_yearly_info, Story):
     valuess = Values.objects.filter(StudentYearlyInformation=student_yearly_info)
     if len(valuess) == 0:
         addNormalTextToStory(Story,'No data available')
-    else
+    else:
         #add up grades by teachers
         obedience=0
         honesty=0
