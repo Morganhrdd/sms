@@ -1937,7 +1937,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         addNormalTextToStory(Story,'Teacher' + ' : ' + teacher_name)
         Story.append(Spacer(1,0.2*inch))
         data = []
-        data.append(['Participation','Readiness to Learn','Perseverence','Pronunciation Development','Creativity'])
+        data.append(['Participation','Readiness to Learn','Perseverance','Pronunciation Development','Creativity'])
         data.append([participation,readinessToLearn,continuityInWork,skillDevelopment,creativity])
         addTableToStory(Story, data, 'CENTER')
         addNormalTextToStory(Story,'Comment' + ' : ' + comment)
@@ -2015,6 +2015,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         problem_selection = GRADE_CHOICES_3[project.ProblemSelection]
         review = GRADE_CHOICES_3[project.Review]
         planning = GRADE_CHOICES_3[project.Planning]
+        executionAndHardWork = GRADE_CHOICES_3[project.Planning]
         documentation = GRADE_CHOICES_3[project.Documentation]
         communication = GRADE_CHOICES_3[project.Communication]
         comment = project.PublicComment
@@ -2025,8 +2026,8 @@ def fillCoCurricularReport(student_yearly_info, Story):
         addNormalTextToStory(Story,'Subject' + ' : ' + subject)
         Story.append(Spacer(1,0.1*inch))
         data = []
-        data.append(['ProblemSelection','Review of topic','Planning','Documentation','Communication'])
-        data.append([problem_selection,review,planning,documentation,communication])
+        data.append(['Problem Selection','Review of topic','Planning','Execution','Documentation','Communication'])
+        data.append([problem_selection,review,planning,executionAndHardWork,documentation,communication])
         addTableToStory(Story, data, 'CENTER')
         addNormalTextToStory(Story,'Comment' + ' : ' + comment)
         Story.append(Spacer(1,0.2*inch))
