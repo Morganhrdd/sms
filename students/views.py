@@ -88,7 +88,18 @@ GRADE_CHOICES = {
     '3.0': 'Satisfactory',
     '2.0': 'Needs Improvement',
     '1.0': 'Unsatisfactory',
-    '0.0': '-',
+    '0.0': '-'
+}
+    
+GRADE_CHOICES_3 = {
+    '0': 'None',
+    '1': 'Satisfactory',
+    '2': 'Good',
+    '3': 'Outstanding'
+     0 : 'None',
+     1 : 'Satisfactory',
+     2 : 'Good',
+     3 : 'Outstanding'
 }
 
 GRADE_NUM = {
@@ -1589,8 +1600,8 @@ def fillLetterHead(Story):
 
 def fillStudentAttendance(student_yearly_info, Story, class_type):
     attendances = StudentAttendance.objects.filter(StudentYearlyInformation = student_yearly_info)
-    cummulative_attendance=0
-    cummulative_workingdays=0
+    cumulative_attendance=0
+    cumulative_workingdays=0
 
     data = []
 
@@ -1623,8 +1634,8 @@ def fillStudentAttendance(student_yearly_info, Story, class_type):
             working_days = attendance.AttendanceMaster.WorkingDays
             monthly_attendance[int(attendance.AttendanceMaster.Month)] = actual_attendance
             monthly_workingdays[int(attendance.AttendanceMaster.Month)] = working_days
-            cummulative_attendance = cummulative_attendance + actual_attendance
-            cummulative_workingdays = cummulative_workingdays + working_days
+            cumulative_attendance = cumulative_attendance + actual_attendance
+            cumulative_workingdays = cumulative_workingdays + working_days
 
     data_row = []
     data_row.append('Attendance')
@@ -1632,7 +1643,7 @@ def fillStudentAttendance(student_yearly_info, Story, class_type):
         data_row.append(monthly_attendance[i])
     for i in range(1, 6):
         data_row.append(monthly_attendance[i])
-    data_row.append(cummulative_attendance)
+    data_row.append(cumulative_attendance)
     data.append(data_row)
 
     data_row = []
@@ -1641,7 +1652,7 @@ def fillStudentAttendance(student_yearly_info, Story, class_type):
         data_row.append(monthly_workingdays[i])
     for i in range(1, 6):
         data_row.append(monthly_workingdays[i])
-    data_row.append(cummulative_workingdays)
+    data_row.append(cumulative_workingdays)
     data.append(data_row)
 
     addTableToStory(Story,data,'CENTER')
@@ -1684,7 +1695,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
     Story.append(table)
     Story.append(Spacer(1,0.2*inch))
 
-    # Cummulative Academics
+    # cumulative Academics
     marks = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
     cumulative_marks=0
     cumulative_maximum_marks=0
@@ -1726,7 +1737,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
             proj_grade_row_sum=0
         cumulative_project_grade_sum=cumulative_project_grade_sum+(int(proj_grade_row_sum/5))
     if len(projects) > 0:
-        cumulative_project_grade=GRADE_CHOICES[int(round(cumulative_project_grade_sum/len(projects)))]
+        cumulative_project_grade=GRADE_CHOICES_3[int(round(cumulative_project_grade_sum/len(projects)))]
 
     # Cumulative Elocution
     elocutions = Elocution.objects.filter(StudentYearlyInformation = student_yearly_info)
@@ -1736,7 +1747,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
         elocution_grade_row_sum=int(GRADE_NUM[elo_row.Memory])+int(GRADE_NUM[elo_row.Content])+int(GRADE_NUM[elo_row.Understanding])+int(GRADE_NUM[elo_row.Pronunciation])+int(GRADE_NUM[elo_row.Presentation])
         cumulative_elocution_grade_sum=cumulative_elocution_grade_sum+(int(elocution_grade_row_sum/5))
     if len(elocutions) > 0:
-        cumulative_elocution_grade=GRADE_CHOICES[int(round(cumulative_elocution_grade_sum/len(elocutions)))]
+        cumulative_elocution_grade=GRADE_CHOICES_3[int(round(cumulative_elocution_grade_sum/len(elocutions)))]
 
     # Cumulative Physical Fitness Info
     physical_fit_info = PhysicalFitnessInfo.objects.filter(StudentYearlyInformation = student_yearly_info)
@@ -1745,7 +1756,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
     for ph_data in physical_fit_info:
         cumulative_physical_grade_sum=cumulative_physical_grade_sum + GRADE_NUM[ph_data.Grade]
     if len(physical_fit_info) > 0:
-        cumulative_physical_grade=GRADE_CHOICES[int(round(cumulative_physical_grade_sum/len(physical_fit_info)))]
+        cumulative_physical_grade=GRADE_CHOICES_3[int(round(cumulative_physical_grade_sum/len(physical_fit_info)))]
 
     # Cumulative Social Activity
     social_activities = SocialActivity.objects.filter(StudentYearlyInformation = student_yearly_info)
@@ -1765,17 +1776,17 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
 
     # Cumulative Prashala Attendance
     attendances = StudentAttendance.objects.filter(StudentYearlyInformation = student_yearly_info)
-    cummulative_attendance=0
-    cummulative_workingdays_attendance=0
+    cumulative_attendance=0
+    cumulative_workingdays_attendance=0
     cumulative_attendance_percentage='-'
     for attendance in attendances:
         attendance_master = attendance.AttendanceMaster
         class_master = attendance_master.ClassMaster
         if class_master.Type == 'P':
-            cummulative_attendance = cummulative_attendance + attendance.ActualAttendance
-            cummulative_workingdays_attendance = cummulative_workingdays_attendance + attendance.AttendanceMaster.WorkingDays
-    if cummulative_workingdays_attendance > 0:
-        cumulative_attendance_percentage = str(round((float(cummulative_attendance) / cummulative_workingdays_attendance * 100),2)) + "%"
+            cumulative_attendance = cumulative_attendance + attendance.ActualAttendance
+            cumulative_workingdays_attendance = cumulative_workingdays_attendance + attendance.AttendanceMaster.WorkingDays
+    if cumulative_workingdays_attendance > 0:
+        cumulative_attendance_percentage = str(round((float(cumulative_attendance) / cumulative_workingdays_attendance * 100),2)) + "%"
 
     # Cumulative Grade Table
     addSubHeaderToStory(Story,"Report Summary")
@@ -1833,15 +1844,15 @@ def fillAcademicReport(student_yearly_info, Story):
         subject_data = subjects_data[subject_name]
         subject_data.append(test_marks)
 
-    cummulative_marks=0
-    cummulative_maxmarks=0
+    cumulative_marks=0
+    cumulative_maxmarks=0
     data = []
     data.append(['','W1','W2','W3','W4','T1','N1','F1','Total','%'])
     for subject_item in subjects_data.keys():
         subject_data = subjects_data[subject_item]
         subject_name = subject_item
-        cummulative_subject_marks=0
-        cummulative_subject_maxmarks=0
+        cumulative_subject_marks=0
+        cumulative_subject_maxmarks=0
         subject_test_marks = {}
         subject_test_marks['W1'] = '-'
         subject_test_marks['W2'] = '-'
@@ -1860,14 +1871,14 @@ def fillAcademicReport(student_yearly_info, Story):
             marks_obtained = subject_marks.MarksObtained
             if marks_obtained > 0:
                 subject_test_marks[test_type] = str(marks_obtained) + " / " + str(int(maximum_marks))
-                cummulative_subject_marks = cummulative_subject_marks + marks_obtained
-                cummulative_subject_maxmarks = cummulative_subject_maxmarks + maximum_marks
+                cumulative_subject_marks = cumulative_subject_marks + marks_obtained
+                cumulative_subject_maxmarks = cumulative_subject_maxmarks + maximum_marks
             else:
                 subject_test_marks[test_type] = "Absent"
-        subject_test_marks['Total'] = str(cummulative_subject_marks) + " / " + str(int(cummulative_subject_maxmarks))
+        subject_test_marks['Total'] = str(cumulative_subject_marks) + " / " + str(int(cumulative_subject_maxmarks))
         percentage = 0
-        if cummulative_subject_maxmarks > 0:
-            percentage = round((cummulative_subject_marks / cummulative_subject_maxmarks * 100),2)
+        if cumulative_subject_maxmarks > 0:
+            percentage = round((cumulative_subject_marks / cumulative_subject_maxmarks * 100),2)
         subject_test_marks['%'] = str(percentage) + '%'
         data_row = []
         data_row.append(subject_name)
@@ -1881,16 +1892,16 @@ def fillAcademicReport(student_yearly_info, Story):
         data_row.append(subject_test_marks['Total'])
         data_row.append(subject_test_marks['%'])
         data.append(data_row)
-        cummulative_marks = cummulative_marks + cummulative_subject_marks
-        cummulative_maxmarks = cummulative_maxmarks + cummulative_subject_maxmarks
+        cumulative_marks = cumulative_marks + cumulative_subject_marks
+        cumulative_maxmarks = cumulative_maxmarks + cumulative_subject_maxmarks
 
     addTableToStory(Story, data, 'CENTER')
     Story.append(Spacer(1,0.25*inch))
 
     percentage = 0
-    if cummulative_maxmarks > 0:
-        percentage = round((cummulative_marks / cummulative_maxmarks * 100),2)
-    addSubHeaderToStory(Story, mark_safe('Grand Total: ' +  str(cummulative_marks) + " / " + str(cummulative_maxmarks)))
+    if cumulative_maxmarks > 0:
+        percentage = round((cumulative_marks / cumulative_maxmarks * 100),2)
+    addSubHeaderToStory(Story, mark_safe('Grand Total: ' +  str(cumulative_marks) + " / " + str(cumulative_maxmarks)))
     addSubHeaderToStory(Story, 'Percentage: ' + str(percentage) + "%")
 
     Story.append(Spacer(1,0.5*inch))
@@ -2001,11 +2012,11 @@ def fillCoCurricularReport(student_yearly_info, Story):
         title = project.Title
         project_type = PROJECT_TYPE_CHOICES[project.Type]
         subject = project.Subject
-        problem_selection = GRADE_CHOICES[project.ProblemSelection]
-        review = GRADE_CHOICES[project.Review]
-        planning = GRADE_CHOICES[project.Planning]
-        documentation = GRADE_CHOICES[project.Documentation]
-        communication = GRADE_CHOICES[project.Communication]
+        problem_selection = GRADE_CHOICES_3[project.ProblemSelection]
+        review = GRADE_CHOICES_3[project.Review]
+        planning = GRADE_CHOICES_3[project.Planning]
+        documentation = GRADE_CHOICES_3[project.Documentation]
+        communication = GRADE_CHOICES_3[project.Communication]
         comment = project.PublicComment
 
         addNormalTextToStory(Story,'<strong>' + 'Project'+ ' ' + str(i) + '</strong>')
@@ -2032,11 +2043,11 @@ def fillCoCurricularReport(student_yearly_info, Story):
     for elocution in elocutions:
         i = i + 1
         title = elocution.Title
-        memory = GRADE_CHOICES[elocution.Memory]
-        content = GRADE_CHOICES[elocution.Content]
-        understanding = GRADE_CHOICES[elocution.Understanding]
-        pronunciation = GRADE_CHOICES[elocution.Pronunciation]
-        presentation = GRADE_CHOICES[elocution.Presentation]
+        memory = GRADE_CHOICES_3[elocution.Memory]
+        content = GRADE_CHOICES_3[elocution.Content]
+        understanding = GRADE_CHOICES_3[elocution.Understanding]
+        pronunciation = GRADE_CHOICES_3[elocution.Pronunciation]
+        presentation = GRADE_CHOICES_3[elocution.Presentation]
         comment = elocution.PublicComment
 
         addNormalTextToStory(Story,'<strong>' + 'Elocution'+ ' ' + str(i) + '</strong>')
@@ -2238,12 +2249,12 @@ def fillSkillsReport(student_yearly_info, Story):
             schoolEnvironment = schoolEnvironment + GRADE_NUM[attitudeTowardsSchool.SchoolEnvironment]
             
         #total grades
-        addNormalTextToStory(Story,'SchoolTeachers' + ' : ' + GRADE_CHOICES[round(schoolTeachers / length)])
-        addNormalTextToStory(Story,'SchoolMates' + ' : ' + GRADE_CHOICES[round(schoolMates / length)])
-        addNormalTextToStory(Story,'SchoolPrograms' + ' : ' + GRADE_CHOICES[round(schoolPrograms / length)])
-        addNormalTextToStory(Story,'SchoolEnvironment' + ' : ' + GRADE_CHOICES[round(schoolEnvironment / length)])
+        addNormalTextToStory(Story,'SchoolTeachers' + ' : ' + GRADE_CHOICES_3[round(schoolTeachers / length)])
+        addNormalTextToStory(Story,'SchoolMates' + ' : ' + GRADE_CHOICES_3[round(schoolMates / length)])
+        addNormalTextToStory(Story,'SchoolPrograms' + ' : ' + GRADE_CHOICES_3[round(schoolPrograms / length)])
+        addNormalTextToStory(Story,'SchoolEnvironment' + ' : ' + GRADE_CHOICES_3[round(schoolEnvironment / length)])
         Story.append(Spacer(1,0.05*inch))
-        addNormalTextToStory(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + GRADE_CHOICES[round((schoolTeachers + schoolMates + schoolPrograms + schoolEnvironment) / (4.0 * length))])
+        addNormalTextToStory(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + GRADE_CHOICES_3[round((schoolTeachers + schoolMates + schoolPrograms + schoolEnvironment) / (4.0 * length))])
         Story.append(Spacer(1,0.1*inch))
         
         addNormalTextToStory(Story,'Comments:')
@@ -2277,12 +2288,12 @@ def fillSkillsReport(student_yearly_info, Story):
             responsibility = responsibility + GRADE_NUM[values.Responsibility]
             
         #total grades
-        addNormalTextToStory(Story,'Obedience' + ' : ' + GRADE_CHOICES[round(obedience / length)])
-        addNormalTextToStory(Story,'Honesty' + ' : ' + GRADE_CHOICES[round(honesty / length)])
-        addNormalTextToStory(Story,'Equality' + ' : ' + GRADE_CHOICES[round(equality / length)])
-        addNormalTextToStory(Story,'Responsibility' + ' : ' + GRADE_CHOICES[round(responsibility / length)])
+        addNormalTextToStory(Story,'Obedience' + ' : ' + GRADE_CHOICES_3[round(obedience / length)])
+        addNormalTextToStory(Story,'Honesty' + ' : ' + GRADE_CHOICES_3[round(honesty / length)])
+        addNormalTextToStory(Story,'Equality' + ' : ' + GRADE_CHOICES_3[round(equality / length)])
+        addNormalTextToStory(Story,'Responsibility' + ' : ' + GRADE_CHOICES_3[round(responsibility / length)])
         Story.append(Spacer(1,0.05*inch))
-        addNormalTextToStory(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + GRADE_CHOICES[round((obedience + honesty + equality + responsibility) / (4.0 * length))])
+        addNormalTextToStory(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + GRADE_CHOICES_3[round((obedience + honesty + equality + responsibility) / (4.0 * length))])
         Story.append(Spacer(1,0.1*inch))
         
         addNormalTextToStory(Story,'Comments:')
@@ -2338,7 +2349,7 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         bmi = round(float(weight) / (float(height / 100.0) * float(height / 100.0)), 2)
         balancing = physical_fitness_info.Balancing
         try:
-            grade = GRADE_CHOICES[physical_fitness_info.Grade]
+            grade = GRADE_CHOICES_3[physical_fitness_info.Grade]
         except:
             grade = physical_fitness_info.Grade
         pathak = physical_fitness_info.Pathak
