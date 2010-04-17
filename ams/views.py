@@ -455,13 +455,30 @@ def ams_display(request):
 	
 def app_leave(request):
 	message = "";
-	if not request.POST:
+	disabled = 'true'
+	user = 0
+
+	if (not request.user.email) or (request.user.email == ""):
 		form = LeaveForm()
 		return render_to_response('ams/leaveapp.html', {'form': form})
+
+	users = User.objects.filter(Email=request.user.email)
+	if users:
+		user = users[0]
+			
+	if request.user.is_superuser:
+		disabled = 'false'
+	
+	if not request.POST:
+		if user:
+			form = LeaveForm({'Barcode':user.Barcode, 'Category':user.Category.Id, 'Type':1})
+		else:
+			form = LeaveForm()
+		return render_to_response('ams/leaveapp.html', {'form': form, 'disabled':disabled})
 	else:
 		form = LeaveForm(request.POST)
 		if not form.is_valid():
-			return render_to_response('ams/leaveapp.html', {'form': form})
+			return render_to_response('ams/leaveapp.html', {'form': form, 'disabled':disabled})
 		if request.POST['applyforleave'] == '1':
 			if form.is_valid():
 				fdate = form.cleaned_data['FromDate']
@@ -472,7 +489,7 @@ def app_leave(request):
 				
 				if (not fdate) or (not tdate):
 					message = "Please supply both the dates for leave application"
-					return render_to_response('ams/leaveapp.html', {'form': form, 'message': message})
+					return render_to_response('ams/leaveapp.html', {'form': form, 'message': message, 'disabled':disabled})
 				if fdate <= tdate:
 					date = fdate 
 					oneday = datetime.timedelta(1)
@@ -499,7 +516,7 @@ def app_leave(request):
 								if leaves.Status == 2:
 									if date < datetime.datetime.now().date():
 										message = "Leave already approved!"
-										return render_to_response('ams/leaveapp.html', {'form': form, 'message': message})
+										return render_to_response('ams/leaveapp.html', {'form': form, 'message': message, 'disabled':disabled})
 									att = LeaveAttendance.objects.filter(Date=date).filter(Barcode=barcode)
 									att[0].delete()
 								leaves.Status = 1
@@ -522,7 +539,7 @@ def app_leave(request):
 							break
 				else:
 					message = "Enter correct dates!"
-					return render_to_response('ams/leaveapp.html', {'form': form, 'message': message})
+					return render_to_response('ams/leaveapp.html', {'form': form, 'message': message, 'disabled':disabled})
 				message = "Leave application submitted for user " + str(barcode)
 		elif request.POST['applyforleave'] == '2':
 			if form.is_valid():
@@ -532,7 +549,7 @@ def app_leave(request):
 				category = form.cleaned_data['Category']
 				if (not fdate) or (not tdate):
 					message = "Please supply both the dates for leave cancellation"
-					return render_to_response('ams/leaveapp.html', {'form': form, 'message': message})
+					return render_to_response('ams/leaveapp.html', {'form': form, 'message': message, 'disabled':disabled})
 				if fdate <= tdate:
 					date = fdate 
 					oneday = datetime.timedelta(1)
@@ -561,7 +578,7 @@ def app_leave(request):
 							break
 				else:
 					message = "Enter correct dates!"
-					return render_to_response('ams/leaveapp.html', {'form': form, 'message': message})
+					return render_to_response('ams/leaveapp.html', {'form': form, 'message': message, 'disabled':disabled})
 				message = "Leave cancellation submitted for user " + str(barcode)
 		elif request.POST['applyforleave'] == '3':
 			if form.is_valid():
@@ -570,7 +587,7 @@ def app_leave(request):
 				category = form.cleaned_data['Category']
 				if not days:
 					message = "Please give no. of days for encashment!"				
-					return render_to_response('ams/leaveapp.html', {'form': form, 'message': message})
+					return render_to_response('ams/leaveapp.html', {'form': form, 'message': message, 'disabled':disabled})
 				enleave = EncashLeaves()
 				enleave.Barcode = barcode
 				enleave.Days = days
@@ -680,7 +697,7 @@ def app_leave(request):
 		return render_to_response('ams/leaveapp.html', {'datedata':datedata,'form': form, 'data': data, 'message': message, 'abdays': abdays,
 									 'absentdays': absentdays, 'latedays': late, 'ltdays': ltdays, 'hfdays':hfdays, 'halfdays': halfdays,
 									 'balance': balance, 'carryforward': carryforward, 'currentleaves': currentleaves,
-									 'takenleaves': takenleaves, 'forgotdays': forgotdays, 'fcdays': fcdays})
+									 'takenleaves': takenleaves, 'forgotdays': forgotdays, 'fcdays': fcdays, 'disabled':disabled})
 
 def monthly_report(request):
 	message = ""

@@ -14,7 +14,7 @@ class categoryAdmin(admin.ModelAdmin):
 	pass
 	
 class userAdmin(admin.ModelAdmin):
-	list_display = ('Name','Barcode','Category',)
+	list_display = ('Name','Barcode','Category','Email')
 	ordering = ('Barcode',)
 	search_fields =['Barcode', 'Name']
 	def save_model(self, request, obj, form, change):

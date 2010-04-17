@@ -5,6 +5,7 @@ function statusform()
  document.leave.applyforleave.value = 0;
  document.leave.submit();
 }
+
 function cancelform()
 {
  document.leave.applyforleave.value = 2;
@@ -29,8 +30,14 @@ function populatedate(date)
  document.leave.FromDate.value = date;
  document.leave.ToDate.value = date;
 }
+
+function setdisabled(disabled)
+{
+ document.leave.Barcode.disabled = disabled;
+ document.leave.Category.disabled = disabled;
+}
 </script>
-<body>
+<body onload="setdisabled({{disabled}})">
 <div align="center">
 
 <h2>
@@ -42,10 +49,10 @@ Leave Application Form
 {{ form.as_table }}
 </table>
 <br/><b>{{ message }}</b><br/><br/>
-<input type="submit" value="Apply Leave"/>
-<input type="submit" value="Cancel Leave" onClick="cancelform()"/>
-<input type="submit" value="Encash Leave" onClick="encashform()"/>
-<input type="submit" value="Check Status" onClick="statusform()"/>
+<input type="submit" value="Apply Leave" onClick="setdisabled(false)"/>
+<input type="submit" value="Cancel Leave" onClick="setdisabled(false);cancelform()"/>
+<input type="submit" value="Encash Leave" onClick="setdisabled(false);encashform()"/>
+<input type="submit" value="Check Status" onClick="setdisabled(false);statusform()"/>
 <input type="hidden" name="applyforleave" value="1"/>
 </form>
 

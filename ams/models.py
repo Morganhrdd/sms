@@ -89,6 +89,7 @@ class User(models.Model):
 	Barcode = models.PositiveIntegerField(primary_key=True)
 	Category = models.ForeignKey(Category)
 	Name = models.CharField(max_length=30)
+	Email = models.EmailField(unique=True)
 	def __unicode__(self):
 		return "%s" % (self.Name)
 	def __str__(self):
