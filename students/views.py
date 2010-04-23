@@ -1996,7 +1996,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         skillDevelopment = GRADE_CHOICES[abhivyaktiVikas.SkillDevelopment]
         creativity = GRADE_CHOICES[abhivyaktiVikas.Creativity]
         comment = abhivyaktiVikas.PublicComment
-        comment = comment.replace('&','\%38')
+        comment = comment.replace('&','and')
 
         addNormalTextToStory(Story,'<strong>' + 'Abhivyakti' + ' ' + str(i) + '</strong>')
         addNormalTextToStory(Story,'Medium of Expression' + '' + ' : ' + mediumOfExpression)
@@ -2029,7 +2029,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         except:
             grade = competitive_exam.Grade
         comment = competitive_exam.PublicComment
-        comment = comment.replace('&','\%38')
+        comment = comment.replace('&','and')
         
         addNormalTextToStory(Story,'<strong>' + 'Competitive Exam' + ' ' + str(i) + '</strong>')
         data = []
@@ -2056,7 +2056,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         achievement = competition.Achievement
         guide = competition.Guide
         comment = competition.PublicComment
-        comment = comment.replace('&','\%38')
+        comment = comment.replace('&','and')
         
         addNormalTextToStory(Story,'<strong>' + 'Competition'+ ' ' + str(i) + '</strong>')
         data = []
@@ -2087,7 +2087,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         documentation = GRADE_CHOICES_3[project.Documentation]
         communication = GRADE_CHOICES_3[project.Communication]
         comment = project.PublicComment
-        comment = comment.replace('&','\%38')
+        comment = comment.replace('&','and')
 
         addNormalTextToStory(Story,'<strong>' + 'Project'+ ' ' + str(i) + '</strong>')
         addNormalTextToStory(Story,'Title' + ' : ' + title)
@@ -2119,7 +2119,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         pronunciation = GRADE_CHOICES_3[elocution.Pronunciation]
         presentation = GRADE_CHOICES_3[elocution.Presentation]
         comment = elocution.PublicComment
-        comment = comment.replace('&','\%38')
+        comment = comment.replace('&','and')
 
         addNormalTextToStory(Story,'<strong>' + 'Elocution'+ ' ' + str(i) + '</strong>')
         addNormalTextToStory(Story,'Title' + ' : ' + title)
@@ -2147,7 +2147,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         confidence = GRADE_CHOICES[workEx.Confidence]
         involvement = GRADE_CHOICES[workEx.Involvement]
         comment = workEx.PublicComment
-        comment = comment.replace('&','\%38')
+        comment = comment.replace('&','and')
 
         addNormalTextToStory(Story,'<strong>' + 'Work Experience'+ ' ' + str(i) + '</strong>')
         addNormalTextToStory(Story,'Teacher' + ' : ' + teacherName)
@@ -2178,7 +2178,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         except:
             grade = coCurricular.Grade
         comment = coCurricular.PublicComment
-        comment = comment.replace('&','\%38')
+        comment = comment.replace('&','and')
 
         addNormalTextToStory(Story,'<strong>' + 'Activity'+ ' ' + str(i) + '</strong>')
         addNormalTextToStory(Story,'Activity' + ' : ' + activity)
@@ -2225,7 +2225,7 @@ def fillSkillsReport(student_yearly_info, Story):
         i=0
         for thinkingSkill in thinkingSkills:
             comment = thinkingSkill.PublicComment
-            comment = comment.replace('&','\%38')
+            comment = comment.replace('&','and')
             if comment != "":
                 i=i+1
                 addNormalTextToStory(Story, str(i) + '. ' + comment)
@@ -2260,7 +2260,7 @@ def fillSkillsReport(student_yearly_info, Story):
         i=0
         for socialSkill in socialSkills:
             comment = socialSkill.PublicComment
-            comment = comment.replace('&','\%38')
+            comment = comment.replace('&','and')
             if comment != "":
                 i=i+1
                 addNormalTextToStory(Story, str(i) + '. ' + comment)
@@ -2297,7 +2297,7 @@ def fillSkillsReport(student_yearly_info, Story):
         i=0
         for emotionalSkill in emotionalSkills:
             comment = emotionalSkill.PublicComment
-            comment = comment.replace('&','\%38')
+            comment = comment.replace('&','and')
             if comment != "":
                 i=i+1
                 addNormalTextToStory(Story, str(i) + '. ' + comment)
@@ -2337,7 +2337,7 @@ def fillSkillsReport(student_yearly_info, Story):
         i=0
         for attitudeTowardsSchool in attitudeTowardsSchools:
             comment = attitudeTowardsSchool.PublicComment
-            comment = comment.replace('&','\%38')
+            comment = comment.replace('&','and')
             if comment != "":
                 i=i+1
                 addNormalTextToStory(Story, str(i) + '. ' + comment)
@@ -2377,7 +2377,7 @@ def fillSkillsReport(student_yearly_info, Story):
         i=0
         for values in valuess:
             comment = values.PublicComment
-            comment = comment.replace('&','\%38')
+            comment = comment.replace('&','and')
             if comment != "":
                 i=i+1
                 addNormalTextToStory(Story, str(i) + '. ' + comment)
@@ -2400,7 +2400,7 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         addNormalTextToStory(Story,'Cooperation' + ' : ' + GRADE_CHOICES[physicalEducation.Cooperation])
         addNormalTextToStory(Story,'Leadership skill' + ' : ' + GRADE_CHOICES[physicalEducation.LeadershipSkill])
         comment = physicalEducation.PublicComment
-        comment = comment.replace('&','\%38')
+        comment = comment.replace('&','and')
         addNormalTextToStory(Story,'Comment' + ' : ' + comment)
     except:
         addNormalTextToStory(Story,'N/A')
@@ -2435,7 +2435,7 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         pathak = physical_fitness_info.Pathak
         special_sport = physical_fitness_info.SpecialSport
         comment = physical_fitness_info.PublicComment
-        comment = comment.replace('&','\%38')
+        comment = comment.replace('&','and')
 
         data = []
         data.append(['W','H','FFB','FBB','SBJ','VJ','BT','SR','SU','S','400m','SP', 'Spl','BMI','B'])
@@ -2479,7 +2479,7 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         except:
             grade = social_activity.Grade
         comment = social_activity.PublicComment
-        comment = comment.replace('&','\%38')
+        comment = comment.replace('&','and')
 
         addNormalTextToStory(Story,'<strong>' + 'Activity'+ ' ' + str(i) + '</strong>')
         addNormalTextToStory(Story,'Activity' + ' : ' + activity)
@@ -2511,7 +2511,7 @@ def fillLibraryReport(student_yearly_info, Story):
         except:
             grade = library.Grade
         comment = library.PublicComment
-        comment = comment.replace('&','\%38')
+        comment = comment.replace('&','and')
         
         data.append([i,books_read, grade, comment])
     addTableToStory(Story, data, 'CENTER')
