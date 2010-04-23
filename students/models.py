@@ -83,6 +83,18 @@ HOSTEL_CHOICES = (
 	('2', 'Full Hostel'),
 	('3', 'Half Hostel'),
 )
+
+BLOOD_GROUP_CHOICES = (
+    ('0', 'None'),
+    ('A+', 'A+'),
+    ('B+', 'B+'),
+    ('AB+', 'AB+'),
+    ('O+', 'O+'),
+    ('A+', 'A-'),
+    ('B+', 'B-'),
+    ('AB-', 'AB-'),
+    ('O-', 'O-'),
+)
 	
 class StudentBasicInfo(models.Model):
     RegistrationNo = models.PositiveIntegerField(primary_key=True)
@@ -403,6 +415,20 @@ class Values(models.Model):
     class Meta:
         verbose_name_plural = "Values"
 
+class MedicalReport(models.Model):
+    StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
+    Height = models.FloatField()
+    Weight = models.FloatField()
+    BloodGroup = models.CharField(max_length=5, choices=BLOOD_GROUP_CHOICES)
+    VisionL = models.CharField(max_length=200)
+    VisionR = models.CharField(max_length=200)
+    Teeth = models.CharField(max_length=200)
+    OralHygiene = models.CharField(max_length=200)
+    SpecificAilment = models.CharField(max_length=200)
+    Doctor = models.CharField(max_length=200)
+    ClinicAddress = models.CharField(max_length=200)
+    Phone = models.CharField(max_length=15)
+    
 class SearchDetailsForm(forms.Form):
     Year = forms.CharField(max_length=9)
     RegistrationNo = forms.IntegerField(required=False)
@@ -603,5 +629,22 @@ class ValuesDetailsForm(forms.Form):
     Responsibility = forms.ChoiceField(choices=GRADE_CHOICES_3, initial='0')
     PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    Delete = forms.CharField(required=False)
+    
+#
+class MedicalReportForm(forms.Form):
+    pkwidget = forms.HiddenInput()
+    pk=forms.IntegerField(widget=pkwidget, required=False)
+    Height = forms.FloatField(help_text="In cms")
+    Weight = forms.FloatField(help_text="In kgs")
+    BloodGroup = forms.ChoiceField(choices=BLOOD_GROUP_CHOICES, initial='0')
+    VisionL = forms.CharField()
+    VisionR = forms.CharField()
+    Teeth = forms.CharField()
+    OralHygiene = forms.CharField()
+    SpecificAilment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    Doctor = forms.CharField()
+    ClinicAddress = forms.CharField(widget=forms.Textarea(attrs={'rows':3}))
+    Phone = forms.CharField(required=False)
     Delete = forms.CharField(required=False)
     
