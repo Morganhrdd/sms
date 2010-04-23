@@ -1541,7 +1541,7 @@ def reportPDF(request):
                              + '<input type="submit" value="Enter" />'
                              + '</form>'
                              + '<br /><br />'
-                             + 'Type of Report - 0 for All, 1 to 4 for respective Part<br />'
+                             + 'Type of Report - 0 for All, 1 to 5 for respective Part<br />'
                              + 'Standard - 5 to 10 for respective Standard, any other value for All<br />'
                              + 'Division - B for Boys, G for Girls, any other value for for Both<br /><br />'
                              + '<P>An unsaved PDF file will be generated.<br /> It will contain minimum 5 pages per valid registration number.<br /> At bottom-right, the number after letter P is the page number in this PDF document</P>'
@@ -1575,20 +1575,33 @@ def fillPdfData(Story, registration_nos, part_option, standard, division, year_o
             if ((division == 'B') or (division == 'G')) and (student_division != division):
                 continue
 
+            #calculate skill grades and populate
+            skillsStory = []
+            skillGrades = {
+                'ThinkingSkill': '-',
+                'SocialSkill': '-',
+                'EmotionalSkill': '-',
+                'AttitudeTowardsSchool': '-',
+                'Values': '-'
+            }
+            fillSkillsReport(student_yearly_info, skillGrades, skillsStory)
+            
             #populate content as per the option chosen
             if part_option == 0:
-                fillStaticAndYearlyInfo(student_yearly_info, Story)
+                fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story)
                 fillAcademicReport(student_yearly_info, Story)
                 fillCoCurricularReport(student_yearly_info, Story)
-                fillSkillsReport(student_yearly_info, Story)
+                Story.append(skillsStory)
                 fillOutdoorActivityReport(student_yearly_info, Story)
             if part_option == 1:
-                fillStaticAndYearlyInfo(student_yearly_info, Story)
+                fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story)
             if part_option == 2:
                 fillAcademicReport(student_yearly_info, Story)
             if part_option == 3:
                 fillCoCurricularReport(student_yearly_info, Story)
             if part_option == 4:
+                Story.append(skillsStory)
+            if part_option == 5:
                 fillOutdoorActivityReport(student_yearly_info, Story)
 
 #helper functions for populating content to pdf report
@@ -1610,15 +1623,15 @@ def addTableToStory(Story,data,align):
 def addMainHeaderToStory(Story,header_text):
     style = ParagraphStyle(name = 'MainHeader', fontSize = 12, alignment=TA_CENTER)
     Story.append(Paragraph("<strong>" + header_text + "</strong>", style))
-    Story.append(Spacer(1,0.25*inch))
+    Story.append(Spacer(1,0.20*inch))
 
 def addSubHeaderToStory(Story,header_text):
     style = ParagraphStyle(name = 'SubHeader', fontSize = 10, alignment=TA_CENTER)
     Story.append(Paragraph("<strong>" + header_text + "</strong>", style))
-    Story.append(Spacer(1,0.25*inch))
+    Story.append(Spacer(1,0.20*inch))
 
 def addSignatureSpaceToStory(Story,signature_text,designation):
-    Story.append(Spacer(1,0.4*inch))
+    Story.append(Spacer(1,0.3*inch))
     style = ParagraphStyle(name = 'SignatureStyle', fontSize = 10, alignment=TA_RIGHT)
     Story.append(Paragraph(signature_text, style))
     Story.append(Paragraph(designation, style))
@@ -1724,7 +1737,7 @@ def fillStudentAttendance(student_yearly_info, Story, class_type):
     Story.append(Spacer(1,0.25*inch))
 
 #first page, letter head, static info and summary
-def fillStaticAndYearlyInfo(student_yearly_info, Story):
+def fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story):
     student_basic_info = student_yearly_info.StudentBasicInfo
 
     try:
@@ -1865,6 +1878,11 @@ def fillStaticAndYearlyInfo(student_yearly_info, Story):
             ['Projects',cumulative_project_grade],
             ['Elocution',cumulative_elocution_grade],
             ['Social activities',cumulative_social_grade],
+            ['Thinking Skill',skillGrades['ThinkingSkill']],
+            ['Social Skill',skillGrades['SocialSkill']],
+            ['Emotional Skill',skillGrades['EmotionalSkill']],
+            ['Attitude Towards School',skillGrades['AttitudeTowardsSchool']],
+            ['Values',skillGrades['Values']],
             ['Library',cumulative_library_grade],
             ['Attendance',cumulative_attendance_percentage]
         )
@@ -2191,8 +2209,8 @@ def fillCoCurricularReport(student_yearly_info, Story):
 
     Story.append(PageBreak())
 
-def fillSkillsReport(student_yearly_info, Story):
-    addMainHeaderToStory(Story, "Part 3.1: Skills Report")
+def fillSkillsReport(student_yearly_info, skillGrades, Story):
+    addMainHeaderToStory(Story, "Part 4: Skills Report")
 
     # Thinking Skill
     addSubHeaderToStory(Story, "Thinking Skill")
@@ -2218,7 +2236,8 @@ def fillSkillsReport(student_yearly_info, Story):
         addNormalTextToStory(Story,'Creativity' + ' : ' + GRADE_CHOICES[round(creativity / length)])
         addNormalTextToStory(Story,'DecisionMakingAndProblemSolving' + ' : ' + GRADE_CHOICES[round(decisionMaking / length)])
         Story.append(Spacer(1,0.05*inch))
-        addNormalTextToStory(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + GRADE_CHOICES[round((inquiry + logicalThinking + creativity + decisionMaking) / (4.0 * length))])
+        skillGrades['ThinkingSkill'] = GRADE_CHOICES[round((inquiry + logicalThinking + creativity + decisionMaking) / (4.0 * length))]
+        addNormalTextToStory(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + skillGrades['ThinkingSkill'])
         Story.append(Spacer(1,0.1*inch))
 
         addNormalTextToStory(Story,'Comments:')
@@ -2253,7 +2272,8 @@ def fillSkillsReport(student_yearly_info, Story):
         addNormalTextToStory(Story,'InterPersonal' + ' : ' + GRADE_CHOICES[round(interPersonal / length)])
         addNormalTextToStory(Story,'Working in group' + ' : ' + GRADE_CHOICES[round(teamWork / length)])
         Story.append(Spacer(1,0.05*inch))
-        addNormalTextToStory(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + GRADE_CHOICES[round((communication + interPersonal + teamWork) / (3.0 * length))])
+        skillGrades['SocialSkill'] = GRADE_CHOICES[round((communication + interPersonal + teamWork) / (3.0 * length))]
+        addNormalTextToStory(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + skillGrades['SocialSkill'])
         Story.append(Spacer(1,0.1*inch))
 
         addNormalTextToStory(Story,'Comments:')
@@ -2290,7 +2310,8 @@ def fillSkillsReport(student_yearly_info, Story):
         addNormalTextToStory(Story,'Expression' + ' : ' + GRADE_CHOICES[round(expression / length)])
         addNormalTextToStory(Story,'Management' + ' : ' + GRADE_CHOICES[round(management / length)])
         Story.append(Spacer(1,0.05*inch))
-        addNormalTextToStory(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + GRADE_CHOICES[round((empathy + expression + management) / (3.0 * length))])
+        skillGrades['EmotionalSkill'] = GRADE_CHOICES[round((empathy + expression + management) / (3.0 * length))]
+        addNormalTextToStory(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + skillGrades['EmotionalSkill'])
         Story.append(Spacer(1,0.1*inch))
         
         addNormalTextToStory(Story,'Comments:')
@@ -2330,7 +2351,8 @@ def fillSkillsReport(student_yearly_info, Story):
         addNormalTextToStory(Story,'SchoolPrograms' + ' : ' + GRADE_CHOICES_3[round(schoolPrograms / length)])
         addNormalTextToStory(Story,'SchoolEnvironment' + ' : ' + GRADE_CHOICES_3[round(schoolEnvironment / length)])
         Story.append(Spacer(1,0.05*inch))
-        addNormalTextToStory(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + GRADE_CHOICES_3[round((schoolTeachers + schoolMates + schoolPrograms + schoolEnvironment) / (4.0 * length))])
+        skillGrades['AttitudeTowardsSchool'] = GRADE_CHOICES_3[round((schoolTeachers + schoolMates + schoolPrograms + schoolEnvironment) / (4.0 * length))]
+        addNormalTextToStory(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + skillGrades['AttitudeTowardsSchool'])
         Story.append(Spacer(1,0.1*inch))
         
         addNormalTextToStory(Story,'Comments:')
@@ -2370,7 +2392,8 @@ def fillSkillsReport(student_yearly_info, Story):
         addNormalTextToStory(Story,'Equality' + ' : ' + GRADE_CHOICES_3[round(equality / length)])
         addNormalTextToStory(Story,'Responsibility' + ' : ' + GRADE_CHOICES_3[round(responsibility / length)])
         Story.append(Spacer(1,0.05*inch))
-        addNormalTextToStory(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + GRADE_CHOICES_3[round((obedience + honesty + equality + responsibility) / (4.0 * length))])
+        skillGrades['Values'] = GRADE_CHOICES_3[round((obedience + honesty + equality + responsibility) / (4.0 * length))]
+        addNormalTextToStory(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + skillGrades['Values'])
         Story.append(Spacer(1,0.1*inch))
         
         addNormalTextToStory(Story,'Comments:')
@@ -2387,7 +2410,7 @@ def fillSkillsReport(student_yearly_info, Story):
     Story.append(PageBreak())
 
 def fillOutdoorActivityReport(student_yearly_info, Story):
-    addMainHeaderToStory(Story, "Part 4: Outdoor Activity Report")
+    addMainHeaderToStory(Story, "Part 5: Outdoor Activity Report")
 
     # Physical Education
     addSubHeaderToStory(Story, "Physical Education")
