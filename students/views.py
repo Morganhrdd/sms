@@ -1676,7 +1676,7 @@ def fillStudentAttendance(student_yearly_info, Story, class_type):
     for i in range(6, 13):
         data_row.append(MONTH_CHOICES[i])
     #append jan to may
-    for i in range(1, 6):
+    for i in range(1, 5):
         data_row.append(MONTH_CHOICES[i])
     data_row.append("Total")
     data.append(data_row)
@@ -1706,7 +1706,7 @@ def fillStudentAttendance(student_yearly_info, Story, class_type):
     data_row.append('Attendance')
     for i in range(6, 13):
         data_row.append(monthly_attendance[i])
-    for i in range(1, 6):
+    for i in range(1, 5):
         data_row.append(monthly_attendance[i])
     data_row.append(cumulative_attendance)
     data.append(data_row)
@@ -1715,7 +1715,7 @@ def fillStudentAttendance(student_yearly_info, Story, class_type):
     data_row.append('Working Days')
     for i in range(6, 13):
         data_row.append(monthly_workingdays[i])
-    for i in range(1, 6):
+    for i in range(1, 5):
         data_row.append(monthly_workingdays[i])
     data_row.append(cumulative_workingdays)
     data.append(data_row)
@@ -2003,7 +2003,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         addNormalTextToStory(Story,'Teacher' + ' : ' + teacher_name)
         Story.append(Spacer(1,0.2*inch))
         data = []
-        data.append(['Participation','Readiness to Learn','Perseverance','Pronunciation Development','Creativity'])
+        data.append(['Participation','Readiness to Learn','Continuity in Work','Skill Development','Creativity'])
         data.append([participation,readinessToLearn,continuityInWork,skillDevelopment,creativity])
         addTableToStory(Story, data, 'CENTER')
         addNormalTextToStory(Story,'Comment' + ' : ' + comment)
@@ -2286,7 +2286,7 @@ def fillSkillsReport(student_yearly_info, Story):
             management = management + GRADE_NUM[emotionalSkill.Management]
        
         #total grades
-        addNormalTextToStory(Story,'Emotional control' + ' : ' + GRADE_CHOICES[round(empathy / length)])
+        addNormalTextToStory(Story,'Emotional understanding' + ' : ' + GRADE_CHOICES[round(empathy / length)])
         addNormalTextToStory(Story,'Expression' + ' : ' + GRADE_CHOICES[round(expression / length)])
         addNormalTextToStory(Story,'Management' + ' : ' + GRADE_CHOICES[round(management / length)])
         Story.append(Spacer(1,0.05*inch))
