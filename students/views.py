@@ -7,13 +7,13 @@ from jp_sms.students.models import SubjectMaster, ClassMaster, SubjectMaster, At
 from jp_sms.students.models import StudentAttendance, StudentAdditionalInformation,CoCurricular
 from jp_sms.students.models import SocialActivity,PhysicalFitnessInfo,AbhivyaktiVikas,Teacher
 from jp_sms.students.models import WorkExperience, PhysicalEducation, ThinkingSkill, SocialSkill, EmotionalSkill
-from jp_sms.students.models import AttitudeTowardsSchool, Values
+from jp_sms.students.models import AttitudeTowardsSchool, Values, MedicalReport
 from jp_sms.students.models import SearchDetailsForm, CompetitionDetailsForm, ElocutionDetailsForm, ValuesDetailsForm
 from jp_sms.students.models import ProjectDetailsForm, AbhivyaktiVikasDetailsForm, CompetitiveExamDetailsForm
 from jp_sms.students.models import CoCurricularDetailsForm, SocialActivityDetailsForm, PhysicalFitnessInfoDetailsForm
 from jp_sms.students.models import WorkExperienceDetailsForm, PhysicalEducationDetailsForm, ThinkingSkillDetailsForm
 from jp_sms.students.models import SocialSkillDetailsForm, EmotionalSkillDetailsForm, AttitudeTowardsSchoolDetailsForm
-from jp_sms.students.models import Project,Elocution,Library,Competition,CompetitiveExam,STANDARD_CHOICES
+from jp_sms.students.models import Project,Elocution,Library,Competition,CompetitiveExam,STANDARD_CHOICES, MedicalReportForm
 from django.template import Context
 from django.template.loader import get_template
 from reportlab.pdfgen import canvas
@@ -95,11 +95,11 @@ GRADE_CHOICES_3 = {
     '0': 'None',
     '1': 'Satisfactory',
     '2': 'Good',
-    '3': 'Outstanding'
+    '3': 'Outstanding',
      0 : 'None',
      1 : 'Satisfactory',
      2 : 'Good',
-     3 : 'Outstanding'
+     3 : 'Outstanding',
 }
 
 GRADE_NUM = {
@@ -1262,7 +1262,7 @@ def values_add(request):
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg})
+            return render_to_response(respage,{'form':genform,'msg':msg})
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -1315,6 +1315,70 @@ def values_add(request):
         return render_to_response(respage,{'form':genform})
     
 
+#
+def medicalreport_add(request):
+    respage = 'students/AddMedicalReport.html'
+    if not request.POST:
+        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
+        return render_to_response(respage,{'form':genform})
+    else:
+        genform = SearchDetailsForm(request.POST)
+        msg = search_reg_no(request=request)
+        if msg:
+            return render_to_response(respage,{'form':genform,'msg':msg})
+        if request.POST.has_key('RegistrationNo'):
+            regno = request.POST['RegistrationNo']
+            student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
+            name = '%s %s' % (student_info.FirstName, student_info.LastName)
+            yr = request.POST['Year']
+            yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
+            # store data
+            if request.POST.has_key('pk'):
+                pk = request.POST['pk']
+                delete = request.POST['Delete']
+                if pk and delete in ('Y', 'y'):
+                    MedicalReport.objects.get(pk=pk).delete()
+                if delete not in ('Y', 'y'):
+                    if pk:
+                        medicalreport_obj = MedicalReport.objects.get(pk=pk)
+                    else:
+                        medicalreport_obj = MedicalReport()
+                    medicalreport_obj.StudentYearlyInformation = yearly_info
+                    medicalreport_obj.Height = request.POST['Height']
+                    medicalreport_obj.Weight = request.POST['Weight']
+                    medicalreport_obj.BloodGroup = request.POST['BloodGroup'] or '0'
+                    medicalreport_obj.VisionL = request.POST['VisionL']
+                    medicalreport_obj.VisionR = request.POST['VisionR']
+                    medicalreport_obj.Teeth = request.POST['Teeth']
+                    medicalreport_obj.OralHygiene = request.POST['OralHygiene']
+                    medicalreport_obj.SpecificAilment = request.POST['SpecificAilment']
+                    medicalreport_obj.Doctor = request.POST['Doctor']
+                    medicalreport_obj.ClinicAddress = request.POST['ClinicAddress']
+                    medicalreport_obj.Phone = request.POST['Phone']
+                    medicalreport_obj.save()
+            # end store data
+            medicalreport_objs = MedicalReport.objects.filter(StudentYearlyInformation=yearly_info)
+            data = []
+            for medicalreport_obj in medicalreport_objs:
+                tmp = {}
+                tmp['pk'] = medicalreport_obj.pk
+                tmp['Height'] = medicalreport_obj.Height
+                tmp['Weight'] = medicalreport_obj.Weight
+                tmp['BloodGroup'] = medicalreport_obj.BloodGroup
+                tmp['VisionL'] = medicalreport_obj.VisionL
+                tmp['VisionR'] = medicalreport_obj.VisionR
+                tmp['Teeth'] = medicalreport_obj.Teeth
+                tmp['OralHygiene'] = medicalreport_obj.OralHygiene
+                tmp['SpecificAilment'] = medicalreport_obj.SpecificAilment
+                tmp['Doctor'] = medicalreport_obj.Doctor
+                tmp['ClinicAddress'] = medicalreport_obj.ClinicAddress
+                tmp['Phone'] = medicalreport_obj.Phone
+                x = MedicalReportForm(initial=tmp)
+                data.append(x)
+            if not len(data):
+                data.append(MedicalReportForm(initial={'Delete':'Y'}))
+            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
+        return render_to_response(respage,{'form':genform})
 
 def display_report(request, regno=None, year=None):
     if request.user.username != str(regno) and not request.user.is_superuser and request.user.is_active:
