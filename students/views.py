@@ -1620,6 +1620,9 @@ def addTableToStory(Story,data,align):
     Story.append(table)
     Story.append(Spacer(1,0.1*inch))
 
+def formatDate(dateObj):
+    return dateObj.strftime("%d %b %Y")
+
 def addMainHeaderToStory(Story,header_text):
     style = ParagraphStyle(name = 'MainHeader', fontSize = 12, alignment=TA_CENTER)
     Story.append(Paragraph("<strong>" + header_text + "</strong>", style))
@@ -1644,13 +1647,13 @@ def fillLetterHead(Story):
     style = ParagraphStyle(name='styleName', fontName ='Times-Bold', fontSize = 18, alignment=TA_CENTER)
     Story.append(Paragraph("Jnana Prabodhini Prashala", style))
 
-    Story.append(Spacer(1,0.1*inch))
+    Story.append(Spacer(1,0.2*inch))
 
-    style = ParagraphStyle(name='styleName', fontName ='Times-Roman', fontSize = 8, alignment=TA_CENTER)
+    style = ParagraphStyle(name='styleName', fontName ='Times-Roman', fontSize = 7, alignment=TA_CENTER)
     Story.append(Paragraph("School Affiliation No:1130001", style))
     Story.append(Paragraph("C.B.S.E./A.I./69/(G)/12096/30/4/69", style))
 
-    style = ParagraphStyle(name='styleName', fontName ='Times-Roman', fontSize = 9, alignment=TA_CENTER)
+    style = ParagraphStyle(name='styleName', fontName ='Times-Roman', fontSize = 7, alignment=TA_CENTER)
     Story.append(Paragraph("510, Sadashiv Peth, Pune, 411030", style))
     Story.append(Paragraph("email: prashala@jnanaprabodhini.org", style))
     Story.append(Paragraph("http://prashala.jnanaprabodhini.org", style))
@@ -1750,10 +1753,9 @@ def fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story):
 
     year = student_yearly_data.ClassMaster.AcademicYear.Year
     addSubHeaderToStory(Story, "Year" + " " + year)
-    Story.append(Spacer(1,0.15*inch))
+    Story.append(Spacer(1,0.1*inch))
 
     addMainHeaderToStory(Story, "Part 1: General Information")
-    Story.append(Spacer(1,0.1*inch))
     data = []
     data=(
             ['Registration No.: ' , student_basic_info.RegistrationNo,''],
@@ -1767,11 +1769,10 @@ def fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story):
     table=Table(data)
     table_style = TableStyle([
         ('FONT', (0,0), (-1,0), 'Times-Roman'),
-        ('FONTSIZE',(0,0),(-1,-1),10)])
+        ('FONTSIZE',(0,0),(-1,-1),9)])
     table.setStyle(table_style)
     table.hAlign='LEFT'
     Story.append(table)
-    Story.append(Spacer(1,0.2*inch))
 
     # cumulative Academics
     marks = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
@@ -1892,7 +1893,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story):
     Story.append(Paragraph('Note: Grades are Outstanding, Excellent, Good, Satisfactory, Needs improvement and Unsatisfactory,', tipStyle))
     Story.append(Paragraph('which indicate level of participation or performance', tipStyle))
 
-    Story.append(Spacer(1,0.7*inch))
+    Story.append(Spacer(1,0.4*inch))
 
     # Signature
     data = []
@@ -2041,7 +2042,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         name = competitive_exam.Name
         subject = competitive_exam.Subject
         level = competitive_exam.Level
-        date = competitive_exam.Date
+        date = formatDate(competitive_exam.Date)
         try:
             grade = GRADE_CHOICES[competitive_exam.Grade]
         except:
@@ -2070,7 +2071,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         i = i + 1
         organizer = competition.Organizer
         subject = competition.Subject
-        date = competition.Date
+        date = formatDate(competition.Date)
         achievement = competition.Achievement
         guide = competition.Guide
         comment = competition.PublicComment
@@ -2189,7 +2190,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         i = i + 1
         activity = coCurricular.Activity
         objectives = coCurricular.Objectives
-        date = coCurricular.Date
+        date = formatDate(coCurricular.Date)
         guide = coCurricular.Guide
         try:
             grade = GRADE_CHOICES[coCurricular.Grade]
@@ -2495,7 +2496,7 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         i = i + 1
         activity = social_activity.Activity
         objectives = social_activity.Objectives
-        date = social_activity.Date
+        date = formatDate(social_activity.Date)
         organizer = social_activity.Organizer
         try:
             grade = GRADE_CHOICES[social_activity.Grade]
@@ -2651,7 +2652,7 @@ def fillCertificate(student_basic_info, Story):
     Story.append(Spacer(1,0.2*inch))
 
     now_time = datetime.datetime.now()
-    date = now_time.strftime("%d %b %Y")
+    date = formatDate(now_time)
     addCertificateNumberTextToStory(Story, "Date : " + date)
 
     Story.append(Spacer(1,0.7*inch))
@@ -2709,7 +2710,7 @@ def fillCertificate(student_basic_info, Story):
     addCertificateTextToStory(Story, genderMentionCapital + " belongs to " + "<strong>" + caste + "</strong>" + " category")
 
     dateOfBirth = student_basic_info.DateOfBirth
-    birthDate = dateOfBirth.strftime("%d %b %Y")
+    birthDate = formatDate(dateOfBirth)
     addCertificateTextToStory(Story, "According to our school record, " + genderBelong + " birth date is " + "<strong>" + birthDate +"</strong>")
 
     addCertificateTextToStory(Story, "To the best of my knowledge and belief, " + genderMentionSmall + " bears good moral character.")
@@ -2848,12 +2849,12 @@ def fillSchoolLeaving(student_yearly_info, Story):
     Story.append(Spacer(1,0.2*inch))
 
     now_time = datetime.datetime.now()
-    date = now_time.strftime("%d %b %Y")
+    date = formatDate(now_time)
     addCertificateNumberTextToStory(Story, "Date : " + date)
 
     terminationDate = student_basic_info.TerminationDate
     try:
-        terminationDate = terminationDate.strftime("%d %b %Y")
+        terminationDate = formatDate(terminationDate)
     except:
         terminationDate = "NOT AVAILABLE"
         addSchoolLeavingTextToStory(Story, "CERTIFICATE IS NOT VALID as Date of Leaving School is not available")
@@ -2872,7 +2873,7 @@ def fillSchoolLeaving(student_yearly_info, Story):
     birthDateInWords = int2word(dateOfBirth.day) + FULLMONTH_CHOICES[dateOfBirth.month] + " " + int2word(dateOfBirth.year)
 
     dateOfRegistration = student_basic_info.DateOfRegistration
-    dateOfRegistration = dateOfRegistration.strftime("%d %b %Y")
+    dateOfRegistration = formatDate(dateOfRegistration)
 
     progress = ""
     conduct = ""
