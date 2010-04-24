@@ -1646,11 +1646,11 @@ def fillLetterHead(Story):
 
     Story.append(Spacer(1,0.1*inch))
 
-    style = ParagraphStyle(name='styleName', fontName ='Times-Roman', fontSize = 8, alignment=TA_CENTER)
+    style = ParagraphStyle(name='styleName', fontName ='Times-Roman', fontSize = 7, alignment=TA_CENTER)
     Story.append(Paragraph("School Affiliation No:1130001", style))
     Story.append(Paragraph("C.B.S.E./A.I./69/(G)/12096/30/4/69", style))
 
-    style = ParagraphStyle(name='styleName', fontName ='Times-Roman', fontSize = 9, alignment=TA_CENTER)
+    style = ParagraphStyle(name='styleName', fontName ='Times-Roman', fontSize = 8, alignment=TA_CENTER)
     Story.append(Paragraph("510, Sadashiv Peth, Pune, 411030", style))
     Story.append(Paragraph("email: prashala@jnanaprabodhini.org", style))
     Story.append(Paragraph("http://prashala.jnanaprabodhini.org", style))
@@ -1750,7 +1750,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story):
 
     year = student_yearly_data.ClassMaster.AcademicYear.Year
     addSubHeaderToStory(Story, "Year" + " " + year)
-    Story.append(Spacer(1,0.15*inch))
+    Story.append(Spacer(1,0.1*inch))
 
     addMainHeaderToStory(Story, "Part 1: General Information")
     Story.append(Spacer(1,0.1*inch))
@@ -1767,7 +1767,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story):
     table=Table(data)
     table_style = TableStyle([
         ('FONT', (0,0), (-1,0), 'Times-Roman'),
-        ('FONTSIZE',(0,0),(-1,-1),10)])
+        ('FONTSIZE',(0,0),(-1,-1),9)])
     table.setStyle(table_style)
     table.hAlign='LEFT'
     Story.append(table)
@@ -1892,7 +1892,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story):
     Story.append(Paragraph('Note: Grades are Outstanding, Excellent, Good, Satisfactory, Needs improvement and Unsatisfactory,', tipStyle))
     Story.append(Paragraph('which indicate level of participation or performance', tipStyle))
 
-    Story.append(Spacer(1,0.7*inch))
+    Story.append(Spacer(1,0.4*inch))
 
     # Signature
     data = []
