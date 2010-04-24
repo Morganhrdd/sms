@@ -1753,7 +1753,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story):
 
     year = student_yearly_data.ClassMaster.AcademicYear.Year
     addSubHeaderToStory(Story, "Year" + " " + year)
-    Story.append(Spacer(1,0.1*inch))
+    Story.append(Spacer(1,0.05*inch))
 
     addMainHeaderToStory(Story, "Part 1: General Information")
     data = []
@@ -1769,7 +1769,8 @@ def fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story):
     table=Table(data)
     table_style = TableStyle([
         ('FONT', (0,0), (-1,0), 'Times-Roman'),
-        ('FONTSIZE',(0,0),(-1,-1),9)])
+        ('FONTSIZE',(0,0),(-1,-1),9),
+        ('BOTTOMPADDING',(0,0),(-1,-1),1)])
     table.setStyle(table_style)
     table.hAlign='LEFT'
     Story.append(table)
