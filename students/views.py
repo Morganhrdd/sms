@@ -1591,7 +1591,7 @@ def fillPdfData(Story, registration_nos, part_option, standard, division, year_o
                 fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story)
                 fillAcademicReport(student_yearly_info, Story)
                 fillCoCurricularReport(student_yearly_info, Story)
-                Story.append(skillsStory)
+                Story += skillsStory
                 fillOutdoorActivityReport(student_yearly_info, Story)
             if part_option == 1:
                 fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story)
