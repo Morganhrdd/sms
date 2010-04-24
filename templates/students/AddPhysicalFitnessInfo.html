@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>AddPhysicalFitnessInfo</title>
+	<!-- Date: 2008-10-12 -->
+</head>
+<body>
+    <a href="/">Home</a>
+ 	<br/>
+        {{ msg|safe }}
+		<img src={{photo}} />
+        <form action="" method="POST">
+		    <table cellSpacing=0 cellPadding=5 width="50%" border=0 style="WIDTH: 50%" align=center>
+                {{ form.as_table }}
+            </table>
+            <input type="submit" value="Go"/>
+
+        </form>
+        {% if data %}
+	    {% for f in data %}
+        <form action="" method="POST">
+			<hr />
+		    {{ form.Year }}
+		    {{ form.RegistrationNo }} {{ name }}
+                <table>
+                        {{ f.as_table }}
+        	    </table>
+		    <input type="submit" value="Save" />
+	    </form>
+	    {% endfor %}
+		{% endif %}
+</body>
+</html>

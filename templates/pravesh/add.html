@@ -1,0 +1,17 @@
+<html>
+<body>
+    <br/><b>{{ message }}</b><br/><br/>
+    <a href='/pravesh'>Home</a>
+    {% if form %}
+    <form name="add" action="/pravesh/add/" method="post">
+        <table>
+            {{ form.as_table }}
+        </table>
+        <input type="submit" value="{{button_name}}"/>
+        {% if edit %}
+        <input type="hidden" id="edit" name="edit" value="{{ edit }}">
+        {% endif %}
+    </form>
+    {% endif %}
+</body>
+</html>
