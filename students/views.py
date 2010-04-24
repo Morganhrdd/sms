@@ -1481,9 +1481,10 @@ def laterPages(canvas, doc):
     canvas.saveState()
     canvas.setFont('Times-Roman',6)
     now_time = datetime.datetime.now()
-    epoch_seconds = time.mktime(now_time.timetuple())
+    #epoch_seconds = time.mktime(now_time.timetuple())
+    epoch_seconds = now_time.strftime("%d %b %Y %I:%M:%S%p")
     #the number at the bottom right of page will let us trace the exact date and time and will never repeat for any documents
-    canvas.drawString(PAGE_WIDTH / 2, 0.75 * inch, "%s          ES%dP%d" % ("Jnana Prabodhini Prashala's Certificate of School Based Evaluation", epoch_seconds, doc.page))
+    canvas.drawString(PAGE_WIDTH / 2, 0.55 * inch, "%s          %s   page %d" % ("Jnana Prabodhini Prashala's Certificate of School Based Evaluation", epoch_seconds, doc.page))
     canvas.restoreState()
     pageBorder(canvas)
 
