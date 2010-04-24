@@ -1481,9 +1481,10 @@ def laterPages(canvas, doc):
     canvas.saveState()
     canvas.setFont('Times-Roman',6)
     now_time = datetime.datetime.now()
-    epoch_seconds = time.mktime(now_time.timetuple())
+    #epoch_seconds = time.mktime(now_time.timetuple())
+    epoch_seconds = now_time.strftime("%d %b %Y %I:%M:%S%p")
     #the number at the bottom right of page will let us trace the exact date and time and will never repeat for any documents
-    canvas.drawString(PAGE_WIDTH / 2, 0.75 * inch, "%s          ES%dP%d" % ("Jnana Prabodhini Prashala's Certificate of School Based Evaluation", epoch_seconds, doc.page))
+    canvas.drawString(PAGE_WIDTH / 2, 0.55 * inch, "%s          %s   page %d" % ("Jnana Prabodhini Prashala's Certificate of School Based Evaluation", epoch_seconds, doc.page))
     canvas.restoreState()
     pageBorder(canvas)
 
@@ -1753,7 +1754,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story):
 
     year = student_yearly_data.ClassMaster.AcademicYear.Year
     addSubHeaderToStory(Story, "Year" + " " + year)
-    Story.append(Spacer(1,0.1*inch))
+    Story.append(Spacer(1,0.05*inch))
 
     addMainHeaderToStory(Story, "Part 1: General Information")
     data = []
@@ -1769,7 +1770,8 @@ def fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story):
     table=Table(data)
     table_style = TableStyle([
         ('FONT', (0,0), (-1,0), 'Times-Roman'),
-        ('FONTSIZE',(0,0),(-1,-1),9)])
+        ('FONTSIZE',(0,0),(-1,-1),9),
+        ('BOTTOMPADDING',(0,0),(-1,-1),1)])
     table.setStyle(table_style)
     table.hAlign='LEFT'
     Story.append(table)
