@@ -1484,7 +1484,7 @@ def laterPages(canvas, doc):
     #epoch_seconds = time.mktime(now_time.timetuple())
     epoch_seconds = now_time.strftime("%d %b %Y %I:%M:%S%p")
     #the number at the bottom right of page will let us trace the exact date and time and will never repeat for any documents
-    canvas.drawString(PAGE_WIDTH / 2, 0.55 * inch, "%s          %s   page %d" % ("Jnana Prabodhini Prashala's Certificate of School Based Evaluation", epoch_seconds, doc.page))
+    canvas.drawString(0.4 * PAGE_WIDTH, 0.75 * inch, "%s          %s   page %d" % ("Jnana Prabodhini Prashala's Certificate of School Based Evaluation", epoch_seconds, doc.page))
     canvas.restoreState()
     pageBorder(canvas)
 
@@ -1623,6 +1623,15 @@ def addTableToStory(Story,data,align):
     table.hAlign=align
     Story.append(table)
     Story.append(Spacer(1,0.1*inch))
+
+def addNoBorderTableToStory(Story, data):
+    table=Table(data)
+    table_style = TableStyle([
+        ('FONT', (0,0), (-1,0), 'Times-Roman'),
+        ('FONTSIZE',(0,0),(-1,-1),9)])
+    table.setStyle(table_style)
+    table.hAlign='LEFT'
+    Story.append(table)
 
 def formatDate(dateObj):
     return dateObj.strftime("%d %b %Y")
@@ -1771,14 +1780,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story):
             ['Standard: ' , student_yearly_data.ClassMaster.Standard,''],
             ['Roll No.: ' , student_yearly_data.RollNo,''],
         )
-    table=Table(data)
-    table_style = TableStyle([
-        ('FONT', (0,0), (-1,0), 'Times-Roman'),
-        ('FONTSIZE',(0,0),(-1,-1),9),
-        ('BOTTOMPADDING',(0,0),(-1,-1),1)])
-    table.setStyle(table_style)
-    table.hAlign='LEFT'
-    Story.append(table)
+    addNoBorderTableToStory(Story, data)
 
     # cumulative Academics
     marks = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
@@ -2536,14 +2538,21 @@ def fillLibraryAndMedicalReport(student_yearly_info, Story):
     try:
         library = Library.objects.get(StudentYearlyInformation=student_yearly_info)
 
-        addNormalTextToStory(Story,'Books Read' + ' : ' + str(library.BooksRead))
-        addNormalTextToStory(Story,'Grade' + ' : ' + GRADE_CHOICES[library.Grade])
-        addNormalTextToStory(Story,'Comment' + ' : ' + library.PublicComment)     
+        comment = library.PublicComment
+        comment = comment.replace('&','and')
+        
+        data = []
+        data.append(['Books Read',str(library.BooksRead)])
+        data.append(['Grade',GRADE_CHOICES[library.Grade]])
+        data.append(['Comment',comment])
+        addNoBorderTableToStory(Story, data)   
     except:
         addNormalTextToStory(Story,'Not available')
 
     Story.append(Spacer(1,0.3*inch))
     addSignatureSpaceToStory(Story, "","Librarian")
+    Story.append(Spacer(1,1*inch))
+
 
     #Medical Report
     addSubHeaderToStory(Story, "Medical Report")
@@ -2557,12 +2566,14 @@ def fillLibraryAndMedicalReport(student_yearly_info, Story):
         data.append(['VisionL',medicalReport.VisionL])
         data.append(['VisionR',medicalReport.VisionR])
         data.append(['Oral Hygiene',medicalReport.OralHygiene])
-        addTableToStory(Story, data, 'CENTER')
-
-        addNormalTextToStory(Story,'Specific Ailment' + ' : ' + medicalReport.SpecificAilment)
-        addNormalTextToStory(Story,'Doctor' + ' : ' + medicalReport.Doctor)
-        addNormalTextToStory(Story,'Clinic Address' + ' : ' + medicalReport.ClinicAddress)
-        addNormalTextToStory(Story,'Phone' + ' : ' + medicalReport.Phone)        
+        data.append(['Specific Ailment',medicalReport.SpecificAilment])
+        addNoBorderTableToStory(Story, data)
+        Story.append(Spacer(1,0.1*inch))
+        data = []
+        data.append(['Doctor',medicalReport.Doctor])
+        data.append(['Clinic Address',medicalReport.ClinicAddress])
+        data.append(['Phone',medicalReport.Phone])
+        addNoBorderTableToStory(Story, data)
     except:
         addNormalTextToStory(Story,'Not available')
  
