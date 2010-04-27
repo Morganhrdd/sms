@@ -1931,27 +1931,14 @@ def fillAcademicReport(student_yearly_info, Story):
         subject_data.append(test_marks)
 
     #desired sequence
-    temp_sort = {}
-    temp_sort['ENG'] = subjects_data['ENG']
-    temp_sort['SAN'] = subjects_data['SAN']
-    temp_sort['MAT'] = subjects_data['MAT']
-    temp_sort['PHY'] = subjects_data['PHY']
-    temp_sort['CHE'] = subjects_data['CHE']
-    temp_sort['BIO'] = subjects_data['BIO']
-    temp_sort['PRA'] = subjects_data['PRA']
-    temp_sort['SCI'] = subjects_data['SCI']
-    temp_sort['HIS'] = subjects_data['HIS']
-    temp_sort['GEO'] = subjects_data['GEO']
-    temp_sort['ECO'] = subjects_data['ECO']
-    temp_sort['SOC'] = subjects_data['SOC']
-    temp_sort['COM'] = subjects_data['COM']
-    subjects_data = temp_sort
-
+    temp_sort = ['ENG', 'SAN', 'MAT', 'PHY', 'CHE', 'BIO', 'SCI', 'PRA', 'HIS', 'GEO', 'ECO', 'SOC', 'COM']
     cumulative_marks=0
     cumulative_maxmarks=0
     data = []
     data.append(['','W1','W2','W3','W4','T1','N1','F1','Total','%'])
-    for subject_item in subjects_data.keys():
+    for subject_item in temp_sort:
+        if not subjects_data.has_key(subject_item):
+            continue
         subject_data = subjects_data[subject_item]
         subject_name = subject_item
         cumulative_subject_marks=0
