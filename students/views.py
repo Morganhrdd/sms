@@ -1542,7 +1542,7 @@ def reportPDF(request):
                              + '<input type="submit" value="Enter" />'
                              + '</form>'
                              + '<br /><br />'
-                             + 'Type of Report - 0 for All, 1 to 5 for respective Part<br />'
+                             + 'Type of Report - 0 for All, Part number for respective Part<br />'
                              + 'Standard - 5 to 10 for respective Standard, any other value for All<br />'
                              + 'Division - B for Boys, G for Girls, any other value for for Both<br /><br />'
                              + '<P>An unsaved PDF file will be generated.<br /> It will contain minimum 5 pages per valid registration number.<br /> At bottom-right, the number after letter P is the page number in this PDF document</P>'
@@ -1594,16 +1594,19 @@ def fillPdfData(Story, registration_nos, part_option, standard, division, year_o
                 fillCoCurricularReport(student_yearly_info, Story)
                 Story += skillsStory
                 fillOutdoorActivityReport(student_yearly_info, Story)
-            if part_option == 1:
+                fillLibraryAndMedicalReport(student_yearly_info, Story)
+            elif part_option == 1:
                 fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story)
-            if part_option == 2:
+            elif part_option == 2:
                 fillAcademicReport(student_yearly_info, Story)
-            if part_option == 3:
+            elif part_option == 3:
                 fillCoCurricularReport(student_yearly_info, Story)
-            if part_option == 4:
+            elif part_option == 4:
                 Story.append(skillsStory)
-            if part_option == 5:
+            elif part_option == 5:
                 fillOutdoorActivityReport(student_yearly_info, Story)
+            elif part_option == 6:
+                fillLibraryAndMedicalReport(student_yearly_info, Story)
 
 #helper functions for populating content to pdf report
 def addTableToStory(Story,data,align):
@@ -1642,6 +1645,7 @@ def addSignatureSpaceToStory(Story,signature_text,designation):
 
 def addNormalTextToStory(Story,normal_text):
     style = ParagraphStyle(name = 'NormalText', fontSize = 9)
+    normal_text = normal_text.replace('&','and')
     Story.append(Paragraph(normal_text, style))
 
 def fillLetterHead(Story):
@@ -2524,30 +2528,44 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
     addSignatureSpaceToStory(Story,pratod , "Activity Incharge")
     Story.append(PageBreak())
 
-def fillLibraryReport(student_yearly_info, Story):
-    style = styles["Normal"]
-    Story.append(Paragraph("Part 5: Library Report", style))
-    Story.append(Spacer(1,0.25*inch))
+def fillLibraryAndMedicalReport(student_yearly_info, Story):
+    addMainHeaderToStory(Story, "Part 6: Other")
 
-    libraries = Library.objects.filter(StudentYearlyInformation=student_yearly_info)
-    data = []
-    data.append(['','Books Read','Grade','Comment'])
-    i=0
-    for library in libraries:
-        i = i + 1
-        books_read = library.BooksRead
-        try:
-            grade = GRADE_CHOICES[library.Grade]
-        except:
-            grade = library.Grade
-        comment = library.PublicComment
-        comment = comment.replace('&','and')
-        
-        data.append([i,books_read, grade, comment])
-    addTableToStory(Story, data, 'CENTER')
+    #Library Report
+    addSubHeaderToStory(Story, "Library Report")
+    try:
+        library = Library.objects.get(StudentYearlyInformation=student_yearly_info)
 
-    Story.append(Spacer(1,1*inch))
+        addNormalTextToStory(Story,'Books Read' + ' : ' + str(library.BooksRead))
+        addNormalTextToStory(Story,'Grade' + ' : ' + GRADE_CHOICES[library.Grade])
+        addNormalTextToStory(Story,'Comment' + ' : ' + library.PublicComment)     
+    except:
+        addNormalTextToStory(Story,'Not available')
+
+    Story.append(Spacer(1,0.3*inch))
     addSignatureSpaceToStory(Story, "","Librarian")
+
+    #Medical Report
+    addSubHeaderToStory(Story, "Medical Report")
+    try:
+        medicalReport = MedicalReport.objects.get(StudentYearlyInformation=student_yearly_info)
+
+        data = []
+        data.append(['Height',str(medicalReport.Height)])
+        data.append(['Weight',str(medicalReport.Weight)])
+        data.append(['Blood Group',medicalReport.BloodGroup])
+        data.append(['VisionL',medicalReport.VisionL])
+        data.append(['VisionR',medicalReport.VisionR])
+        data.append(['Oral Hygiene',medicalReport.OralHygiene])
+        addTableToStory(Story, data, 'CENTER')
+
+        addNormalTextToStory(Story,'Specific Ailment' + ' : ' + medicalReport.SpecificAilment)
+        addNormalTextToStory(Story,'Doctor' + ' : ' + medicalReport.Doctor)
+        addNormalTextToStory(Story,'Clinic Address' + ' : ' + medicalReport.ClinicAddress)
+        addNormalTextToStory(Story,'Phone' + ' : ' + medicalReport.Phone)        
+    except:
+        addNormalTextToStory(Story,'Not available')
+ 
     Story.append(PageBreak())
 
 # PDF Certificate :	--------------------------------------------------
