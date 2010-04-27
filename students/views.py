@@ -1642,6 +1642,7 @@ def addMainHeaderToStory(Story,header_text):
     Story.append(Spacer(1,0.20*inch))
 
 def addSubHeaderToStory(Story,header_text):
+    Story.append(CondPageBreak(2*inch))
     style = ParagraphStyle(name = 'SubHeader', fontSize = 10, alignment=TA_CENTER)
     Story.append(Paragraph("<strong>" + header_text + "</strong>", style))
     Story.append(Spacer(1,0.20*inch))
@@ -1767,7 +1768,6 @@ def fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story):
 
     year = student_yearly_data.ClassMaster.AcademicYear.Year
     addSubHeaderToStory(Story, "Year" + " " + year)
-    Story.append(Spacer(1,0.05*inch))
 
     addMainHeaderToStory(Story, "Part 1: General Information")
     data = []
@@ -1901,9 +1901,8 @@ def fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story):
     Story.append(Paragraph('Note: Grades are Outstanding, Excellent, Good, Satisfactory, Needs improvement and Unsatisfactory,', tipStyle))
     Story.append(Paragraph('which indicate level of participation or performance', tipStyle))
 
-    Story.append(Spacer(1,0.4*inch))
-
     # Signature
+    Story.append(Spacer(1,0.4*inch))
     data = []
     data=(
             ['Supervisor','Vice Principal','Principal'],
@@ -1913,7 +1912,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story):
     table_style = TableStyle([
         ('ALIGN',(0,0),(-1,-1), 'CENTER'),
         ('TEXTCOLOR',(0,0),(-1,-1),colors.black),
-        ('FONTSIZE',(0,0),(-1,-1),10)
+        ('FONTSIZE',(0,0),(-1,-1),9)
         ])
     table.hAlign='CENTER'
     table.setStyle(table_style)
@@ -2439,7 +2438,7 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         comment = comment.replace('&','and')
         addNormalTextToStory(Story,'Comment' + ' : ' + comment)
     except:
-        addNormalTextToStory(Story,'N/A')
+        addNormalTextToStory(Story,'Not available')
     Story.append(Spacer(1,0.2*inch))
     
     pratod = ''
@@ -2484,7 +2483,7 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
         pratod = physical_fitness_info.Pratod
         Story.append(Spacer(1,0.2*inch))
     except:
-        addNormalTextToStory(Story,'N/A')
+        addNormalTextToStory(Story,'Not available')
         pratod = ''
         grade = '-'
         comment = ''
@@ -2567,9 +2566,7 @@ def fillLibraryAndMedicalReport(student_yearly_info, Story):
         data.append(['VisionR',medicalReport.VisionR])
         data.append(['Oral Hygiene',medicalReport.OralHygiene])
         data.append(['Specific Ailment',medicalReport.SpecificAilment])
-        addNoBorderTableToStory(Story, data)
-        Story.append(Spacer(1,0.1*inch))
-        data = []
+        data.append(['',''])
         data.append(['Doctor',medicalReport.Doctor])
         data.append(['Clinic Address',medicalReport.ClinicAddress])
         data.append(['Phone',medicalReport.Phone])
