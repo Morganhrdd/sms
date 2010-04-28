@@ -17,7 +17,7 @@ from jp_sms.students.models import Project,Elocution,Library,Competition,Competi
 from django.template import Context
 from django.template.loader import get_template
 from reportlab.pdfgen import canvas
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer,Image,Table,TableStyle,Frame,PageBreak
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer,Image,Table,TableStyle,Frame,PageBreak, CondPageBreak
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.rl_config import defaultPageSize
@@ -1538,7 +1538,7 @@ def reportPDF(request):
                              + '<BIG>Type of Report</BIG>: <input type="text" name="part_option" value="0" id="part_option" size="3"><br /><br />'
                              + '<BIG>Standard</BIG>: <input type="text" name="standard" value="0" id="standard" size="3"><br /><br />'
                              + '<BIG>Division </BIG>: <input type="text" name="division" value="-" id="division" size="3"><br /><br />'
-                             + 'Year: <input type="text" name="year_option" value="2008-2009" id="year_option" size="10"><br /><br />'
+                             + 'Year: <input type="text" name="year_option" value="2009-2010" id="year_option" size="10"><br /><br />'
                              + '<input type="submit" value="Enter" />'
                              + '</form>'
                              + '<br /><br />'
