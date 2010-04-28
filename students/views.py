@@ -1533,8 +1533,8 @@ def reportPDF(request):
         return HttpResponse ('<html><body>'
                              + '<P><B><BIG><BIG>Report in PDF format</BIG></BIG></B></P>'
                              + '<form action="" method="POST">'
-                             + '<BIG>Registration Numbers: </BIG><input type="text" name="registration_number_min" value="0" id="registration_number_min" size="5"></td>'
-                             + '<BIG> to </BIG><input type="text" name="registration_number_max" value="9999" id="registration_number_max" size="5"><br /><br />'
+                             + '<BIG>Registration Numbers: </BIG><input type="text" name="registration_number_min" value="1000" id="registration_number_min" size="5"></td>'
+                             + '<BIG> to </BIG><input type="text" name="registration_number_max" value="6000" id="registration_number_max" size="5"><br /><br />'
                              + '<BIG>Type of Report</BIG>: <input type="text" name="part_option" value="0" id="part_option" size="3"><br /><br />'
                              + '<BIG>Standard</BIG>: <input type="text" name="standard" value="0" id="standard" size="3"><br /><br />'
                              + '<BIG>Division </BIG>: <input type="text" name="division" value="-" id="division" size="3"><br /><br />'
@@ -1642,7 +1642,7 @@ def addMainHeaderToStory(Story,header_text):
     Story.append(Spacer(1,0.20*inch))
 
 def addSubHeaderToStory(Story,header_text):
-    Story.append(CondPageBreak(2*inch))
+    Story.append(CondPageBreak(1*inch))
     style = ParagraphStyle(name = 'SubHeader', fontSize = 10, alignment=TA_CENTER)
     Story.append(Paragraph("<strong>" + header_text + "</strong>", style))
     Story.append(Spacer(1,0.20*inch))
@@ -1766,10 +1766,18 @@ def fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story):
 
     fillLetterHead(Story)
 
+    #academic year
     year = student_yearly_data.ClassMaster.AcademicYear.Year
-    addSubHeaderToStory(Story, "Year" + " " + year)
+    style = ParagraphStyle(name = 'SubHeader', fontSize = 10, alignment=TA_CENTER)
+    Story.append(Paragraph("<strong>" + "Year" + " " + year + "</strong>", style))
+    Story.append(Spacer(1,0.05*inch))
 
-    addMainHeaderToStory(Story, "Part 1: General Information")
+    #Part 1 title
+    style = ParagraphStyle(name = 'MainHeader', fontSize = 12, alignment=TA_CENTER)
+    Story.append(Paragraph("<strong>" + "Part 1: General Information" + "</strong>", style))
+    Story.append(Spacer(1,0.05*inch))
+
+    #basic info
     data = []
     data=(
             ['Registration No.: ' , student_basic_info.RegistrationNo,''],
@@ -1897,7 +1905,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story):
         )
     addTableToStory(Story, data, 'CENTER')
 
-    tipStyle = ParagraphStyle(name = 'Note', fontSize = 7, alignment=TA_CENTER)
+    tipStyle = ParagraphStyle(name = 'Note', fontSize = 6, alignment=TA_CENTER)
     Story.append(Paragraph('Note: Grades are Outstanding, Excellent, Good, Satisfactory, Needs improvement and Unsatisfactory,', tipStyle))
     Story.append(Paragraph('which indicate level of participation or performance', tipStyle))
 
@@ -1936,7 +1944,7 @@ def fillAcademicReport(student_yearly_info, Story):
         subject_data.append(test_marks)
 
     #desired sequence
-    temp_sort = ['ENG', 'SAN', 'MAT', 'PHY', 'CHE', 'BIO', 'SCI', 'PRA', 'HIS', 'GEO', 'ECO', 'SOC', 'COM']
+    temp_sort = ['ENG', 'SAN', 'MAT', 'PHY', 'CHE', 'BIO', 'PRA', 'SCI', 'HIS', 'GEO', 'ECO', 'SOC', 'COM']
     cumulative_marks=0
     cumulative_maxmarks=0
     data = []
@@ -2108,7 +2116,10 @@ def fillCoCurricularReport(student_yearly_info, Story):
     for project in projects:
         i = i + 1
         title = project.Title
-        project_type = PROJECT_TYPE_CHOICES[project.Type]
+        try:
+            project_type = PROJECT_TYPE_CHOICES[project.Type]
+        except:
+            project_type = '-'
         subject = project.Subject
         problem_selection = GRADE_CHOICES_3[project.ProblemSelection]
         review = GRADE_CHOICES_3[project.Review]
