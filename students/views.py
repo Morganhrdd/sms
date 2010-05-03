@@ -2124,7 +2124,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         problem_selection = GRADE_CHOICES_3[project.ProblemSelection]
         review = GRADE_CHOICES_3[project.Review]
         planning = GRADE_CHOICES_3[project.Planning]
-        executionAndHardWork = GRADE_CHOICES_3[project.Planning]
+        executionAndHardWork = GRADE_CHOICES_3[project.ExecutionAndHardWork]
         documentation = GRADE_CHOICES_3[project.Documentation]
         communication = GRADE_CHOICES_3[project.Communication]
         comment = project.PublicComment
