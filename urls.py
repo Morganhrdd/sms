@@ -53,4 +53,3 @@ urlpatterns = patterns('',
     #(r'^useradd/', views.user_add),
     # ... the rest of your URLs here ...
 )
-(r'^cocurricular_add/', 'students.views.cocurricular_add'),
