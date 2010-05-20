@@ -4,6 +4,8 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponse 
 from django.template import Context
 from django.template.loader import get_template
+from django.views.decorators.csrf import csrf_exempt
+
 import os
 import datetime
 from array import array
@@ -19,7 +21,8 @@ if catqs:
 	CATEGORY_ALL = catqs[0]
 
 HOLIDAY_RULE='Holiday'
-
+#
+@csrf_exempt
 def get_barcode(request):
 	message = ""
 	if request.POST.has_key('barcode') and request.POST['barcode'].isdigit():
@@ -300,6 +303,8 @@ def get_barcode(request):
 			
 	return populate_user(request,message,'ams/barcode.html')		
 	
+#
+@csrf_exempt
 def populate_user(request,message,template):
 	datet = datetime.datetime.now()
 	jsdate = datet.strftime("%Y,%m,%d,%H,%M,%S")
@@ -450,9 +455,13 @@ def populate_user(request,message,template):
 	return render_to_response(template,Context({'come': come,'yettocome':yettocome,'gone':gone,'absent':absent,
 								'forgotcheckout':forgotcheckout,'message':message,'jsdate': jsdate,'datestr': datestr,'leaves':leaves}))
 
+#
+@csrf_exempt
 def ams_display(request):
 	return populate_user(request,'','ams/display.html')
 	
+#
+@csrf_exempt
 def app_leave(request):
 	message = "";
 	disabled = 'true'
@@ -699,6 +708,8 @@ def app_leave(request):
 									 'balance': balance, 'carryforward': carryforward, 'currentleaves': currentleaves,
 									 'takenleaves': takenleaves, 'forgotdays': forgotdays, 'fcdays': fcdays, 'disabled':disabled})
 
+#
+@csrf_exempt
 def monthly_report(request):
 	message = ""
 	if not request.POST:
@@ -769,6 +780,8 @@ def monthly_report(request):
 					
 			return render_to_response('ams/report.html', {'form': form, 'message': message, 'report':report, 'late':late, 'half':half, 'absent':abs})		
 					
+#
+@csrf_exempt
 def daily_report(request):
 	message = ""
 	if not request.POST:
@@ -830,6 +843,8 @@ def daily_report(request):
 			return render_to_response('ams/dailyreport.html', {'form': form, 'message': message, 'report':report,
 									 'late':late, 'half':half, 'absent':abs, 'date':date})		
 
+#
+@csrf_exempt
 def add_dayrules(request):
 	message = "";
 	if not request.POST:
@@ -933,6 +948,8 @@ def add_dayrules(request):
 			message = "Invalid option."
 			return render_to_response('ams/dayrules.html', {'form': form, 'message': message})
 
+#
+@csrf_exempt
 def admin_home(request):
 	user = request.user
 	if user.is_superuser:
