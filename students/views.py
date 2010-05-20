@@ -2,6 +2,8 @@
 from django.db.models import Q
 from django.shortcuts import render_to_response, redirect
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
 from jp_sms.students.models import TestMapping, StudentTestMarks, StudentYearlyInformation, StudentBasicInfo
 from jp_sms.students.models import SubjectMaster, ClassMaster, SubjectMaster, AttendanceMaster, AcademicYear
 from jp_sms.students.models import StudentAttendance, StudentAdditionalInformation,CoCurricular
@@ -148,7 +150,7 @@ thousands = ["","Thousand ","Million ", "Billion ", "Trillion "]
 
 
 # HTML Report:
-
+@csrf_exempt
 def report(request):
     if request.POST:
         keys = request.POST.keys()
@@ -342,6 +344,7 @@ def report(request):
         return HttpResponse ('<html><body>Enter Registration Number<form action="" method="POST"><input type="text" name="reg_no" value="" id="reg_no" size="20"></td>	<input type="submit" value="Enter" /></form></body></html>')
 
 # Used by HTML Report
+@csrf_exempt
 def marks_add(request):
     if request.POST:
         keys = request.POST.keys()
@@ -391,8 +394,10 @@ def marks_add(request):
             rollno = student_test_mark_obj.StudentYearlyInformation.RollNo
             data.append({'id':student_test_mark_obj.StudentYearlyInformation.id, 'name':name, 'rollno':rollno,'marks_obtained':student_test_mark_obj.MarksObtained})
         return render_to_response('students/AddMarks.html',Context({'test_details': test_details,'test_id':test_id, 'data':data}))
+    
 
 
+@csrf_exempt
 def competition_add(request):
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
@@ -449,6 +454,7 @@ def competition_add(request):
 
 
 #
+@csrf_exempt
 def elocution_add(request):
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
@@ -506,6 +512,7 @@ def elocution_add(request):
         return render_to_response('students/AddElocution.html',{'form':genform})
 
 #
+@csrf_exempt
 def project_add(request):
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
@@ -568,6 +575,7 @@ def project_add(request):
             return render_to_response('students/AddProject.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
         return render_to_response('students/AddProject.html',{'form':genform})
 #
+@csrf_exempt
 def abhivyaktivikas_add(request):
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
@@ -628,6 +636,7 @@ def abhivyaktivikas_add(request):
         return render_to_response('students/AddAbhivyaktiVikas.html',{'form':genform})
 
 #
+@csrf_exempt
 def competitiveexam_add(request):
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
@@ -683,6 +692,7 @@ def competitiveexam_add(request):
         return render_to_response('students/AddCompetitiveExam.html',{'form':genform})
 
 #
+@csrf_exempt
 def cocurricular_add(request):
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
@@ -738,6 +748,7 @@ def cocurricular_add(request):
         return render_to_response('students/AddCocurricular.html',{'form':genform})
 
 #
+@csrf_exempt
 def socialactivity_add(request):
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
@@ -793,6 +804,7 @@ def socialactivity_add(request):
         return render_to_response('students/AddSocialActivity.html',{'form':genform})
 
 #
+@csrf_exempt
 def physicalfitnessinfo_add(request):
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
@@ -881,6 +893,7 @@ def physicalfitnessinfo_add(request):
         return render_to_response('students/AddPhysicalFitnessInfo.html',{'form':genform})
 
 #
+@csrf_exempt
 def search_reg_no(request=None):
     if not request:
         return
@@ -897,6 +910,8 @@ def search_reg_no(request=None):
         msg += '<br />'
         return msg
     
+#
+@csrf_exempt
 def workexperience_add(request):
     respage = 'students/AddWorkExperience.html'
     if not request.POST:
@@ -954,6 +969,7 @@ def workexperience_add(request):
         return render_to_response(respage,{'form':genform})
 
 #
+@csrf_exempt
 def physicaleducation_add(request):
     respage = 'students/AddPhysicalEducation.html'
     if not request.POST:
@@ -1012,6 +1028,7 @@ def physicaleducation_add(request):
         return render_to_response(respage,{'form':genform})
 
 #
+@csrf_exempt
 def thinkingskill_add(request):
     respage = 'students/AddThinkingSkill.html'
     if not request.POST:
@@ -1073,6 +1090,7 @@ def thinkingskill_add(request):
         return render_to_response(respage,{'form':genform})
 
 #
+@csrf_exempt
 def socialskill_add(request):
     respage = 'students/AddSocialSkill.html'
     if not request.POST:
@@ -1133,6 +1151,7 @@ def socialskill_add(request):
         return render_to_response('students/AddSocialSkill.html',{'form':genform})
 
 #
+@csrf_exempt
 def attitudetowardsschool_add(request):
     respage = 'students/AddAttitudeTowardsSchool.html'
     if not request.POST:
@@ -1194,6 +1213,7 @@ def attitudetowardsschool_add(request):
             return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
         return render_to_response(respage,{'form':genform})
 #
+@csrf_exempt
 def emotionalskill_add(request):
     respage = 'students/AddEmotionalSkill.html'
     if not request.POST:
@@ -1253,6 +1273,7 @@ def emotionalskill_add(request):
         return render_to_response(respage,{'form':genform})
 
 #
+@csrf_exempt
 def values_add(request):
     respage = 'students/AddValues.html'
     if not request.POST:
@@ -1316,6 +1337,7 @@ def values_add(request):
     
 
 #
+@csrf_exempt
 def medicalreport_add(request):
     respage = 'students/AddMedicalReport.html'
     if not request.POST:
@@ -1380,6 +1402,8 @@ def medicalreport_add(request):
             return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
         return render_to_response(respage,{'form':genform})
 
+#
+@csrf_exempt
 def display_report(request, regno=None, year=None):
     if request.user.username != str(regno) and not request.user.is_superuser and request.user.is_active:
         return redirect('/')
@@ -1434,6 +1458,7 @@ def display_report(request, regno=None, year=None):
     data['values'] = values_objs
     return render_to_response(respage,data)
 # Used by HTML Report
+@csrf_exempt
 def attendance_add(request):
     if request.POST:
         keys = request.POST.keys()
@@ -1500,6 +1525,8 @@ def pageBorder(canvas):
     canvas.setLineWidth(0.1)
     canvas.line(PAGE_WIDTH - margin, margin + 0.16*inch, margin, margin + 0.16*inch)
 
+#
+@csrf_exempt
 def reportPDF(request):
     if request.POST:
         keys = request.POST.keys()
@@ -2607,6 +2634,8 @@ def addCertificateNumberTextToStory(Story,header_text):
     style = ParagraphStyle(name = 'NumberText', fontSize = 8, alignment=TA_RIGHT)
     Story.append(Paragraph(header_text, style))
 
+#
+@csrf_exempt
 def certificatePDF(request):
     if request.POST:
         keys = request.POST.keys()
@@ -2781,6 +2810,8 @@ def addSchoolLeavingTextToStory(Story,header_text):
     Story.append(Paragraph(header_text, style))
     Story.append(Spacer(1,0.05*inch))
 
+#
+@csrf_exempt
 def schoolLeavingPDF(request):
     if request.POST:
         keys = request.POST.keys()

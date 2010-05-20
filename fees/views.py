@@ -32,6 +32,8 @@ tbmargin=0.5*inch
 rmargin=0.8*inch
 lmargin=1.2*inch
 
+#
+@csrf_exempt
 def fee_receipt(request):
 	message = "";
 	dt = datetime.datetime.now()
@@ -214,6 +216,8 @@ def fee_receipt(request):
 				return render_to_response('fees/feeform.html', {'form': form, 'message': message, 'date':date,
 											'receiptnumber':receiptnumber, 'student':student, 'years':years })					
 
+#
+@csrf_exempt
 def fee_report(request):
 	message = ""
 	STYLE_OPEN_TAG = '<b>'
@@ -333,6 +337,8 @@ def fee_report(request):
 		else:
 			return render_to_response('fees/feereport.html', {'form': form, 'message': message})
 		
+#
+@csrf_exempt
 def fee_collection(request):
 	message = ""
 	if not request.POST:
@@ -362,6 +368,8 @@ def fee_collection(request):
 			return render_to_response('fees/feecollection.html', {'form': form, 'message': message})
 
 
+#
+@csrf_exempt
 def reprint_receipt(request):
 	if request.POST:
 		receiptno = request.POST['receiptno']
@@ -372,6 +380,7 @@ def reprint_receipt(request):
 	
 	return HttpResponse ('<html><body></body></html>')
 
+#
 def print_receipt(feerct):
 	student = feerct.StudentYearlyInformation.StudentBasicInfo
 	id = feerct.ReceiptNumber
