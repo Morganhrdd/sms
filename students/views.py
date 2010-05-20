@@ -1844,7 +1844,7 @@ def fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story):
     cumulative_abhi_grade='-'
     for abhi_row in abhivyakti_vikas:
         abhi_grade_row_sum=(GRADE_NUM[abhi_row.Participation])+(GRADE_NUM[abhi_row.ReadinessToLearn])+(GRADE_NUM[abhi_row.ContinuityInWork])+(GRADE_NUM[abhi_row.SkillDevelopment])+(GRADE_NUM[abhi_row.Creativity])
-        cumulative_abhi_grade_sum=cumulative_abhi_grade_sum+int(round((abhi_grade_row_sum/5))
+        cumulative_abhi_grade_sum=cumulative_abhi_grade_sum+int(round((abhi_grade_row_sum/5)))
     if len(abhivyakti_vikas) > 0:
         cumulative_abhi_grade=GRADE_CHOICES[int(round(cumulative_abhi_grade_sum/len(abhivyakti_vikas)))]
 
