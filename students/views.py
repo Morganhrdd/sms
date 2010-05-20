@@ -228,8 +228,8 @@ def report(request):
         cumulative_abhi_grade_sum=0
         cumulative_abhi_grade=0
         for abhi_row in abhivyakti_vikas:
-            abhi_grade_row_sum=int(GRADE_NUM[abhi_row.Participation])+int(GRADE_NUM[abhi_row.ReadinessToLearn])+int(GRADE_NUM[abhi_row.ContinuityInWork])+int(GRADE_NUM[abhi_row.SkillDevelopment])+int(GRADE_NUM[abhi_row.Creativity])
-            cumulative_abhi_grade_sum=cumulative_abhi_grade_sum+(int(abhi_grade_row_sum/5))
+            abhi_grade_row_sum=(GRADE_NUM[abhi_row.Participation])+(GRADE_NUM[abhi_row.ReadinessToLearn])+(GRADE_NUM[abhi_row.ContinuityInWork])+(GRADE_NUM[abhi_row.SkillDevelopment])+(GRADE_NUM[abhi_row.Creativity])
+            cumulative_abhi_grade_sum=cumulative_abhi_grade_sum+int(round(abhi_grade_row_sum/5))
             abhivyakti_vikas_data.append({'MediumOfExpression':abhi_row.MediumOfExpression ,
                                          'Teacher':abhi_row.Teacher ,
                                          'Participation':GRADE_CHOICES[abhi_row.Participation] ,
@@ -246,8 +246,8 @@ def report(request):
         cumulative_project_grade_sum=0
         cumulative_project_grade=0
         for proj_row in projects:
-            proj_grade_row_sum=int(GRADE_NUM[proj_row.ProblemSelection])+int(GRADE_NUM[proj_row.Review])+int(GRADE_NUM[proj_row.Planning])+int(GRADE_NUM[proj_row.Documentation])+int(GRADE_NUM[proj_row.Communication])
-            cumulative_project_grade_sum=cumulative_project_grade_sum+(int(proj_grade_row_sum/5))
+            proj_grade_row_sum=(GRADE_NUM[proj_row.ProblemSelection])+(GRADE_NUM[proj_row.Review])+(GRADE_NUM[proj_row.Planning])+(GRADE_NUM[proj_row.Documentation])+(GRADE_NUM[proj_row.Communication])
+            cumulative_project_grade_sum=cumulative_project_grade_sum+int(round(proj_grade_row_sum/5))
             project_data.append({'Title':proj_row.Title ,
                                          'Type':PROJECT_TYPE_CHOICES[proj_row.Type] ,
                                          'Subject':proj_row.Subject ,
@@ -265,8 +265,8 @@ def report(request):
         cumulative_elocution_grade_sum=0
         cumulative_elocution_grade=0
         for elo_row in elocution:
-            elocution_grade_row_sum=int(GRADE_NUM[elo_row.Memory])+int(GRADE_NUM[elo_row.Content])+int(GRADE_NUM[elo_row.Understanding])+int(GRADE_NUM[elo_row.Pronunciation])+int(GRADE_NUM[elo_row.Presentation])
-            cumulative_elocution_grade_sum=cumulative_elocution_grade_sum+(int(elocution_grade_row_sum/5))
+            elocution_grade_row_sum=(GRADE_NUM[elo_row.Memory])+(GRADE_NUM[elo_row.Content])+(GRADE_NUM[elo_row.Understanding])+(GRADE_NUM[elo_row.Pronunciation])+(GRADE_NUM[elo_row.Presentation])
+            cumulative_elocution_grade_sum=cumulative_elocution_grade_sum+int(round(elocution_grade_row_sum/5))
             elocution_data.append({'Title':elo_row.Title ,
                                          'Memory':GRADE_CHOICES[elo_row.Memory] ,
                                          'Content':GRADE_CHOICES[elo_row.Content] ,
@@ -1843,8 +1843,8 @@ def fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story):
     cumulative_abhi_grade_sum=0
     cumulative_abhi_grade='-'
     for abhi_row in abhivyakti_vikas:
-        abhi_grade_row_sum=int(GRADE_NUM[abhi_row.Participation])+int(GRADE_NUM[abhi_row.ReadinessToLearn])+int(GRADE_NUM[abhi_row.ContinuityInWork])+int(GRADE_NUM[abhi_row.SkillDevelopment])+int(GRADE_NUM[abhi_row.Creativity])
-        cumulative_abhi_grade_sum=cumulative_abhi_grade_sum+(int(abhi_grade_row_sum/5))
+        abhi_grade_row_sum=(GRADE_NUM[abhi_row.Participation])+(GRADE_NUM[abhi_row.ReadinessToLearn])+(GRADE_NUM[abhi_row.ContinuityInWork])+(GRADE_NUM[abhi_row.SkillDevelopment])+(GRADE_NUM[abhi_row.Creativity])
+        cumulative_abhi_grade_sum=cumulative_abhi_grade_sum+int(round((abhi_grade_row_sum/5))
     if len(abhivyakti_vikas) > 0:
         cumulative_abhi_grade=GRADE_CHOICES[int(round(cumulative_abhi_grade_sum/len(abhivyakti_vikas)))]
 
@@ -1854,10 +1854,10 @@ def fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story):
     cumulative_project_grade='-'
     for proj_row in projects:
         try:
-            proj_grade_row_sum=int(GRADE_NUM[proj_row.ProblemSelection])+int(GRADE_NUM[proj_row.Review])+int(GRADE_NUM[proj_row.Planning])+int(GRADE_NUM[proj_row.Documentation])+int(GRADE_NUM[proj_row.Communication])
+            proj_grade_row_sum=(GRADE_NUM[proj_row.ProblemSelection])+(GRADE_NUM[proj_row.Review])+(GRADE_NUM[proj_row.Planning])+(GRADE_NUM[proj_row.Documentation])+(GRADE_NUM[proj_row.Communication])
         except:
             proj_grade_row_sum=0
-        cumulative_project_grade_sum=cumulative_project_grade_sum+(int(proj_grade_row_sum/5))
+        cumulative_project_grade_sum=cumulative_project_grade_sum+int(round(proj_grade_row_sum/5))
     if len(projects) > 0:
         cumulative_project_grade=GRADE_CHOICES_3[int(round(cumulative_project_grade_sum/len(projects)))]
 
@@ -1866,8 +1866,8 @@ def fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story):
     cumulative_elocution_grade_sum=0
     cumulative_elocution_grade='-'
     for elo_row in elocutions:
-        elocution_grade_row_sum=int(GRADE_NUM[elo_row.Memory])+int(GRADE_NUM[elo_row.Content])+int(GRADE_NUM[elo_row.Understanding])+int(GRADE_NUM[elo_row.Pronunciation])+int(GRADE_NUM[elo_row.Presentation])
-        cumulative_elocution_grade_sum=cumulative_elocution_grade_sum+(int(elocution_grade_row_sum/5))
+        elocution_grade_row_sum=(GRADE_NUM[elo_row.Memory])+(GRADE_NUM[elo_row.Content])+(GRADE_NUM[elo_row.Understanding])+(GRADE_NUM[elo_row.Pronunciation])+(GRADE_NUM[elo_row.Presentation])
+        cumulative_elocution_grade_sum=cumulative_elocution_grade_sum+int(round(elocution_grade_row_sum/5))
     if len(elocutions) > 0:
         cumulative_elocution_grade=GRADE_CHOICES_3[int(round(cumulative_elocution_grade_sum/len(elocutions)))]
 
@@ -2151,7 +2151,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         problem_selection = GRADE_CHOICES_3[project.ProblemSelection]
         review = GRADE_CHOICES_3[project.Review]
         planning = GRADE_CHOICES_3[project.Planning]
-        executionAndHardWork = GRADE_CHOICES_3[project.Planning]
+        executionAndHardWork = GRADE_CHOICES_3[project.ExecutionAndHardWork]
         documentation = GRADE_CHOICES_3[project.Documentation]
         communication = GRADE_CHOICES_3[project.Communication]
         comment = project.PublicComment
