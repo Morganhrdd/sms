@@ -16,6 +16,7 @@ import os
 import datetime
 from array import array
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 
 from jp_sms.fees.models import StudentBasicInfo, AcademicYear, ClassMaster, StudentYearlyInformation
 from jp_sms.fees.models import ScholarshipOrFee
