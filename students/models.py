@@ -118,6 +118,7 @@ class StudentBasicInfo(models.Model):
 
 class StudentAdditionalInformation(models.Model):
     Id = models.ForeignKey(StudentBasicInfo, primary_key=True)
+    Address = models.CharField(max_length=300)
     Strength = models.CharField(max_length=200, blank=True)
     Weakness = models.CharField(max_length=200, blank=True)
     Sankalp = models.CharField(max_length=200, blank=True)
@@ -134,7 +135,6 @@ class StudentAdditionalInformation(models.Model):
     Mothers_Occupation = models.CharField(max_length=100, blank=True)
     Mothers_Phone_No = models.CharField(max_length=15, blank=True)
     Mothers_Email = models.EmailField(blank=True)
-    Address = models.CharField(max_length=300)
     class Meta:
         verbose_name_plural = "Student Additional Information"
 
