@@ -79,9 +79,9 @@ PROJECT_TYPE_CHOICES = (
 )
 
 HOSTEL_CHOICES = (
-	('1', 'No Hostel'),
-	('2', 'Full Hostel'),
-	('3', 'Half Hostel'),
+	(1, 'No Hostel'),
+	(2, 'Full Hostel'),
+	(3, 'Half Hostel'),
 )
 
 BLOOD_GROUP_CHOICES = (
