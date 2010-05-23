@@ -3038,6 +3038,17 @@ def int2word(n):
     return nw
 
 # ------------------- Cards PDF --------------------------------
+
+def cardsLaterPages(canvas, doc):
+    canvas.saveState()
+    canvas.setFont('Times-Roman',6)
+    now_time = datetime.datetime.now()
+    epoch_seconds = now_time.strftime("%d %b %Y %I:%M:%S%p")
+    #the number at the bottom right of page will let us trace the exact date and time and will never repeat for any documents
+    canvas.drawString(0.4 * PAGE_WIDTH, 0.75 * inch, "%s          %s   page %d" % ("Jnana Prabodhini Prashala - Students Information", epoch_seconds, doc.page))
+    canvas.restoreState()
+    pageBorder(canvas)
+
 #
 @csrf_exempt
 def cardsPDF(request):
@@ -3065,12 +3076,12 @@ def cardsPDF(request):
         #show an unsaved pdf document in the browser, using reportPDF
         response = HttpResponse(mimetype='application/pdf')
         doc = SimpleDocTemplate(response)
-        doc.build(Story, onFirstPage=laterPages, onLaterPages=laterPages)
+        doc.build(Story, onFirstPage=cardsLaterPages, onLaterPages=cardsLaterPages)
         
         return response
     else:
         return HttpResponse ('<html><body>'
-                             + '<P><B><BIG><BIG>Report in PDF format</BIG></BIG></B></P>'
+                             + '<P><B><BIG><BIG>Cards in PDF format</BIG></BIG></B></P>'
                              + '<form action="" method="POST">'
                              + '<BIG>Registration Numbers: </BIG><input type="text" name="registration_number_min" value="1000" id="registration_number_min" size="5"></td>'
                              + '<BIG> to </BIG><input type="text" name="registration_number_max" value="6000" id="registration_number_max" size="5"><br /><br />'
@@ -3141,10 +3152,10 @@ def fillCardRow(Story, student_yearly_infos):
         student_additional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info.RegistrationNo)
 
         birthDate = formatDate(student_basic_info.DateOfBirth)
-        stdRoll = student_yearly_info.ClassMaster.Standard + ' ' + student_yearly_info.RollNo
+        stdRoll = str(student_yearly_info.RollNo) + ' (' + student_yearly_info.ClassMaster.Standard + 'th std)'
 
-        regnRow += ['Regn No: ' , student_basic_info.RegistrationNo]
-        stdRow += ['Std, Roll No: ' , stdRoll]
+        regnRow += ['Regn No.: ' , student_basic_info.RegistrationNo]
+        stdRow += ['Roll No: ' , stdRoll]
         nameRow += ['Name: ' , student_basic_info.FirstName + ' ' + student_basic_info.LastName]
         addressRow += ['Address: ' , student_additional_info.Address]
         dateRow += ['Birth Date' , birthDate]
@@ -3157,7 +3168,7 @@ def fillCardRow(Story, student_yearly_infos):
         addressRow += ['','']
         dateRow += ['','']
 
-    #table
+    #table data
     data = []
     data.append(regnRow)
     data.append(stdRow)
@@ -3166,8 +3177,15 @@ def fillCardRow(Story, student_yearly_infos):
     data.append(dateRow)
 
     Story.append(CondPageBreak(1*inch))
-    addNoBorderTableToStory(Story, data)
-    
+
+    #table
+    table=Table(data, colWidths=[1,7,1,7])
+    table_style = TableStyle([
+        ('FONT', (0,0), (-1,0), 'Times-Roman'),
+        ('FONTSIZE',(0,0),(-1,-1),9)])
+    table.setStyle(table_style)
+    table.hAlign='LEFT'
+    Story.append(table)
 
 #----------------------------------------------------------------------------------------------------
 
