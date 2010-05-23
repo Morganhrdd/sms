@@ -3179,7 +3179,8 @@ def fillCardRow(Story, student_yearly_infos):
     Story.append(CondPageBreak(1*inch))
 
     #table
-    table=Table(data, colWidths=[1,7,1,7])
+    rH=0.2*inch
+    table=Table(data, colWidths=[1*inch,7*inch,1*inch,7*inch], rowHeights=[rH,rH,rH,rH,rH])
     table_style = TableStyle([
         ('FONT', (0,0), (-1,0), 'Times-Roman'),
         ('FONTSIZE',(0,0),(-1,-1),9)])
