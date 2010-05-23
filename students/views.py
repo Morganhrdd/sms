@@ -3037,6 +3037,140 @@ def int2word(n):
             nw = ones[b3] + "Hundred " + nw
     return nw
 
+# ------------------- Cards PDF --------------------------------
+#
+@csrf_exempt
+def cardsPDF(request):
+    if request.POST:
+        keys = request.POST.keys()
+        
+        #pick values from html form
+        registration_number_min = int(request.POST['registration_number_min'])
+        registration_number_max = int(request.POST['registration_number_max'])
+        standard = int(request.POST['standard'])
+        division = request.POST['division']
+        year_option = request.POST['year_option']
+
+        #populate a list of egistration numbers for the specified range
+        registration_numbers = []
+        registration_number = registration_number_min
+        while registration_number <= registration_number_max:
+            registration_numbers.append(registration_number)
+            registration_number = registration_number + 1
+
+        #populate content for the list of reg numbers
+        Story = []
+        fillCardsData(Story, registration_numbers, standard, division, year_option)
+
+        #show an unsaved pdf document in the browser, using reportPDF
+        response = HttpResponse(mimetype='application/pdf')
+        doc = SimpleDocTemplate(response)
+        doc.build(Story, onFirstPage=laterPages, onLaterPages=laterPages)
+        
+        return response
+    else:
+        return HttpResponse ('<html><body>'
+                             + '<P><B><BIG><BIG>Report in PDF format</BIG></BIG></B></P>'
+                             + '<form action="" method="POST">'
+                             + '<BIG>Registration Numbers: </BIG><input type="text" name="registration_number_min" value="1000" id="registration_number_min" size="5"></td>'
+                             + '<BIG> to </BIG><input type="text" name="registration_number_max" value="6000" id="registration_number_max" size="5"><br /><br />'
+                             + '<BIG>Standard</BIG>: <input type="text" name="standard" value="0" id="standard" size="3"><br /><br />'
+                             + '<BIG>Division </BIG>: <input type="text" name="division" value="-" id="division" size="3"><br /><br />'
+                             + 'Year: <input type="text" name="year_option" value="2009-2010" id="year_option" size="10"><br /><br />'
+                             + '<input type="submit" value="Enter" />'
+                             + '</form>'
+                             + '<br /><br />'
+                             + 'Standard - 5 to 10 for respective Standard, any other value for All<br />'
+                             + 'Division - B for Boys, G for Girls, any other value for for Both<br /><br />'
+                             + '<P>An unsaved PDF file will be generated.</P>'
+                             + '</body></html>')
+
+def fillCardsData(Story, registration_nos, part_option, standard, division, year_option):
+    for registration_no in registration_nos:
+        try:
+            #read basic and yearly info for the list of reg numbers
+            student_basic_info = StudentBasicInfo.objects.get(RegistrationNo = registration_no)
+            student_yearly_infos = StudentYearlyInformation.objects.filter(StudentBasicInfo = student_basic_info)
+            student_addtional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info.RegistrationNo)
+        except:
+            #skip the reg numbers if basic info is not found
+            continue
+
+        #filter
+        selected_yearly_infos = []
+        for student_yearly_info in student_yearly_infos:
+
+            #filter by year
+            student_year = student_yearly_info.ClassMaster.AcademicYear.Year
+            if student_year != year_option:
+                continue
+
+            #filter by standard if a valid entry is available
+            student_standard = student_yearly_info.ClassMaster.Standard
+            if (standard >= 5) and (standard <= 10) and (student_standard != standard):
+                continue
+
+            #filter by division if a valid entry is available
+            student_division = student_yearly_info.ClassMaster.Division
+            if ((division == 'B') or (division == 'G')) and (student_division != division):
+                continue
+
+            #select
+            selected_yearly_infos.append(student_yearly_info)
+
+        #fill rows
+        count = len(selected_yearly_infos)
+        for i in range(0, count, 2):
+            row = []
+            row.append(selected_yearly_infos[i])
+            if (i + 1) < count:
+                row.append(selected_yearly_infos[i + 1])
+            fillCardRow(Story, row)
+
+def fillCardRow(Story, student_yearly_infos):
+
+    regnRow = []
+    stdRow = []
+    nameRow = []
+    addressRow = []
+    dateRow = []
+
+    #populate row data
+    for student_yearly_info in student_yearly_infos:
+        student_basic_info = student_yearly_info.StudentBasicInfo
+        student_additional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info.RegistrationNo)
+
+        birthDate = formatDate(student_basic_info.DateOfBirth)
+        stdRoll = student_yearly_info.ClassMaster.Standard + ' ' + student_yearly_info.RollNo
+
+        regnRow += ['Regn No: ' , student_basic_info.RegistrationNo]
+        stdRow += ['Std, Roll No: ' , stdRoll]
+        nameRow += ['Name: ' , student_basic_info.FirstName + ' ' + student_basic_info.LastName]
+        addressRow += ['Address: ' , student_additional_info.Address]
+        dateRow += ['Birth Date' , birthDate]
+
+    #for last odd record
+    if len(student_yearly_infos) < 2:
+        regnRow += ['','']
+        stdRow += ['','']
+        nameRow += ['','']
+        addressRow += ['','']
+        dateRow += ['','']
+
+    #table
+    data = []
+    data.append(regnRow)
+    data.append(stdRow)
+    data.append(nameRow)
+    data.append(addressRow)
+    data.append(dateRow)
+
+    Story.append(CondPageBreak(1*inch))
+    addNoBorderTableToStory(Story, data)
+    
+
+#----------------------------------------------------------------------------------------------------
+
 marks_add = login_required(marks_add)
 competition_add = login_required(competition_add)
 attendance_add = login_required(attendance_add)
@@ -3056,4 +3190,5 @@ values_add = login_required(values_add)
 report=login_required(report)
 reportPDF=login_required(reportPDF)
 certificatePDF = login_required(certificatePDF)
+cardsPDF=login_required(cardsPDF)
 display_report = login_required(display_report)
