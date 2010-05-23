@@ -3085,7 +3085,7 @@ def cardsPDF(request):
                              + '<P>An unsaved PDF file will be generated.</P>'
                              + '</body></html>')
 
-def fillCardsData(Story, registration_nos, part_option, standard, division, year_option):
+def fillCardsData(Story, registration_nos, standard, division, year_option):
     for registration_no in registration_nos:
         try:
             #read basic and yearly info for the list of reg numbers
