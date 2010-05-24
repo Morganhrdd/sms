@@ -3045,9 +3045,8 @@ def cardsLaterPages(canvas, doc):
     now_time = datetime.datetime.now()
     epoch_seconds = now_time.strftime("%d %b %Y %I:%M:%S%p")
     #the number at the bottom right of page will let us trace the exact date and time and will never repeat for any documents
-    canvas.drawString(0.4 * PAGE_WIDTH, 0.75 * inch, "%s          %s   page %d" % ("Jnana Prabodhini Prashala - Students Information", epoch_seconds, doc.page))
+    canvas.drawString(0.4 * PAGE_WIDTH, 0.1 * inch, "%s          %s   page %d" % ("Jnana Prabodhini Prashala - Students Information", epoch_seconds, doc.page))
     canvas.restoreState()
-    pageBorder(canvas)
 
 #
 @csrf_exempt
@@ -3061,7 +3060,8 @@ def cardsPDF(request):
         standard = int(request.POST['standard'])
         division = request.POST['division']
         year_option = request.POST['year_option']
-
+        attributes = request.POST['attributes']
+        
         #populate a list of egistration numbers for the specified range
         registration_numbers = []
         registration_number = registration_number_min
@@ -3071,11 +3071,17 @@ def cardsPDF(request):
 
         #populate content for the list of reg numbers
         Story = []
-        fillCardsData(Story, registration_numbers, standard, division, year_option)
+        fillCardsData(Story, registration_numbers, standard, division, year_option, attributes)
 
         #show an unsaved pdf document in the browser, using reportPDF
         response = HttpResponse(mimetype='application/pdf')
-        doc = SimpleDocTemplate(response)
+
+        margin=0.5*inch
+        doc = SimpleDocTemplate(response,
+                leftMargin=margin,
+                rightMargin=margin,
+                topMargin=margin,
+                bottomMargin=margin)
         doc.build(Story, onFirstPage=cardsLaterPages, onLaterPages=cardsLaterPages)
         
         return response
@@ -3087,7 +3093,13 @@ def cardsPDF(request):
                              + '<BIG> to </BIG><input type="text" name="registration_number_max" value="6000" id="registration_number_max" size="5"><br /><br />'
                              + '<BIG>Standard</BIG>: <input type="text" name="standard" value="0" id="standard" size="3"><br /><br />'
                              + '<BIG>Division </BIG>: <input type="text" name="division" value="-" id="division" size="3"><br /><br />'
-                             + 'Year: <input type="text" name="year_option" value="2009-2010" id="year_option" size="10"><br /><br />'
+                             + '<BIG>Year </BIG>: <input type="text" name="year_option" value="2009-2010" id="year_option" size="10"><br /><br />'
+                             + '<input type="checkbox" name="attributes" value="regn">Registration number</input><br />'
+                             + '<input type="checkbox" name="attributes" value="roll">Roll number</input><br />'
+                             + '<input type="checkbox" name="attributes" value="student">Name</input><br />'
+                             + '<input type="checkbox" name="attributes" value="address">Address</input><br />'
+                             + '<input type="checkbox" name="attributes" value="bdate">Birth Date</input><br />'
+                             + '<br />'
                              + '<input type="submit" value="Enter" />'
                              + '</form>'
                              + '<br /><br />'
@@ -3096,7 +3108,7 @@ def cardsPDF(request):
                              + '<P>An unsaved PDF file will be generated.</P>'
                              + '</body></html>')
 
-def fillCardsData(Story, registration_nos, standard, division, year_option):
+def fillCardsData(Story, registration_nos, standard, division, year_option, attributes):
     for registration_no in registration_nos:
         try:
             #read basic and yearly info for the list of reg numbers
@@ -3136,9 +3148,9 @@ def fillCardsData(Story, registration_nos, standard, division, year_option):
             row.append(selected_yearly_infos[i])
             if (i + 1) < count:
                 row.append(selected_yearly_infos[i + 1])
-            fillCardRow(Story, row)
+            fillCardRow(Story, row, attributes)
 
-def fillCardRow(Story, student_yearly_infos):
+def fillCardRow(Story, student_yearly_infos, attributes):
 
     regnRow = []
     stdRow = []
@@ -3146,25 +3158,39 @@ def fillCardRow(Story, student_yearly_infos):
     addressRow = []
     dateRow = []
 
+    rowCount = 0
+    isRegn = (attributes.index('regn') > -1)
+    isRoll = (attributes.index('roll') > -1)
+    isName = (attributes.index('student') > -1)
+    isAddress = (attributes.index('address') > -1)
+    isBDate = (attributes.index('bdate') > -1)
+
     #populate row data
     for student_yearly_info in student_yearly_infos:
         student_basic_info = student_yearly_info.StudentBasicInfo
         student_additional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info.RegistrationNo)
 
         birthDate = formatDate(student_basic_info.DateOfBirth)
-        stdRoll = str(student_yearly_info.RollNo) + ' (' + str(student_yearly_info.ClassMaster.Standard) + 'th std)'
-
-        regnRow += ['Regn No.: ' , student_basic_info.RegistrationNo]
-        stdRow += ['Roll No: ' , stdRoll]
-        nameRow += ['Name: ' , student_basic_info.FirstName + ' ' + student_basic_info.LastName]
-
-        style = ParagraphStyle(name = 'NormalText', fontSize = 9)
-        normal_text = student_additional_info.Address
-        normal_text = normal_text.replace('&','and')
-        address = Paragraph(normal_text, style)
-        addressRow += ['Address: ' , address]
         
-        dateRow += ['Birth Date' , birthDate]
+        if  isRegn:
+            regnRow += ['Regn No.: ' , student_basic_info.RegistrationNo]
+
+        if  isRoll:
+            stdRoll = str(student_yearly_info.RollNo) + ' (' + str(student_yearly_info.ClassMaster.Standard) + 'th std)'
+            stdRow += ['Roll No: ' , stdRoll]
+            
+        if isName:
+            nameRow += ['Name: ' , student_basic_info.FirstName + ' ' + student_basic_info.LastName]
+
+        if isAddress:
+            style = styles['Normal']
+            normal_text = student_additional_info.Address
+            normal_text = normal_text.replace('&','and')
+            address = Paragraph(normal_text, style)
+            addressRow += ['Address: ' , address]
+
+        if isBDate:
+            dateRow += ['Birth Date:' , birthDate]
 
     #for last odd record
     if len(student_yearly_infos) < 2:
@@ -3176,17 +3202,33 @@ def fillCardRow(Story, student_yearly_infos):
 
     #table data
     data = []
-    data.append(regnRow)
-    data.append(stdRow)
-    data.append(nameRow)
-    data.append(addressRow)
-    data.append(dateRow)
-
+    if isRegn:
+        data.append(regnRow)
+        rowCount += 1
+        
+    if isRoll:
+        data.append(stdRow)
+        rowCount += 1
+        
+    if isName:
+        data.append(nameRow)
+        rowCount += 1
+        
+    if isAddress:
+        data.append(addressRow)
+        rowCount += 1
+        
+    if isBDate:
+        data.append(dateRow)
+        rowCount += 1
+        
     Story.append(CondPageBreak(1*inch))
 
     #table
-    rH=0.2*inch
-    table=Table(data, colWidths=[1*inch,7*inch,1*inch,7*inch], rowHeights=[rH,rH,rH,rH,rH])
+    heights=[]
+    for i in range(0, rowCount):
+        heights.append(0.2*inch)
+    table=Table(data, colWidths=[1*inch,7*inch,1*inch,7*inch], rowHeights=heights)
     table_style = TableStyle([
         ('FONT', (0,0), (-1,0), 'Times-Roman'),
         ('FONTSIZE',(0,0),(-1,-1),9)])
