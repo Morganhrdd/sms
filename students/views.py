@@ -3152,7 +3152,7 @@ def fillCardRow(Story, student_yearly_infos):
         student_additional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info.RegistrationNo)
 
         birthDate = formatDate(student_basic_info.DateOfBirth)
-        stdRoll = str(student_yearly_info.RollNo) + ' (' + student_yearly_info.ClassMaster.Standard + 'th std)'
+        stdRoll = str(student_yearly_info.RollNo) + ' (' + str(student_yearly_info.ClassMaster.Standard) + 'th std)'
 
         regnRow += ['Regn No.: ' , student_basic_info.RegistrationNo]
         stdRow += ['Roll No: ' , stdRoll]
