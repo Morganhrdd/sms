@@ -3157,7 +3157,13 @@ def fillCardRow(Story, student_yearly_infos):
         regnRow += ['Regn No.: ' , student_basic_info.RegistrationNo]
         stdRow += ['Roll No: ' , stdRoll]
         nameRow += ['Name: ' , student_basic_info.FirstName + ' ' + student_basic_info.LastName]
-        addressRow += ['Address: ' , student_additional_info.Address]
+
+        style = ParagraphStyle(name = 'NormalText', fontSize = 9)
+        normal_text = student_additional_info.Address
+        normal_text = normal_text.replace('&','and')
+        address = Paragraph(normal_text, style)
+        addressRow += ['Address: ' , address]
+        
         dateRow += ['Birth Date' , birthDate]
 
     #for last odd record
