@@ -3094,11 +3094,11 @@ def cardsPDF(request):
                              + '<BIG>Standard</BIG>: <input type="text" name="standard" value="0" id="standard" size="3"><br /><br />'
                              + '<BIG>Division </BIG>: <input type="text" name="division" value="-" id="division" size="3"><br /><br />'
                              + '<BIG>Year </BIG>: <input type="text" name="year_option" value="2009-2010" id="year_option" size="10"><br /><br />'
-                             + '<input type="checkbox" name="attributes" value="regn">Registration number</input><br />'
-                             + '<input type="checkbox" name="attributes" value="roll">Roll number</input><br />'
-                             + '<input type="checkbox" name="attributes" value="student">Name</input><br />'
-                             + '<input type="checkbox" name="attributes" value="address">Address</input><br />'
-                             + '<input type="checkbox" name="attributes" value="bdate">Birth Date</input><br />'
+                             + '<input type="checkbox" name="attributes" value="regn" checked>Registration number</input><br />'
+                             + '<input type="checkbox" name="attributes" value="roll" checked>Roll number</input><br />'
+                             + '<input type="checkbox" name="attributes" value="student" checked>Name</input><br />'
+                             + '<input type="checkbox" name="attributes" value="address" checked>Address</input><br />'
+                             + '<input type="checkbox" name="attributes" value="bdate" checked>Birth Date</input><br />'
                              + '<br />'
                              + '<input type="submit" value="Enter" />'
                              + '</form>'
@@ -3158,19 +3158,29 @@ def fillCardRow(Story, student_yearly_infos, attributes):
     addressRow = []
     dateRow = []
 
-    rowCount = 0
-    isRegn = (attributes.index('regn') > -1)
-    isRoll = (attributes.index('roll') > -1)
-    isName = (attributes.index('student') > -1)
-    isAddress = (attributes.index('address') > -1)
-    isBDate = (attributes.index('bdate') > -1)
+    #read selected attributes
+    isRegn = False
+    isRoll = False
+    isName = False
+    isAddress = False
+    isBDate = False
+
+    for attribute in attributes:
+        if attribute == 'regn':
+            isRegn = True
+        elif attribute == 'roll':
+            isRoll = True
+        elif attribute == 'student':
+            isName = True
+        elif attribute == 'address':
+            isAddress = True
+        elif attribute == 'bdate':
+            isBDate = True        
 
     #populate row data
     for student_yearly_info in student_yearly_infos:
         student_basic_info = student_yearly_info.StudentBasicInfo
         student_additional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info.RegistrationNo)
-
-        birthDate = formatDate(student_basic_info.DateOfBirth)
         
         if  isRegn:
             regnRow += ['Regn No.: ' , student_basic_info.RegistrationNo]
@@ -3190,6 +3200,7 @@ def fillCardRow(Story, student_yearly_infos, attributes):
             addressRow += ['Address: ' , address]
 
         if isBDate:
+            birthDate = formatDate(student_basic_info.DateOfBirth)
             dateRow += ['Birth Date:' , birthDate]
 
     #for last odd record
@@ -3202,6 +3213,8 @@ def fillCardRow(Story, student_yearly_infos, attributes):
 
     #table data
     data = []
+    rowCount = 0
+    
     if isRegn:
         data.append(regnRow)
         rowCount += 1
