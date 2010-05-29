@@ -305,7 +305,6 @@ def report(request):
                                            'PublicComment':ph_data.PublicComment})
         if(len(physical_fit_info) > 0):
             cumulative_physical_grade=GRADE_CHOICES[int(round(cumulative_physical_grade_sum/len(physical_fit_info)))]
-        print cumulative_physical_grade
 
         social_activities = SocialActivity.objects.filter(StudentYearlyInformation = student_yearly_info)
         social_activity_data = []
@@ -321,8 +320,6 @@ def report(request):
                                          'PublicComment':soc_act_data.PublicComment})
         if(len(social_activities) > 0):
             cumulative_social_grade=GRADE_CHOICES[int(round(cumulative_social_grade_sum/len(social_activities)))]
-        #print cumulative_social_grade
-
 
         return render_to_response('students/Marks_Report.html',Context({'student_data':student_data ,
         'mark_data':mark_data ,
@@ -2826,14 +2823,14 @@ def schoolLeavingPDF(request):
         while registration_number <= registration_number_max:
             registration_numbers.append(registration_number)
             registration_number = registration_number + 1
-        #print registration_numbers
+            
         Story = []
         fillSchoolLeavingPdfData(Story, registration_numbers, standard, division, year_option)
-        #print 'Filled'
+        
         response = HttpResponse(mimetype='application/pdf')
         doc = SimpleDocTemplate(response)
         doc.build(Story, onFirstPage=SchoolLeavingLaterPages, onLaterPages=SchoolLeavingLaterPages)
-        #print 'PDF Build'
+
         return response
     else:
         return HttpResponse ('<html><body>'
@@ -2871,7 +2868,7 @@ def fillSchoolLeavingPdfData(Story, registration_nos, standard, division, year_o
             student_division = student_yearly_info.ClassMaster.Division
             if ((division == 'B') or (division == 'G')) and (student_division != division):
                 continue
-            #print 'Filling ' + str(registration_no)
+
             fillSchoolLeavingHeader(Story)
             fillSchoolLeaving(student_yearly_info, Story)
 
@@ -3012,8 +3009,6 @@ def int2word(n):
                 n3.append(int(r[:1]))
         r1 = r
 
-    #print n3  # test
-
     # break each group of 3 digits into
     # ones, tens/twenties, hundreds
     # and form a string
@@ -3022,7 +3017,7 @@ def int2word(n):
         b1 = x % 10
         b2 = (x % 100)//10
         b3 = (x % 1000)//100
-        #print b1, b2, b3  # test
+
         if x == 0:
             continue  # skip
         else:
@@ -3048,6 +3043,12 @@ def cardsLaterPages(canvas, doc):
     canvas.drawString(0.4 * PAGE_WIDTH, 0.1 * inch, "%s          %s   page %d" % ("Jnana Prabodhini Prashala - Students Information", epoch_seconds, doc.page))
     canvas.restoreState()
 
+def checkBoxValue(request, checkBoxName):
+    try:
+        return (request.POST[checkBoxName] == 'on')
+    except:
+        return False
+
 #
 @csrf_exempt
 def cardsPDF(request):
@@ -3055,28 +3056,35 @@ def cardsPDF(request):
         keys = request.POST.keys()
         
         #pick values from html form
+        #range and filters for registration numbers
         registration_number_min = int(request.POST['registration_number_min'])
         registration_number_max = int(request.POST['registration_number_max'])
         standard = int(request.POST['standard'])
         division = request.POST['division']
-        year_option = request.POST['year_option']
-        attributes = request.POST['attributes']
-        
-        #populate a list of egistration numbers for the specified range
-        registration_numbers = []
-        registration_number = registration_number_min
-        while registration_number <= registration_number_max:
-            registration_numbers.append(registration_number)
-            registration_number = registration_number + 1
+        academic_year = request.POST['year_option']
+
+        #selection of fields to be shown on card
+        isShowRegNo = checkBoxValue(request, 'isShowRegNo')
+        isShowRollNo = checkBoxValue(request, 'isShowRollNo')
+        isShowName = checkBoxValue(request, 'isShowName')
+        isShowAddress = checkBoxValue(request, 'isShowAddress')
+        isShowBirthDate = checkBoxValue(request, 'isShowBirthDate')
+        isShowPhoneNo = checkBoxValue(request, 'isShowPhoneNo')
+
+        #select student yearly informations
+        student_yearly_infos = []
+        selectYearlyInfos(student_yearly_infos, registration_number_min, registration_number_max,
+                          standard, division, academic_year)
 
         #populate content for the list of reg numbers
         Story = []
-        fillCardsData(Story, registration_numbers, standard, division, year_option, attributes)
+        fillCardsData(Story, student_yearly_infos,
+                      isShowRegNo, isShowRollNo, isShowName, isShowAddress, isShowBirthDate, isShowPhoneNo)
 
         #show an unsaved pdf document in the browser, using reportPDF
         response = HttpResponse(mimetype='application/pdf')
 
-        margin=0.5*inch
+        margin=0.01*PAGE_WIDTH
         doc = SimpleDocTemplate(response,
                 leftMargin=margin,
                 rightMargin=margin,
@@ -3094,11 +3102,12 @@ def cardsPDF(request):
                              + '<BIG>Standard</BIG>: <input type="text" name="standard" value="0" id="standard" size="3"><br /><br />'
                              + '<BIG>Division </BIG>: <input type="text" name="division" value="-" id="division" size="3"><br /><br />'
                              + '<BIG>Year </BIG>: <input type="text" name="year_option" value="2009-2010" id="year_option" size="10"><br /><br />'
-                             + '<input type="checkbox" name="attributes" value="regn" checked>Registration number</input><br />'
-                             + '<input type="checkbox" name="attributes" value="roll" checked>Roll number</input><br />'
-                             + '<input type="checkbox" name="attributes" value="student" checked>Name</input><br />'
-                             + '<input type="checkbox" name="attributes" value="address" checked>Address</input><br />'
-                             + '<input type="checkbox" name="attributes" value="bdate" checked>Birth Date</input><br />'
+                             + '<input type="checkbox" name="isShowRegNo" checked>Registration number</input><br />'
+                             + '<input type="checkbox" name="isShowRollNo" checked>Roll number</input><br />'
+                             + '<input type="checkbox" name="isShowName" checked>Name</input><br />'
+                             + '<input type="checkbox" name="isShowAddress" checked>Address</input><br />'
+                             + '<input type="checkbox" name="isShowBirthDate" checked>Birth Date</input><br />'
+                             + '<input type="checkbox" name="isShowPhoneNo" checked>Phone number</input><br />'
                              + '<br />'
                              + '<input type="submit" value="Enter" />'
                              + '</form>'
@@ -3108,8 +3117,18 @@ def cardsPDF(request):
                              + '<P>An unsaved PDF file will be generated.</P>'
                              + '</body></html>')
 
-def fillCardsData(Story, registration_nos, standard, division, year_option, attributes):
-    for registration_no in registration_nos:
+#use this function for other pdfs once tested
+def selectYearlyInfos(selected_yearly_infos, registration_number_min, registration_number_max, standard, division, academic_year):
+
+    #populate a list of registration numbers for the specified range
+    registration_numbers = []
+    registration_number = registration_number_min
+    while registration_number <= registration_number_max:
+        registration_numbers.append(registration_number)
+        registration_number = registration_number + 1
+
+    #filter and populate a list of yearly informations
+    for registration_no in registration_numbers:
         try:
             #read basic and yearly info for the list of reg numbers
             student_basic_info = StudentBasicInfo.objects.get(RegistrationNo = registration_no)
@@ -3120,12 +3139,11 @@ def fillCardsData(Story, registration_nos, standard, division, year_option, attr
             continue
 
         #filter
-        selected_yearly_infos = []
         for student_yearly_info in student_yearly_infos:
 
             #filter by year
             student_year = student_yearly_info.ClassMaster.AcademicYear.Year
-            if student_year != year_option:
+            if student_year != academic_year:
                 continue
 
             #filter by standard if a valid entry is available
@@ -3141,112 +3159,72 @@ def fillCardsData(Story, registration_nos, standard, division, year_option, attr
             #select
             selected_yearly_infos.append(student_yearly_info)
 
-        #fill rows
-        count = len(selected_yearly_infos)
-        for i in range(0, count, 2):
-            row = []
-            row.append(selected_yearly_infos[i])
-            if (i + 1) < count:
-                row.append(selected_yearly_infos[i + 1])
-            fillCardRow(Story, row, attributes)
+def fillCardsData(Story, student_yearly_infos,
+                  isShowRegNo, isShowRollNo, isShowName, isShowAddress, isShowBirthDate, isShowPhoneNo):
 
-def fillCardRow(Story, student_yearly_infos, attributes):
+    count = len(student_yearly_infos)
+    #take 2 consecutive entries at a time to fill a row of 2 cards
+    for i in range(0, count, 2):
+	fillCardRow(Story, student_yearly_infos[i:i+2],
+                    isShowRegNo, isShowRollNo, isShowName, isShowAddress, isShowBirthDate, isShowPhoneNo)
 
-    regnRow = []
-    stdRow = []
-    nameRow = []
-    addressRow = []
-    dateRow = []
+def fillCardRow(Story, student_yearly_infos,
+                isShowRegNo, isShowRollNo, isShowName, isShowAddress, isShowBirthDate, isShowPhoneNo):
 
-    #read selected attributes
-    isRegn = False
-    isRoll = False
-    isName = False
-    isAddress = False
-    isBDate = False
-
-    for attribute in attributes:
-        if attribute == 'regn':
-            isRegn = True
-        elif attribute == 'roll':
-            isRoll = True
-        elif attribute == 'student':
-            isName = True
-        elif attribute == 'address':
-            isAddress = True
-        elif attribute == 'bdate':
-            isBDate = True        
-
-    #populate row data
+    cardsRow = []
     for student_yearly_info in student_yearly_infos:
+
+        #populate selected fields to a card
         student_basic_info = student_yearly_info.StudentBasicInfo
         student_additional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info.RegistrationNo)
+
+        studentCardText = ''
         
-        if  isRegn:
-            regnRow += ['Regn No.: ' , student_basic_info.RegistrationNo]
+        if isShowRegNo:
+            regNo = 'RegNo' + ' ' + str(student_basic_info.RegistrationNo)
+            studentCardText += regNo + ',    '
 
-        if  isRoll:
-            stdRoll = str(student_yearly_info.RollNo) + ' (' + str(student_yearly_info.ClassMaster.Standard) + 'th std)'
-            stdRow += ['Roll No: ' , stdRoll]
-            
-        if isName:
-            nameRow += ['Name: ' , student_basic_info.FirstName + ' ' + student_basic_info.LastName]
+        if isShowRollNo:
+            rollNo = str(student_yearly_info.ClassMaster.Standard) + 'th Std' + ',    ' + 'RollNo' + ' ' + str(student_yearly_info.RollNo)
+            studentCardText += rollNo
 
-        if isAddress:
-            style = styles['Normal']
-            normal_text = student_additional_info.Address
-            normal_text = normal_text.replace('&','and')
-            address = Paragraph(normal_text, style)
-            addressRow += ['Address: ' , address]
+        if studentCardText != '':
+            studentCardText += '<br/>'
 
-        if isBDate:
-            birthDate = formatDate(student_basic_info.DateOfBirth)
-            dateRow += ['Birth Date:' , birthDate]
+        if isShowName:
+            name = student_basic_info.FirstName + ' ' + student_basic_info.LastName
+            studentCardText += name + '<br/>'
+
+        if isShowAddress:
+            address = student_additional_info.Address
+            studentCardText += address + '<br/>'
+
+        if isShowBirthDate:
+            birthDate = 'Birth Date:' + ' ' + formatDate(student_basic_info.DateOfBirth)
+            studentCardText += birthDate + '<br/>'
+
+        if isShowPhoneNo:
+            phoneNoText = 'PhoneNo:' + ' ' + str(student_additional_info.Fathers_Phone_No) + '   ' + str(student_additional_info.Mothers_Phone_No)
+            studentCardText += phoneNoText + '<br/>'
+
+        #append card to row
+        style = ParagraphStyle(name = 'NameStyle', fontSize = 12)
+        studentCardText = studentCardText.replace('&','and')
+        studentCard = Paragraph(studentCardText, style)
+        cardsRow.append(studentCard)
 
     #for last odd record
     if len(student_yearly_infos) < 2:
-        regnRow += ['','']
-        stdRow += ['','']
-        nameRow += ['','']
-        addressRow += ['','']
-        dateRow += ['','']
-
-    #table data
-    data = []
-    rowCount = 0
-    
-    if isRegn:
-        data.append(regnRow)
-        rowCount += 1
-        
-    if isRoll:
-        data.append(stdRow)
-        rowCount += 1
-        
-    if isName:
-        data.append(nameRow)
-        rowCount += 1
-        
-    if isAddress:
-        data.append(addressRow)
-        rowCount += 1
-        
-    if isBDate:
-        data.append(dateRow)
-        rowCount += 1
-        
+        cardsRow.append('')
+   
     Story.append(CondPageBreak(1*inch))
 
     #table
-    heights=[]
-    for i in range(0, rowCount):
-        heights.append(0.2*inch)
-    table=Table(data, colWidths=[1*inch,7*inch,1*inch,7*inch], rowHeights=heights)
-    table_style = TableStyle([
-        ('FONT', (0,0), (-1,0), 'Times-Roman'),
-        ('FONTSIZE',(0,0),(-1,-1),9)])
+    data = [cardsRow]
+    colWidthValues = [0.49*PAGE_WIDTH,0.49*PAGE_WIDTH]
+    table=Table(data, colWidths=colWidthValues)
+    table_style = TableStyle([('VALIGN',(0,0),(-1,-1), 'TOP')])
     table.setStyle(table_style)
-    table.hAlign='LEFT'
     Story.append(table)
 
 #----------------------------------------------------------------------------------------------------
