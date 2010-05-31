@@ -435,6 +435,12 @@ class SearchDetailsForm(forms.Form):
     FirstName = forms.CharField(required=False)
     LastName = forms.CharField(required=False)
 
+class SearchClassDetailsForm(forms.Form):
+    Year = forms.CharField(max_length=9)
+    Standard = forms.IntegerField()
+    Division = forms.CharField()
+    Columns = forms.IntegerField()
+
 class CompetitionDetailsForm(forms.Form):
     pkwidget = forms.HiddenInput()
     pk=forms.IntegerField(widget=pkwidget, required=False)
