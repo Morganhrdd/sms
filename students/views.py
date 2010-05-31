@@ -4,18 +4,19 @@ from django.shortcuts import render_to_response, redirect
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from jp_sms.students.models import TestMapping, StudentTestMarks, StudentYearlyInformation, StudentBasicInfo
-from jp_sms.students.models import SubjectMaster, ClassMaster, SubjectMaster, AttendanceMaster, AcademicYear
-from jp_sms.students.models import StudentAttendance, StudentAdditionalInformation,CoCurricular
-from jp_sms.students.models import SocialActivity,PhysicalFitnessInfo,AbhivyaktiVikas,Teacher
-from jp_sms.students.models import WorkExperience, PhysicalEducation, ThinkingSkill, SocialSkill, EmotionalSkill
-from jp_sms.students.models import AttitudeTowardsSchool, Values, MedicalReport
-from jp_sms.students.models import SearchDetailsForm, CompetitionDetailsForm, ElocutionDetailsForm, ValuesDetailsForm
-from jp_sms.students.models import ProjectDetailsForm, AbhivyaktiVikasDetailsForm, CompetitiveExamDetailsForm
-from jp_sms.students.models import CoCurricularDetailsForm, SocialActivityDetailsForm, PhysicalFitnessInfoDetailsForm
-from jp_sms.students.models import WorkExperienceDetailsForm, PhysicalEducationDetailsForm, ThinkingSkillDetailsForm
-from jp_sms.students.models import SocialSkillDetailsForm, EmotionalSkillDetailsForm, AttitudeTowardsSchoolDetailsForm
-from jp_sms.students.models import Project,Elocution,Library,Competition,CompetitiveExam,STANDARD_CHOICES, MedicalReportForm
+from jp_sms.students.models import *
+#from jp_sms.students.models import TestMapping, StudentTestMarks, StudentYearlyInformation, StudentBasicInfo
+#from jp_sms.students.models import SubjectMaster, ClassMaster, SubjectMaster, AttendanceMaster, AcademicYear
+#from jp_sms.students.models import StudentAttendance, StudentAdditionalInformation,CoCurricular
+#from jp_sms.students.models import SocialActivity,PhysicalFitnessInfo,AbhivyaktiVikas,Teacher
+#from jp_sms.students.models import WorkExperience, PhysicalEducation, ThinkingSkill, SocialSkill, EmotionalSkill
+##from jp_sms.students.models import AttitudeTowardsSchool, Values, MedicalReport
+#from jp_sms.students.models import SearchDetailsForm, CompetitionDetailsForm, ElocutionDetailsForm, ValuesDetailsForm
+#from jp_sms.students.models import ProjectDetailsForm, AbhivyaktiVikasDetailsForm, CompetitiveExamDetailsForm
+#from jp_sms.students.models import CoCurricularDetailsForm, SocialActivityDetailsForm, PhysicalFitnessInfoDetailsForm
+#from jp_sms.students.models import WorkExperienceDetailsForm, PhysicalEducationDetailsForm, ThinkingSkillDetailsForm
+#from jp_sms.students.models import SocialSkillDetailsForm, EmotionalSkillDetailsForm, AttitudeTowardsSchoolDetailsForm
+#from jp_sms.students.models import Project,Elocution,Library,Competition,CompetitiveExam,STANDARD_CHOICES, MedicalReportForm
 from django.template import Context
 from django.template.loader import get_template
 from reportlab.pdfgen import canvas
@@ -23,7 +24,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer,Image,Table,
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.rl_config import defaultPageSize
-from reportlab.lib.units import inch
+from reportlab.lib.units import inch, cm
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT
 from reportlab.lib import colors
 import os
@@ -1398,6 +1399,61 @@ def medicalreport_add(request):
                 data.append(MedicalReportForm(initial={'Delete':'Y'}))
             return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
         return render_to_response(respage,{'form':genform})
+
+
+#
+@csrf_exempt
+def generate_name_columns(request):
+    respage = 'students/GenerateNameColumns.html'
+    if not request.POST:
+        genform = SearchClassDetailsForm(initial={'Year':'2009-2010'})
+        return render_to_response(respage,{'form':genform})
+    else:
+        table_style = TableStyle([
+               ('FONT', (0,0), (-1,0), 'Times-Bold'),
+               ('HALIGN',(0,0),(-1,-1), 'LEFT'),
+               ('TEXTCOLOR',(0,0),(-1,-1),colors.black),
+               ('FONTSIZE',(0,0),(-1,-1),12),
+               ('VALIGN',(0,0),(-1,-1),'MIDDLE'),
+               ('INNERGRID', (0,0), (-1,-1), 0.20, colors.gray),
+               ('BOX', (0,0), (-1,-1), 0.20, colors.gray)])
+        tmp = []
+        data = []
+        dl = []
+        dl.append(1.5*cm)
+        dl.append(1.75*cm)
+        dl.append(2*inch)
+        cols = int(request.POST['Columns'])
+        col_width = (defaultPageSize[0]-(5*inch))/cols
+        height = defaultPageSize[1]
+        yr = request.POST['Year']
+        std = request.POST['Standard']
+        div = request.POST['Division']
+        for i in range(cols):
+            tmp.append('')
+            dl.append(col_width)
+        data.append(['RegNo', 'RollNo', 'Name']+tmp)
+        s_objs = StudentYearlyInformation.objects.filter(ClassMaster__AcademicYear__Year=yr,ClassMaster__Standard=std,ClassMaster__Division=div)
+        for s in s_objs:
+            data.append([s.StudentBasicInfo.RegistrationNo, s.RollNo, s.StudentBasicInfo.FirstName+' '+s.StudentBasicInfo.LastName]+tmp)
+
+
+        #
+        PAGE_HEIGHT=defaultPageSize[1]
+        PAGE_WIDTH=defaultPageSize[0]
+        styles = getSampleStyleSheet()
+        pages  = []
+        dr=[]
+        for i in data:
+            dr.append(.55*cm)
+        table = Table(data,dl,dr)
+        table.setStyle(table_style)
+        pages.append(table)
+        response = HttpResponse(mimetype='application/pdf')
+        doc = SimpleDocTemplate(response)
+        doc.build(pages)
+        return response
+
 
 #
 @csrf_exempt
