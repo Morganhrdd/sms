@@ -1,0 +1,162 @@
+<html>
+<script lannguage="javascript">
+function statusform()
+{
+ document.leave.applyforleave.value = 0;
+ document.leave.submit();
+}
+
+function cancelform()
+{
+ document.leave.applyforleave.value = 2;
+ document.leave.submit();
+}
+
+function encashform()
+{
+ document.leave.applyforleave.value = 3;
+ document.leave.submit();
+}
+
+function showdiv(divname) {
+{% for row in datedata %}
+ document.getElementById('{{row.type}}').style.visibility = 'hidden';
+{% endfor %}
+ document.getElementById(divname).style.visibility = 'visible';
+}
+ 
+function populatedate(date)
+{
+ document.leave.FromDate.value = date;
+ document.leave.ToDate.value = date;
+}
+
+function setdisabled(disabled)
+{
+ document.leave.Barcode.disabled = disabled;
+ document.leave.Category.disabled = disabled;
+}
+</script>
+<body onload="setdisabled({{disabled}})">
+<div align="center">
+
+<h2>
+Leave Application Form
+</h2><br/>
+
+<form name="leave" action="/leave/" method="post">
+<table>
+{{ form.as_table }}
+</table>
+<br/><b>{{ message }}</b><br/><br/>
+<input type="submit" value="Apply Leave" onClick="setdisabled(false)"/>
+<input type="submit" value="Cancel Leave" onClick="setdisabled(false);cancelform()"/>
+<input type="submit" value="Encash Leave" onClick="setdisabled(false);encashform()"/>
+<input type="submit" value="Check Status" onClick="setdisabled(false);statusform()"/>
+<input type="hidden" name="applyforleave" value="1"/>
+</form>
+
+</div>
+<br/>
+
+<div id="LeaveBalance" name="LeaveBalance" style="position:absolute;left:50;top:430">
+<h3>
+Leave Balance
+</h3><br/>
+	<table border="1" cellspacing="5" cellpadding="0">
+	<tr><th>Leave type</th><th>Carry</th><th>Current</th><th>Taken</th><th>Balance</th></tr>
+	<tr><td>Casual</td><td>{{ carryforward.1 }}</td><td>{{ currentleaves.1 }}</td><td>{{ takenleaves.1 }}</td><td>{{ balance.1 }}</td></tr>
+	<tr><td>Sick</td><td>{{ carryforward.2 }}</td><td>{{ currentleaves.2 }}</td><td>{{ takenleaves.2 }}</td><td>{{ balance.2 }}</td></tr>
+	<tr><td>Earned</td><td>{{ carryforward.3 }}</td><td>{{ currentleaves.3 }}</td><td>{{ takenleaves.3 }}</td><td>{{ balance.3 }}</td></tr>
+	</table>
+</div>
+
+<div align="center">
+<h2>
+Leave Status
+</h2><br/>
+	<table border="1" cellspacing="5" cellpadding="0">
+		<tr><th>Leave type</th> <th>Total</th> <th>Approve</th> <th>Pending</th> </tr>
+	
+			{% for row in data %}
+			<tr>
+				<td><a href="javascript:showdiv('{{row.type}}')">{{ row.type}}</a></td><td>{{ row.total }}</td>
+				<td>{{ row.approve}}</td><td>{{ row.pending }}</td>
+			</tr>
+			{% endfor %}
+	</table>
+</div>
+
+{% for row in datedata %}
+<div id="{{row.type}}" name="{{row.type}}" style="position:absolute;right:200;top:430;visibility:hidden">
+<table border="1" cellspacing="5" cellpadding="0">
+<h3>
+{{row.type}}
+</h3>
+<th>Approve dates</th>
+<th>Pending dates</th>
+<tr><td>
+	{% for dat in row.approve %}
+		<a href="javascript:populatedate('{{dat}}')">{{dat}}</a><br/>
+	{% endfor %}
+</td>
+<td>
+	{% for dat in row.pending %}
+		<a href="javascript:populatedate('{{dat}}')">{{dat}}</a><br/>
+	{% endfor %}
+</td></tr>
+</table>
+</div>
+{% endfor %}
+
+<br><br>
+<div align="center">
+<table name="outer" border="1" cellspacing="5" cellpadding="0" width=200>
+<tr><td> Absent </td> <td> {{ absentdays }}</td></tr>
+<tr>
+<td colspan=2 align="center">
+<table name="inner">
+	{% for row in abdays %}
+	<tr>
+		<td><a href="javascript:populatedate('{{ row.date}}')">{{ row.date}}</a></td>
+	</tr>
+	{% endfor %}
+</table>
+<tr><td> Halfday </td> <td> {{ halfdays }}</td></tr>
+<tr>
+<td colspan=2 align="center">
+<table name="innerhfdays">
+	{% for row in hfdays %}
+	<tr>
+		<td><a href="javascript:populatedate('{{ row.date}}')">{{ row.date}}</a></td>
+	</tr>
+	{% endfor %}
+</table>
+<tr><td> Late </td> <td> {{ latedays }}</td></tr>
+<tr>
+<td colspan=2 align="center">
+<table name="innerltdays">
+	{% for row in ltdays %}
+	<tr>
+		<td>{{ row.date}}</td>
+	</tr>
+	{% endfor %}
+</table>
+</td>
+</tr>
+<tr><td> Forgot Checkout </td> <td> {{ forgotdays }}</td></tr>
+<tr>
+<td colspan=2 align="center">
+<table name="innerfcdays">
+	{% for row in fcdays %}
+	<tr>
+		<td>{{ row.date}}</td>
+	</tr>
+	{% endfor %}
+</table>
+</td>
+</tr>
+</table>
+</div>
+</body>
+</html>
