@@ -140,6 +140,11 @@ PROJECT_TYPE_CHOICES = {
     'O': 'Open ended exploration',
 }
 
+DIVISION_NUM = {
+    'B': 1,
+    'G': 2
+}
+
 ones = ["", "One ","Two ","Three ","Four ", "Five ", "Six ","Seven ","Eight ","Nine "]
 
 tens = ["Ten ","Eleven ","Twelve ","Thirteen ", "Fourteen ",
@@ -3101,10 +3106,15 @@ def cardsPDF(request):
         isShowBirthDate = checkBoxValue(request, 'isShowBirthDate')
         isShowPhoneNo = checkBoxValue(request, 'isShowPhoneNo')
 
+        isSortByRollNo = checkBoxValue(request, 'isSortByRollNo')
+
         #select student yearly informations
         student_yearly_infos = []
         selectYearlyInfos(student_yearly_infos, registration_number_min, registration_number_max,
                           standard, division, academic_year)
+
+        if isSortByRollNo:
+            student_yearly_infos.sort(compareYearlyInfo)
 
         #populate content for the list of reg numbers
         Story = []
@@ -3138,6 +3148,8 @@ def cardsPDF(request):
                              + '<input type="checkbox" name="isShowAddress" checked>Address</input><br />'
                              + '<input type="checkbox" name="isShowBirthDate" checked>Birth Date</input><br />'
                              + '<input type="checkbox" name="isShowPhoneNo" checked>Phone number</input><br />'
+                             + '<br />'
+                             + '<input type="checkbox" name="isSortByRollNo" checked>Sort by Standard and Roll number</input><br />'
                              + '<br />'
                              + '<input type="submit" value="Enter" />'
                              + '</form>'
@@ -3189,6 +3201,17 @@ def selectYearlyInfos(selected_yearly_infos, registration_number_min, registrati
             #select
             selected_yearly_infos.append(student_yearly_info)
 
+def compareYearlyInfo(yearly_info_left, yearly_info_right):  
+    rollNo_left = comparisonIndex(yearly_info_left)
+    rollNo_right = comparisonIndex(yearly_info_right)
+    return cmp(int(rollNo_left), int(rollNo_right))
+
+def comparisonIndex(student_yearly_info):
+    division = student_yearly_info.ClassMaster.Division
+    standard = student_yearly_info.ClassMaster.Standard
+    rollNo = student_yearly_info.RollNo
+    return standard * 10000 + DIVISION_NUM[division] * 1000 + rollNo
+    
 def fillCardsData(Story, student_yearly_infos,
                   isShowRegNo, isShowRollNo, isShowName, isShowAddress, isShowBirthDate, isShowPhoneNo):
 
