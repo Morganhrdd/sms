@@ -82,7 +82,7 @@
 	<b>School attendance:</b><p/>
 	<table border="1" cellspacing="5" cellpadding="0">
 		<tr><th>Month</th> <th>Attendance</th><th>Working days</th></tr> 
-		<form action="" method="POST">
+		<form action="" method="POST">{% csrf_token %}
 			{% for row in attendance_data %}
 			<tr>
 				<td>{{ row.Month}}</td>
@@ -98,7 +98,7 @@
 		<tr><th>Subject Name</th> <th>Test type</th>  <th>Marks</th> <th>Maximum Marks</th></tr> 
 	
 	
-		<form action="" method="POST">
+		<form action="" method="POST">{% csrf_token %}
 			{% for row in mark_data %}
 			<tr>
 				<td>{{ row.Subject_Name}}</td>
@@ -114,7 +114,7 @@
 	<b>Co Curricular:</b><p/>
 	<table border="1" cellspacing="5" cellpadding="0">
 		<tr><th>Activity</th> <th>Objectives</th> <th>Date</th> <th>Guide</th> <th>Grade</th></tr> 
-		<form action="" method="POST">
+		<form action="" method="POST">{% csrf_token %}
 			{% for row in co_curricular_data %}
 			<tr>
 				<td>{{ row.Activity}}</td>
@@ -131,7 +131,7 @@
 	<b>competitive Exams:</b><p/>
 	<table border="1" cellspacing="5" cellpadding="0">
 		<tr><th>Name</th> <th>Subject</th> <th>Date</th> <th>Level</th> <th>Grade</th></tr> 
-		<form action="" method="POST">
+		<form action="" method="POST">{% csrf_token %}
 			{% for row in competitive_exam_data %}
 			<tr>
 				<td>{{ row.Name}}</td>
@@ -148,7 +148,7 @@
 	<b>Competition:</b><p/>
 	<table border="1" cellspacing="5" cellpadding="0">
 		<tr><th>Organizer</th> <th>Subject</th> <th>Date</th> <th>Achievement</th> <th>Guide</th></tr> 
-		<form action="" method="POST">
+		<form action="" method="POST">{% csrf_token %}
 			{% for row in competitions_data %}
 			<tr>
 				<td>{{ row.Organizer}}</td>
@@ -168,7 +168,7 @@
 
 	<table border="1" cellspacing="5" cellpadding="0">
 		<tr><th>MediumOfExpression</th> <th>Teacher</th> <th>Participation</th> <th>ReadinessToLearn</th> <th>ContinuityInWork</th><th>SkillDevelopment</th><th>Creativity</th></tr> 
-		<form action="" method="POST">
+		<form action="" method="POST">{% csrf_token %}
 			{% for row in abhivyakti_vikas_data %}
 			<tr>
 				<td>{{row.MediumOfExpression}}</td>
@@ -187,7 +187,7 @@
     <p/>
 <table border="1" cellspacing="5" cellpadding="0">
 		<tr><th>Title</th> <th>Type</th> <th>Subject</th> <th>ProblemSelection</th> <th>Review</th><th>Planning</th><th>Documentation</th><th>Communication</th></tr> 
-		<form action="" method="POST">
+		<form action="" method="POST">{% csrf_token %}
 			{% for row in project_data %}
 			<tr>
 				<td>{{row.Title}}</td>
@@ -208,7 +208,7 @@
     <p/>
 	<table border="1" cellspacing="5" cellpadding="0">
 		<tr><th>Title</th> <th>Memory</th> <th>Content</th> <th>Understanding</th> <th>Skill</th><th>Presentation</th></tr> 
-		<form action="" method="POST">
+		<form action="" method="POST">{% csrf_token %}
 			{% for row in elocution_data %}
 			<tr>
 				<td>{{row.Title}}</td>
@@ -235,7 +235,7 @@
 		<th width="119">SitUps</th> <th width="94">sprint</th> <th width="161">400m</th> 
           <th width="162">ShortPut</th><th width="158">BMI</th> <th width="116">Balancing</th>
 		 <th width="96">Grade</th></tr> 
-		<form action="" method="POST">
+		<form action="" method="POST">{% csrf_token %}
 			{% for row in physical_fit_info_data %}
 			<tr>
 				<td width="10">{{row.SpecialSport}}</td>
@@ -264,7 +264,7 @@
     <p/>
 	<table border="1" cellspacing="5" cellpadding="0">
 		<tr><th>Activity</th> <th>Objectives</th> <th>Date</th> <th>Organizer</th> <th>Grade</th></tr> 
-		<form action="" method="POST">
+		<form action="" method="POST">{% csrf_token %}
 			{% for row in social_activity_data %}
 			<tr>
 				<td>{{ row.Activity}}</td>

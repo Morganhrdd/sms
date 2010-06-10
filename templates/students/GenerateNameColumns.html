@@ -11,7 +11,7 @@
  	<br/>
         {{ msg|safe }}
         <img src={{photo}} />
-		<form action="" method="POST">
+		<form action="" method="POST">{% csrf_token %}
 		    <table cellSpacing=0 cellPadding=5 width="50%" border=0 style="WIDTH: 50%" align=center>
                 {{ form.as_table }}
             </table>

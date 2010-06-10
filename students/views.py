@@ -2,8 +2,8 @@
 from django.db.models import Q
 from django.shortcuts import render_to_response, redirect
 from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-
+#from django.views.decorators.csrf import csrf_exempt
+from django.core.context_processors import csrf
 from jp_sms.students.models import *
 #from jp_sms.students.models import TestMapping, StudentTestMarks, StudentYearlyInformation, StudentBasicInfo
 #from jp_sms.students.models import SubjectMaster, ClassMaster, SubjectMaster, AttendanceMaster, AcademicYear
@@ -17,7 +17,7 @@ from jp_sms.students.models import *
 #from jp_sms.students.models import WorkExperienceDetailsForm, PhysicalEducationDetailsForm, ThinkingSkillDetailsForm
 #from jp_sms.students.models import SocialSkillDetailsForm, EmotionalSkillDetailsForm, AttitudeTowardsSchoolDetailsForm
 #from jp_sms.students.models import Project,Elocution,Library,Competition,CompetitiveExam,STANDARD_CHOICES, MedicalReportForm
-from django.template import Context
+from django.template import Context, RequestContext
 from django.template.loader import get_template
 from reportlab.pdfgen import canvas
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer,Image,Table,TableStyle,Frame,PageBreak, CondPageBreak
@@ -151,7 +151,6 @@ thousands = ["","Thousand ","Million ", "Billion ", "Trillion "]
 
 
 # HTML Report:
-@csrf_exempt
 def report(request):
     if request.POST:
         keys = request.POST.keys()
@@ -337,12 +336,11 @@ def report(request):
         'physical_fit_info_data':physical_fit_info_data,
         'cumulative_physical_grade':cumulative_physical_grade,
         'social_activity_data':social_activity_data,
-        'cumulative_social_grade':cumulative_social_grade}))
+        'cumulative_social_grade':cumulative_social_grade}), context_instance=RequestContext(request))
     else:
         return HttpResponse ('<html><body>Enter Registration Number<form action="" method="POST"><input type="text" name="reg_no" value="" id="reg_no" size="20"></td>	<input type="submit" value="Enter" /></form></body></html>')
 
 # Used by HTML Report
-@csrf_exempt
 def marks_add(request):
     if request.POST:
         keys = request.POST.keys()
@@ -391,20 +389,19 @@ def marks_add(request):
             name = '%s %s' % (student_test_mark_obj.StudentYearlyInformation.StudentBasicInfo.FirstName, student_test_mark_obj.StudentYearlyInformation.StudentBasicInfo.LastName)
             rollno = student_test_mark_obj.StudentYearlyInformation.RollNo
             data.append({'id':student_test_mark_obj.StudentYearlyInformation.id, 'name':name, 'rollno':rollno,'marks_obtained':student_test_mark_obj.MarksObtained})
-        return render_to_response('students/AddMarks.html',Context({'test_details': test_details,'test_id':test_id, 'data':data}))
+        return render_to_response('students/AddMarks.html',Context({'test_details': test_details,'test_id':test_id, 'data':data}), context_instance=RequestContext(request))
     
 
 
-@csrf_exempt
 def competition_add(request):
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response('students/AddCompetition.html',{'form':genform})
+        return render_to_response('students/AddCompetition.html',{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg})
+            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg}, context_instance=RequestContext(request))
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -447,21 +444,20 @@ def competition_add(request):
                 x = CompetitionDetailsForm(initial=tmp)
                 data.append(x)
             data.append(CompetitionDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddCompetition.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
-        return render_to_response('students/AddCompetition.html',{'form':genform})
+            return render_to_response('students/AddCompetition.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response('students/AddCompetition.html',{'form':genform}, context_instance=RequestContext(request))
 
 
 #
-@csrf_exempt
 def elocution_add(request):
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response('students/AddElocution.html',{'form':genform})
+        return render_to_response('students/AddElocution.html',{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg})
+            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg}, context_instance=RequestContext(request))
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -506,20 +502,19 @@ def elocution_add(request):
                 x = ElocutionDetailsForm(initial=tmp)
                 data.append(x)
             data.append(ElocutionDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddElocution.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
-        return render_to_response('students/AddElocution.html',{'form':genform})
+            return render_to_response('students/AddElocution.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response('students/AddElocution.html',{'form':genform}, context_instance=RequestContext(request))
 
 #
-@csrf_exempt
 def project_add(request):
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response('students/AddProject.html',{'form':genform})
+        return render_to_response('students/AddProject.html',{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg})
+            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg}, context_instance=RequestContext(request))
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -570,19 +565,18 @@ def project_add(request):
                 x = ProjectDetailsForm(initial=tmp)
                 data.append(x)
             data.append(ProjectDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddProject.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
-        return render_to_response('students/AddProject.html',{'form':genform})
+            return render_to_response('students/AddProject.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response('students/AddProject.html',{'form':genform}, context_instance=RequestContext(request))
 #
-@csrf_exempt
 def abhivyaktivikas_add(request):
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response('students/AddAbhivyaktiVikas.html',{'form':genform})
+        return render_to_response('students/AddAbhivyaktiVikas.html',{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg})
+            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg}, context_instance=RequestContext(request))
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -630,20 +624,19 @@ def abhivyaktivikas_add(request):
                 x = AbhivyaktiVikasDetailsForm(initial=tmp)
                 data.append(x)
             data.append(AbhivyaktiVikasDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddAbhivyaktiVikas.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
-        return render_to_response('students/AddAbhivyaktiVikas.html',{'form':genform})
+            return render_to_response('students/AddAbhivyaktiVikas.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response('students/AddAbhivyaktiVikas.html',{'form':genform}, context_instance=RequestContext(request))
 
 #
-@csrf_exempt
 def competitiveexam_add(request):
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response('students/AddCompetitiveExam.html',{'form':genform})
+        return render_to_response('students/AddCompetitiveExam.html',{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg})
+            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg}, context_instance=RequestContext(request))
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -686,20 +679,19 @@ def competitiveexam_add(request):
                 x = CompetitiveExamDetailsForm(initial=tmp)
                 data.append(x)
             data.append(CompetitiveExamDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddCompetitiveExam.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
-        return render_to_response('students/AddCompetitiveExam.html',{'form':genform})
+            return render_to_response('students/AddCompetitiveExam.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response('students/AddCompetitiveExam.html',{'form':genform}, context_instance=RequestContext(request))
 
 #
-@csrf_exempt
 def cocurricular_add(request):
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response('students/AddCocurricular.html',{'form':genform})
+        return render_to_response('students/AddCocurricular.html',{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg})
+            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg}, context_instance=RequestContext(request))
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -742,20 +734,19 @@ def cocurricular_add(request):
                 x = CoCurricularDetailsForm(initial=tmp)
                 data.append(x)
             data.append(CoCurricularDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddCocurricular.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
-        return render_to_response('students/AddCocurricular.html',{'form':genform})
+            return render_to_response('students/AddCocurricular.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response('students/AddCocurricular.html',{'form':genform}, context_instance=RequestContext(request))
 
 #
-@csrf_exempt
 def socialactivity_add(request):
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response('students/AddSocialActivity.html',{'form':genform})
+        return render_to_response('students/AddSocialActivity.html',{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg})
+            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg}, context_instance=RequestContext(request))
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -798,20 +789,19 @@ def socialactivity_add(request):
                 x = SocialActivityDetailsForm(initial=tmp)
                 data.append(x)
             data.append(SocialActivityDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddSocialActivity.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
-        return render_to_response('students/AddSocialActivity.html',{'form':genform})
+            return render_to_response('students/AddSocialActivity.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response('students/AddSocialActivity.html',{'form':genform}, context_instance=RequestContext(request))
 
 #
-@csrf_exempt
 def physicalfitnessinfo_add(request):
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response('students/AddPhysicalFitnessInfo.html',{'form':genform})
+        return render_to_response('students/AddPhysicalFitnessInfo.html',{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg})
+            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg}, context_instance=RequestContext(request))
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -887,11 +877,10 @@ def physicalfitnessinfo_add(request):
                 data.append(x)
             if not len(data):
                 data.append(PhysicalFitnessInfoDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddPhysicalFitnessInfo.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
-        return render_to_response('students/AddPhysicalFitnessInfo.html',{'form':genform})
+            return render_to_response('students/AddPhysicalFitnessInfo.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response('students/AddPhysicalFitnessInfo.html',{'form':genform}, context_instance=RequestContext(request))
 
 #
-@csrf_exempt
 def search_reg_no(request=None):
     if not request:
         return
@@ -909,17 +898,16 @@ def search_reg_no(request=None):
         return msg
     
 #
-@csrf_exempt
 def workexperience_add(request):
     respage = 'students/AddWorkExperience.html'
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response(respage,{'form':genform})
+        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage,{'form':genform,'msg':msg})
+            return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -963,21 +951,20 @@ def workexperience_add(request):
                 x = WorkExperienceDetailsForm(initial=tmp)
                 data.append(x)
             data.append(WorkExperienceDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
-        return render_to_response(respage,{'form':genform})
+            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
 
 #
-@csrf_exempt
 def physicaleducation_add(request):
     respage = 'students/AddPhysicalEducation.html'
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response(respage,{'form':genform})
+        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage,{'form':genform,'msg':msg})
+            return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -1022,21 +1009,20 @@ def physicaleducation_add(request):
                 data.append(x)
             if not len(data):
                 data.append(PhysicalEducationDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
-        return render_to_response(respage,{'form':genform})
+            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
 
 #
-@csrf_exempt
 def thinkingskill_add(request):
     respage = 'students/AddThinkingSkill.html'
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response(respage,{'form':genform})
+        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage,{'form':genform,'msg':msg})
+            return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -1084,21 +1070,20 @@ def thinkingskill_add(request):
             tmp['Delete'] = delete
             x = ThinkingSkillDetailsForm(initial=tmp)
             data.append(x)
-            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
-        return render_to_response(respage,{'form':genform})
+            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
 
 #
-@csrf_exempt
 def socialskill_add(request):
     respage = 'students/AddSocialSkill.html'
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response(respage,{'form':genform})
+        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage,{'form':genform,'msg':msg})
+            return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -1145,21 +1130,20 @@ def socialskill_add(request):
             tmp['Delete'] = delete
             x = SocialSkillDetailsForm(initial=tmp)
             data.append(x)
-            return render_to_response('students/AddSocialSkill.html',{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
-        return render_to_response('students/AddSocialSkill.html',{'form':genform})
+            return render_to_response('students/AddSocialSkill.html',{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response('students/AddSocialSkill.html',{'form':genform}, context_instance=RequestContext(request))
 
 #
-@csrf_exempt
 def attitudetowardsschool_add(request):
     respage = 'students/AddAttitudeTowardsSchool.html'
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response(respage,{'form':genform})
+        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage,{'form':genform,'msg':msg})
+            return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -1208,20 +1192,19 @@ def attitudetowardsschool_add(request):
             tmp['Delete'] = delete
             x = AttitudeTowardsSchoolDetailsForm(initial=tmp)
             data.append(x)
-            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
-        return render_to_response(respage,{'form':genform})
+            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
 #
-@csrf_exempt
 def emotionalskill_add(request):
     respage = 'students/AddEmotionalSkill.html'
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response(respage,{'form':genform})
+        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage,{'form':genform,'msg':msg})
+            return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -1267,21 +1250,20 @@ def emotionalskill_add(request):
             tmp['Delete'] = delete
             x = EmotionalSkillDetailsForm(initial=tmp)
             data.append(x)
-            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
-        return render_to_response(respage,{'form':genform})
+            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
 
 #
-@csrf_exempt
 def values_add(request):
     respage = 'students/AddValues.html'
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response(respage,{'form':genform})
+        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage,{'form':genform,'msg':msg})
+            return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -1330,22 +1312,21 @@ def values_add(request):
             tmp['Delete'] = delete
             x = ValuesDetailsForm(initial=tmp)
             data.append(x)
-            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
-        return render_to_response(respage,{'form':genform})
+            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
     
 
 #
-@csrf_exempt
 def medicalreport_add(request):
     respage = 'students/AddMedicalReport.html'
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response(respage,{'form':genform})
+        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage,{'form':genform,'msg':msg})
+            return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -1397,17 +1378,16 @@ def medicalreport_add(request):
                 data.append(x)
             if not len(data):
                 data.append(MedicalReportForm(initial={'Delete':'Y'}))
-            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'})
-        return render_to_response(respage,{'form':genform})
+            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
 
 
 #
-@csrf_exempt
 def generate_name_columns(request):
     respage = 'students/GenerateNameColumns.html'
     if not request.POST:
         genform = SearchClassDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response(respage,{'form':genform})
+        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
     else:
         table_style = TableStyle([
                ('FONT', (0,0), (-1,0), 'Times-Bold'),
@@ -1433,7 +1413,7 @@ def generate_name_columns(request):
             tmp.append('')
             dl.append(col_width)
         data.append(['RegNo', 'RollNo', 'Name']+tmp)
-        s_objs = StudentYearlyInformation.objects.filter(ClassMaster__AcademicYear__Year=yr,ClassMaster__Standard=std,ClassMaster__Division=div)
+        s_objs = StudentYearlyInformation.objects.filter(ClassMaster__AcademicYear__Year=yr,ClassMaster__Standard=std,ClassMaster__Division=div).order_by('RollNo')
         for s in s_objs:
             data.append([s.StudentBasicInfo.RegistrationNo, s.RollNo, s.StudentBasicInfo.FirstName+' '+s.StudentBasicInfo.LastName]+tmp)
 
@@ -1456,7 +1436,6 @@ def generate_name_columns(request):
 
 
 #
-@csrf_exempt
 def display_report(request, regno=None, year=None):
     if request.user.username != str(regno) and not request.user.is_superuser and request.user.is_active:
         return redirect('/')
@@ -1509,9 +1488,8 @@ def display_report(request, regno=None, year=None):
     data['emotionalskill'] = emotionalskill_objs
     data['attitudetowardsschool'] = attitudetowardsschool_objs
     data['values'] = values_objs
-    return render_to_response(respage,data)
+    return render_to_response(respage,data, context_instance=RequestContext(request))
 # Used by HTML Report
-@csrf_exempt
 def attendance_add(request):
     if request.POST:
         keys = request.POST.keys()
@@ -1550,7 +1528,7 @@ def attendance_add(request):
             except:
                 attendance = ''
             data.append({'id':student.id,'roll_no':student.RollNo, 'name':name, 'attendance':attendance})
-        return render_to_response('students/AddAttendance.html',Context({'attendance_id':attendance_id, 'attendance_details':attendance_obj.ClassMaster, 'data':data}))
+        return render_to_response('students/AddAttendance.html',Context({'attendance_id':attendance_id, 'attendance_details':attendance_obj.ClassMaster, 'data':data}), context_instance=RequestContext(request))
     return HttpResponse()
 
 # PDF Report :	--------------------------------------------------
@@ -1579,7 +1557,6 @@ def pageBorder(canvas):
     canvas.line(PAGE_WIDTH - margin, margin + 0.16*inch, margin, margin + 0.16*inch)
 
 #
-@csrf_exempt
 def reportPDF(request):
     if request.POST:
         keys = request.POST.keys()
@@ -2688,7 +2665,6 @@ def addCertificateNumberTextToStory(Story,header_text):
     Story.append(Paragraph(header_text, style))
 
 #
-@csrf_exempt
 def certificatePDF(request):
     if request.POST:
         keys = request.POST.keys()
@@ -2864,7 +2840,6 @@ def addSchoolLeavingTextToStory(Story,header_text):
     Story.append(Spacer(1,0.05*inch))
 
 #
-@csrf_exempt
 def schoolLeavingPDF(request):
     if request.POST:
         keys = request.POST.keys()
@@ -3106,7 +3081,6 @@ def checkBoxValue(request, checkBoxName):
         return False
 
 #
-@csrf_exempt
 def cardsPDF(request):
     if request.POST:
         keys = request.POST.keys()

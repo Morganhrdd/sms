@@ -1052,6 +1052,33 @@ def copy_yrly_info():
                 print yi_new
             except:
                 pass
+
+def update_yrly_info():
+    print 'Update yearly info'
+    xls_file = raw_input('Enter filename: ')
+    book = xlrd.open_workbook(xls_file)
+    sh = book.sheet_by_name('Sheet1')
+    for rx in range(0, sh.nrows):
+        row = sh.row_values(rx)
+        regno = row[0]
+        rollno = row[1]
+        basicinfo = StudentBasicInfo(RegistrationNo=regno)
+        tmp = row[2].split(' ')
+        yr = tmp[0]
+        std = tmp[1]
+        div = tmp[2]
+        teacher = ' '.join(tmp[3:])
+        classmaster_obj = ClassMaster.objects.get(AcademicYear__Year=yr,Standard=std, Division=div, Teacher__Name=teacher, Type='P')
+        try:
+            StudentYearlyInformation.objects.get(StudentBasicInfo=basicinfo, ClassMaster = classmaster_obj)
+            print 'Found!!!', basicinfo
+        except:
+            yrl_obj = StudentYearlyInformation(StudentBasicInfo=basicinfo, RollNo = rollno, ClassMaster = classmaster_obj, Hostel = 1)
+            yrl_obj.save()
+    
+    
+
+update_yrly_info()
 #copy_yrly_info()
 #populate_abhivyakti()
 #populate_competitiveexam()

@@ -15,7 +15,7 @@
 		<tr><th>Roll Number</th> <th>Name</th> <th>Attendance</th></tr>
 	
 	
-		<form action="" method="POST">
+		<form action="" method="POST"> {% csrf_token %}
 			{% for row in data %}
 			<tr>
 				<td>{{ row.roll_no }}</td> <td>{{ row.name }}</td>
