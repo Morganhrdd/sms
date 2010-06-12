@@ -2,21 +2,9 @@
 from django.db.models import Q
 from django.shortcuts import render_to_response, redirect
 from django.http import HttpResponse
-#from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt
 from django.core.context_processors import csrf
 from jp_sms.students.models import *
-#from jp_sms.students.models import TestMapping, StudentTestMarks, StudentYearlyInformation, StudentBasicInfo
-#from jp_sms.students.models import SubjectMaster, ClassMaster, SubjectMaster, AttendanceMaster, AcademicYear
-#from jp_sms.students.models import StudentAttendance, StudentAdditionalInformation,CoCurricular
-#from jp_sms.students.models import SocialActivity,PhysicalFitnessInfo,AbhivyaktiVikas,Teacher
-#from jp_sms.students.models import WorkExperience, PhysicalEducation, ThinkingSkill, SocialSkill, EmotionalSkill
-##from jp_sms.students.models import AttitudeTowardsSchool, Values, MedicalReport
-#from jp_sms.students.models import SearchDetailsForm, CompetitionDetailsForm, ElocutionDetailsForm, ValuesDetailsForm
-#from jp_sms.students.models import ProjectDetailsForm, AbhivyaktiVikasDetailsForm, CompetitiveExamDetailsForm
-#from jp_sms.students.models import CoCurricularDetailsForm, SocialActivityDetailsForm, PhysicalFitnessInfoDetailsForm
-#from jp_sms.students.models import WorkExperienceDetailsForm, PhysicalEducationDetailsForm, ThinkingSkillDetailsForm
-#from jp_sms.students.models import SocialSkillDetailsForm, EmotionalSkillDetailsForm, AttitudeTowardsSchoolDetailsForm
-#from jp_sms.students.models import Project,Elocution,Library,Competition,CompetitiveExam,STANDARD_CHOICES, MedicalReportForm
 from django.template import Context, RequestContext
 from django.template.loader import get_template
 from reportlab.pdfgen import canvas
@@ -2670,6 +2658,7 @@ def addCertificateNumberTextToStory(Story,header_text):
     Story.append(Paragraph(header_text, style))
 
 #
+@csrf_exempt
 def certificatePDF(request):
     if request.POST:
         keys = request.POST.keys()
@@ -3086,6 +3075,7 @@ def checkBoxValue(request, checkBoxName):
         return False
 
 #
+@csrf_exempt
 def cardsPDF(request):
     if request.POST:
         keys = request.POST.keys()
