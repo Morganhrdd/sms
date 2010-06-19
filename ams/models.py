@@ -208,3 +208,8 @@ class DayRulesForm(forms.Form):
 	Category = forms.ModelChoiceField(queryset=Category.objects.all(), required=False)
 	Barcode = forms.ModelChoiceField(queryset=User.objects.all(), required=False)
 	Type = forms.ModelChoiceField(queryset=TimeRules.objects.all(), required=False)
+
+class LeaveReportForm(forms.Form):
+	Category = forms.ModelChoiceField(queryset=Category.objects.all())
+	Barcode = forms.ModelChoiceField(queryset=User.objects.all(), required=False)
+	
