@@ -59,10 +59,10 @@ Leave Application Form
 </div>
 <br/>
 
-<div id="LeaveBalance" name="LeaveBalance" style="position:absolute;left:50;top:430">
-<h3>
+<div id="LeaveBalance" name="LeaveBalance" align="center">
+<h2>
 Leave Balance
-</h3><br/>
+</h2><br/>
 	<table border="1" cellspacing="5" cellpadding="0">
 	<tr><th>Leave type</th><th>Carry</th><th>Current</th><th>Taken</th><th>Balance</th></tr>
 	<tr><td>Casual</td><td>{{ carryforward.1 }}</td><td>{{ currentleaves.1 }}</td><td>{{ takenleaves.1 }}</td><td>{{ balance.1 }}</td></tr>
@@ -88,7 +88,7 @@ Leave Status
 </div>
 
 {% for row in datedata %}
-<div id="{{row.type}}" name="{{row.type}}" style="position:absolute;right:200;top:430;visibility:hidden">
+<div id="{{row.type}}" name="{{row.type}}" style="position:absolute;right:200;top:600;visibility:hidden">
 <table border="1" cellspacing="5" cellpadding="0">
 <h3>
 {{row.type}}

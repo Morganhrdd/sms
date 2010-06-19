@@ -12,7 +12,7 @@ from array import array
 
 from jp_sms.ams.models import Category, User, UserStatus, TimeRecords, DayRules, TimeRules, Attendance, TempAttendance, ForgotCheckout
 from jp_sms.ams.models import Leaves, LeaveForm, LeaveRules, AcademicYear, LeaveAttendance, LeavesBalance, EncashLeaves, Overtime
-from jp_sms.ams.models import UserJoiningDate, ReportForm, DailyReportForm, DayRulesForm
+from jp_sms.ams.models import UserJoiningDate, ReportForm, DailyReportForm, DayRulesForm, LeaveReportForm
 from jp_sms.ams.models import LEAVE_CHOICES, REMARK_CHOICES, DAY_CHOICES
 from django.contrib.auth.decorators import login_required
 
@@ -636,13 +636,13 @@ def app_leave(request):
 
 		approveenleaves = EncashLeaves.objects.filter(Barcode=barcode).filter(Status=2)
 		pendingenleaves = EncashLeaves.objects.filter(Barcode=barcode).filter(Status=1)
-		approve = 0
-		pending = 0
+		approveencash = 0
+		pendingencash = 0
 		for enleave in approveenleaves:
-			approve += enleave.Days
+			approveencash += enleave.Days
 		for enleave in pendingenleaves:
-			pending += enleave.Days
-		data.append({'type':'Encashed', 'total':0, 'approve': approve, 'pending':pending, 'balance':0 })
+			pendingencash += enleave.Days
+		data.append({'type':'Encashed', 'total':0, 'approve': approveencash, 'pending':pendingencash, 'balance':0 })
 		
 		datedata = []
 		for type in LEAVE_CHOICES:
@@ -703,6 +703,10 @@ def app_leave(request):
 			balance[1] -= total_subtract
 			takenleaves[1] += total_subtract
 
+# Deduct encashed leaves from earned leave balance
+		takenleaves[3] += (approveencash + pendingencash)
+		balance[3] -= (approveencash + pendingencash)
+		
 		return render_to_response('ams/leaveapp.html', {'datedata':datedata,'form': form, 'data': data, 'message': message, 'abdays': abdays,
 									 'absentdays': absentdays, 'latedays': late, 'ltdays': ltdays, 'hfdays':hfdays, 'halfdays': halfdays,
 									 'balance': balance, 'carryforward': carryforward, 'currentleaves': currentleaves,
@@ -842,6 +846,131 @@ def daily_report(request):
 
 			return render_to_response('ams/dailyreport.html', {'form': form, 'message': message, 'report':report,
 									 'late':late, 'half':half, 'absent':abs, 'date':date})		
+
+#
+@csrf_exempt
+def report_leave(request):
+	message = "";
+	disabled = 'true'
+	user = 0
+
+	if (not request.user.email) or (request.user.email == ""):
+		form = LeaveReportForm()
+		return render_to_response('ams/leavereport.html', {'form': form})
+
+	users = User.objects.filter(Email=request.user.email)
+	if users:
+		user = users[0]
+			
+	if request.user.is_superuser:
+		disabled = 'false'
+	
+	if not request.POST:
+		if user:
+			form = LeaveReportForm({'Barcode':user.Barcode, 'Category':user.Category.Id})
+		else:
+			form = LeaveReportForm()
+		return render_to_response('ams/leavereport.html', {'form': form, 'disabled':disabled})
+	else:
+		form = LeaveReportForm(request.POST)
+		if not form.is_valid():
+			return render_to_response('ams/leavereport.html', {'form': form, 'disabled':disabled})
+
+		barcode = form.cleaned_data['Barcode']
+		category = form.cleaned_data['Category']
+		acadyear = AcademicYear.objects.get(Status=1)
+
+		ams_users = []
+		if barcode:
+			ams_users.append(barcode)
+		else:
+			ams_users = User.objects.filter(Category = category)
+
+		data = []
+
+		for usr in ams_users:
+			barcode = usr
+			pendingleaves = Leaves.objects.filter(Barcode=barcode).filter(Status=1).filter(LeaveDate__gte = acadyear.StartDate, LeaveDate__lte = acadyear.EndDate)
+			approveleaves = Leaves.objects.filter(Barcode=barcode).filter(Status=2).filter(LeaveDate__gte = acadyear.StartDate, LeaveDate__lte = acadyear.EndDate)
+			balance = [0,0,0,0,0,0,0,0]
+			carryforward = [0,0,0,0,0,0,0,0]
+			currentleaves = [0,0,0,0,0,0,0,0]
+			takenleaves = [0,0,0,0,0,0,0,0]
+			for type in LEAVE_CHOICES:
+				leavetype = type[0]
+				lrule = LeaveRules.objects.filter(Category=category).filter(Type=leavetype)
+				if lrule:
+					total = LeaveRules.objects.filter(Category=category).filter(Type=leavetype)[0].Days
+				else:
+					total = 0
+				currentleaves[leavetype] = total	
+				lvbalance = LeavesBalance.objects.filter(Barcode=barcode).filter(Type=leavetype)
+				if lvbalance:
+					total += lvbalance[0].Days
+					carryforward[leavetype] = lvbalance[0].Days
+					
+				pending = pendingleaves.filter(Type=leavetype).count()
+				approve = approveleaves.filter(Type=leavetype).count()
+				balance[leavetype] = total - approve - pending
+				takenleaves[leavetype] = approve + pending
+	
+			approveenleaves = EncashLeaves.objects.filter(Barcode=barcode).filter(Status=2)
+			pendingenleaves = EncashLeaves.objects.filter(Barcode=barcode).filter(Status=1)
+			approveencash = 0
+			pendingencash = 0
+			for enleave in approveenleaves:
+				approveencash += enleave.Days
+			for enleave in pendingenleaves:
+				pendingencash += enleave.Days
+			#data.append({'type':'Encashed', 'total':0, 'approve': approve, 'pending':pending, 'balance':0 })
+			
+			adays = Attendance.objects.filter(Barcode=barcode).filter(Remark='A').filter(Year=acadyear)
+			ldays = Attendance.objects.filter(Barcode=barcode).filter(Remark__in=('L','E')).filter(Year=acadyear)
+			fdays = ForgotCheckout.objects.filter(Barcode=barcode)
+			hdays = Attendance.objects.filter(Barcode=barcode).filter(Remark='H').filter(Year=acadyear)
+			counts = [0,0,0,0,0,0,0,0,0,0,0,0,0]
+			absentdays = 0
+			halfdays = 0
+			forgotdays = 0
+			latedays = 0
+			for day in adays:
+				if not Leaves.objects.filter(Barcode=barcode).filter(LeaveDate=day.Date).filter(Type__in=(1,2,3)):
+					absentdays += 1
+			for day in hdays:
+				if not Leaves.objects.filter(Barcode=barcode).filter(LeaveDate=day.Date).filter(Type__in=(5,6)):
+					halfdays += 1
+				
+			for day in ldays:
+				counts[day.Date.month] += 1
+				latedays += 1
+	
+			for day in fdays:
+				forgotdays += 1
+			
+			late = 0
+			for cnt in counts:
+				late = late + (cnt/3)
+				
+			total_subtract = ((late + halfdays + (-balance[5]) + (-balance[6])) / 2.0)  + absentdays
+			if total_subtract > balance[1]:
+				total_subtract -= balance[1]
+				takenleaves[1] = carryforward[1] + currentleaves[1]
+				takenleaves[3] += total_subtract
+				balance[1] = 0
+				balance[3] -= total_subtract
+			else:
+				balance[1] -= total_subtract
+				takenleaves[1] += total_subtract
+			
+	# Deduct encashed leaves from earned leave balance
+			takenleaves[3] += (approveencash + pendingencash)
+			balance[3] -= (approveencash + pendingencash)
+
+			data.append({'usr':barcode, 'casualtaken':takenleaves[1], 'casualbal':balance[1], 
+							'sicktaken':takenleaves[2], 'sickbal':balance[2], 'earnedtaken':takenleaves[3], 'earnedbal':balance[3],
+							'absent': absentdays, 'half':halfdays, 'late':latedays, 'forgot':forgotdays})
+					
+		return render_to_response('ams/leavereport.html', {'form': form, 'data': data, 'message': message, 'disabled':disabled})
 
 #
 @csrf_exempt

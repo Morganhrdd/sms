@@ -21,7 +21,6 @@ DATABASES = {
     }
 }
 
-
 # Local time zone for this installation. Choices can be found here:
 # http://www.postgresql.org/docs/8.1/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE
 # although not all variations may be possible on all operating systems.
@@ -79,7 +78,7 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     "/Users/shantanoo/repo/jp_sms/templates",
-    #'C:/Documents and Settings/aditya/Desktop/JPP/latest/jp_sms/templates'
+    #'C:/Documents and Settings/aditya/Desktop/JPP/june_code/jp_sms/templates'
     #'C:/Users/aloks/Work/jp_sms/templates'
 )
 
