@@ -143,6 +143,87 @@ twenties = ["","","Twenty ","Thirty ","Forty ", "Fifty ","Sixty ","Seventy ","Ei
 thousands = ["","Thousand ","Million ", "Billion ", "Trillion "]
 
 
+class generate_report(object):
+    def __init__(self, regno=None, year=None, classmaster_type='P'):
+        self.regno = regno
+        self.year = year
+        self.classmaster_type = classmaster_type
+        self.data = {}
+    def generate_data(self):
+        student_basic_info_obj = StudentBasicInfo.objects.get(RegistrationNo=self.regno)
+        year = AcademicYear.objects.get(Year=self.year)
+        try:
+            student_addtional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info_obj)
+        except:
+            student_addtional_info = StudentAdditionalInformation()
+        student_yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo=student_basic_info_obj, ClassMaster__AcademicYear=year, ClassMaster__Type=self.classmaster_type)
+        classmaster = student_yearly_info.ClassMaster
+        attendance_objs = StudentAttendance.objects.filter(AttendanceMaster__ClassMaster=classmaster, StudentYearlyInformation=student_yearly_info)
+        physical_fitness_info_obj = PhysicalFitnessInfo.objects.filter(StudentYearlyInformation=student_yearly_info)
+        test_marks_objs = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
+        socialactivity_objs = SocialActivity.objects.filter(StudentYearlyInformation=student_yearly_info)
+        cocurricular_objs = CoCurricular.objects.filter(StudentYearlyInformation=student_yearly_info)
+        competitiveexam_objs = CompetitiveExam.objects.filter(StudentYearlyInformation=student_yearly_info)
+        competition_objs = Competition.objects.filter(StudentYearlyInformation=student_yearly_info)
+        abhivyaktivikas_objs = AbhivyaktiVikas.objects.filter(StudentYearlyInformation=student_yearly_info)
+        project_objs = Project.objects.filter(StudentYearlyInformation=student_yearly_info)
+        elocution_objs = Elocution.objects.filter(StudentYearlyInformation=student_yearly_info)
+        library_objs = Library.objects.filter(StudentYearlyInformation=student_yearly_info)
+        workexperience_objs = WorkExperience.objects.filter(StudentYearlyInformation=student_yearly_info)
+        physicaleducation_objs = PhysicalEducation.objects.filter(StudentYearlyInformation=student_yearly_info)
+        thinkingskill_objs = ThinkingSkill.objects.filter(StudentYearlyInformation=student_yearly_info)
+        socialskill_objs = SocialSkill.objects.filter(StudentYearlyInformation=student_yearly_info)
+        emotionalskill_objs = EmotionalSkill.objects.filter(StudentYearlyInformation=student_yearly_info)
+        attitudetowardsschool_objs = AttitudeTowardsSchool.objects.filter(StudentYearlyInformation=student_yearly_info)
+        values_objs = Values.objects.filter(StudentYearlyInformation=student_yearly_info)
+        self.data['basic_info'] = student_basic_info_obj
+        self.data['additional_info'] = student_addtional_info
+        self.data['yearly_info'] = student_yearly_info
+        self.data['attendance'] = attendance_objs
+        self.data['physical_fitness'] = physical_fitness_info_obj
+        self.data['test_marks'] = test_marks_objs
+        self.data['socialactivity'] = socialactivity_objs
+        self.data['cocurricular'] = cocurricular_objs
+        self.data['competitiveexam'] = competitiveexam_objs
+        self.data['competition'] = competition_objs
+        self.data['abhivyaktivikas'] = abhivyaktivikas_objs
+        self.data['project'] = project_objs
+        self.data['elocution'] = elocution_objs
+        self.data['library'] = library_objs
+        self.data['workexperience'] = workexperience_objs
+        self.data['physicaleducation'] = physicaleducation_objs
+        self.data['thinkingskill'] = thinkingskill_objs
+        self.data['socialskill'] = socialskill_objs
+        self.data['emotionalskill'] = emotionalskill_objs
+        self.data['attitudetowardsschool'] = attitudetowardsschool_objs
+        self.data['values'] = values_objs
+        tmp_data = {}
+        tmp_data['workexperience'] = {'nos':['Communication', 'Confidence', 'Involvement'],'strings':['Task','PublicComment']}
+        tmp_data['thinkingskill'] = {'nos':['Inquiry', 'LogicalThinking', 'Creativity', 'DecisionMakingAndProblemSolving'], 'strings':['PublicComment']}
+        tmp_data['socialskill'] = {'nos':['Communication', 'InterPersonal', 'TeamWork'], 'strings':['PublicComment']}
+        tmp_data['emotionalskill'] = {'nos':['Empathy', 'Expression', 'Management'], 'strings':['PublicComment']}
+        tmp_data['attitudetowardsschool'] = {'nos':['SchoolTeachers', 'SchoolMates', 'SchoolPrograms', 'SchoolEnvironment'], 'strings':['PublicComment']}
+        tmp_data['values'] = {'nos':['Obedience', 'Honesty', 'Equality', 'Responsibility'],'strings':['PublicComment']}
+        self.find_avg(tmp_data)
+        #find_avg({'values':{'nos':['Obedience', 'Honesty', 'Equality', 'Responsibility'],'strings':['PublicComment']}})
+    #
+    def find_avg(self, data):
+        for k in data.keys():
+            retval = {}
+            t = self.data[k]
+            for x in data[k]['nos']:
+                retval[x] = 0
+            for x in data[k]['strings']:
+                retval[x] = ''
+            for x in t:
+                for y in data[k]['nos']:
+                    retval[y] += int(getattr(x,y))
+                for y in data[k]['strings']:
+                    retval[y] += getattr(x,y)
+            for x in data[k]['nos']:
+                retval[x] /= len(t)
+                retval[x] = round(retval[x])
+            self.data[k] = [retval]
 # HTML Report:
 def report(request):
     if request.POST:
@@ -1433,55 +1514,10 @@ def display_report(request, regno=None, year=None):
     if request.user.username != str(regno) and not request.user.is_superuser and request.user.is_active:
         return redirect('/')
     respage = 'students/DisplayReport.html'
-    student_basic_info_obj = StudentBasicInfo.objects.get(RegistrationNo=regno)
-    year = AcademicYear.objects.get(Year=year)
-    try:
-        student_addtional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info_obj)
-    except:
-        student_addtional_info = StudentAdditionalInformation()
-    student_yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo=student_basic_info_obj, ClassMaster__AcademicYear=year, ClassMaster__Type='P')
-    classmaster = student_yearly_info.ClassMaster
-    attendance_objs = StudentAttendance.objects.filter(AttendanceMaster__ClassMaster=classmaster, StudentYearlyInformation=student_yearly_info)
-    physical_fitness_info_obj = PhysicalFitnessInfo.objects.filter(StudentYearlyInformation=student_yearly_info)
-    test_marks_objs = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
-    socialactivity_objs = SocialActivity.objects.filter(StudentYearlyInformation=student_yearly_info)
-    cocurricular_objs = CoCurricular.objects.filter(StudentYearlyInformation=student_yearly_info)
-    competitiveexam_objs = CompetitiveExam.objects.filter(StudentYearlyInformation=student_yearly_info)
-    competition_objs = Competition.objects.filter(StudentYearlyInformation=student_yearly_info)
-    abhivyaktivikas_objs = AbhivyaktiVikas.objects.filter(StudentYearlyInformation=student_yearly_info)
-    project_objs = Project.objects.filter(StudentYearlyInformation=student_yearly_info)
-    elocution_objs = Elocution.objects.filter(StudentYearlyInformation=student_yearly_info)
-    library_objs = Library.objects.filter(StudentYearlyInformation=student_yearly_info)
-    workexperience_objs = WorkExperience.objects.filter(StudentYearlyInformation=student_yearly_info)
-    physicaleducation_objs = PhysicalEducation.objects.filter(StudentYearlyInformation=student_yearly_info)
-    thinkingskill_objs = ThinkingSkill.objects.filter(StudentYearlyInformation=student_yearly_info)
-    socialskill_objs = SocialSkill.objects.filter(StudentYearlyInformation=student_yearly_info)
-    emotionalskill_objs = EmotionalSkill.objects.filter(StudentYearlyInformation=student_yearly_info)
-    attitudetowardsschool_objs = AttitudeTowardsSchool.objects.filter(StudentYearlyInformation=student_yearly_info)
-    values_objs = Values.objects.filter(StudentYearlyInformation=student_yearly_info)
-    data = {}
-    data['basic_info'] = student_basic_info_obj
-    data['additional_info'] = student_addtional_info
-    data['yearly_info'] = student_yearly_info
-    data['attendance'] = attendance_objs
-    data['physical_fitness'] = physical_fitness_info_obj
-    data['test_marks'] = test_marks_objs
-    data['socialactivity'] = socialactivity_objs
-    data['cocurricular'] = cocurricular_objs
-    data['competitiveexam'] = competitiveexam_objs
-    data['competition'] = competition_objs
-    data['abhivyaktivikas'] = abhivyaktivikas_objs
-    data['project'] = project_objs
-    data['elocution'] = elocution_objs
-    data['library'] = library_objs
-    data['workexperience'] = workexperience_objs
-    data['physicaleducation'] = physicaleducation_objs
-    data['thinkingskill'] = thinkingskill_objs
-    data['socialskill'] = socialskill_objs
-    data['emotionalskill'] = emotionalskill_objs
-    data['attitudetowardsschool'] = attitudetowardsschool_objs
-    data['values'] = values_objs
-    return render_to_response(respage,data, context_instance=RequestContext(request))
+    data = generate_report(regno=regno, year=year)
+    data.generate_data()
+    return render_to_response(respage,data.data, context_instance=RequestContext(request))
+
 # Used by HTML Report
 def attendance_add(request):
     if request.POST:
