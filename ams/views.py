@@ -659,7 +659,7 @@ def app_leave(request):
 			
 		adays = Attendance.objects.filter(Barcode=barcode).filter(Remark='A').filter(Year=acadyear)
 		ldays = Attendance.objects.filter(Barcode=barcode).filter(Remark__in=('L','E')).filter(Year=acadyear)
-		fdays = ForgotCheckout.objects.filter(Barcode=barcode)
+		fdays = ForgotCheckout.objects.filter(Barcode=barcode).filter(Date__gte = acadyear.StartDate, Date__lte = acadyear.EndDate)
 		hdays = Attendance.objects.filter(Barcode=barcode).filter(Remark='H').filter(Year=acadyear)
 		abdays = []
 		hfdays = []
@@ -883,6 +883,8 @@ def report_leave(request):
 		ams_users = []
 		if barcode:
 			ams_users.append(barcode)
+		elif (category == CATEGORY_ALL):
+			ams_users = User.objects.all()
 		else:
 			ams_users = User.objects.filter(Category = category)
 
@@ -890,6 +892,7 @@ def report_leave(request):
 
 		for usr in ams_users:
 			barcode = usr
+			category = usr.Category
 			pendingleaves = Leaves.objects.filter(Barcode=barcode).filter(Status=1).filter(LeaveDate__gte = acadyear.StartDate, LeaveDate__lte = acadyear.EndDate)
 			approveleaves = Leaves.objects.filter(Barcode=barcode).filter(Status=2).filter(LeaveDate__gte = acadyear.StartDate, LeaveDate__lte = acadyear.EndDate)
 			balance = [0,0,0,0,0,0,0,0]
@@ -926,7 +929,7 @@ def report_leave(request):
 			
 			adays = Attendance.objects.filter(Barcode=barcode).filter(Remark='A').filter(Year=acadyear)
 			ldays = Attendance.objects.filter(Barcode=barcode).filter(Remark__in=('L','E')).filter(Year=acadyear)
-			fdays = ForgotCheckout.objects.filter(Barcode=barcode)
+			fdays = ForgotCheckout.objects.filter(Barcode=barcode).filter(Date__gte = acadyear.StartDate, Date__lte = acadyear.EndDate)
 			hdays = Attendance.objects.filter(Barcode=barcode).filter(Remark='H').filter(Year=acadyear)
 			counts = [0,0,0,0,0,0,0,0,0,0,0,0,0]
 			absentdays = 0
