@@ -95,7 +95,7 @@ BLOOD_GROUP_CHOICES = (
     ('AB-', 'AB-'),
     ('O-', 'O-'),
 )
-	
+
 class StudentBasicInfo(models.Model):
     RegistrationNo = models.PositiveIntegerField(primary_key=True)
     DateOfRegistration = models.DateField()
@@ -137,6 +137,12 @@ class StudentAdditionalInformation(models.Model):
     Mothers_Email = models.EmailField(blank=True)
     class Meta:
         verbose_name_plural = "Student Additional Information"
+
+class Scrap(models.Model):
+    User = models.ForeignKey(User)
+    StudentBasicInfo = models.ForeignKey(StudentBasicInfo)
+    date = models.DateField()
+    data = models.CharField(max_length=500)
 
 
 class AcademicYear(models.Model):
@@ -653,4 +659,4 @@ class MedicalReportForm(forms.Form):
     ClinicAddress = forms.CharField(widget=forms.Textarea(attrs={'rows':3}))
     Phone = forms.CharField(required=False)
     Delete = forms.CharField(required=False)
-    
+

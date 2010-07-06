@@ -466,16 +466,27 @@ def marks_add(request):
         return render_to_response('students/AddMarks.html',Context({'test_details': test_details,'test_id':test_id, 'data':data}), context_instance=RequestContext(request))
     
 
+def can_login(group=None, user=None):
+    if not user.is_active:
+        return 0
+    if user.is_superuser:
+        return 1
+    if group in [x.name for x in user.groups.all()]:
+        return 1
+        
 
 def competition_add(request):
+    if not can_login(group='teacher', user=request.user):
+        return redirect('/')
+    respage = 'students/AddCompetition.html'
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response('students/AddCompetition.html',{'form':genform}, context_instance=RequestContext(request))
+        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -518,20 +529,23 @@ def competition_add(request):
                 x = CompetitionDetailsForm(initial=tmp)
                 data.append(x)
             data.append(CompetitionDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddCompetition.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response('students/AddCompetition.html',{'form':genform}, context_instance=RequestContext(request))
+            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
 
 
 #
 def elocution_add(request):
+    if not can_login(group='teacher', user=request.user):
+        return redirect('/')
+    respage = 'students/AddElocution.html'
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response('students/AddElocution.html',{'form':genform}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage, {'form':genform,'msg':msg}, context_instance=RequestContext(request))
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -576,19 +590,22 @@ def elocution_add(request):
                 x = ElocutionDetailsForm(initial=tmp)
                 data.append(x)
             data.append(ElocutionDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddElocution.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response('students/AddElocution.html',{'form':genform}, context_instance=RequestContext(request))
+            return render_to_response(respage, {'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
 
 #
 def project_add(request):
+    if not can_login(group='teacher', user=request.user):
+        return redirect('/')
+    respage = 'students/AddProject.html'
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response('students/AddProject.html',{'form':genform}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage, {'form':genform,'msg':msg}, context_instance=RequestContext(request))
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -639,18 +656,21 @@ def project_add(request):
                 x = ProjectDetailsForm(initial=tmp)
                 data.append(x)
             data.append(ProjectDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddProject.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response('students/AddProject.html',{'form':genform}, context_instance=RequestContext(request))
+            return render_to_response(respage, {'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
 #
 def abhivyaktivikas_add(request):
+    if not can_login(group='teacher', user=request.user):
+        return redirect('/')
+    respage = 'students/AddAbhivyaktiVikas.html'
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response('students/AddAbhivyaktiVikas.html',{'form':genform}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage, {'form':genform,'msg':msg}, context_instance=RequestContext(request))
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -698,19 +718,22 @@ def abhivyaktivikas_add(request):
                 x = AbhivyaktiVikasDetailsForm(initial=tmp)
                 data.append(x)
             data.append(AbhivyaktiVikasDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddAbhivyaktiVikas.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response('students/AddAbhivyaktiVikas.html',{'form':genform}, context_instance=RequestContext(request))
+            return render_to_response(respage, {'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
 
 #
 def competitiveexam_add(request):
+    if not can_login(group='teacher', user=request.user):
+        return redirect('/')
+    respage = 'students/AddCompetitiveExam.html'
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response('students/AddCompetitiveExam.html',{'form':genform}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage, {'form':genform,'msg':msg}, context_instance=RequestContext(request))
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -753,19 +776,22 @@ def competitiveexam_add(request):
                 x = CompetitiveExamDetailsForm(initial=tmp)
                 data.append(x)
             data.append(CompetitiveExamDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddCompetitiveExam.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response('students/AddCompetitiveExam.html',{'form':genform}, context_instance=RequestContext(request))
+            return render_to_response(respage, {'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
 
 #
 def cocurricular_add(request):
+    if not can_login(group='teacher', user=request.user):
+        return redirect('/')
+    respage = 'students/AddCocurricular.html'
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response('students/AddCocurricular.html',{'form':genform}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage, {'form':genform,'msg':msg}, context_instance=RequestContext(request))
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -808,19 +834,22 @@ def cocurricular_add(request):
                 x = CoCurricularDetailsForm(initial=tmp)
                 data.append(x)
             data.append(CoCurricularDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddCocurricular.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response('students/AddCocurricular.html',{'form':genform}, context_instance=RequestContext(request))
+            return render_to_response(respage, {'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
 
 #
 def socialactivity_add(request):
+    if not can_login(group='teacher', user=request.user):
+        return redirect('/')
+    respage = 'students/AddSocialActivity.html'
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response('students/AddSocialActivity.html',{'form':genform}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage, {'form':genform,'msg':msg}, context_instance=RequestContext(request))
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -863,19 +892,22 @@ def socialactivity_add(request):
                 x = SocialActivityDetailsForm(initial=tmp)
                 data.append(x)
             data.append(SocialActivityDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddSocialActivity.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response('students/AddSocialActivity.html',{'form':genform}, context_instance=RequestContext(request))
+            return render_to_response(respage, {'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
 
 #
 def physicalfitnessinfo_add(request):
+    if not can_login(group='teacher', user=request.user):
+        return redirect('/')
+    respage = 'students/AddPhysicalFitnessInfo.html'
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
-        return render_to_response('students/AddPhysicalFitnessInfo.html',{'form':genform}, context_instance=RequestContext(request))
+        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response('students/AddWorkExperience.html',{'form':genform,'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
         if request.POST.has_key('RegistrationNo'):
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -951,8 +983,8 @@ def physicalfitnessinfo_add(request):
                 data.append(x)
             if not len(data):
                 data.append(PhysicalFitnessInfoDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response('students/AddPhysicalFitnessInfo.html',{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response('students/AddPhysicalFitnessInfo.html',{'form':genform}, context_instance=RequestContext(request))
+            return render_to_response(respage, {'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
 
 #
 def search_reg_no(request=None):
@@ -973,6 +1005,8 @@ def search_reg_no(request=None):
     
 #
 def workexperience_add(request):
+    if not can_login(group='teacher', user=request.user):
+        return redirect('/')
     respage = 'students/AddWorkExperience.html'
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2009-2010'})
@@ -1204,8 +1238,8 @@ def socialskill_add(request):
             tmp['Delete'] = delete
             x = SocialSkillDetailsForm(initial=tmp)
             data.append(x)
-            return render_to_response('students/AddSocialSkill.html',{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response('students/AddSocialSkill.html',{'form':genform}, context_instance=RequestContext(request))
+            return render_to_response(respage, {'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
 
 #
 def attitudetowardsschool_add(request):
@@ -1516,7 +1550,7 @@ def display_report(request, regno=None, year=None):
     respage = 'students/DisplayReport.html'
     data = generate_report(regno=regno, year=year)
     data.generate_data()
-    return render_to_response(respage,data.data, context_instance=RequestContext(request))
+    return render_to_response(respage, data.data, context_instance=RequestContext(request))
 
 # Used by HTML Report
 def attendance_add(request):
