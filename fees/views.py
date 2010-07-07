@@ -18,12 +18,12 @@ from array import array
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
-from jp_sms.fees.models import StudentBasicInfo, AcademicYear, ClassMaster, StudentYearlyInformation
-from jp_sms.fees.models import ScholarshipOrFee
-from jp_sms.fees.models import FeeType, FeeReceipt
-from jp_sms.fees.models import FeeForm, FeeReportForm, FeeCollectionForm
+from sms.fees.models import StudentBasicInfo, AcademicYear, ClassMaster, StudentYearlyInformation
+from sms.fees.models import ScholarshipOrFee
+from sms.fees.models import FeeType, FeeReceipt
+from sms.fees.models import FeeForm, FeeReportForm, FeeCollectionForm
 
-from jp_sms.fees.num2word_EN import Num2Word_EN
+from sms.fees.num2word_EN import Num2Word_EN
 
 PAGE_HEIGHT=defaultPageSize[1]; PAGE_WIDTH=defaultPageSize[0]
 #PAGE_HEIGHT=8*inch; PAGE_WIDTH=defaultPageSize[0]

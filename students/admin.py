@@ -1,9 +1,9 @@
-from jp_sms.students.models import StudentBasicInfo, StudentAdditionalInformation, AcademicYear, Teacher
-from jp_sms.students.models import SubjectMaster, StudentYearlyInformation, ClassMaster, TestMapping
-from jp_sms.students.models import StudentTestMarks, AttendanceMaster, StudentAttendance, PhysicalFitnessInfo
-from jp_sms.students.models import SocialActivity, CoCurricular, CompetitiveExam, Competition
-from jp_sms.students.models import AbhivyaktiVikas, Project, Elocution, Library, WorkExperience, PhysicalEducation
-from jp_sms.students.models import ThinkingSkill, SocialSkill, EmotionalSkill, AttitudeTowardsSchool, Values
+from sms.students.models import StudentBasicInfo, StudentAdditionalInformation, AcademicYear, Teacher
+from sms.students.models import SubjectMaster, StudentYearlyInformation, ClassMaster, TestMapping
+from sms.students.models import StudentTestMarks, AttendanceMaster, StudentAttendance, PhysicalFitnessInfo
+from sms.students.models import SocialActivity, CoCurricular, CompetitiveExam, Competition
+from sms.students.models import AbhivyaktiVikas, Project, Elocution, Library, WorkExperience, PhysicalEducation
+from sms.students.models import ThinkingSkill, SocialSkill, EmotionalSkill, AttitudeTowardsSchool, Values
 from django.contrib.auth.models import User
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _

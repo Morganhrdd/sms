@@ -2,9 +2,9 @@ from django.contrib.auth.models import User
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from jp_sms.ams.models import Category, User, UserStatus, TimeRules, DayRules, Attendance, TimeRecords, ForgotCheckout
-from jp_sms.ams.models import Leaves, LeaveRules, AcademicYear, LeaveAttendance, LeavesBalance, EncashLeaves, Overtime
-from jp_sms.ams.models import UserJoiningDate
+from sms.ams.models import Category, User, UserStatus, TimeRules, DayRules, Attendance, TimeRecords, ForgotCheckout
+from sms.ams.models import Leaves, LeaveRules, AcademicYear, LeaveAttendance, LeavesBalance, EncashLeaves, Overtime
+from sms.ams.models import UserJoiningDate
 import datetime
 
 class categoryAdmin(admin.ModelAdmin):

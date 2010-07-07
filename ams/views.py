@@ -10,10 +10,10 @@ import os
 import datetime
 from array import array
 
-from jp_sms.ams.models import Category, User, UserStatus, TimeRecords, DayRules, TimeRules, Attendance, TempAttendance, ForgotCheckout
-from jp_sms.ams.models import Leaves, LeaveForm, LeaveRules, AcademicYear, LeaveAttendance, LeavesBalance, EncashLeaves, Overtime
-from jp_sms.ams.models import UserJoiningDate, ReportForm, DailyReportForm, DayRulesForm, LeaveReportForm
-from jp_sms.ams.models import LEAVE_CHOICES, REMARK_CHOICES, DAY_CHOICES
+from sms.ams.models import Category, User, UserStatus, TimeRecords, DayRules, TimeRules, Attendance, TempAttendance, ForgotCheckout
+from sms.ams.models import Leaves, LeaveForm, LeaveRules, AcademicYear, LeaveAttendance, LeavesBalance, EncashLeaves, Overtime
+from sms.ams.models import UserJoiningDate, ReportForm, DailyReportForm, DayRulesForm, LeaveReportForm
+from sms.ams.models import LEAVE_CHOICES, REMARK_CHOICES, DAY_CHOICES
 from django.contrib.auth.decorators import login_required
 
 catqs = Category.objects.filter(Description='ALL')

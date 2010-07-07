@@ -1,6 +1,6 @@
 from django.db import models
 from django import forms
-from jp_sms.students.models import StudentBasicInfo, AcademicYear, ClassMaster, StudentYearlyInformation, STANDARD_CHOICES
+from sms.students.models import StudentBasicInfo, AcademicYear, ClassMaster, StudentYearlyInformation, STANDARD_CHOICES
 
 # Create your models here.
 

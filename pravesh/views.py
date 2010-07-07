@@ -4,8 +4,8 @@ from django.http import HttpResponse
 from django.template import Context
 from django.template.loader import get_template
 from django.contrib.auth.decorators import login_required
-from jp_sms.pravesh.models import ApplicationForm, GenerateHallTicketForm
-from jp_sms.pravesh.models import HallTicket, Session, ClassRoom, Student
+from sms.pravesh.models import ApplicationForm, GenerateHallTicketForm
+from sms.pravesh.models import HallTicket, Session, ClassRoom, Student
 
 # Create your views here.
 

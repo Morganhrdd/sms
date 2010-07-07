@@ -4,7 +4,7 @@ from django.shortcuts import render_to_response, redirect
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.context_processors import csrf
-from jp_sms.students.models import *
+from sms.students.models import *
 from django.template import Context, RequestContext
 from django.template.loader import get_template
 from reportlab.pdfgen import canvas

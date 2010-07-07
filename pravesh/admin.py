@@ -1,4 +1,4 @@
-from jp_sms.pravesh.models import ClassRoom, Session, Student, HallTicket
+from sms.pravesh.models import ClassRoom, Session, Student, HallTicket
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 

@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from jp_sms.fees.models import FeeType, FeeReceipt, ScholarshipOrFee
+from sms.fees.models import FeeType, FeeReceipt, ScholarshipOrFee
 import datetime
 
 class feetypeAdmin(admin.ModelAdmin):
