@@ -51,7 +51,7 @@ Jnana Prabodhini Prashala<br/>
 <!--<tr> <td><b>Receipt Number</b></td><td>{{receiptnumber}}</td></tr>-->
 </table>
 </div>
-<form name="fee" action="/fee/" method="post">
+<form name="fee" action="/fee/" method="post"> {% csrf_token %}
 
 <!--
 <table>
@@ -115,7 +115,7 @@ Jnana Prabodhini Prashala<br/>
 </table>
 </div>
 
-<form name="printform" action="/fee_receipt/" method="POST">
+<form name="printform" action="/fee_receipt/" method="POST"> {% csrf_token %}
 <input type="hidden" name="receiptno"/>
 </form>
 
