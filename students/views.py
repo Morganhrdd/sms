@@ -205,7 +205,6 @@ class generate_report(object):
         tmp_data['attitudetowardsschool'] = {'nos':['SchoolTeachers', 'SchoolMates', 'SchoolPrograms', 'SchoolEnvironment'], 'strings':['PublicComment']}
         tmp_data['values'] = {'nos':['Obedience', 'Honesty', 'Equality', 'Responsibility'],'strings':['PublicComment']}
         self.find_avg(tmp_data)
-        #find_avg({'values':{'nos':['Obedience', 'Honesty', 'Equality', 'Responsibility'],'strings':['PublicComment']}})
     #
     def find_avg(self, data):
         for k in data.keys():
@@ -1491,6 +1490,7 @@ def medicalreport_add(request):
 
 
 #
+@csrf_exempt
 def generate_name_columns(request):
     respage = 'students/GenerateNameColumns.html'
     if not request.POST:
@@ -1620,6 +1620,7 @@ def pageBorder(canvas):
     canvas.line(PAGE_WIDTH - margin, margin + 0.16*inch, margin, margin + 0.16*inch)
 
 #
+@csrf_exempt
 def reportPDF(request):
     if request.POST:
         keys = request.POST.keys()
