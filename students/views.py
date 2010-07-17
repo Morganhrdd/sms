@@ -220,8 +220,9 @@ class generate_report(object):
                 for y in data[k]['strings']:
                     retval[y] += getattr(x,y)
             for x in data[k]['nos']:
-                retval[x] /= len(t)
-                retval[x] = round(retval[x])
+                if len(t):
+                    retval[x] /= len(t)
+                    retval[x] = round(retval[x])
             self.data[k] = [retval]
 # HTML Report:
 def report(request):
