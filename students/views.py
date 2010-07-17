@@ -413,6 +413,12 @@ def report(request):
     else:
         return HttpResponse ('<html><body>Enter Registration Number<form action="" method="POST"><input type="text" name="reg_no" value="" id="reg_no" size="20"></td>	<input type="submit" value="Enter" /></form></body></html>')
 
+def student_summary(request):
+    if request.user.username.isdigit():
+        regno = request.user.username
+        student_yearly_infos = StudentYearlyInformation.objects.filter(StudentBasicInfo__RegistrationNo=regno)
+        return render_to_response('students/student_summary.htm',Context({'yrly_infos': student_yearly_infos}), context_instance=RequestContext(request))
+    return HttpResponse('Invalid user')
 # Used by HTML Report
 def marks_add(request):
     if request.POST:
@@ -3365,3 +3371,4 @@ certificatePDF = login_required(certificatePDF)
 cardsPDF=login_required(cardsPDF)
 display_report = login_required(display_report)
 generate_name_columns = login_required(generate_name_columns)
+student_summary = login_required(student_summary)
