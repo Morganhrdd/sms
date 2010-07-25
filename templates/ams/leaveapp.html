@@ -158,5 +158,45 @@ Leave Status
 </tr>
 </table>
 </div>
+
+<div id="Dayrules" name="Dayrules" align="center">
+<h2>
+Day Rules
+</h2>
+	<table border="1" cellspacing="5" cellpadding="0">
+	<tr><th>Date</th><th>Day</th><th>Time Rule</th></tr>
+	{% for row in dayrules %}
+	<tr>
+	<td>{{row.date}}</td><td>{{row.day}}</td><td>{{row.type}}</td>
+	</tr>
+	{% endfor %}
+	{% for row in daterules %}
+	<tr>
+	<td>{{row.date}}</td><td>{{row.day}}</td><td>{{row.type}}</td>
+	</tr>
+	{% endfor %}
+	</table>
+</div>
+
+<div id="Timerules" name="Timerules" align="center">
+<h2>
+Time Rules
+</h2>
+	<table border="1" cellspacing="5" cellpadding="0">
+	<tr><th>Name</th><th>TimeIn</th><th>LateIn</th><th>HalfIn</th><th>HalfOut</th><th>EarlyOut</th><th>TimeOut</th></tr>
+	{% for row in timerules %}
+	<tr>
+	<td>{{row.timerule.Type}}</td>
+	<td>{{row.timerule.TimeIn}}</td>
+	<td>{{row.timerule.LateIn}}</td>
+	<td>{{row.timerule.HalfIn}}</td>
+	<td>{{row.timerule.HalfOut}}</td>
+	<td>{{row.timerule.EarlyOut}}</td>
+	<td>{{row.timerule.TimeOut}}</td>
+	</tr>
+	{% endfor %}
+	</table>
+</div>
+
 </body>
 </html>

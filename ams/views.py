@@ -316,6 +316,7 @@ def populate_user(request,message,template):
 	gone = []
 	absent = []
 	come = []
+	absentnoleave = []
 	dt = datetime.datetime.now()
 	date = dt.date()
 
@@ -452,8 +453,17 @@ def populate_user(request,message,template):
 		for pleave in pendingleaves:
 			leaves.append({'leave':pleave})
 			
+	# Find absent remarks for which there is no corresponding leave request for template ams/display.html
+	current_year = AcademicYear.objects.get(Status=1)
+	absentremarks = Attendance.objects.filter(Remark__in=('A','H')).filter(Year=current_year)
+	for rem in absentremarks:
+		leaverequest = Leaves.objects.filter(Barcode=rem.Barcode).filter(LeaveDate=rem.Date)
+		if not leaverequest:
+			absentnoleave.append({'remark':rem})
+			
 	return render_to_response(template,Context({'come': come,'yettocome':yettocome,'gone':gone,'absent':absent,
-								'forgotcheckout':forgotcheckout,'message':message,'jsdate': jsdate,'datestr': datestr,'leaves':leaves}))
+								'forgotcheckout':forgotcheckout,'message':message,'jsdate': jsdate,'datestr': datestr,'leaves':leaves,
+								'absentnoleave':absentnoleave}))
 
 #
 @csrf_exempt
@@ -609,7 +619,43 @@ def app_leave(request):
 		acadyear = AcademicYear.objects.get(Status=1)
 		pendingleaves = Leaves.objects.filter(Barcode=barcode).filter(Status=1).filter(LeaveDate__gte = acadyear.StartDate, LeaveDate__lte = acadyear.EndDate)
 		approveleaves = Leaves.objects.filter(Barcode=barcode).filter(Status=2).filter(LeaveDate__gte = acadyear.StartDate, LeaveDate__lte = acadyear.EndDate)
+		usrdayrules = DayRules.objects.filter(Barcode=barcode.Barcode)
+		catdayrules = DayRules.objects.filter(Category=barcode.Category).filter(Barcode__isnull=True)
+		comdayrules = DayRules.objects.filter(Category=CATEGORY_ALL)
+		appdaterules = []
+		appdayrules = []
+		timerules = []
+		
+		for rule in comdayrules:
+			if rule.Date:
+				if not catdayrules.filter(Date=rule.Date) and not usrdayrules.filter(Date=rule.Date):
+					appdaterules.append({'date': rule.Date, 'day': DAY_CHOICES[rule.Date.isoweekday()-1][1], 'type': rule.Type})
+			elif rule.Day:
+				if not catdayrules.filter(Day=rule.Day) and not usrdayrules.filter(Day=rule.Day):
+					appdayrules.append({'date': rule.Date, 'day': DAY_CHOICES[rule.Day - 1][1], 'type': rule.Type})
 
+		for rule in catdayrules:
+			if rule.Date:
+				if not usrdayrules.filter(Date=rule.Date):
+					appdaterules.append({'date': rule.Date, 'day': DAY_CHOICES[rule.Date.isoweekday()-1][1], 'type': rule.Type})
+			elif rule.Day:
+				if not usrdayrules.filter(Day=rule.Day):
+					appdayrules.append({'date': rule.Date, 'day': DAY_CHOICES[rule.Day - 1][1], 'type': rule.Type})
+
+		for rule in usrdayrules:
+			if rule.Date:
+				appdaterules.append({'date': rule.Date, 'day': DAY_CHOICES[rule.Date.isoweekday()-1][1], 'type': rule.Type})
+			elif rule.Day:
+				appdayrules.append({'date': rule.Date, 'day': DAY_CHOICES[rule.Day - 1][1], 'type': rule.Type})
+			
+		for rule in appdaterules:
+			if timerules.count({'timerule': rule['type']}) == 0:
+				timerules.append({'timerule': rule['type']})
+
+		for rule in appdayrules:
+			if timerules.count({'timerule': rule['type']}) == 0:
+				timerules.append({'timerule': rule['type']})
+			
 		data = []
 		balance = [0,0,0,0,0,0,0,0]
 		carryforward = [0,0,0,0,0,0,0,0]
@@ -710,7 +756,8 @@ def app_leave(request):
 		return render_to_response('ams/leaveapp.html', {'datedata':datedata,'form': form, 'data': data, 'message': message, 'abdays': abdays,
 									 'absentdays': absentdays, 'latedays': late, 'ltdays': ltdays, 'hfdays':hfdays, 'halfdays': halfdays,
 									 'balance': balance, 'carryforward': carryforward, 'currentleaves': currentleaves,
-									 'takenleaves': takenleaves, 'forgotdays': forgotdays, 'fcdays': fcdays, 'disabled':disabled})
+									 'takenleaves': takenleaves, 'forgotdays': forgotdays, 'fcdays': fcdays, 'disabled':disabled,
+									 'dayrules':appdayrules, 'daterules':appdaterules, 'timerules':timerules})
 
 #
 @csrf_exempt
