@@ -1,0 +1,55 @@
+<html>
+<head>
+
+<STYLE TYPE="text/css">
+<!--
+TD{font-family: Arial; font-size: 10pt;}
+--->
+</STYLE>
+
+</head>
+<body>
+{% if data %}
+<table border='1'>
+    <tr>
+        <td></td>
+        <td>Group</td>
+        <td><strong>{{ data.0.ClassRoom.Medium }}{{ data.0.ClassRoom.Number }}</strong></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>Classname</td>
+        <td><strong>{{ data.0.ClassRoom.Name}}</strong></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><strong>Seat Number</strong></td>
+        <td><strong>Name</strong></td>
+        <td><strong>Mobile Number</strong></td>
+        <td><strong>Attd 1</strong></td>
+        <td><strong>Attd 2</strong></td>
+        <td><strong>Attd 3</strong></td>
+    </tr>
+    {% for x in data %}
+    <tr>
+    <td></td>
+    <td>{{x.ClassRoom.Medium}}{{x.ClassRoom.Number}}-{{x.SeatNumber}}</td>
+    <td>{{x.Student.FirstName}} {{x.Student.LastName}}</td>
+    <td>{{x.Student.PhoneMobile}}</td>
+    <td>__________</td>
+    <td>__________</td>
+    <td>__________</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+{% if classrooms %}
+{% for x in classrooms %}
+<a href='/pravesh/generate_report/?medium={{x.Medium}}&number={{x.Number}}'>{{ x.Name }}: {{ x.Medium }}{{ x.Number}}</a> <br />
+{% endfor %}
+{% endif%}
+</body>
+</html>
