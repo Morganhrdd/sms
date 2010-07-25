@@ -1528,7 +1528,7 @@ def generate_name_columns(request):
             tmp.append('')
             dl.append(col_width)
         data.append(['RegNo', 'RollNo', 'Name']+tmp)
-        s_objs = StudentYearlyInformation.objects.filter(ClassMaster__AcademicYear__Year=yr,ClassMaster__Standard=std,ClassMaster__Division=div).order_by('RollNo')
+        s_objs = StudentYearlyInformation.objects.filter(ClassMaster__AcademicYear__Year=yr,ClassMaster__Standard=std,ClassMaster__Division=div, StudentBasicInfo__TerminationDate=None).order_by('RollNo')
         for s in s_objs:
             data.append([s.StudentBasicInfo.RegistrationNo, s.RollNo, s.StudentBasicInfo.FirstName+' '+s.StudentBasicInfo.LastName]+tmp)
 
