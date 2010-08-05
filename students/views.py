@@ -429,14 +429,17 @@ def marks_add(request):
         if request.user.is_superuser or request.user.email == test.Teacher.Email:
             test = TestMapping.objects.get(id=test_id)
             for key in keys:
-                student = StudentYearlyInformation.objects.get(id=key)
-                a = StudentTestMarks.objects.filter(StudentYearlyInformation=student, TestMapping=test)
-                a.delete()
-                a = StudentTestMarks()
-                a.TestMapping = test
-                a.StudentYearlyInformation = student
-                a.MarksObtained = request.POST[key]
-                a.save()
+		        try:
+                    student = StudentYearlyInformation.objects.get(id=key)
+                    a = StudentTestMarks.objects.filter(StudentYearlyInformation=student, TestMapping=test)
+                    a.delete()
+                    a = StudentTestMarks()
+                    a.TestMapping = test
+                    a.StudentYearlyInformation = student
+                    a.MarksObtained = request.POST[key]
+                    a.save()
+        		except:
+        		    pass
             return HttpResponse('Successfully added record.<br/>\n<a href="/marks_add">Select test for entering data</a>')
         else:
             return HttpResponse('Permission denied')
@@ -1566,15 +1569,18 @@ def attendance_add(request):
         attendance_id = request.POST['attendance_id']
         keys.remove('attendance_id')
         for key in keys:
-            attendance_master = AttendanceMaster.objects.get(id = attendance_id)
-            student = StudentYearlyInformation.objects.get(id = key)
-            a = StudentAttendance.objects.filter(AttendanceMaster = attendance_master, StudentYearlyInformation = student)
-            a.delete()
-            a = StudentAttendance()
-            a.AttendanceMaster = attendance_master
-            a.StudentYearlyInformation = student
-            a.ActualAttendance = request.POST[key]
-            a.save()
+            try:
+                attendance_master = AttendanceMaster.objects.get(id = attendance_id)
+                student = StudentYearlyInformation.objects.get(id = key)
+                a = StudentAttendance.objects.filter(AttendanceMaster = attendance_master, StudentYearlyInformation = student)
+                a.delete()
+                a = StudentAttendance()
+                a.AttendanceMaster = attendance_master
+                a.StudentYearlyInformation = student
+                a.ActualAttendance = request.POST[key]
+                a.save()
+            except:
+                pass
         return HttpResponse('Successfully added record.<br/>\n<a href="/attendance_add">Select test for entering data</a>')
     else:
         if not request.GET.has_key('attendance_id'):
