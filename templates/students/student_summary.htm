@@ -12,7 +12,7 @@
         {{ msg|safe }}
     <br />
     {% for yrly_info in  yrly_infos %}
-    <a href='/display_report/{{ yrly_info.StudentBasicInfo.RegistrationNo }}/{{ yrly_info.ClassMaster.AcademicYear }}'>{{ yrly_info.StudentBasicInfo }}</a>
+    <a href='/display_report/{{ yrly_info.StudentBasicInfo.RegistrationNo }}/{{ yrly_info.ClassMaster.AcademicYear }}'>{{ yrly_info.ClassMaster.AcademicYear }}</a>
     {% endfor %}
 </body>
 </html>
