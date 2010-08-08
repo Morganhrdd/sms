@@ -121,8 +121,6 @@ class StudentAdditionalInformation(models.Model):
     Address = models.TextField(max_length=300)
     Strength = models.TextField(max_length=200, blank=True)
     Weakness = models.TextField(max_length=200, blank=True)
-    Sankalp = models.TextField(max_length=200, blank=True)
-    Sankalp_Comment = models.TextField(max_length=200, blank=True)
     Hobbies = models.TextField(max_length=200, blank=True)
     Family_Background = models.TextField(max_length=200, blank=True)
     Fathers_Income = models.CharField(max_length=60, blank=True)
@@ -185,6 +183,8 @@ class StudentYearlyInformation(models.Model):
     ClassMaster = models.ForeignKey(ClassMaster)
     Photo = models.ImageField(upload_to='media', blank=True)
     Hostel = models.PositiveIntegerField(choices=HOSTEL_CHOICES)
+    Sankalp = models.TextField(max_length=200, blank=True)
+    Sankalp_Comment = models.TextField(max_length=200, blank=True)
     def __unicode__(self):
         return "%s, %d, %s" % (self.StudentBasicInfo, self.RollNo, self.ClassMaster)
 
