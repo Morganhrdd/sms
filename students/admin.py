@@ -14,7 +14,7 @@ class StudentBasicInfoAdmin(admin.ModelAdmin):
     search_fields =['RegistrationNo', 'FirstName', 'LastName',]
     
 class StudentAdditionalInformationAdmin(admin.ModelAdmin):
-    list_display = ('Id', 'Strength', 'Weakness', 'Sankalp', 'Sankalp_Comment', 'Hobbies', 'Family_Background', 'Fathers_Income',
+    list_display = ('Id', 'Strength', 'Weakness', 'Hobbies', 'Family_Background', 'Fathers_Income',
                     'Fathers_Education', 'Fathers_Occupation', 'Fathers_Phone_No', 'Fathers_Email', 'Mothers_Income' ,'Mothers_Education',
                     'Mothers_Occupation', 'Mothers_Phone_No', 'Mothers_Email', 'Address')
     search_fields = ['Id__RegistrationNo', 'Id__FirstName', 'Id__LastName']
@@ -35,7 +35,7 @@ class SubjectMasterAdmin(admin.ModelAdmin):
     search_fields = ['Name', 'Standard']
 
 class StudentYearlyInformationAdmin(admin.ModelAdmin):
-    list_display = ('StudentBasicInfo', 'RollNo', 'ClassMaster', 'Photo')
+    list_display = ('StudentBasicInfo', 'Sankalp', 'Sankalp_Comment', 'RollNo', 'ClassMaster', 'Photo')
     ordering = ('ClassMaster', 'RollNo', )
     search_fields = ['StudentBasicInfo__FirstName', 'StudentBasicInfo__LastName', 'ClassMaster__Teacher__Name', 'RollNo', 'ClassMaster__Standard','ClassMaster__AcademicYear__Year', 'StudentBasicInfo__RegistrationNo']
 

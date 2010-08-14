@@ -78,14 +78,6 @@
             <td>{{additional_info.Weakness}}</td>
         </tr>
         <tr>
-            <td>Sankalp</td>
-            <td>{{additional_info.Sankalp}}</td>
-        </tr>
-        <tr>
-            <td>Sankalp Comment</td>
-            <td>{{additional_info.Sankalp_Comment}}</td>
-        </tr>
-        <tr>
             <td>Hobbies</td>
             <td>{{additional_info.Hobbies}}</td>
         </tr>
@@ -148,6 +140,15 @@
             <td>Division</td>
             <td>{{yearly_info.ClassMaster.Division}}</td>
         </tr>
+        <tr>
+            <td>Sankalp</td>
+            <td>{{yearly_info.Sankalp}}</td>
+        </tr>
+        <tr>
+            <td>Sankalp Comment</td>
+            <td>{{yearly_info.Sankalp_Comment}}</td>
+        </tr>
+
     </table>
     <h1>Attendance Record</h1>
     <table border=1>
@@ -264,7 +265,10 @@
         </tr>
         {% endfor %}
     </table>
-    <h1>Social Ativity</h1>
+	<p>
+		*** Grades: 0 = None. Higher the grade, better is the performance
+    </p>
+	<h1>Social Ativity</h1>
     {% for x in socialactivity %}
     <table border=1>
         <tr>
