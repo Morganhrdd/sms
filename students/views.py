@@ -2078,7 +2078,7 @@ def fillAcademicReport(student_yearly_info, Story):
         subject_data.append(test_marks)
 
     #desired sequence
-    temp_sort = ['ENG', 'SAN', 'MAT', 'PHY', 'CHE', 'BIO', 'PRA', 'SCI', 'HIS', 'GEO', 'ECO', 'SOC', 'COM']
+    temp_sort = ['ENG', 'HIN', 'MAR', 'SAN', 'MAT', 'PHY', 'CHE', 'BIO', 'PRA', 'SCI', 'SCS', 'HIS', 'GEO', 'ECO', 'POL', 'SOC', 'COM']
     cumulative_marks=0
     cumulative_maxmarks=0
     data = []
