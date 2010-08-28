@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.context_processors import csrf
 from sms.students.models import *
+from sms.students.forms import *
 from django.template import Context, RequestContext
 from django.template.loader import get_template
 from reportlab.pdfgen import canvas
