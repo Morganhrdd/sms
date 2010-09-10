@@ -22,6 +22,7 @@ class CompetitionDetailsForm(forms.Form):
     Guide = forms.CharField(max_length=30, required=False)
     PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    DescriptiveIndicator = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     Delete = forms.CharField(required=False)
 
 class ElocutionDetailsForm(forms.Form):
@@ -35,6 +36,7 @@ class ElocutionDetailsForm(forms.Form):
     Presentation = forms.ChoiceField(choices=GRADE_CHOICES_3, initial='0')
     PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    DescriptiveIndicator = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     Delete = forms.CharField(required=False)
 
 class ProjectDetailsForm(forms.Form):
@@ -51,6 +53,7 @@ class ProjectDetailsForm(forms.Form):
     Communication = forms.ChoiceField(choices=GRADE_CHOICES_3, initial='0')
     PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    DescriptiveIndicator = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     Delete = forms.CharField(required=False)
     
 
@@ -66,6 +69,7 @@ class AbhivyaktiVikasDetailsForm(forms.Form):
     Creativity = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
     PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    DescriptiveIndicator = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     Delete = forms.CharField(required=False)
 
 class CompetitiveExamDetailsForm(forms.Form):
@@ -78,6 +82,7 @@ class CompetitiveExamDetailsForm(forms.Form):
     Grade = forms.CharField(max_length=20, required=False)
     PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    DescriptiveIndicator = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     Delete = forms.CharField(required=False)
 
 class CoCurricularDetailsForm(forms.Form):
@@ -90,6 +95,7 @@ class CoCurricularDetailsForm(forms.Form):
     Grade = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
     PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    DescriptiveIndicator = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     Delete = forms.CharField(required=False)
 
 class SocialActivityDetailsForm(forms.Form):
@@ -102,6 +108,7 @@ class SocialActivityDetailsForm(forms.Form):
     Grade = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
     PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    DescriptiveIndicator = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     Delete = forms.CharField(required=False)
     
 class PhysicalFitnessInfoDetailsForm(forms.Form):
@@ -124,6 +131,7 @@ class PhysicalFitnessInfoDetailsForm(forms.Form):
     Balancing = forms.IntegerField(required=False)
     PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    DescriptiveIndicator = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     Pathak = forms.CharField(max_length=50, required=False)
     Pratod = forms.CharField(max_length=50, required=False)
     Margadarshak = forms.CharField(max_length=50, required=False)
@@ -141,6 +149,7 @@ class WorkExperienceDetailsForm(forms.Form):
     Involvement = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
     PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    DescriptiveIndicator = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     Delete = forms.CharField(required=False)
 
 class PhysicalEducationDetailsForm(forms.Form):
@@ -153,6 +162,7 @@ class PhysicalEducationDetailsForm(forms.Form):
     LeadershipSkill = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
     PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    DescriptiveIndicator = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     Delete = forms.CharField(required=False)
 
 class ThinkingSkillDetailsForm(forms.Form):
@@ -164,6 +174,7 @@ class ThinkingSkillDetailsForm(forms.Form):
     DecisionMakingAndProblemSolving = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
     PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    DescriptiveIndicator = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     Delete = forms.CharField(required=False)
 
 class SocialSkillDetailsForm(forms.Form):
@@ -174,6 +185,7 @@ class SocialSkillDetailsForm(forms.Form):
     TeamWork = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
     PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    DescriptiveIndicator = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     Delete = forms.CharField(required=False)
 
 class EmotionalSkillDetailsForm(forms.Form):
@@ -184,6 +196,7 @@ class EmotionalSkillDetailsForm(forms.Form):
     Management = forms.ChoiceField(choices=GRADE_CHOICES, initial='0')
     PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    DescriptiveIndicator = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     Delete = forms.CharField(required=False)
 
 class AttitudeTowardsSchoolDetailsForm(forms.Form):
@@ -195,6 +208,7 @@ class AttitudeTowardsSchoolDetailsForm(forms.Form):
     SchoolEnvironment = forms.ChoiceField(choices=GRADE_CHOICES_3, initial='0')
     PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    DescriptiveIndicator = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     Delete = forms.CharField(required=False)
 
 class ValuesDetailsForm(forms.Form):
@@ -206,6 +220,7 @@ class ValuesDetailsForm(forms.Form):
     Responsibility = forms.ChoiceField(choices=GRADE_CHOICES_3, initial='0')
     PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    DescriptiveIndicator = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     Delete = forms.CharField(required=False)
     
 #
