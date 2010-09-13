@@ -1,4 +1,7 @@
 from django import forms
+
+from sms.students.vars import *
+from sms.students.models import *
     
 class SearchDetailsForm(forms.Form):
     Year = forms.CharField(max_length=9)
