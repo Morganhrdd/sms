@@ -28,121 +28,7 @@ from pprint import pprint
 PAGE_HEIGHT=defaultPageSize[1]; PAGE_WIDTH=defaultPageSize[0]
 styles = getSampleStyleSheet()
 
-MONTH_CHOICES = {
-    1: 'Jan',
-    2: 'Feb',
-    3: 'Mar',
-    4: 'Apr',
-    5: 'May',
-    6: 'Jun',
-    7: 'Jul',
-    8: 'Aug',
-    9: 'Sep',
-    10: 'Oct',
-    11: 'Nov',
-    12: 'Dec'
-}
-
-FULLMONTH_CHOICES = {
-    1: 'January',
-    2: 'February',
-    3: 'March',
-    4: 'April',
-    5: 'May',
-    6: 'June',
-    7: 'July',
-    8: 'August',
-    9: 'September',
-    10: 'October',
-    11: 'November',
-    12: 'December'
-}
-
-GRADE_CHOICES = {
-    6: 'Outstanding',
-    5: 'Excellent',
-    4: 'Good',
-    3: 'Satisfactory',
-    2: 'Needs Improvement',
-    1: 'Unsatisfactory',
-    0: '-',
-    '': '-',
-    '6': 'Outstanding',
-    '5': 'Excellent',
-    '4': 'Good',
-    '3': 'Satisfactory',
-    '2': 'Needs Improvement',
-    '1': 'Unsatisfactory',
-    '0': '-',
-    '6.0': 'Outstanding',
-    '5.0': 'Excellent',
-    '4.0': 'Good',
-    '3.0': 'Satisfactory',
-    '2.0': 'Needs Improvement',
-    '1.0': 'Unsatisfactory',
-    '0.0': '-'
-}
-    
-GRADE_CHOICES_3 = {
-    '0': 'None',
-    '1': 'Satisfactory',
-    '2': 'Good',
-    '3': 'Outstanding',
-     0 : 'None',
-     1 : 'Satisfactory',
-     2 : 'Good',
-     3 : 'Outstanding',
-}
-
-GRADE_NUM = {
-    'O': 6,
-    'E': 5,
-    'G': 4,
-    'S': 3,
-    'N': 2,
-    'U': 1,
-    'A':0,
-    '':0,
-    '0':0,
-    '1':1,
-    '2':2,
-    '3':3,
-    '4':4,
-    '5':5,
-    '6':6,
-    '6.0':6,
-    '5.0':5,
-    '4.0':4,
-    '3.0':3,
-    '2.0':2,
-    '1.0':1,
-    '0.0':0
-}
-
-PROJECT_TYPE_CHOICES = {
-    'CC': 'Collection, Classification',
-    'MM': 'Model Making',
-    'IS': 'Investivation by Survey',
-    'I': 'Investigation',
-    'CP': 'Creative production',
-    'AC': 'Appreciation-criticism',
-    'O': 'Open ended exploration',
-}
-
-DIVISION_NUM = {
-    'B': 1,
-    'G': 2
-}
-
-ones = ["", "One ","Two ","Three ","Four ", "Five ", "Six ","Seven ","Eight ","Nine "]
-
-tens = ["Ten ","Eleven ","Twelve ","Thirteen ", "Fourteen ",
-"Fifteen ","Sixteen ","Seventeen ","Eighteen ","Nineteen "]
-
-twenties = ["","","Twenty ","Thirty ","Forty ", "Fifty ","Sixty ","Seventy ","Eighty ","Ninety "]
-
-thousands = ["","Thousand ","Million ", "Billion ", "Trillion "]
-
+from sms.students.vars import *
 
 class generate_report(object):
     def __init__(self, regno=None, year=None, classmaster_type='P'):
@@ -413,7 +299,7 @@ def report(request):
         'social_activity_data':social_activity_data,
         'cumulative_social_grade':cumulative_social_grade}), context_instance=RequestContext(request))
     else:
-        return HttpResponse ('<html><body>Enter Registration Number<form action="" method="POST"><input type="text" name="reg_no" value="" id="reg_no" size="20"></td>	<input type="submit" value="Enter" /></form></body></html>')
+        return HttpResponse ('<html><body>Enter Registration Number<form action="" method="POST"><input type="text" name="reg_no" value="" id="reg_no" size="20"></td>  <input type="submit" value="Enter" /></form></body></html>')
 
 def student_summary(request):
     if request.user.username.isdigit():
@@ -422,6 +308,13 @@ def student_summary(request):
         return render_to_response('students/student_summary.htm',Context({'yrly_infos': student_yearly_infos}), context_instance=RequestContext(request))
     return HttpResponse('Invalid user')
 # Used by HTML Report
+def marks_add1(request):
+    if request.POST:
+        keys = request.POST.keys()
+        test_id = request.POST['test_id']
+        keys.request('test_id')
+        if request.user.is_superuser or request.user.email == test.Teacher.Email:
+            test = TestMapping.objects.get(id=test_id)
 def marks_add(request):
     if request.POST:
         keys = request.POST.keys()
@@ -430,7 +323,7 @@ def marks_add(request):
         if request.user.is_superuser or request.user.email == test.Teacher.Email:
             test = TestMapping.objects.get(id=test_id)
             for key in keys:
-		        try:
+                try:
                     student = StudentYearlyInformation.objects.get(id=key)
                     a = StudentTestMarks.objects.filter(StudentYearlyInformation=student, TestMapping=test)
                     a.delete()
@@ -439,8 +332,8 @@ def marks_add(request):
                     a.StudentYearlyInformation = student
                     a.MarksObtained = request.POST[key]
                     a.save()
-        		except:
-        		    pass
+                except:
+                    pass
             return HttpResponse('Successfully added record.<br/>\n<a href="/marks_add">Select test for entering data</a>')
         else:
             return HttpResponse('Permission denied')
@@ -474,7 +367,6 @@ def marks_add(request):
             rollno = student_test_mark_obj.StudentYearlyInformation.RollNo
             data.append({'id':student_test_mark_obj.StudentYearlyInformation.id, 'name':name, 'rollno':rollno,'marks_obtained':student_test_mark_obj.MarksObtained})
         return render_to_response('students/AddMarks.html',Context({'test_details': test_details,'test_id':test_id, 'data':data}), context_instance=RequestContext(request))
-    
 
 def can_login(group=None, user=None):
     if not user.is_active:
@@ -483,7 +375,7 @@ def can_login(group=None, user=None):
         return 1
     if group in [x.name for x in user.groups.all()]:
         return 1
-        
+
 
 def competition_add(request):
     if not can_login(group='teacher', user=request.user):
@@ -1012,7 +904,7 @@ def search_reg_no(request=None):
             msg += '<br /> %s %s %s' % (x.RegistrationNo, x.FirstName, x.LastName)
         msg += '<br />'
         return msg
-    
+
 #
 def workexperience_add(request):
     if not can_login(group='teacher', user=request.user):
@@ -1432,7 +1324,7 @@ def values_add(request):
             data.append(x)
             return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
-    
+
 
 #
 def medicalreport_add(request):
@@ -1608,7 +1500,7 @@ def attendance_add(request):
         return render_to_response('students/AddAttendance.html',Context({'attendance_id':attendance_id, 'attendance_details':attendance_obj.ClassMaster, 'data':data}), context_instance=RequestContext(request))
     return HttpResponse()
 
-# PDF Report :	--------------------------------------------------
+# PDF Report :  --------------------------------------------------
 
 def laterPages(canvas, doc):
     canvas.saveState()
@@ -1628,7 +1520,7 @@ def pageBorder(canvas):
     canvas.line(margin, PAGE_HEIGHT - margin, PAGE_WIDTH - margin, PAGE_HEIGHT - margin)
     canvas.line(PAGE_WIDTH - margin, PAGE_HEIGHT - margin, PAGE_WIDTH - margin, margin)
     canvas.line(PAGE_WIDTH - margin, margin, margin, margin)
-    
+
     #line separator for footer
     canvas.setLineWidth(0.1)
     canvas.line(PAGE_WIDTH - margin, margin + 0.16*inch, margin, margin + 0.16*inch)
@@ -1638,7 +1530,7 @@ def pageBorder(canvas):
 def reportPDF(request):
     if request.POST:
         keys = request.POST.keys()
-        
+
         #pick values from html form
         registration_number_min = int(request.POST['registration_number_min'])
         registration_number_max = int(request.POST['registration_number_max'])
@@ -1662,7 +1554,7 @@ def reportPDF(request):
         response = HttpResponse(mimetype='application/pdf')
         doc = SimpleDocTemplate(response)
         doc.build(Story, onFirstPage=laterPages, onLaterPages=laterPages)
-        
+
         return response
     else:
         return HttpResponse ('<html><body>'
@@ -1693,7 +1585,7 @@ def fillPdfData(Story, registration_nos, part_option, standard, division, year_o
         except:
             #skip the reg numbers if basic info is not found
             continue
-        
+
         for student_yearly_info in student_yearly_infos:
 
             #filter by year
@@ -1721,7 +1613,7 @@ def fillPdfData(Story, registration_nos, part_option, standard, division, year_o
                 'Values': '-'
             }
             fillSkillsReport(student_yearly_info, skillGrades, skillsStory)
-            
+
             #populate content as per the option chosen
             if part_option == 0:
                 fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story)
@@ -2203,7 +2095,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
             grade = competitive_exam.Grade
         comment = competitive_exam.PublicComment
         comment = comment.replace('&','and')
-        
+
         addNormalTextToStory(Story,'<strong>' + 'Competitive Exam' + ' ' + str(i) + '</strong>')
         data = []
         data.append(['Name','Subject','Level','Date','Performance'])
@@ -2230,7 +2122,7 @@ def fillCoCurricularReport(student_yearly_info, Story):
         guide = competition.Guide
         comment = competition.PublicComment
         comment = comment.replace('&','and')
-        
+
         addNormalTextToStory(Story,'<strong>' + 'Competition'+ ' ' + str(i) + '</strong>')
         data = []
         data.append(['Organizer','Subject','Date','Achievement','Guide'])
@@ -2387,7 +2279,7 @@ def fillSkillsReport(student_yearly_info, skillGrades, Story):
             logicalThinking = logicalThinking + GRADE_NUM[thinkingSkill.LogicalThinking]
             creativity = creativity + GRADE_NUM[thinkingSkill.Creativity]
             decisionMaking = decisionMaking + GRADE_NUM[thinkingSkill.DecisionMakingAndProblemSolving]
-        
+
         #total grades
         addNormalTextToStory(Story,'Inquiry' + ' : ' + GRADE_CHOICES[round(inquiry / length)])
         addNormalTextToStory(Story,'LogicalThinking' + ' : ' + GRADE_CHOICES[round(logicalThinking / length)])
@@ -2424,7 +2316,7 @@ def fillSkillsReport(student_yearly_info, skillGrades, Story):
             communication = communication + GRADE_NUM[socialSkill.Communication]
             interPersonal = interPersonal + GRADE_NUM[socialSkill.InterPersonal]
             teamWork = teamWork + GRADE_NUM[socialSkill.TeamWork]
-       
+
         #total grades
         addNormalTextToStory(Story,'Communication' + ' : ' + GRADE_CHOICES[round(communication / length)])
         addNormalTextToStory(Story,'InterPersonal' + ' : ' + GRADE_CHOICES[round(interPersonal / length)])
@@ -2462,7 +2354,7 @@ def fillSkillsReport(student_yearly_info, skillGrades, Story):
             empathy = empathy + GRADE_NUM[emotionalSkill.Empathy]
             expression = expression + GRADE_NUM[emotionalSkill.Expression]
             management = management + GRADE_NUM[emotionalSkill.Management]
-       
+
         #total grades
         addNormalTextToStory(Story,'Emotional understanding' + ' : ' + GRADE_CHOICES[round(empathy / length)])
         addNormalTextToStory(Story,'Expression' + ' : ' + GRADE_CHOICES[round(expression / length)])
@@ -2471,7 +2363,7 @@ def fillSkillsReport(student_yearly_info, skillGrades, Story):
         skillGrades['EmotionalSkill'] = GRADE_CHOICES[round((empathy + expression + management) / (3.0 * length))]
         addNormalTextToStory(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + skillGrades['EmotionalSkill'])
         Story.append(Spacer(1,0.1*inch))
-        
+
         addNormalTextToStory(Story,'Comments:')
         i=0
         for emotionalSkill in emotionalSkills:
@@ -2502,7 +2394,7 @@ def fillSkillsReport(student_yearly_info, skillGrades, Story):
             schoolMates = schoolMates + GRADE_NUM[attitudeTowardsSchool.SchoolMates]
             schoolPrograms = schoolPrograms + GRADE_NUM[attitudeTowardsSchool.SchoolPrograms]
             schoolEnvironment = schoolEnvironment + GRADE_NUM[attitudeTowardsSchool.SchoolEnvironment]
-            
+
         #total grades
         addNormalTextToStory(Story,'SchoolTeachers' + ' : ' + GRADE_CHOICES_3[round(schoolTeachers / length)])
         addNormalTextToStory(Story,'SchoolMates' + ' : ' + GRADE_CHOICES_3[round(schoolMates / length)])
@@ -2512,7 +2404,7 @@ def fillSkillsReport(student_yearly_info, skillGrades, Story):
         skillGrades['AttitudeTowardsSchool'] = GRADE_CHOICES_3[round((schoolTeachers + schoolMates + schoolPrograms + schoolEnvironment) / (4.0 * length))]
         addNormalTextToStory(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + skillGrades['AttitudeTowardsSchool'])
         Story.append(Spacer(1,0.1*inch))
-        
+
         addNormalTextToStory(Story,'Comments:')
         i=0
         for attitudeTowardsSchool in attitudeTowardsSchools:
@@ -2543,7 +2435,7 @@ def fillSkillsReport(student_yearly_info, skillGrades, Story):
             honesty = honesty + GRADE_NUM[values.Honesty]
             equality = equality + GRADE_NUM[values.Equality]
             responsibility = responsibility + GRADE_NUM[values.Responsibility]
-            
+
         #total grades
         addNormalTextToStory(Story,'Obedience' + ' : ' + GRADE_CHOICES_3[round(obedience / length)])
         addNormalTextToStory(Story,'Honesty' + ' : ' + GRADE_CHOICES_3[round(honesty / length)])
@@ -2553,7 +2445,7 @@ def fillSkillsReport(student_yearly_info, skillGrades, Story):
         skillGrades['Values'] = GRADE_CHOICES_3[round((obedience + honesty + equality + responsibility) / (4.0 * length))]
         addNormalTextToStory(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + skillGrades['Values'])
         Story.append(Spacer(1,0.1*inch))
-        
+
         addNormalTextToStory(Story,'Comments:')
         i=0
         for values in valuess:
@@ -2564,7 +2456,7 @@ def fillSkillsReport(student_yearly_info, skillGrades, Story):
                 addNormalTextToStory(Story, str(i) + '. ' + comment)
 
     Story.append(Spacer(1,0.2*inch))
-    
+
     Story.append(PageBreak())
 
 def fillOutdoorActivityReport(student_yearly_info, Story):
@@ -2574,7 +2466,7 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
     addSubHeaderToStory(Story, "Physical Education")
     try:
         physicalEducation = PhysicalEducation.objects.get(StudentYearlyInformation=student_yearly_info)
-        
+
         addNormalTextToStory(Story,'Name' + ' : ' + physicalEducation.Name)
         addNormalTextToStory(Story,'Pratod' + ' : ' + physicalEducation.Pratod)
         addNormalTextToStory(Story,'Ability to work in team' + ' : ' + GRADE_CHOICES[physicalEducation.AbilityToWorkInTeam])
@@ -2586,7 +2478,7 @@ def fillOutdoorActivityReport(student_yearly_info, Story):
     except:
         addNormalTextToStory(Story,'Not available')
     Story.append(Spacer(1,0.2*inch))
-    
+
     pratod = ''
     # Physical Fitness Report
     addSubHeaderToStory(Story, "Physical Fitness Report")
@@ -2685,12 +2577,12 @@ def fillLibraryAndMedicalReport(student_yearly_info, Story):
 
         comment = library.PublicComment
         comment = comment.replace('&','and')
-        
+
         data = []
         data.append(['Books Read',str(library.BooksRead)])
         data.append(['Grade',GRADE_CHOICES[library.Grade]])
         data.append(['Comment',comment])
-        addNoBorderTableToStory(Story, data)   
+        addNoBorderTableToStory(Story, data)
     except:
         addNormalTextToStory(Story,'Not available')
 
@@ -2719,10 +2611,10 @@ def fillLibraryAndMedicalReport(student_yearly_info, Story):
         addNoBorderTableToStory(Story, data)
     except:
         addNormalTextToStory(Story,'Not available')
- 
+
     Story.append(PageBreak())
 
-# PDF Certificate :	--------------------------------------------------
+# PDF Certificate :     --------------------------------------------------
 
 def CertificateLaterPages(canvas, doc):
     canvas.saveState()
@@ -2749,7 +2641,7 @@ def certificatePDF(request):
         keys = request.POST.keys()
         registration_number_min = int(request.POST['registration_number_min'])
         registration_number_max = int(request.POST['registration_number_max'])
-        standard = 0 
+        standard = 0
         division = "-"
 
         registration_numbers = []
@@ -2902,7 +2794,7 @@ def fillCertificate(student_basic_info, Story):
     Story.append(Spacer(1,0.1*inch))
     Story.append(PageBreak())
 
-# PDF School Leaving :	--------------------------------------------------
+# PDF School Leaving :  --------------------------------------------------
 
 def SchoolLeavingLaterPages(canvas, doc):
     canvas.saveState()
@@ -2933,10 +2825,10 @@ def schoolLeavingPDF(request):
         while registration_number <= registration_number_max:
             registration_numbers.append(registration_number)
             registration_number = registration_number + 1
-            
+
         Story = []
         fillSchoolLeavingPdfData(Story, registration_numbers, standard, division, year_option)
-        
+
         response = HttpResponse(mimetype='application/pdf')
         doc = SimpleDocTemplate(response)
         doc.build(Story, onFirstPage=SchoolLeavingLaterPages, onLaterPages=SchoolLeavingLaterPages)
@@ -3164,7 +3056,7 @@ def checkBoxValue(request, checkBoxName):
 def cardsPDF(request):
     if request.POST:
         keys = request.POST.keys()
-        
+
         #pick values from html form
         #range and filters for registration numbers
         registration_number_min = int(request.POST['registration_number_min'])
@@ -3206,7 +3098,7 @@ def cardsPDF(request):
                 topMargin=margin,
                 bottomMargin=margin)
         doc.build(Story, onFirstPage=cardsLaterPages, onLaterPages=cardsLaterPages)
-        
+
         return response
     else:
         return HttpResponse ('<html><body>'
@@ -3276,7 +3168,7 @@ def selectYearlyInfos(selected_yearly_infos, registration_number_min, registrati
             #select
             selected_yearly_infos.append(student_yearly_info)
 
-def compareYearlyInfo(yearly_info_left, yearly_info_right):  
+def compareYearlyInfo(yearly_info_left, yearly_info_right):
     rollNo_left = comparisonIndex(yearly_info_left)
     rollNo_right = comparisonIndex(yearly_info_right)
     return cmp(int(rollNo_left), int(rollNo_right))
@@ -3286,14 +3178,14 @@ def comparisonIndex(student_yearly_info):
     standard = student_yearly_info.ClassMaster.Standard
     rollNo = student_yearly_info.RollNo
     return standard * 10000 + DIVISION_NUM[division] * 1000 + rollNo
-    
+
 def fillCardsData(Story, student_yearly_infos,
                   isShowRegNo, isShowRollNo, isShowName, isShowAddress, isShowBirthDate, isShowPhoneNo):
 
     count = len(student_yearly_infos)
     #take 2 consecutive entries at a time to fill a row of 2 cards
     for i in range(0, count, 2):
-	fillCardRow(Story, student_yearly_infos[i:i+2],
+        fillCardRow(Story, student_yearly_infos[i:i+2],
                     isShowRegNo, isShowRollNo, isShowName, isShowAddress, isShowBirthDate, isShowPhoneNo)
 
 def fillCardRow(Story, student_yearly_infos,
@@ -3307,7 +3199,7 @@ def fillCardRow(Story, student_yearly_infos,
         student_additional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info.RegistrationNo)
 
         studentCardText = ''
-        
+
         if isShowRegNo:
             regNo = 'RegNo' + ' ' + str(student_basic_info.RegistrationNo)
             studentCardText += regNo + ',    '
@@ -3344,7 +3236,7 @@ def fillCardRow(Story, student_yearly_infos,
     #for last odd record
     if len(student_yearly_infos) < 2:
         cardsRow.append('')
-   
+
     Story.append(CondPageBreak(1*inch))
 
     #table
