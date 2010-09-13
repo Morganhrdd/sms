@@ -1,13 +1,8 @@
-import xlrd, os, sys, datetime
-os.environ['DJANGO_SETTINGS_MODULE'] = 'jp_sms.settings'
+import xlrd, os, sys, datetime, re
+os.environ['DJANGO_SETTINGS_MODULE'] = 'sms.settings'
 sys.path.append(os.environ['DATAPY'])
-from jp_sms.students.models import StudentBasicInfo, SubjectMaster, Teacher, AttendanceMaster
-from jp_sms.students.models import AcademicYear, TestMapping, StudentYearlyInformation, StudentAttendance
-from jp_sms.students.models import ClassMaster, StudentTestMarks, StudentAdditionalInformation, Elocution
-from jp_sms.students.models import AbhivyaktiVikas, CoCurricular, Competition, CompetitiveExam
-from jp_sms.students.models import Project, Library, PhysicalFitnessInfo
-
-from jp_sms.fees.models import FeeType, FeeReceipt
+from jp_sms.students.models import *
+from jp_sms.fees.models import *
 
 def get_yrly_info(regno, year, std, div, class_type='P'):
     try:
@@ -1078,7 +1073,55 @@ def update_yrly_info():
     
     
 
-update_yrly_info()
+def add_basic_info():
+    print 'Adding basic info'
+    xls_file = raw_input('Enter filename: ')
+    book = xlrd.open_workbook(xls_file)
+    sh = book.sheet_by_index(0)
+    for rx in range(4,26):
+        row = sh.row_values(rx)
+        s = StudentBasicInfo()
+        s.RegistrationNo = row[1]
+        tmp = row[2].split('/')
+        s.DateOfRegistration = datetime.date(int(tmp[2]),int(tmp[1]),int(tmp[0]))
+        (s.FirstName, s.FathersName, s.LastName) = re.sub('\s+', ' ',row[3].strip()).split(r' ')
+        s.FirstName = s.FirstName.capitalize()
+        s.FathersName = s.FathersName.capitalize()
+        s.LastName = s.LastName.capitalize()
+        tmp = row[4].split('/')
+        s.DateOfBirth = datetime.date(int(tmp[2]),int(tmp[1]),int(tmp[0]))
+        s.BirthPlace = row[5]
+        s.Gender = row[6][0]
+        s.Caste = row[7]
+        s.Category = row[8]
+        s.save()
+        additional_info = StudentAdditionalInformation()
+        additional_info.Id = s
+        additional_info.Address = row[9]
+        additional_info.save()
+
+
+    '''
+    RegistrationNo = models.PositiveIntegerField(primary_key=True)
+    DateOfRegistration = models.DateField()
+    FirstName = models.CharField(max_length=30)
+    LastName = models.CharField(max_length=30)
+    DateOfBirth = models.DateField()
+    Gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    FathersName = models.CharField(max_length=60, blank=True)
+    MothersName = models.CharField(max_length=60, blank=True)
+    TerminationDate = models.DateField(null=True, blank=True)
+    Caste = models.CharField(max_length=50, blank=True)
+    Nationality = models.CharField(max_length=50, blank=True)
+    BirthPlace = models.CharField(max_length=50, blank=True)
+    ReasonOfLeavingSchool = models.TextField(max_length=100, blank=True)
+    PreviousSchool = models.CharField(max_length=200, blank=True)
+    Category = models.CharField(max_length=200, blank=True)
+    '''
+
+
+#add_basic_info()
+#update_yrly_info()
 #copy_yrly_info()
 #populate_abhivyakti()
 #populate_competitiveexam()
