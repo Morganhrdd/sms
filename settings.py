@@ -77,8 +77,8 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    #"/Users/shantanoo/repo/sms/templates",
-    "/home/shantanoo/repo/sms/templates",
+    "/Users/shantanoo/repo/sms/templates",
+    #"/home/shantanoo/repo/sms/templates",
     #'C:/Documents and Settings/aditya/Desktop/JPP/june_code/jp_sms/templates'
     #'C:/Users/aloks/Work/jp_sms/templates'
 )
@@ -94,6 +94,7 @@ INSTALLED_APPS = (
     'sms.ams',
     'sms.fees',
     'sms.pravesh',
+    'sms.mailinglist',
 )
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
