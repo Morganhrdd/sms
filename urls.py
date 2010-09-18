@@ -8,6 +8,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     (r'^admin/ams/home/', 'ams.views.admin_home'),
     (r'^admin/(.*)', admin.site.root),
+    #(r'^admin/(.*)', include(admin.site.urls)),
     (r'^marks_add/', 'students.views.marks_add'),
     (r'^attendance_add/', 'students.views.attendance_add'),
     (r'^report/', 'students.views.report'),
@@ -54,6 +55,7 @@ urlpatterns = patterns('',
     (r'^pravesh/generate_hallticket','pravesh.views.generate_hallticket'),
     (r'^pravesh/generate_report','pravesh.views.generate_classreport'),
     (r'^pravesh/?','pravesh.views.index'),
+    (r'^mailinglist/display', 'mailinglist.views.display'),
     #(r'^useradd/', views.user_add),
     # ... the rest of your URLs here ...
 )
