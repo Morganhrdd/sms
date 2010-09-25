@@ -7,6 +7,8 @@ from django.core.context_processors import csrf
 from sms.mailinglist.models import *
 from django.template import Context, RequestContext
 from django.template.loader import get_template
+from django.contrib.auth.decorators import login_required
+
 
 from pprint import pprint
 
