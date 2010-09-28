@@ -8,19 +8,20 @@ from django.views.decorators.csrf import csrf_exempt
 
 import os
 import datetime
-from array import array
 
-from sms.ams.models import Category, User, UserStatus, TimeRecords, DayRules, TimeRules, Attendance, TempAttendance, ForgotCheckout
-from sms.ams.models import Leaves, LeaveForm, LeaveRules, AcademicYear, LeaveAttendance, LeavesBalance, EncashLeaves, Overtime
-from sms.ams.models import UserJoiningDate, ReportForm, DailyReportForm, DayRulesForm, LeaveReportForm
-from sms.ams.models import LEAVE_CHOICES, REMARK_CHOICES, DAY_CHOICES
+from sms.ams.models import *
 from django.contrib.auth.decorators import login_required
+
+# import variables
+from sms.ams.vars import *
+
+# import forms
+from sms.ams.forms import *
 
 catqs = Category.objects.filter(Description='ALL')
 if catqs:
 	CATEGORY_ALL = catqs[0]
 
-HOLIDAY_RULE='Holiday'
 #
 @csrf_exempt
 def get_barcode(request):
