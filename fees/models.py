@@ -1,29 +1,9 @@
 from django.db import models
 from django import forms
-from sms.students.models import StudentBasicInfo, AcademicYear, ClassMaster, StudentYearlyInformation, STANDARD_CHOICES
+from sms.students.models import StudentBasicInfo, AcademicYear, ClassMaster, StudentYearlyInformation
 
 # Create your models here.
 
-RECEIPT_CHOICES = (
-    (1, 'Valid'),
-    (2, 'Cancel'),
-)
-
-FEE_FILTER_CHOICES = (
-	(1, 'All'),
-	(2, 'Defaulters')
-)
-
-FEE_DIVISION_CHOICES = (
-    ('A', 'All'),
-    ('G', 'Girls'),
-    ('B', 'Boys'),
-)
-
-FEE_CHOICES = (
-	('1', 'Scholarship'),
-	('2', 'Special Fee'),
-)
 
 class FeeType(models.Model):
 	ClassMaster = models.ForeignKey(ClassMaster)

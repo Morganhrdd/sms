@@ -18,20 +18,9 @@ from array import array
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
-from sms.fees.models import StudentBasicInfo, AcademicYear, ClassMaster, StudentYearlyInformation
-from sms.fees.models import ScholarshipOrFee
-from sms.fees.models import FeeType, FeeReceipt
-from sms.fees.models import FeeForm, FeeReportForm, FeeCollectionForm
-
+from sms.fees.models import *
 from sms.fees.num2word_EN import Num2Word_EN
 
-PAGE_HEIGHT=defaultPageSize[1]; PAGE_WIDTH=defaultPageSize[0]
-#PAGE_HEIGHT=8*inch; PAGE_WIDTH=defaultPageSize[0]
-styles = getSampleStyleSheet()
-margin=0.4*inch
-tbmargin=0.5*inch
-rmargin=0.8*inch
-lmargin=1.2*inch
 
 def fee_valid_user(user):
     if user.is_superuser:
