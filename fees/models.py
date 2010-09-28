@@ -1,7 +1,7 @@
 from django.db import models
 from django import forms
 from sms.students.models import StudentBasicInfo, AcademicYear, ClassMaster, StudentYearlyInformation
-
+from sms.fees.vars import *
 # Create your models here.
 
 
