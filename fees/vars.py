@@ -1,5 +1,7 @@
 from reportlab.lib.units import inch
-from sms.students.vars import STANDARD_CHOICES
+from sms.students.models import STANDARD_CHOICES
+from reportlab.rl_config import defaultPageSize
+from reportlab.lib.styles import getSampleStyleSheet
 
 RECEIPT_CHOICES = (
     (1, 'Valid'),
