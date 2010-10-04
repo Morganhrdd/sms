@@ -85,12 +85,15 @@ class generate_report(object):
         self.data['attitudetowardsschool'] = attitudetowardsschool_objs
         self.data['values'] = values_objs
         tmp_data = {}
-        tmp_data['workexperience'] = {'nos':['Communication', 'Confidence', 'Involvement'],'strings':['Task','PublicComment']}
+        tmp_data['workexperience'] = {'nos':['Communication', 'Confidence', 'Involvement'],'strings':['Task','PublicComment'], 'keep':['Task'], 'max':6}
         tmp_data['thinkingskill'] = {'nos':['Inquiry', 'LogicalThinking', 'Creativity', 'DecisionMakingAndProblemSolving'], 'strings':['PublicComment']}
         tmp_data['socialskill'] = {'nos':['Communication', 'InterPersonal', 'TeamWork'], 'strings':['PublicComment']}
         tmp_data['emotionalskill'] = {'nos':['Empathy', 'Expression', 'Management'], 'strings':['PublicComment']}
         tmp_data['attitudetowardsschool'] = {'nos':['SchoolTeachers', 'SchoolMates', 'SchoolPrograms', 'SchoolEnvironment'], 'strings':['PublicComment']}
         tmp_data['values'] = {'nos':['Obedience', 'Honesty', 'Equality', 'Responsibility'],'strings':['PublicComment']}
+        tmp_data['project'] = {'nos':['ProblemSelection', 'Review', 'Planning', 'ExecutionAndHardWork', 'Documentation', 'Communication'],'strings':['Title', 'PublicComment'], 'max':3}
+        tmp_data['physical_fitness'] = {'nos':'Grade','max':3}
+        tmp_data['socialactivity'] = {'nos':'Grade','max':6}
         self.find_avg(tmp_data)
     #
     def find_avg(self, data):
@@ -102,14 +105,23 @@ class generate_report(object):
             for x in data[k]['strings']:
                 retval[x] = ''
             for x in t:
-                for y in data[k]['nos']:
-                    retval[y] += int(getattr(x,y))
-                for y in data[k]['strings']:
-                    retval[y] += getattr(x,y)
+                if data[k].has_key('nos'):
+                    for y in data[k]['nos']:
+                        retval[y] += int(getattr(x,y))
+                if data[k].has_key('strings'):
+                    for y in data[k]['strings']:
+                        retval[y] += getattr(x,y)
+                if data[k].has_key('keep'):
+                    for y in data[k]['keep']:
+                        retval[y] = getattr(x,y)
             for x in data[k]['nos']:
                 if len(t):
                     retval[x] /= len(t)
                     retval[x] = round(retval[x])
+                    if data[k].has_key('max') and data[k]['max'] == 6:
+                        retval[x] = GRADE_CHOICES[retval[x]]
+                    if data[k].has_key('max') and data[k]['max'] == 3:
+                        retval[x] = GRADE_CHOICES_3[retval[x]]
             self.data[k] = [retval]
 # HTML Report:
 def report(request):
@@ -320,8 +332,8 @@ def marks_add(request):
         keys = request.POST.keys()
         test_id = request.POST['test_id']
         keys.remove('test_id')
+        test = TestMapping.objects.get(id=test_id)
         if request.user.is_superuser or request.user.email == test.Teacher.Email:
-            test = TestMapping.objects.get(id=test_id)
             for key in keys:
                 try:
                     student = StudentYearlyInformation.objects.get(id=key)
@@ -1449,7 +1461,7 @@ def generate_name_columns(request):
 #
 def display_report(request, regno=None, year=None):
     if request.user.username != str(regno) and not request.user.is_superuser and request.user.is_active:
-        return redirect('/')
+        return redirect('/parents')
     respage = 'students/DisplayReport.html'
     data = generate_report(regno=regno, year=year)
     data.generate_data()
