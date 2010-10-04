@@ -382,7 +382,7 @@ def competition_add(request):
         return redirect('/')
     respage = 'students/AddCompetition.html'
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
+        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
@@ -441,7 +441,7 @@ def elocution_add(request):
         return redirect('/')
     respage = 'students/AddElocution.html'
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
+        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
@@ -501,7 +501,7 @@ def project_add(request):
         return redirect('/')
     respage = 'students/AddProject.html'
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
+        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
@@ -566,7 +566,7 @@ def abhivyaktivikas_add(request):
         return redirect('/')
     respage = 'students/AddAbhivyaktiVikas.html'
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
+        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
@@ -629,7 +629,7 @@ def competitiveexam_add(request):
         return redirect('/')
     respage = 'students/AddCompetitiveExam.html'
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
+        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
@@ -687,7 +687,7 @@ def cocurricular_add(request):
         return redirect('/')
     respage = 'students/AddCocurricular.html'
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
+        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
@@ -745,7 +745,7 @@ def socialactivity_add(request):
         return redirect('/')
     respage = 'students/AddSocialActivity.html'
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
+        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
@@ -803,7 +803,7 @@ def physicalfitnessinfo_add(request):
         return redirect('/')
     respage = 'students/AddPhysicalFitnessInfo.html'
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
+        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
@@ -911,7 +911,7 @@ def workexperience_add(request):
         return redirect('/')
     respage = 'students/AddWorkExperience.html'
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
+        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
@@ -968,7 +968,7 @@ def workexperience_add(request):
 def physicaleducation_add(request):
     respage = 'students/AddPhysicalEducation.html'
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
+        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
@@ -1026,7 +1026,7 @@ def physicaleducation_add(request):
 def thinkingskill_add(request):
     respage = 'students/AddThinkingSkill.html'
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
+        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
@@ -1087,7 +1087,7 @@ def thinkingskill_add(request):
 def socialskill_add(request):
     respage = 'students/AddSocialSkill.html'
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
+        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
@@ -1147,7 +1147,7 @@ def socialskill_add(request):
 def attitudetowardsschool_add(request):
     respage = 'students/AddAttitudeTowardsSchool.html'
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
+        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
@@ -1208,7 +1208,7 @@ def attitudetowardsschool_add(request):
 def emotionalskill_add(request):
     respage = 'students/AddEmotionalSkill.html'
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
+        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
@@ -1267,7 +1267,7 @@ def emotionalskill_add(request):
 def values_add(request):
     respage = 'students/AddValues.html'
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
+        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
@@ -1330,7 +1330,7 @@ def values_add(request):
 def medicalreport_add(request):
     respage = 'students/AddMedicalReport.html'
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2009-2010'})
+        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
@@ -1397,7 +1397,7 @@ def medicalreport_add(request):
 def generate_name_columns(request):
     respage = 'students/GenerateNameColumns.html'
     if not request.POST:
-        genform = SearchClassDetailsForm(initial={'Year':'2009-2010'})
+        genform = SearchClassDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
     else:
         table_style = TableStyle([
