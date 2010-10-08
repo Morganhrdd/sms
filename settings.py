@@ -79,7 +79,7 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     "/Users/shantanoo/repo/sms/templates",
     #"/home/shantanoo/repo/sms/templates",
-    #'C:/Documents and Settings/aditya/Desktop/JPP/june_code/jp_sms/templates'
+    #'C:/Documents and Settings/aditya/Desktop/JPP/latest_bitbucket/sms/templates'
     #'C:/Users/aloks/Work/jp_sms/templates'
 )
 

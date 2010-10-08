@@ -83,7 +83,7 @@ class leavesAdmin(admin.ModelAdmin):
 					attendance.Barcode = obj.Barcode
 					attendance.Date = obj.LeaveDate
 
-				if obj.Type == 4:
+				if obj.Type == 4 or obj.Type == 7:
 					attendance.Remark = 'D'
 				elif obj.Type == 5 or obj.Type == 6:
 					attendance.Remark = 'F'

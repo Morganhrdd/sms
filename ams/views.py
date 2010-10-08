@@ -658,10 +658,10 @@ def app_leave(request):
 				timerules.append({'timerule': rule['type']})
 			
 		data = []
-		balance = [0,0,0,0,0,0,0,0]
-		carryforward = [0,0,0,0,0,0,0,0]
-		currentleaves = [0,0,0,0,0,0,0,0]
-		takenleaves = [0,0,0,0,0,0,0,0]
+		balance = [0,0,0,0,0,0,0,0,0]
+		carryforward = [0,0,0,0,0,0,0,0,0]
+		currentleaves = [0,0,0,0,0,0,0,0,0]
+		takenleaves = [0,0,0,0,0,0,0,0,0]
 		for type in LEAVE_CHOICES:
 			leavetype = type[0]
 			lrule = LeaveRules.objects.filter(Category=category).filter(Type=leavetype)
@@ -943,10 +943,10 @@ def report_leave(request):
 			category = usr.Category
 			pendingleaves = Leaves.objects.filter(Barcode=barcode).filter(Status=1).filter(LeaveDate__gte = acadyear.StartDate, LeaveDate__lte = acadyear.EndDate)
 			approveleaves = Leaves.objects.filter(Barcode=barcode).filter(Status=2).filter(LeaveDate__gte = acadyear.StartDate, LeaveDate__lte = acadyear.EndDate)
-			balance = [0,0,0,0,0,0,0,0]
-			carryforward = [0,0,0,0,0,0,0,0]
-			currentleaves = [0,0,0,0,0,0,0,0]
-			takenleaves = [0,0,0,0,0,0,0,0]
+			balance = [0,0,0,0,0,0,0,0,0]
+			carryforward = [0,0,0,0,0,0,0,0,0]
+			currentleaves = [0,0,0,0,0,0,0,0,0]
+			takenleaves = [0,0,0,0,0,0,0,0,0]
 			for type in LEAVE_CHOICES:
 				leavetype = type[0]
 				lrule = LeaveRules.objects.filter(Category=category).filter(Type=leavetype)

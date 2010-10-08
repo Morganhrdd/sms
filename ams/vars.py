@@ -47,9 +47,10 @@ LEAVE_CHOICES = (
 	(1, 'Casual'),
 	(2, 'Sick'),
 	(3, 'Earned'),
-	(4, 'OnDuty'),
+	(4, 'OnDuty(First)'),
 	(5, 'Halfday(First)'),
 	(6, 'Halfday(Second)'),
+	(7, 'OnDuty(Second)'),
 )
 
 LEAVESTATUS_CHOICES = (
