@@ -1,0 +1,38 @@
+<html>
+<body>
+<div align="center">
+
+<h2>
+ATTENDANCE: Monthly Report
+</h2><br/>
+
+<form name="report" action="/ams_report/" method="post">
+<table>
+{{ form.as_table }}
+</table>
+<br/><h3>Date format: yyyy-mm-dd</h3>
+<b>{{ message }}</b><br/><br/>
+<input type="submit" value="Generate Report"/>
+</form>
+
+</div>
+<div align="center">
+<h2>
+Report
+</h2><br/>
+	<table border="1" cellspacing="5" cellpadding="0">
+	<tr><th>Date</th><th>Day</th><th>Time In</th><th>Time Out</th><th>Remark</th></tr>
+	{% for row in report %}
+	<tr><td>{{row.date}}</td><td>{{row.day}}</td><td>{{row.ti}}</td><td>{{row.to}}</td><td>{{row.rem}}</td></tr>
+	{% endfor %}
+	</table>
+	<br/>
+	<b>
+	Late:{{late}} &nbsp&nbsp
+	Half:{{half}} &nbsp&nbsp
+	Absent:{{absent}}
+	</b>
+</div>
+
+</body>
+</html>
