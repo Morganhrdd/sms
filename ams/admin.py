@@ -6,6 +6,7 @@ from sms.ams.models import Category, User, UserStatus, TimeRules, DayRules, Atte
 from sms.ams.models import Leaves, LeaveRules, AcademicYear, LeaveAttendance, LeavesBalance, EncashLeaves, Overtime
 from sms.ams.models import UserJoiningDate
 import datetime
+import misc
 
 class categoryAdmin(admin.ModelAdmin):
 	list_display = ('Description','Id',)
@@ -90,10 +91,19 @@ class leavesAdmin(admin.ModelAdmin):
 				else:
 					attendance.Remark = 'O'
 				attendance.save()
+				
+				pno = [obj.Barcode.Phone]
+				psms = "Your leave for "+str(obj.LeaveDate.day)+'/'+str(obj.LeaveDate.month)+'/'+str(obj.LeaveDate.year)+" has been approved."
+				misc.sms_send(nos=pno,msg=psms)
 			else:
 				att = LeaveAttendance.objects.filter(Date=obj.LeaveDate).filter(Barcode=obj.Barcode)
 				if att:
 					att[0].delete()
+				
+				if obj.Status == 3:
+					pno = [obj.Barcode.Phone]
+					psms = "Your leave for "+str(obj.LeaveDate.day)+'/'+str(obj.LeaveDate.month)+'/'+str(obj.LeaveDate.year)+" has been denied."
+					misc.sms_send(nos=pno,msg=psms)
 		obj.save()
 		
 	pass
