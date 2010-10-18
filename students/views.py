@@ -1968,6 +1968,17 @@ def fillStaticAndYearlyInfo(student_yearly_info, skillGrades, Story):
     Story.append(PageBreak())
 
 def fillAcademicReport(student_yearly_info, Story):
+    #decide format based on academic year
+    academic_year = student_yearly_info.ClassMaster.AcademicYear.Year
+    begin_year = academic_year.split('-')
+    isFormat2010 = (int(begin_year[0]) >= 2010)
+    
+    if isFormat2010:
+        fillAcademicReport2010(student_yearly_info, Story)
+    else:
+        fillAcademicReport2008(student_yearly_info, Story)
+
+def fillAcademicReport2008(student_yearly_info, Story):
     addMainHeaderToStory(Story, "Part 2: Academic Performance")
 
     subjects_data = {}
@@ -2031,6 +2042,95 @@ def fillAcademicReport(student_yearly_info, Story):
         data_row.append(subject_test_marks['T1'])
         data_row.append(subject_test_marks['N1'])
         data_row.append(subject_test_marks['F1'])
+        data_row.append(subject_test_marks['Total'])
+        data_row.append(subject_test_marks['%'])
+        data.append(data_row)
+        cumulative_marks = cumulative_marks + cumulative_subject_marks
+        cumulative_maxmarks = cumulative_maxmarks + cumulative_subject_maxmarks
+
+    addTableToStory(Story, data, 'CENTER')
+    Story.append(Spacer(1,0.25*inch))
+
+    percentage = 0
+    if cumulative_maxmarks > 0:
+        percentage = round((cumulative_marks / cumulative_maxmarks * 100),2)
+    addSubHeaderToStory(Story, mark_safe('Grand Total: ' +  str(cumulative_marks) + " / " + str(cumulative_maxmarks)))
+    addSubHeaderToStory(Story, 'Percentage: ' + str(percentage) + "%")
+
+    Story.append(Spacer(1,0.5*inch))
+    addSubHeaderToStory(Story, "School Attendance")
+    fillStudentAttendance(student_yearly_info, Story, 'P')
+
+    class_teacher = student_yearly_info.ClassMaster.Teacher.Name
+    addSignatureSpaceToStory(Story,class_teacher, "Class Teacher")
+    Story.append(PageBreak())
+
+def fillAcademicReport2010(student_yearly_info, Story):
+    addMainHeaderToStory(Story, "Part 2: Academic Performance")
+
+    subjects_data = {}
+    student_test_data = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
+    data = []
+    data.append(['','Subject Name','Test type','Marks','Maximum Marks'])
+    for test_marks in student_test_data:
+        test_mapping = test_marks.TestMapping
+        subject_name = test_mapping.SubjectMaster.Name
+        if not subjects_data.has_key(subject_name):
+            subjects_data[subject_name] = []
+        subject_data = subjects_data[subject_name]
+        subject_data.append(test_marks)
+
+    #desired sequence
+    temp_sort = ['ENG', 'HIN', 'MAR', 'SAN', 'MAT', 'SCI', 'SCS']
+    cumulative_marks=0
+    cumulative_maxmarks=0
+    data = []
+    data.append(['','F1','F2','F3','F4','N1','N2','S1','S2','Total','%'])
+    for subject_item in temp_sort:
+        if not subjects_data.has_key(subject_item):
+            continue
+        subject_data = subjects_data[subject_item]
+        subject_name = subject_item
+        cumulative_subject_marks=0
+        cumulative_subject_maxmarks=0
+        subject_test_marks = {}
+        subject_test_marks['F1'] = '-'
+        subject_test_marks['F2'] = '-'
+        subject_test_marks['F3'] = '-'
+        subject_test_marks['F4'] = '-'
+        subject_test_marks['N1'] = '-'
+        subject_test_marks['N2'] = '-'
+        subject_test_marks['S1'] = '-'
+        subject_test_marks['S2'] = '-'        
+        subject_test_marks['Total'] = 0
+        subject_test_marks['%'] = 0
+        for subject_marks in subject_data:
+            test_mapping = subject_marks.TestMapping
+            subject_name = test_mapping.SubjectMaster.Name
+            test_type = test_mapping.TestType
+            maximum_marks = test_mapping.MaximumMarks
+            marks_obtained = subject_marks.MarksObtained
+            if marks_obtained > 0:
+                subject_test_marks[test_type] = str(marks_obtained) + " / " + str(int(maximum_marks))
+                cumulative_subject_marks = cumulative_subject_marks + marks_obtained
+                cumulative_subject_maxmarks = cumulative_subject_maxmarks + maximum_marks
+            else:
+                subject_test_marks[test_type] = "Absent"
+        subject_test_marks['Total'] = str(cumulative_subject_marks) + " / " + str(int(cumulative_subject_maxmarks))
+        percentage = 0
+        if cumulative_subject_maxmarks > 0:
+            percentage = round((cumulative_subject_marks / cumulative_subject_maxmarks * 100),2)
+        subject_test_marks['%'] = str(percentage) + '%'
+        data_row = []
+        data_row.append(subject_name)
+        data_row.append(subject_test_marks['F1'])
+        data_row.append(subject_test_marks['F2'])
+        data_row.append(subject_test_marks['F3'])
+        data_row.append(subject_test_marks['F4'])
+        data_row.append(subject_test_marks['N1'])
+        data_row.append(subject_test_marks['N2'])
+        data_row.append(subject_test_marks['S1'])
+        data_row.append(subject_test_marks['S2'])
         data_row.append(subject_test_marks['Total'])
         data_row.append(subject_test_marks['%'])
         data.append(data_row)
