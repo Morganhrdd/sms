@@ -426,6 +426,7 @@ def competition_add(request):
                     competition_obj.Guide = request.POST['Guide']
                     competition_obj.PublicComment = request.POST['PublicComment']
                     competition_obj.PrivateComment = request.POST['PrivateComment']
+                    competition_obj.DescriptiveIndicator = request.POST['DescriptiveIndicator']
                     competition_obj.save()
             # end store data
             competition_objs = Competition.objects.filter(StudentYearlyInformation=yearly_info)
@@ -440,6 +441,7 @@ def competition_add(request):
                 tmp['Guide'] = competition_obj.Guide
                 tmp['PublicComment'] = competition_obj.PublicComment
                 tmp['PrivateComment'] = competition_obj.PrivateComment
+                tmp['DescriptiveIndicator'] = competition_obj.DescriptiveIndicator
                 x = CompetitionDetailsForm(initial=tmp)
                 data.append(x)
             data.append(CompetitionDetailsForm(initial={'Delete':'Y'}))
@@ -486,6 +488,7 @@ def elocution_add(request):
                     elocution_obj.Presentation = request.POST['Presentation'] or '0'
                     elocution_obj.PublicComment = request.POST['PublicComment']
                     elocution_obj.PrivateComment = request.POST['PrivateComment']
+                    elocution_obj.DescriptiveIndicator = request.POST['DescriptiveIndicator']
                     elocution_obj.save()
             # end store data
             elocution_objs = Elocution.objects.filter(StudentYearlyInformation=yearly_info)
@@ -501,6 +504,7 @@ def elocution_add(request):
                 tmp['Presentation'] = elocution_obj.Presentation
                 tmp['PublicComment'] = elocution_obj.PublicComment
                 tmp['PrivateComment'] = elocution_obj.PrivateComment
+                tmp['DescriptiveIndicator'] = elocution_obj.DescriptiveIndicator
                 x = ElocutionDetailsForm(initial=tmp)
                 data.append(x)
             data.append(ElocutionDetailsForm(initial={'Delete':'Y'}))
@@ -549,6 +553,7 @@ def project_add(request):
                     project_obj.Communication = request.POST['Communication'] or '0'
                     project_obj.PublicComment = request.POST['PublicComment']
                     project_obj.PrivateComment = request.POST['PrivateComment']
+                    project_obj.DescriptiveIndicator = request.POST['DescriptiveIndicator']
                     project_obj.save()
             # end store data
             project_objs = Project.objects.filter(StudentYearlyInformation=yearly_info)
@@ -567,6 +572,7 @@ def project_add(request):
                 tmp['Communication'] = project_obj.Communication
                 tmp['PublicComment'] = project_obj.PublicComment
                 tmp['PrivateComment'] = project_obj.PrivateComment
+                tmp['DescriptiveIndicator'] = project_obj.DescriptiveIndicator
                 x = ProjectDetailsForm(initial=tmp)
                 data.append(x)
             data.append(ProjectDetailsForm(initial={'Delete':'Y'}))
@@ -612,6 +618,7 @@ def abhivyaktivikas_add(request):
                     abhivyaktivikas_obj.Creativity = request.POST['Creativity'] or '0'
                     abhivyaktivikas_obj.PublicComment = request.POST['PublicComment']
                     abhivyaktivikas_obj.PrivateComment = request.POST['PrivateComment']
+                    abhivyaktivikas_obj.DescriptiveIndicator = request.POST['DescriptiveIndicator']
                     abhivyaktivikas_obj.save()
             # end store data
             abhivyaktivikas_objs = AbhivyaktiVikas.objects.filter(StudentYearlyInformation=yearly_info)
@@ -629,6 +636,7 @@ def abhivyaktivikas_add(request):
                 tmp['Creativity'] = abhivyaktivikas_obj.Creativity
                 tmp['PublicComment'] = abhivyaktivikas_obj.PublicComment
                 tmp['PrivateComment'] = abhivyaktivikas_obj.PrivateComment
+                tmp['DescriptiveIndicator'] = abhivyaktivikas_obj.DescriptiveIndicator
                 x = AbhivyaktiVikasDetailsForm(initial=tmp)
                 data.append(x)
             data.append(AbhivyaktiVikasDetailsForm(initial={'Delete':'Y'}))
@@ -673,6 +681,7 @@ def competitiveexam_add(request):
                     competitiveexam_obj.Grade = request.POST['Grade']
                     competitiveexam_obj.PublicComment = request.POST['PublicComment']
                     competitiveexam_obj.PrivateComment = request.POST['PrivateComment']
+                    competitiveexam_obj.DescriptiveIndicator = request.POST['DescriptiveIndicator']
                     competitiveexam_obj.save()
             # end store data
             competitiveexam_objs = CompetitiveExam.objects.filter(StudentYearlyInformation=yearly_info)
@@ -687,6 +696,7 @@ def competitiveexam_add(request):
                 tmp['Grade'] = competitiveexam_obj.Grade
                 tmp['PublicComment'] = competitiveexam_obj.PublicComment
                 tmp['PrivateComment'] = competitiveexam_obj.PrivateComment
+                tmp['DescriptiveIndicator'] = competitiveexam_obj.DescriptiveIndicator
                 x = CompetitiveExamDetailsForm(initial=tmp)
                 data.append(x)
             data.append(CompetitiveExamDetailsForm(initial={'Delete':'Y'}))
@@ -731,6 +741,7 @@ def cocurricular_add(request):
                     cocurricular_obj.Grade = request.POST['Grade']
                     cocurricular_obj.PublicComment = request.POST['PublicComment']
                     cocurricular_obj.PrivateComment = request.POST['PrivateComment']
+                    cocurricular_obj.DescriptiveIndicator = request.POST['DescriptiveIndicator']
                     cocurricular_obj.save()
             # end store data
             cocurricular_objs = CoCurricular.objects.filter(StudentYearlyInformation=yearly_info)
@@ -745,6 +756,7 @@ def cocurricular_add(request):
                 tmp['Grade'] = cocurricular_obj.Grade
                 tmp['PublicComment'] = cocurricular_obj.PublicComment
                 tmp['PrivateComment'] = cocurricular_obj.PrivateComment
+                tmp['DescriptiveIndicator'] = cocurricular_obj.DescriptiveIndicator
                 x = CoCurricularDetailsForm(initial=tmp)
                 data.append(x)
             data.append(CoCurricularDetailsForm(initial={'Delete':'Y'}))
@@ -789,6 +801,7 @@ def socialactivity_add(request):
                     socialactivity_obj.Grade = request.POST['Grade']
                     socialactivity_obj.PublicComment = request.POST['PublicComment']
                     socialactivity_obj.PrivateComment = request.POST['PrivateComment']
+                    socialactivity_obj.DescriptiveIndicator = request.POST['DescriptiveIndicator']
                     socialactivity_obj.save()
             # end store data
             socialactivity_objs = SocialActivity.objects.filter(StudentYearlyInformation=yearly_info)
@@ -803,6 +816,7 @@ def socialactivity_add(request):
                 tmp['Grade'] = socialactivity_obj.Grade
                 tmp['PublicComment'] = socialactivity_obj.PublicComment
                 tmp['PrivateComment'] = socialactivity_obj.PrivateComment
+                tmp['DescriptiveIndicator'] = socialactivity_obj.DescriptiveIndicator
                 x = SocialActivityDetailsForm(initial=tmp)
                 data.append(x)
             data.append(SocialActivityDetailsForm(initial={'Delete':'Y'}))
@@ -955,6 +969,7 @@ def workexperience_add(request):
                     workexperience_obj.Involvement = request.POST['Involvement'] or '0'
                     workexperience_obj.PublicComment = request.POST['PublicComment']
                     workexperience_obj.PrivateComment = request.POST['PrivateComment']
+                    workexperience_obj.DescriptiveIndicator = request.POST['DescriptiveIndicator']
                     workexperience_obj.save()
             # end store data
             workexperience_objs = WorkExperience.objects.filter(StudentYearlyInformation=yearly_info)
@@ -1012,6 +1027,7 @@ def physicaleducation_add(request):
                     physicaleducation_obj.LeadershipSkill = request.POST['LeadershipSkill'] or '0'
                     physicaleducation_obj.PublicComment = request.POST['PublicComment']
                     physicaleducation_obj.PrivateComment = request.POST['PrivateComment']
+                    physicaleducation_obj.DescriptiveIndicator = request.POST['DescriptiveIndicator']
                     physicaleducation_obj.save()
             # end store data
             physicaleducation_objs = PhysicalEducation.objects.filter(StudentYearlyInformation=yearly_info)
@@ -1027,6 +1043,7 @@ def physicaleducation_add(request):
                 tmp['LeadershipSkill'] = physicaleducation_obj.LeadershipSkill
                 tmp['PublicComment'] = physicaleducation_obj.PublicComment
                 tmp['PrivateComment'] = physicaleducation_obj.PrivateComment
+                tmp['DescriptiveIndicator'] = physicaleducation_obj.DescriptiveIndicator
                 x = PhysicalEducationDetailsForm(initial=tmp)
                 data.append(x)
             if not len(data):
@@ -1070,6 +1087,7 @@ def thinkingskill_add(request):
                     thinkingskill_obj.DecisionMakingAndProblemSolving = request.POST['DecisionMakingAndProblemSolving'] or '0'
                     thinkingskill_obj.PublicComment = request.POST['PublicComment']
                     thinkingskill_obj.PrivateComment = request.POST['PrivateComment']
+                    thinkingskill_obj.DescriptiveIndicator = request.POST['DescriptiveIndicator']
                     thinkingskill_obj.save()
             # end store data
             delete = ''
@@ -1089,6 +1107,7 @@ def thinkingskill_add(request):
             tmp['DecisionMakingAndProblemSolving'] = thinkingskill_obj.DecisionMakingAndProblemSolving
             tmp['PublicComment'] = thinkingskill_obj.PublicComment
             tmp['PrivateComment'] = thinkingskill_obj.PrivateComment
+            tmp['DescriptiveIndicator'] = thinkingskill_obj.DescriptiveIndicator
             tmp['Delete'] = delete
             x = ThinkingSkillDetailsForm(initial=tmp)
             data.append(x)
@@ -1130,6 +1149,7 @@ def socialskill_add(request):
                     socialskill_obj.TeamWork = request.POST['TeamWork'] or '0'
                     socialskill_obj.PublicComment = request.POST['PublicComment']
                     socialskill_obj.PrivateComment = request.POST['PrivateComment']
+                    socialskill_obj.DescriptiveIndicator = request.POST['DescriptiveIndicator']
                     socialskill_obj.save()
             # end store data
             delete = ''
@@ -1149,6 +1169,7 @@ def socialskill_add(request):
             tmp['TeamWork'] = socialskill_obj.TeamWork
             tmp['PublicComment'] = socialskill_obj.PublicComment
             tmp['PrivateComment'] = socialskill_obj.PrivateComment
+            tmp['DescriptiveIndicator'] = socialskill_obj.DescriptiveIndicator
             tmp['Delete'] = delete
             x = SocialSkillDetailsForm(initial=tmp)
             data.append(x)
@@ -1191,6 +1212,7 @@ def attitudetowardsschool_add(request):
                     attitudetowardsschool_obj.SchoolEnvironment = request.POST['SchoolEnvironment'] or '0'
                     attitudetowardsschool_obj.PublicComment = request.POST['PublicComment']
                     attitudetowardsschool_obj.PrivateComment = request.POST['PrivateComment']
+                    attitudetowardsschool_obj.DescriptiveIndicator = request.POST['DescriptiveIndicator']
                     attitudetowardsschool_obj.save()
             # end store data
             delete = ''
@@ -1211,6 +1233,7 @@ def attitudetowardsschool_add(request):
             tmp['SchoolEnvironment'] = attitudetowardsschool_obj.SchoolEnvironment
             tmp['PublicComment'] = attitudetowardsschool_obj.PublicComment
             tmp['PrivateComment'] = attitudetowardsschool_obj.PrivateComment
+            tmp['DescriptiveIndicator'] = attitudetowardsschool_obj.DescriptiveIndicator
             tmp['Delete'] = delete
             x = AttitudeTowardsSchoolDetailsForm(initial=tmp)
             data.append(x)
@@ -1251,6 +1274,7 @@ def emotionalskill_add(request):
                     emotionalskill_obj.Management = request.POST['Management'] or '0'
                     emotionalskill_obj.PublicComment = request.POST['PublicComment']
                     emotionalskill_obj.PrivateComment = request.POST['PrivateComment']
+                    emotionalskill_obj.DescriptiveIndicator = request.POST['DescriptiveIndicator']
                     emotionalskill_obj.save()
             # end store data
             delete = ''
@@ -1269,6 +1293,7 @@ def emotionalskill_add(request):
             tmp['Management'] = emotionalskill_obj.Management
             tmp['PublicComment'] = emotionalskill_obj.PublicComment
             tmp['PrivateComment'] = emotionalskill_obj.PrivateComment
+            tmp['DescriptiveIndicator'] = emotionalskill_obj.DescriptiveIndicator
             tmp['Delete'] = delete
             x = EmotionalSkillDetailsForm(initial=tmp)
             data.append(x)
@@ -1311,6 +1336,7 @@ def values_add(request):
                     values_obj.Responsibility = request.POST['Responsibility'] or '0'
                     values_obj.PublicComment = request.POST['PublicComment']
                     values_obj.PrivateComment = request.POST['PrivateComment']
+                    values_obj.DescriptiveIndicator = request.POST['DescriptiveIndicator']
                     values_obj.save()
             # end store data
             delete = ''
@@ -1331,6 +1357,7 @@ def values_add(request):
             tmp['Responsibility'] = values_obj.Responsibility
             tmp['PublicComment'] = values_obj.PublicComment
             tmp['PrivateComment'] = values_obj.PrivateComment
+            tmp['DescriptiveIndicator'] = values_obj.DescriptiveIndicator
             tmp['Delete'] = delete
             x = ValuesDetailsForm(initial=tmp)
             data.append(x)
