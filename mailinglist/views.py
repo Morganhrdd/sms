@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # Create your views here.
 from django.db.models import Q
 from django.shortcuts import render_to_response, redirect
@@ -17,22 +19,24 @@ def display(request):
     persons = generate_person_pages_list(html_brk = '<br />')
     return render_to_response(respage,{'persons':persons}, context_instance=RequestContext(request))
 
-def generate_person_pages_list(max_rows=25, max_cols=4, html_brk = ''):
-    persons = []
+def generate_person_pages_list(persons = [], max_rows=25, max_cols=4, html_brk = ''):
+    if not persons:
+        persons = Person.objects.all()
+    retval = []
     max_cols = 4
     max_rows = 25
     cols = []
     col = 0
     row = 0
     col_str = ''
-    for x in Person.objects.all():
+    for x in persons:
         tmp = []
         tmp.append((x.Name))
         tmp.append((x.Address))
-        tmp.append((x.City))
-        tmp.append((x.Taluka))
+        tmp.append((u'शहर: '+x.City))
+        tmp.append((u'तालूका: '+x.Taluka))
         tmp.append((x.PinCode))
-        tmp.append((x.District))
+        tmp.append((u'जिल्हा: '+x.District))
         tmp.append((x.Phone))
         tmp.append('<hr>')
         tmp_str = '\n'.join(tmp)
@@ -47,14 +51,14 @@ def generate_person_pages_list(max_rows=25, max_cols=4, html_brk = ''):
             col += 1
             row = 0
         if col >= max_cols:
-            persons.append(cols)
+            retval.append(cols)
             cols = []
             col = 0
             row = 0
     if col_str:
-        cols.append('1'+col_str.replace(u'\r\n',u'\n').replace(u'\n','\n'+html_brk)+html_brk)
+        cols.append(col_str.replace(u'\r\n',u'\n').replace(u'\n','\n'+html_brk)+html_brk)
     if cols:
-        persons.append(cols)
-    return persons
+        retval.append(cols)
+    return retval
 
 display = login_required(display)
