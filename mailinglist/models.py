@@ -13,6 +13,8 @@ class Person(models.Model):
     District = models.CharField(max_length=50, blank=True)
     PinCode = models.CharField(max_length=6, blank=True)
     Phone = models.CharField(max_length=20, blank=True)
+    def __unicode__(self):
+        return '%s' % (self.Name)
     
 class PersonSearch(forms.Form):
     Name = forms.CharField()
