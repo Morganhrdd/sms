@@ -86,15 +86,16 @@ class generate_report(object):
         self.data['values'] = values_objs
         tmp_data = {}
         tmp_data['workexperience'] = {'nos':['Communication', 'Confidence', 'Involvement'],'strings':['Task','PublicComment'], 'keep':['Task'], 'max':6}
-        tmp_data['thinkingskill'] = {'nos':['Inquiry', 'LogicalThinking', 'Creativity', 'DecisionMakingAndProblemSolving'], 'strings':['PublicComment']}
-        tmp_data['socialskill'] = {'nos':['Communication', 'InterPersonal', 'TeamWork'], 'strings':['PublicComment']}
-        tmp_data['emotionalskill'] = {'nos':['Empathy', 'Expression', 'Management'], 'strings':['PublicComment']}
-        tmp_data['attitudetowardsschool'] = {'nos':['SchoolTeachers', 'SchoolMates', 'SchoolPrograms', 'SchoolEnvironment'], 'strings':['PublicComment']}
-        tmp_data['values'] = {'nos':['Obedience', 'Honesty', 'Equality', 'Responsibility'],'strings':['PublicComment']}
+        tmp_data['thinkingskill'] = {'nos':['Inquiry', 'LogicalThinking', 'Creativity', 'DecisionMakingAndProblemSolving'], 'strings':['PublicComment'], 'max':6}
+        tmp_data['socialskill'] = {'nos':['Communication', 'InterPersonal', 'TeamWork'], 'strings':['PublicComment'], 'max':6}
+        tmp_data['emotionalskill'] = {'nos':['Empathy', 'Expression', 'Management'], 'strings':['PublicComment'], 'max':6}
+        tmp_data['attitudetowardsschool'] = {'nos':['SchoolTeachers', 'SchoolMates', 'SchoolPrograms', 'SchoolEnvironment'], 'strings':['PublicComment'],'max':3}
+        tmp_data['values'] = {'nos':['Obedience', 'Honesty', 'Equality', 'Responsibility'],'strings':['PublicComment'], 'max':3}
         tmp_data['project'] = {'nos':['ProblemSelection', 'Review', 'Planning', 'ExecutionAndHardWork', 'Documentation', 'Communication'],'keep':['Title', 'PublicComment', 'Type', 'Subject'], 'max':3}
         tmp_data['physical_fitness'] = {'nos':['Grade'], 'keep':['Weight', 'Height', 'FlexibleForwardBending', 'FlexibleBackwardBending', 'SBJ', 'VerticleJump', 'BallThrow', 'ShuttleRun', 'SitUps', 'Sprint', 'Running400m', 'ShortPutThrow', 'Split', 'BodyMassIndex', 'Balancing', 'Pathak', 'Pratod', 'Margadarshak', 'SpecialSport'],'max':3, 'strings':['PublicComment']}
         tmp_data['socialactivity'] = {'nos':['Grade'], 'keep':['Activity', 'Objectives', 'Date', 'Organizer'], 'max':6, 'strings':['PublicComment']}
         tmp_data['abhivyaktivikas'] = {'nos':['Participation', 'ReadinessToLearn', 'ContinuityInWork', 'SkillDevelopment', 'Creativity'], 'strings':['PublicComment'], 'keep':['MediumOfExpression', 'Teacher'], 'max':6}
+        tmp_data['elocution'] = {'nos':['Memory', 'Content', 'Understanding', 'Pronunciation', 'Presentation'], 'max':3, 'keep':['Title', 'PublicComment']}
         self.find_avg(tmp_data)
     #
     def find_avg(self, data):
