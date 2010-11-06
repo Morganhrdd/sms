@@ -96,6 +96,7 @@ class generate_report(object):
         tmp_data['socialactivity'] = {'nos':['Grade'], 'keep':['Activity', 'Objectives', 'Date', 'Organizer'], 'max':6, 'strings':['PublicComment']}
         tmp_data['abhivyaktivikas'] = {'nos':['Participation', 'ReadinessToLearn', 'ContinuityInWork', 'SkillDevelopment', 'Creativity'], 'strings':['PublicComment'], 'keep':['MediumOfExpression', 'Teacher'], 'max':6}
         tmp_data['elocution'] = {'nos':['Memory', 'Content', 'Understanding', 'Pronunciation', 'Presentation'], 'max':3, 'keep':['Title', 'PublicComment']}
+        tmp_data['physicaleducation'] = {'keep':['Name', 'Pratod'], 'nos':['AbilityToWorkInTeam', 'Cooperation', 'LeadershipSkill'], 'strings':['PublicComment']}
         self.find_avg(tmp_data)
     #
     def find_avg(self, data):
