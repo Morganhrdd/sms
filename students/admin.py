@@ -65,8 +65,8 @@ class PhysicalFitnessInfoAdmin(admin.ModelAdmin):
     search_fields = ('StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName', 'StudentYearlyInformation__StudentBasicInfo__RegistrationNo')
     
 class SocialActivityAdmin(admin.ModelAdmin):
+    list_display = ('StudentYearlyInformation', 'Activity', 'Objectives', 'Date', 'Organizer', 'Grade', 'PublicComment')
     search_fields = ('StudentYearlyInformation__StudentBasicInfo__RegistrationNo','StudentYearlyInformation__StudentBasicInfo__FirstName', 'Activity', 'Objectives')
-    pass
 
 class CoCurricularAdmin(admin.ModelAdmin):
     list_display = ('StudentYearlyInformation', 'Activity', 'Objectives', 'Date', 'Guide', 'Grade')
