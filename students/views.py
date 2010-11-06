@@ -91,9 +91,10 @@ class generate_report(object):
         tmp_data['emotionalskill'] = {'nos':['Empathy', 'Expression', 'Management'], 'strings':['PublicComment']}
         tmp_data['attitudetowardsschool'] = {'nos':['SchoolTeachers', 'SchoolMates', 'SchoolPrograms', 'SchoolEnvironment'], 'strings':['PublicComment']}
         tmp_data['values'] = {'nos':['Obedience', 'Honesty', 'Equality', 'Responsibility'],'strings':['PublicComment']}
-        tmp_data['project'] = {'nos':['ProblemSelection', 'Review', 'Planning', 'ExecutionAndHardWork', 'Documentation', 'Communication'],'strings':['Title', 'PublicComment'], 'max':3}
-        tmp_data['physical_fitness'] = {'nos':'Grade','max':3}
-        tmp_data['socialactivity'] = {'nos':'Grade','max':6}
+        tmp_data['project'] = {'nos':['ProblemSelection', 'Review', 'Planning', 'ExecutionAndHardWork', 'Documentation', 'Communication'],'keep':['Title', 'PublicComment', 'Type', 'Subject'], 'max':3}
+        tmp_data['physical_fitness'] = {'nos':['Grade'], 'keep':['Weight', 'Height', 'FlexibleForwardBending', 'FlexibleBackwardBending', 'SBJ', 'VerticleJump', 'BallThrow', 'ShuttleRun', 'SitUps', 'Sprint', 'Running400m', 'ShortPutThrow', 'Split', 'BodyMassIndex', 'Balancing', 'Pathak', 'Pratod', 'Margadarshak', 'SpecialSport'],'max':3, 'strings':['PublicComment']}
+        tmp_data['socialactivity'] = {'nos':['Grade'], 'keep':['Activity', 'Objectives', 'Date', 'Organizer'], 'max':6, 'strings':['PublicComment']}
+        tmp_data['abhivyaktivikas'] = {'nos':['Participation', 'ReadinessToLearn', 'ContinuityInWork', 'SkillDevelopment', 'Creativity'], 'strings':['PublicComment'], 'keep':['MediumOfExpression', 'Teacher'], 'max':6}
         self.find_avg(tmp_data)
     #
     def find_avg(self, data):
@@ -102,8 +103,9 @@ class generate_report(object):
             t = self.data[k]
             for x in data[k]['nos']:
                 retval[x] = 0
-            for x in data[k]['strings']:
-                retval[x] = ''
+            if data[k].has_key('strings'):
+                for x in data[k]['strings']:
+                    retval[x] = ''
             for x in t:
                 if data[k].has_key('nos'):
                     for y in data[k]['nos']:
