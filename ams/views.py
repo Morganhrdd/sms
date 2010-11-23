@@ -111,14 +111,12 @@ def get_barcode(request):
 				t2_m = timerule.HalfIn.hour*60 + timerule.HalfIn.minute
 				if t1_m > t2_m + 15:
 					remark = 'A'
-				elif time > timerule.HalfIn:
+				elif time > timerule.LateIn:
 					tattendance = TempAttendance()
 					tattendance.Barcode = user
 					tattendance.Remark = 'L'
 					tattendance.save()
 					remark = 'H'	
-				elif time > timerule.LateIn:
-					remark = 'H'
 				elif time > timerule.TimeIn:
 					remark = 'L'
 				else:
@@ -256,8 +254,8 @@ def get_barcode(request):
 							remark = 'E'
 				elif rem == 'H':
 					tattendance = TempAttendance.objects.filter(Barcode=barcode)
-                    if tattendance:
-                        tattendance = tattendance[0]
+                    		if tattendance:
+                        		tattendance = tattendance[0]
 					if time < timerule.EarlyOut:
 						remark = 'A'
 						if tattendance:
