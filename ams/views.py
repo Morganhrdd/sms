@@ -255,7 +255,9 @@ def get_barcode(request):
 						else:
 							remark = 'E'
 				elif rem == 'H':
-					tattendance = TempAttendance.objects.filter(Barcode=barcode)[0]
+					tattendance = TempAttendance.objects.filter(Barcode=barcode)
+                    if tattendance:
+                        tattendance = tattendance[0]
 					if time < timerule.EarlyOut:
 						remark = 'A'
 						if tattendance:
