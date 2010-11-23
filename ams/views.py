@@ -456,7 +456,7 @@ def populate_user(request,message,template):
             
     # Find absent remarks for which there is no corresponding leave request for template ams/display.html
     current_year = AcademicYear.objects.get(Status=1)
-    absentremarks = Attendance.objects.filter(Remark__in=('A','H')).filter(Year=current_year)
+    absentremarks = Attendance.objects.filter(Remark__in=('A','H')).filter(Year=current_year).filter(Status__in=(1,2))
     for rem in absentremarks:
         leaverequest = Leaves.objects.filter(Barcode=rem.Barcode).filter(LeaveDate=rem.Date)
         if not leaverequest:
