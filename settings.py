@@ -95,6 +95,7 @@ INSTALLED_APPS = (
     'sms.fees',
     'sms.pravesh',
     'sms.mailinglist',
+    'sms.question_bank',
 )
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
