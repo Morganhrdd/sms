@@ -1,7 +1,7 @@
 from sms.students.models import StudentBasicInfo, StudentAdditionalInformation, AcademicYear, Teacher
 from sms.students.models import SubjectMaster, StudentYearlyInformation, ClassMaster, TestMapping
 from sms.students.models import StudentTestMarks, AttendanceMaster, StudentAttendance, PhysicalFitnessInfo
-from sms.students.models import SocialActivity, CoCurricular, CompetitiveExam, Competition
+from sms.students.models import SocialActivity, CoCurricular, CompetitiveExam, Competition, Scrap
 from sms.students.models import AbhivyaktiVikas, Project, Elocution, Library, WorkExperience, PhysicalEducation
 from sms.students.models import ThinkingSkill, SocialSkill, EmotionalSkill, AttitudeTowardsSchool, Values
 from django.contrib.auth.models import User
@@ -122,6 +122,9 @@ class AttitudeTowardsSchoolAdmin(admin.ModelAdmin):
 class ValuesAdmin(admin.ModelAdmin):
     search_fields = ['StudentYearlyInformation__StudentBasicInfo__RegistrationNo', 'StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName']
 
+class ScrapAdmin(admin.ModelAdmin):
+    list_display = ('StudentBasicInfo', 'User', 'data', 'date')
+    search_fields = ['StudentBasicInfo', 'User', 'data', 'date']
 
 admin.site.register(AttendanceMaster, AttendanceMasterAdmin)
 admin.site.register(StudentAttendance, StudentAttendanceAdmin)
@@ -150,3 +153,4 @@ admin.site.register(SocialSkill, SocialSkillAdmin)
 admin.site.register(EmotionalSkill, EmotionalSkillAdmin)
 admin.site.register(AttitudeTowardsSchool, AttitudeTowardsSchoolAdmin)
 admin.site.register(Values, ValuesAdmin)
+admin.site.register(Scrap, ScrapAdmin)

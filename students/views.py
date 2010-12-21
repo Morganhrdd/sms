@@ -2,9 +2,14 @@
 from django.shortcuts import render_to_response, redirect
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import User
+from django.template import Context, RequestContext
+from django.contrib.auth.decorators import login_required
+from django.utils.safestring import mark_safe
+
 from sms.students.models import *
 from sms.students.forms import *
-from django.template import Context, RequestContext
+
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer,Table,TableStyle,PageBreak, CondPageBreak
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.styles import ParagraphStyle
@@ -12,8 +17,7 @@ from reportlab.rl_config import defaultPageSize
 from reportlab.lib.units import inch, cm
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT
 from reportlab.lib import colors
-from django.contrib.auth.decorators import login_required
-from django.utils.safestring import mark_safe
+
 import time
 import datetime
 
@@ -120,6 +124,7 @@ class generate_report(object):
                         retval[x] = GRADE_CHOICES_3[retval[x]]
             self.data[k] = [retval]
 # HTML Report:
+@login_required
 def report(request):
     if request.POST:
         reg_no = request.POST['reg_no']
@@ -308,6 +313,7 @@ def report(request):
     else:
         return HttpResponse ('<html><body>Enter Registration Number<form action="" method="POST"><input type="text" name="reg_no" value="" id="reg_no" size="20"></td>  <input type="submit" value="Enter" /></form></body></html>')
 
+@login_required
 def student_summary(request):
     if request.user.username.isdigit():
         regno = request.user.username
@@ -322,6 +328,8 @@ def marks_add1(request):
         keys.request('test_id')
         if request.user.is_superuser or request.user.email == test.Teacher.Email:
             test = TestMapping.objects.get(id=test_id)
+
+@login_required
 def marks_add(request):
     if request.POST:
         keys = request.POST.keys()
@@ -384,6 +392,7 @@ def can_login(group=None, user=None):
         return 1
 
 
+@login_required
 def competition_add(request):
     if not can_login(group='teacher', user=request.user):
         return redirect('/')
@@ -445,6 +454,7 @@ def competition_add(request):
 
 
 #
+@login_required
 def elocution_add(request):
     if not can_login(group='teacher', user=request.user):
         return redirect('/')
@@ -507,6 +517,7 @@ def elocution_add(request):
         return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
 
 #
+@login_required
 def project_add(request):
     if not can_login(group='teacher', user=request.user):
         return redirect('/')
@@ -574,6 +585,7 @@ def project_add(request):
             return render_to_response(respage, {'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
         return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
 #
+@login_required
 def abhivyaktivikas_add(request):
     if not can_login(group='teacher', user=request.user):
         return redirect('/')
@@ -698,6 +710,7 @@ def competitiveexam_add(request):
         return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
 
 #
+@login_required
 def cocurricular_add(request):
     if not can_login(group='teacher', user=request.user):
         return redirect('/')
@@ -758,6 +771,7 @@ def cocurricular_add(request):
         return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
 
 #
+@login_required
 def socialactivity_add(request):
     if not can_login(group='teacher', user=request.user):
         return redirect('/')
@@ -818,6 +832,7 @@ def socialactivity_add(request):
         return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
 
 #
+@login_required
 def physicalfitnessinfo_add(request):
     if not can_login(group='teacher', user=request.user):
         return redirect('/')
@@ -926,6 +941,7 @@ def search_reg_no(request=None):
         return msg
 
 #
+@login_required
 def workexperience_add(request):
     if not can_login(group='teacher', user=request.user):
         return redirect('/')
@@ -985,6 +1001,7 @@ def workexperience_add(request):
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
 
 #
+@login_required
 def physicaleducation_add(request):
     respage = 'students/AddPhysicalEducation.html'
     if not request.POST:
@@ -1044,6 +1061,7 @@ def physicaleducation_add(request):
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
 
 #
+@login_required
 def thinkingskill_add(request):
     respage = 'students/AddThinkingSkill.html'
     if not request.POST:
@@ -1169,6 +1187,7 @@ def socialskill_add(request):
         return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
 
 #
+@login_required
 def attitudetowardsschool_add(request):
     respage = 'students/AddAttitudeTowardsSchool.html'
     if not request.POST:
@@ -1232,6 +1251,7 @@ def attitudetowardsschool_add(request):
             return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
 #
+@login_required
 def emotionalskill_add(request):
     respage = 'students/AddEmotionalSkill.html'
     if not request.POST:
@@ -1293,6 +1313,7 @@ def emotionalskill_add(request):
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
 
 #
+@login_required
 def values_add(request):
     respage = 'students/AddValues.html'
     if not request.POST:
@@ -1422,9 +1443,66 @@ def medicalreport_add(request):
             return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
 
+#
+@login_required
+def scrap_add(request):
+    respage = 'students/AddScrap.html'
+    if not request.POST:
+        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
+        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+    else:
+        genform = SearchDetailsForm(request.POST)
+        msg = search_reg_no(request=request)
+        if msg:
+            return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
+        if request.POST.has_key('RegistrationNo'):
+            regno = request.POST['RegistrationNo']
+            student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
+            name = '%s %s' % (student_info.FirstName, student_info.LastName)
+            yr = request.POST['Year']
+            # store data
+            if request.POST.has_key('pk'):
+                pk = request.POST['pk']
+                delete = request.POST['Delete']
+                if pk and delete in ('Y', 'y'):
+                    Scrap.objects.get(pk=pk).delete()
+                if delete not in ('Y', 'y'):
+                    if pk:
+                        scrap_obj = Scrap.objects.get(pk=pk)
+                    else:
+                        scrap_obj = Scrap()
+                    scrap_obj.StudentBasicInfo = student_info
+                    scrap_obj.User = request.user
+                    scrap_obj.data = request.POST['data']
+                    scrap_obj.date = datetime.datetime.now()
+                    scrap_obj.save()
+            # end store data
+            delete = ''
+            try:
+                scrap_obj = Scrap.objects.get(StudentBasicInfo=student_info)
+            except:
+                scrap_obj = Scrap(StudentBasicInfo=student_info)
+                delete = 'Y'
+            
+            data = []
+            for tmp_data in Scrap.objects.filter(StudentBasicInfo=student_info):
+                tmp = {}
+                tmp['pk'] = tmp_data.pk
+                tmp['User'] = tmp_data.User
+                tmp['data'] = tmp_data.data
+                tmp['date'] = tmp_data.date
+                x = ScrapDetailsForm(initial=tmp)
+                data.append(x)
+            x = ScrapDetailsForm(initial={'User':request.user, 'Delete':'Y'})
+            data.append(x)
+            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, }, context_instance=RequestContext(request))
+        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+
+
 
 #
 @csrf_exempt
+@login_required
 def generate_name_columns(request):
     respage = 'students/GenerateNameColumns.html'
     if not request.POST:
@@ -1474,6 +1552,7 @@ def generate_name_columns(request):
 
 
 #
+@login_required
 def display_report(request, regno=None, year=None):
     if request.user.username != str(regno) and not request.user.is_superuser and request.user.is_active:
         return redirect('/parents')
@@ -1483,6 +1562,7 @@ def display_report(request, regno=None, year=None):
     return render_to_response(respage, data.data, context_instance=RequestContext(request))
 
 # Used by HTML Report
+@login_required
 def attendance_add(request):
     if request.POST:
         keys = request.POST.keys()
@@ -1554,6 +1634,7 @@ def page_border(canvas):
 
 #
 @csrf_exempt
+@login_required
 def report_pdf(request):
     if request.POST:
 
@@ -2761,6 +2842,7 @@ def add_certificate_number_text_to_story(Story,header_text):
 
 #
 @csrf_exempt
+@login_required
 def certificate_pdf(request):
     if request.POST:
         registration_number_min = int(request.POST['registration_number_min'])
@@ -3174,6 +3256,7 @@ def check_box_value(request, checkBoxName):
 
 #
 @csrf_exempt
+@login_required
 def cards_pdf(request):
     if request.POST:
         
@@ -3368,27 +3451,3 @@ def fill_card_row(Story, student_yearly_infos,
     Story.append(table)
 
 #----------------------------------------------------------------------------------------------------
-
-marks_add = login_required(marks_add)
-competition_add = login_required(competition_add)
-attendance_add = login_required(attendance_add)
-elocution_add = login_required(elocution_add)
-abhivyaktivikas_add = login_required(abhivyaktivikas_add)
-project_add = login_required(project_add)
-competitiveexam_add = login_required(competitiveexam_add)
-cocurricular_add = login_required(cocurricular_add)
-socialactivity_add = login_required(socialactivity_add)
-workexperience_add = login_required(workexperience_add)
-physicalfitnessinfo_add = login_required(physicalfitnessinfo_add)
-thinkingskill_add = login_required(thinkingskill_add)
-socialskill_add = login_required(socialskill_add)
-attitudetowardsschool_add = login_required(attitudetowardsschool_add)
-emotionalskill_add = login_required(emotionalskill_add)
-values_add = login_required(values_add)
-report=login_required(report)
-report_pdf=login_required(report_pdf)
-certificate_pdf = login_required(certificate_pdf)
-cards_pdf=login_required(cards_pdf)
-display_report = login_required(display_report)
-generate_name_columns = login_required(generate_name_columns)
-student_summary = login_required(student_summary)
