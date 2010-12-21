@@ -18,8 +18,8 @@ class DifficultyLevelAdmin(admin.ModelAdmin):
     search_fields = ['Level', 'Comment']
 
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ['Content', 'ObjectiveType', 'ObjectiveLength', 'Marks', 'DifficultyLevel', 'ExpectedTime', 'Standard']
-    search_fields = ['Content', 'ObjectiveType', 'ObjectiveLength', 'Marks', 'DifficultyLevel', 'ExpectedTime', 'Standard']
+    list_display = ['Content', 'ObjectiveType', 'ObjectiveLength', 'Marks', 'DifficultyLevel', 'ExpectedTime', 'Standard', 'Subject']
+    search_fields = ['Content', 'ObjectiveType', 'ObjectiveLength', 'Marks', 'DifficultyLevel', 'ExpectedTime', 'Standard', 'Subject']
 
 
 admin.site.register(ObjectiveType, ObjectiveTypeAdmin)
