@@ -33,5 +33,6 @@ class Question(models.Model):
     Marks = models.ForeignKey(Marks)
     DifficultyLevel = models.ForeignKey(DifficultyLevel)
     ExpectedTime = models.FloatField()
+    Subject = models.CharField(max_length=200)
     Unit = models.CharField(max_length=500)
     Standard = models.CharField(max_length=100, help_text='Common seperated standards')
