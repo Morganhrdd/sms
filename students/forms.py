@@ -250,3 +250,4 @@ class ScrapDetailsForm(forms.Form):
     data = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     User = forms.CharField()
     Delete = forms.CharField(required=False)
+    date = forms.DateField(widget=SelectDateWidget())
