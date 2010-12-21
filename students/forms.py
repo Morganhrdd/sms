@@ -1,4 +1,5 @@
 from django import forms
+from django.forms.extras.widgets import SelectDateWidget
 
 from sms.students.vars import *
 from sms.students.models import *
@@ -243,3 +244,9 @@ class MedicalReportForm(forms.Form):
     Phone = forms.CharField(required=False)
     Delete = forms.CharField(required=False)
 
+class ScrapDetailsForm(forms.Form):
+    pkwidget = forms.HiddenInput()
+    pk = forms.IntegerField(widget=pkwidget, required=False)
+    data = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    User = forms.CharField()
+    Delete = forms.CharField(required=False)

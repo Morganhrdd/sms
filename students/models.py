@@ -138,8 +138,10 @@ class StudentAdditionalInformation(models.Model):
 class Scrap(models.Model):
     User = models.ForeignKey(User)
     StudentBasicInfo = models.ForeignKey(StudentBasicInfo)
-    date = models.DateField()
+    date = models.DateTimeField()
     data = models.CharField(max_length=500)
+    def __unicode__(self):
+        return '%s --- %s' % (self.StudentBasicInfo, self.User)
 
 
 class AcademicYear(models.Model):
