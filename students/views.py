@@ -127,6 +127,8 @@ class generate_report(object):
 # HTML Report:
 @login_required
 def report(request):
+    if not can_login(group='teacher', user=request.user):
+        return redirect('/')
     if request.POST:
         reg_no = request.POST['reg_no']
 
@@ -332,6 +334,8 @@ def marks_add1(request):
 
 @login_required
 def marks_add(request):
+    if not can_login(group='teacher', user=request.user):
+        return redirect('/')
     if request.POST:
         keys = request.POST.keys()
         test_id = request.POST['test_id']
@@ -1005,6 +1009,8 @@ def workexperience_add(request):
 @login_required
 def physicaleducation_add(request):
     respage = 'students/AddPhysicalEducation.html'
+    if not can_login(group='teacher', user=request.user):
+        return redirect('/')
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
@@ -1065,6 +1071,8 @@ def physicaleducation_add(request):
 @login_required
 def thinkingskill_add(request):
     respage = 'students/AddThinkingSkill.html'
+    if not can_login(group='teacher', user=request.user):
+        return redirect('/')
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
@@ -1128,6 +1136,8 @@ def thinkingskill_add(request):
 #
 def socialskill_add(request):
     respage = 'students/AddSocialSkill.html'
+    if not can_login(group='teacher', user=request.user):
+        return redirect('/')
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
@@ -1191,6 +1201,8 @@ def socialskill_add(request):
 @login_required
 def attitudetowardsschool_add(request):
     respage = 'students/AddAttitudeTowardsSchool.html'
+    if not can_login(group='teacher', user=request.user):
+        return redirect('/')
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
@@ -1255,6 +1267,8 @@ def attitudetowardsschool_add(request):
 @login_required
 def emotionalskill_add(request):
     respage = 'students/AddEmotionalSkill.html'
+    if not can_login(group='teacher', user=request.user):
+        return redirect('/')
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
@@ -1317,6 +1331,8 @@ def emotionalskill_add(request):
 @login_required
 def values_add(request):
     respage = 'students/AddValues.html'
+    if not can_login(group='teacher', user=request.user):
+        return redirect('/')
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
@@ -1383,6 +1399,8 @@ def values_add(request):
 @login_required
 def medicalreport_add(request):
     respage = 'students/AddMedicalReport.html'
+    if not can_login(group='teacher', user=request.user):
+        return redirect('/')
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
@@ -1449,6 +1467,8 @@ def medicalreport_add(request):
 @login_required
 def scrap_add(request):
     respage = 'students/AddScrap.html'
+    if not can_login(group='teacher', user=request.user):
+        return redirect('/')
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
@@ -1504,6 +1524,8 @@ def scrap_add(request):
 @login_required
 def send_sms_students(request):
     respage = 'students/SMSSend.html'
+    if not can_login(group='teacher', user=request.user):
+        return redirect('/')
     if not request.POST:
         genform = SMSSendForm(initial={'Year':'2010-2011'})
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
@@ -1529,6 +1551,8 @@ def send_sms_students(request):
 @login_required
 def generate_name_columns(request):
     respage = 'students/GenerateNameColumns.html'
+    if not can_login(group='teacher', user=request.user):
+        return redirect('/')
     if not request.POST:
         genform = SearchClassDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
@@ -1588,6 +1612,8 @@ def display_report(request, regno=None, year=None):
 # Used by HTML Report
 @login_required
 def attendance_add(request):
+    if not can_login(group='teacher', user=request.user):
+        return redirect('/')
     if request.POST:
         keys = request.POST.keys()
         attendance_id = request.POST['attendance_id']
@@ -1660,8 +1686,9 @@ def page_border(canvas):
 @csrf_exempt
 @login_required
 def report_pdf(request):
+    if not can_login(group='teacher', user=request.user):
+        return redirect('/')
     if request.POST:
-
         #pick values from html form
         registration_number_min = int(request.POST['registration_number_min'])
         registration_number_max = int(request.POST['registration_number_max'])
@@ -1669,18 +1696,15 @@ def report_pdf(request):
         standard = int(request.POST['standard'])
         division = request.POST['division']
         year_option = request.POST['year_option']
-
         #populate a list of egistration numbers for the specified range
         registration_numbers = []
         registration_number = registration_number_min
         while registration_number <= registration_number_max:
             registration_numbers.append(registration_number)
             registration_number = registration_number + 1
-
         #populate content for the list of reg numbers
         Story = []
         fill_pdf_data(Story, registration_numbers, part_option, standard, division, year_option)
-
         #show an unsaved pdf document in the browser, using report_pdf
         response = HttpResponse(mimetype='application/pdf')
         doc = SimpleDocTemplate(response)
@@ -1715,24 +1739,19 @@ def fill_pdf_data(Story, registration_nos, part_option, standard, division, year
         except:
             #skip the reg numbers if basic info is not found
             continue
-
         for student_yearly_info in student_yearly_infos:
-
             #filter by year
             student_year = student_yearly_info.ClassMaster.AcademicYear.Year
             if student_year != year_option:
                 continue
-
             #filter by standard if a valid entry is available
             student_standard = student_yearly_info.ClassMaster.Standard
             if (standard >= 5) and (standard <= 10) and (student_standard != standard):
                 continue
-
             #filter by division if a valid entry is available
             student_division = student_yearly_info.ClassMaster.Division
             if ((division == 'B') or (division == 'G')) and (student_division != division):
                 continue
-
             #calculate skill grades and populate
             skillsStory = []
             skillGrades = {
@@ -1743,7 +1762,6 @@ def fill_pdf_data(Story, registration_nos, part_option, standard, division, year
                 'Values': '-'
             }
             fill_skills_report(student_yearly_info, skillGrades, skillsStory)
-
             #populate content as per the option chosen
             if part_option == 0:
                 fill_static_and_yearly_info(student_yearly_info, skillGrades, Story)
