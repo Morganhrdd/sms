@@ -1379,6 +1379,7 @@ def values_add(request):
 
 
 #
+@login_required
 def medicalreport_add(request):
     respage = 'students/AddMedicalReport.html'
     if not request.POST:
@@ -1499,6 +1500,13 @@ def scrap_add(request):
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
 
 
+@login_required
+def send_sms_students(request):
+    respage = 'students/SMSSend.html'
+    if not request.POST:
+        genform = SMSSendForm(initial={'Year':'2010-2011'})
+        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+    
 
 #
 @csrf_exempt
