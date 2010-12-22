@@ -9,6 +9,7 @@ from django.utils.safestring import mark_safe
 
 from sms.students.models import *
 from sms.students.forms import *
+import misc
 
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer,Table,TableStyle,PageBreak, CondPageBreak
 from reportlab.lib.styles import getSampleStyleSheet
@@ -1506,6 +1507,22 @@ def send_sms_students(request):
     if not request.POST:
         genform = SMSSendForm(initial={'Year':'2010-2011'})
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+    else:
+        regno = []
+        yr = request.POST['Year']
+        standard = request.POST['Standard']
+        division = request.POST['Division']
+        msg = request.POST['Message']
+        for x in StudentYearlyInformation.objects.filter(ClassMaster__AcademicYear__Year=yr, ClassMaster__Standard=standard, ClassMaster__Division=division):
+            regno.append(x.StudentBasicInfo.RegistrationNo)
+        nos = []
+        for x in regno:
+            y = StudentAdditionalInformation.objects.get(Id__RegistrationNo=x)
+            if int(y.Fathers_Phone_No[-10]) in (7, 8, 9):
+                nos.append(y.Fathers_Phone_No[-10:])
+            if int(y.Mothers_Phone_No[-10]) in (7, 8, 9):
+                nos.append(y.Mothers_Phone_No[-10:])
+        misc.sms_send(nos=nos,msg=msg, senderid='PRASHALA')
 
 #
 @csrf_exempt
