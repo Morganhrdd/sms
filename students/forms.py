@@ -251,3 +251,9 @@ class ScrapDetailsForm(forms.Form):
     User = forms.CharField()
     Delete = forms.CharField(required=False)
     date = forms.DateField(widget=SelectDateWidget())
+
+class SMSSendForm(forms.Form):
+    Standard = forms.IntegerField()
+    Division = forms.CharField()
+    Year = forms.CharField(max_length=9)
+    Message = forms.CharField(widget=forms.Textarea(attrs={'rows':5}))
