@@ -1506,7 +1506,6 @@ def send_sms_students(request):
     if not request.POST:
         genform = SMSSendForm(initial={'Year':'2010-2011'})
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
-    
 
 #
 @csrf_exempt
