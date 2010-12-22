@@ -2,12 +2,12 @@ from django.db import models
 
 # Create your models here.
 
-class ObjectiveType(models.Model):
+class TypeByObjective(models.Model):
     Name = models.CharField(max_length=100)
     def __unicode__(self):
         return "%s" % (self.Name)
 
-class ObjectiveLength(models.Model):
+class TypeByLength(models.Model):
     Name = models.CharField(max_length=100)
     def __unicode__(self):
         return "%s" % (self.Name)
@@ -28,8 +28,8 @@ class DifficultyLevel(models.Model):
 
 class Question(models.Model):
     Content = models.TextField(max_length=5000)
-    ObjectiveType = models.ForeignKey(ObjectiveType)
-    ObjectiveLength = models.ForeignKey(ObjectiveLength)
+    TypeByObjective= models.ForeignKey(TypeByObjective)
+    TypeByLength= models.ForeignKey(TypeByLength)
     Marks = models.ForeignKey(Marks)
     DifficultyLevel = models.ForeignKey(DifficultyLevel)
     ExpectedTime = models.FloatField()

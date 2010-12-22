@@ -1,11 +1,11 @@
 from sms.question_bank.models import *
 from django.contrib import admin
 
-class ObjectiveTypeAdmin(admin.ModelAdmin):
+class TypeByObjectiveAdmin(admin.ModelAdmin):
     list_display = ['Name']
     search_fields = ['Name']
 
-class ObjectiveLengthAdmin(admin.ModelAdmin):
+class TypeByLengthAdmin(admin.ModelAdmin):
     list_display = ['Name']
     search_fields = ['Name']
 
@@ -22,8 +22,8 @@ class QuestionAdmin(admin.ModelAdmin):
     search_fields = ['Content', 'ObjectiveType', 'ObjectiveLength', 'Marks', 'DifficultyLevel', 'ExpectedTime', 'Standard', 'Subject']
 
 
-admin.site.register(ObjectiveType, ObjectiveTypeAdmin)
-admin.site.register(ObjectiveLength, ObjectiveLengthAdmin)
+admin.site.register(TypeByObjective, TypeByObjectiveAdmin)
+admin.site.register(TypeByLength, TypeByLengthAdmin)
 admin.site.register(Marks, MarksAdmin)
 admin.site.register(DifficultyLevel, DifficultyLevelAdmin)
 admin.site.register(Question, QuestionAdmin)
