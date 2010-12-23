@@ -1539,11 +1539,14 @@ def send_sms_students(request):
             regno.append(x.StudentBasicInfo.RegistrationNo)
         nos = []
         for x in regno:
-            y = StudentAdditionalInformation.objects.get(Id__RegistrationNo=x)
-            if len(y.Fathers_Phone_No) >= 10 and int(y.Fathers_Phone_No[-10]) in (7, 8, 9):
-                nos.append(y.Fathers_Phone_No[-10:])
-            if len(y.Mothers_Phone_No) >= 10 and int(y.Mothers_Phone_No[-10]) in (7, 8, 9):
-                nos.append(y.Mothers_Phone_No[-10:])
+            try:
+                y = StudentAdditionalInformation.objects.get(Id__RegistrationNo=x)
+                if len(y.Fathers_Phone_No) >= 10 and int(y.Fathers_Phone_No[-10]) in (7, 8, 9):
+                    nos.append(y.Fathers_Phone_No[-10:])
+                if len(y.Mothers_Phone_No) >= 10 and int(y.Mothers_Phone_No[-10]) in (7, 8, 9):
+                    nos.append(y.Mothers_Phone_No[-10:])
+            except:
+                pass
         misc.sms_send(nos=nos,msg=msg, senderid='PRASHALA')
         return redirect('/sms_send')
 #
