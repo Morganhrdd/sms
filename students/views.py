@@ -1532,21 +1532,25 @@ def send_sms_students(request):
     else:
         regno = []
         yr = request.POST['Year']
-        standard = request.POST['Standard']
-        division = request.POST['Division']
+        standards = request.POST['Standard'].split(',')
+        divisions = request.POST['Division'].split(',')
         msg = request.POST['Message']
-        for x in StudentYearlyInformation.objects.filter(ClassMaster__AcademicYear__Year=yr, ClassMaster__Standard=standard, ClassMaster__Division=division):
-            regno.append(x.StudentBasicInfo.RegistrationNo)
-        nos = []
-        for x in regno:
-            try:
-                y = StudentAdditionalInformation.objects.get(Id__RegistrationNo=x)
-                if len(y.Fathers_Phone_No) >= 10 and int(y.Fathers_Phone_No[-10]) in (7, 8, 9):
-                    nos.append(y.Fathers_Phone_No[-10:])
-                if len(y.Mothers_Phone_No) >= 10 and int(y.Mothers_Phone_No[-10]) in (7, 8, 9):
-                    nos.append(y.Mothers_Phone_No[-10:])
-            except:
-                pass
+        for standard in standards:
+            standard = standard.strip()
+            for division in divisions:
+                division = division.strip()
+                for x in StudentYearlyInformation.objects.filter(ClassMaster__AcademicYear__Year=yr, ClassMaster__Standard=standard, ClassMaster__Division=division):
+                    regno.append(x.StudentBasicInfo.RegistrationNo)
+                nos = set()
+                for x in regno:
+                    try:
+                        y = StudentAdditionalInformation.objects.get(Id__RegistrationNo=x)
+                        if len(y.Fathers_Phone_No) >= 10 and int(y.Fathers_Phone_No[-10]) in (7, 8, 9):
+                            nos.add(y.Fathers_Phone_No[-10:])
+                        if len(y.Mothers_Phone_No) >= 10 and int(y.Mothers_Phone_No[-10]) in (7, 8, 9):
+                            nos.add(y.Mothers_Phone_No[-10:])
+                    except:
+                        pass
         misc.sms_send(nos=nos,msg=msg, senderid='PRASHALA')
         return redirect('/sms_send')
 #
