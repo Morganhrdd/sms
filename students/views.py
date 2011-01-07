@@ -1789,6 +1789,10 @@ def fill_pdf_data(Story, registration_nos, part_option, standard, division, year
                 fill_outdoor_activity_report(student_yearly_info, Story)
             elif part_option == 6:
                 fill_library_and_medical_report(student_yearly_info, Story)
+            elif part_option == 1109:
+                fill_academic_report_board_2011_9th(student_yearly_info, Story)
+            elif part_option == 1110:
+                fill_academic_report_board_2011_10th(student_yearly_info, Story)
 
 #helper functions for populating content to pdf report
 def add_table_to_story(Story,data,align):
@@ -2296,6 +2300,243 @@ def fill_academic_report2010(student_yearly_info, Story):
     class_teacher = student_yearly_info.ClassMaster.Teacher.Name
     add_signature_space_to_story(Story,class_teacher, "Class Teacher")
     Story.append(PageBreak())
+
+def fill_academic_report_board_2011_9th(student_yearly_info, Story):
+    add_main_header_to_story(Story, "Part 2: Academic Performance")
+
+    subjects_data = {}
+    student_test_data = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
+    for test_marks in student_test_data:
+        test_mapping = test_marks.TestMapping
+        subject_name = test_mapping.SubjectMaster.Name
+        if not subjects_data.has_key(subject_name):
+            subjects_data[subject_name] = []
+        subject_data = subjects_data[subject_name]
+        subject_data.append(test_marks)
+
+    grades = ['E2','E2','E2','E1','D','C2','C1','B2','B1','A2','A1']
+
+    #desired sequence
+    temp_sort = ['ENG', 'HIN', 'MAR', 'SAN', 'MAT', 'SCI', 'SCS']
+    cumulative_marks=0
+    cumulative_maxmarks=0
+    data = []
+    data.append(['','F3/10','F4/10','N2/20','S2/60','FA','SA','Total Grade', 'Grade Point'])
+    for subject_item in temp_sort:
+        if not subjects_data.has_key(subject_item):
+            continue
+        subject_data = subjects_data[subject_item]
+        subject_name = subject_item
+
+        F1, F2, F3, F4, N1, N2, S1, S2 = 0
+                        
+        for subject_marks in subject_data:
+            test_mapping = subject_marks.TestMapping
+            subject_name = test_mapping.SubjectMaster.Name
+            test_type = test_mapping.TestType
+            maximum_marks = test_mapping.MaximumMarks
+            marks_obtained = subject_marks.MarksObtained
+
+            #weighted marks
+            if test_type == 'F1':
+                F1 = weighted_marks(marks_obtained, maximum_marks, 10)
+            elif test_type == 'F2':
+                F2 = weighted_marks(marks_obtained, maximum_marks, 10)
+            elif test_type == 'F3':
+                F3 = weighted_marks(marks_obtained, maximum_marks, 10)
+            elif test_type == 'F4':
+                F4 = weighted_marks(marks_obtained, maximum_marks, 10)
+            elif test_type == 'N2':
+                N2 = weighted_marks(marks_obtained, maximum_marks, 20)
+            elif test_type == 'S2':
+                S2 = weighted_marks(marks_obtained, maximum_marks, 60)
+
+        #pick best two
+        F3, F4 = best_two_of_four_marks(F1, F2, F3, F4)
+
+        #summations
+        FA = F3 + F4 + N2
+        SA = S2
+        total = FA + SA
+
+        #grade points
+        grade_point_FA = grade_point(FA, 40)
+        grade_point_SA = grade_point(SA, 60)
+        grade_point_total = grade_point(total, 100)
+
+        #fill subject row
+        data_row = []
+        data_row.append(subject_name)
+        data_row.append(str(F3))
+        data_row.append(str(F4))
+        data_row.append(str(N2))
+        data_row.append(str(S2))
+        data_row.append(grades[grade_point_FA])
+        data_row.append(grades[grade_point_SA])
+        data_row.append(grades[grade_point_total])
+        data_row.append(str(grade_point_total))
+        
+        data.append(data_row)
+        
+        cumulative_marks = cumulative_marks + total
+        cumulative_maxmarks = cumulative_maxmarks + 100
+
+    add_table_to_story(Story, data, 'CENTER')
+    Story.append(Spacer(1,0.25*inch))
+
+    CGPA = grade_point(cumulative_marks, cumulative_maxmarks)
+    add_sub_header_to_story(Story, mark_safe('CGPA: ' +  str(CGPA)))
+    add_sub_header_to_story(Story, mark_safe('Grand Total: ' +  str(cumulative_marks) + " / " + str(cumulative_maxmarks)))
+
+    percentage = 0
+    if cumulative_maxmarks > 0:
+        percentage = round((cumulative_marks / cumulative_maxmarks * 100),2)
+    add_sub_header_to_story(Story, 'Percentage: ' + str(percentage) + "%")
+
+    Story.append(PageBreak())
+
+def fill_academic_report_board_2011_10th(student_yearly_info, Story):
+    add_main_header_to_story(Story, "Part 2: Academic Performance")
+
+    subjects_data = {}
+    student_test_data = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
+    for test_marks in student_test_data:
+        test_mapping = test_marks.TestMapping
+        subject_name = test_mapping.SubjectMaster.Name
+        if not subjects_data.has_key(subject_name):
+            subjects_data[subject_name] = []
+        subject_data = subjects_data[subject_name]
+        subject_data.append(test_marks)
+
+    grades = ['E2','E2','E2','E1','D','C2','C1','B2','B1','A2','A1']
+
+    #desired sequence
+    temp_sort = ['ENG', 'HIN', 'MAR', 'SAN', 'MAT', 'SCI', 'SCS']
+    cumulative_marks=0
+    cumulative_maxmarks=0
+    data = []
+    data.append(['','F1','F2','F3','F4','S1','S2','FA','SA','Total', 'Total'])
+    data.append(['','5','5','5','5','20','40','Grade','Grade','Grade', 'Grade Point'])
+    for subject_item in temp_sort:
+        if not subjects_data.has_key(subject_item):
+            continue
+        subject_data = subjects_data[subject_item]
+        subject_name = subject_item
+
+        F1, F2, F3, F4, N1, N2, S1, S2 = 0
+                        
+        for subject_marks in subject_data:
+            test_mapping = subject_marks.TestMapping
+            subject_name = test_mapping.SubjectMaster.Name
+            test_type = test_mapping.TestType
+            maximum_marks = test_mapping.MaximumMarks
+            marks_obtained = subject_marks.MarksObtained
+
+            #weighted marks
+            if test_type == 'F1':
+                F1 = weighted_marks(marks_obtained, maximum_marks, 5)
+            elif test_type == 'F2':
+                F2 = weighted_marks(marks_obtained, maximum_marks, 5)
+            elif test_type == 'F3':
+                F3 = weighted_marks(marks_obtained, maximum_marks, 5)
+            elif test_type == 'F4':
+                F4 = weighted_marks(marks_obtained, maximum_marks, 5)
+            elif test_type == 'N1':
+                N1 = weighted_marks(marks_obtained, maximum_marks, 5)
+            elif test_type == 'N2':
+                N2 = weighted_marks(marks_obtained, maximum_marks, 5)
+            elif test_type == 'S1':
+                S1 = weighted_marks(marks_obtained, maximum_marks, 20)
+            elif test_type == 'S2':
+                S2 = weighted_marks(marks_obtained, maximum_marks, 40)
+
+        #merge N1, N2 marks into FA
+        F1 = round_marks((F1 + N1) / 2)
+        F2 = round_marks((F2 + N1) / 2)
+        F3 = round_marks((F3 + N2) / 2)
+        F4 = round_marks((F4 + N2) / 2)
+
+        #summations
+        FA = F1 + F2 + F3 + F4
+        SA = S1 + S2
+        total = FA + SA
+
+        #grade points
+        grade_point_FA = grade_point(FA, 40)
+        grade_point_SA = grade_point(SA, 60)
+        grade_point_total = grade_point(total, 100)
+
+        #fill subject row
+        data_row = []
+        data_row.append(subject_name)
+        data_row.append((str(F1))
+        data_row.append(str(F2))
+        data_row.append(str(F3))
+        data_row.append(str(F4))
+        data_row.append(str(S1))
+        data_row.append(str(S2))
+        data_row.append(grades[grade_point_FA])
+        data_row.append(grades[grade_point_SA])
+        data_row.append(grades[grade_point_total])
+        data_row.append(str(grade_point_total))
+        
+        data.append(data_row)
+        
+        cumulative_marks = cumulative_marks + total
+        cumulative_maxmarks = cumulative_maxmarks + 100
+
+    add_table_to_story(Story, data, 'CENTER')
+    Story.append(Spacer(1,0.25*inch))
+
+    CGPA = grade_point(cumulative_marks, cumulative_maxmarks)
+    add_sub_header_to_story(Story, mark_safe('CGPA: ' +  str(CGPA)))
+    add_sub_header_to_story(Story, mark_safe('Grand Total: ' +  str(cumulative_marks) + " / " + str(cumulative_maxmarks)))
+
+    percentage = 0
+    if cumulative_maxmarks > 0:
+        percentage = round((cumulative_marks / cumulative_maxmarks * 100),2)
+    add_sub_header_to_story(Story, 'Percentage: ' + str(percentage) + "%")
+
+    Story.append(PageBreak())
+
+def weighted_marks(test_marks_obtained, test_maximum_marks, weighted_maximum_marks):
+    ratio = test_marks_obtained / test_maximum_marks
+    weighted_marks_obtained = round_marks(ratio * weighted_maximum_marks)
+    return weighted_marks_obtained
+
+def grade_point(test_marks_obtained, test_maximum_marks):
+    ratio = test_marks_obtained / test_maximum_marks
+    percentage = round_marks(ratio * 100)
+
+    #grade point
+    if (percentage <= 20):
+        grade_point = 0
+    elif (percentage <= 32):
+        grade_point = 0
+    elif (percentage <= 40):
+        grade_point = 4
+    elif (percentage <= 50):
+        grade_point = 5
+    elif (percentage <= 60):
+        grade_point = 6
+    elif (percentage <= 70):
+        grade_point = 7
+    elif (percentage <= 80):
+        grade_point = 8
+    elif (percentage <= 90):
+        grade_point = 9
+    elif (percentage <= 100):
+        grade_point = 10
+   
+    return grade_point
+
+def best_two_of_four_marks(marks1, marks2, marks3, marks4):
+    marks = [marks1, marks2, marks3, marks4]
+    marks.sort()
+    return marks[2], marks[3]
+
+def round_marks(marks)
+    return int(round(marks))
 
 def fill_cocurricular_report(student_yearly_info, Story):
     add_main_header_to_story(Story, "Part 3: Co-curricular Activity Report")
