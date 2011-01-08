@@ -2328,7 +2328,7 @@ def fill_academic_report_board_2011_9th(student_yearly_info, Story):
         subject_data = subjects_data[subject_item]
         subject_name = subject_item
 
-        F1, F2, F3, F4, N1, N2, S1, S2 = 0
+        F1, F2, F3, F4, N1, N2, S1, S2 = [0 for x in range(8)] 
                         
         for subject_marks in subject_data:
             test_mapping = subject_marks.TestMapping
@@ -2423,7 +2423,7 @@ def fill_academic_report_board_2011_10th(student_yearly_info, Story):
         subject_data = subjects_data[subject_item]
         subject_name = subject_item
 
-        F1, F2, F3, F4, N1, N2, S1, S2 = 0
+        F1, F2, F3, F4, N1, N2, S1, S2 = [0 for x in range(8)]
                         
         for subject_marks in subject_data:
             test_mapping = subject_marks.TestMapping
