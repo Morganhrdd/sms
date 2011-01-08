@@ -2469,7 +2469,7 @@ def fill_academic_report_board_2011_10th(student_yearly_info, Story):
         #fill subject row
         data_row = []
         data_row.append(subject_name)
-        data_row.append((str(F1))
+        data_row.append(str(F1))
         data_row.append(str(F2))
         data_row.append(str(F3))
         data_row.append(str(F4))
@@ -2535,7 +2535,7 @@ def best_two_of_four_marks(marks1, marks2, marks3, marks4):
     marks.sort()
     return marks[2], marks[3]
 
-def round_marks(marks)
+def round_marks(marks):
     return int(round(marks))
 
 def fill_cocurricular_report(student_yearly_info, Story):
