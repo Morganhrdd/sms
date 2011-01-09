@@ -127,7 +127,7 @@ class generate_report(object):
 # HTML Report:
 @login_required
 def report(request):
-    if not can_login(group='teacher', user=request.user):
+    if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     if request.POST:
         reg_no = request.POST['reg_no']
@@ -334,7 +334,7 @@ def marks_add1(request):
 
 @login_required
 def marks_add(request):
-    if not can_login(group='teacher', user=request.user):
+    if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     if request.POST:
         keys = request.POST.keys()
@@ -388,18 +388,19 @@ def marks_add(request):
             data.append({'id':student_test_mark_obj.StudentYearlyInformation.id, 'name':name, 'rollno':rollno,'marks_obtained':student_test_mark_obj.MarksObtained})
         return render_to_response('students/AddMarks.html',Context({'test_details': test_details,'test_id':test_id, 'data':data}), context_instance=RequestContext(request))
 
-def can_login(group=None, user=None):
+def can_login(groups=None, user=None):
     if not user.is_active:
         return 0
     if user.is_superuser:
         return 1
-    if group in [x.name for x in user.groups.all()]:
-        return 1
+    for group in groups:
+        if group in [x.name for x in user.groups.all()]:
+            return 1
 
 
 @login_required
 def competition_add(request):
-    if not can_login(group='teacher', user=request.user):
+    if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     respage = 'students/AddCompetition.html'
     if not request.POST:
@@ -461,7 +462,7 @@ def competition_add(request):
 #
 @login_required
 def elocution_add(request):
-    if not can_login(group='teacher', user=request.user):
+    if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     respage = 'students/AddElocution.html'
     if not request.POST:
@@ -524,7 +525,7 @@ def elocution_add(request):
 #
 @login_required
 def project_add(request):
-    if not can_login(group='teacher', user=request.user):
+    if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     respage = 'students/AddProject.html'
     if not request.POST:
@@ -592,7 +593,7 @@ def project_add(request):
 #
 @login_required
 def abhivyaktivikas_add(request):
-    if not can_login(group='teacher', user=request.user):
+    if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     respage = 'students/AddAbhivyaktiVikas.html'
     if not request.POST:
@@ -656,7 +657,7 @@ def abhivyaktivikas_add(request):
 
 #
 def competitiveexam_add(request):
-    if not can_login(group='teacher', user=request.user):
+    if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     respage = 'students/AddCompetitiveExam.html'
     if not request.POST:
@@ -717,7 +718,7 @@ def competitiveexam_add(request):
 #
 @login_required
 def cocurricular_add(request):
-    if not can_login(group='teacher', user=request.user):
+    if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     respage = 'students/AddCocurricular.html'
     if not request.POST:
@@ -778,7 +779,7 @@ def cocurricular_add(request):
 #
 @login_required
 def socialactivity_add(request):
-    if not can_login(group='teacher', user=request.user):
+    if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     respage = 'students/AddSocialActivity.html'
     if not request.POST:
@@ -839,7 +840,7 @@ def socialactivity_add(request):
 #
 @login_required
 def physicalfitnessinfo_add(request):
-    if not can_login(group='teacher', user=request.user):
+    if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     respage = 'students/AddPhysicalFitnessInfo.html'
     if not request.POST:
@@ -948,7 +949,7 @@ def search_reg_no(request=None):
 #
 @login_required
 def workexperience_add(request):
-    if not can_login(group='teacher', user=request.user):
+    if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     respage = 'students/AddWorkExperience.html'
     if not request.POST:
@@ -1009,7 +1010,7 @@ def workexperience_add(request):
 @login_required
 def physicaleducation_add(request):
     respage = 'students/AddPhysicalEducation.html'
-    if not can_login(group='teacher', user=request.user):
+    if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2010-2011'})
@@ -1071,7 +1072,7 @@ def physicaleducation_add(request):
 @login_required
 def thinkingskill_add(request):
     respage = 'students/AddThinkingSkill.html'
-    if not can_login(group='teacher', user=request.user):
+    if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2010-2011'})
@@ -1136,7 +1137,7 @@ def thinkingskill_add(request):
 #
 def socialskill_add(request):
     respage = 'students/AddSocialSkill.html'
-    if not can_login(group='teacher', user=request.user):
+    if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2010-2011'})
@@ -1201,7 +1202,7 @@ def socialskill_add(request):
 @login_required
 def attitudetowardsschool_add(request):
     respage = 'students/AddAttitudeTowardsSchool.html'
-    if not can_login(group='teacher', user=request.user):
+    if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2010-2011'})
@@ -1267,7 +1268,7 @@ def attitudetowardsschool_add(request):
 @login_required
 def emotionalskill_add(request):
     respage = 'students/AddEmotionalSkill.html'
-    if not can_login(group='teacher', user=request.user):
+    if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2010-2011'})
@@ -1331,7 +1332,7 @@ def emotionalskill_add(request):
 @login_required
 def values_add(request):
     respage = 'students/AddValues.html'
-    if not can_login(group='teacher', user=request.user):
+    if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2010-2011'})
@@ -1399,7 +1400,7 @@ def values_add(request):
 @login_required
 def medicalreport_add(request):
     respage = 'students/AddMedicalReport.html'
-    if not can_login(group='teacher', user=request.user):
+    if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2010-2011'})
@@ -1467,7 +1468,7 @@ def medicalreport_add(request):
 @login_required
 def scrap_add(request):
     respage = 'students/AddScrap.html'
-    if not can_login(group='teacher', user=request.user):
+    if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2010-2011'})
@@ -1524,7 +1525,7 @@ def scrap_add(request):
 @login_required
 def send_sms_students(request):
     respage = 'students/SMSSend.html'
-    if not can_login(group='teacher', user=request.user):
+    if not can_login(groups=['teacher', 'Pratod'], user=request.user):
         return redirect('/')
     if not request.POST:
         genform = SMSSendForm(initial={'Year':'2010-2011'})
@@ -1558,7 +1559,7 @@ def send_sms_students(request):
 @login_required
 def generate_name_columns(request):
     respage = 'students/GenerateNameColumns.html'
-    if not can_login(group='teacher', user=request.user):
+    if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     if not request.POST:
         genform = SearchClassDetailsForm(initial={'Year':'2010-2011'})
@@ -1619,7 +1620,7 @@ def display_report(request, regno=None, year=None):
 # Used by HTML Report
 @login_required
 def attendance_add(request):
-    if not can_login(group='teacher', user=request.user):
+    if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     if request.POST:
         keys = request.POST.keys()
@@ -1693,7 +1694,7 @@ def page_border(canvas):
 @csrf_exempt
 @login_required
 def report_pdf(request):
-    if not can_login(group='teacher', user=request.user):
+    if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     if request.POST:
         #pick values from html form
