@@ -1880,6 +1880,11 @@ def fill_pdf_data(Story, registration_nos, part_option, standard, division, year
                 'Values': '-'
             }
             fill_skills_report(student_yearly_info, skillGrades, skillsStory)
+
+            #add student name at beginning for partial reports
+            if part_option != 0:
+                add_student_name(student_yearly_info, Story)
+            
             #populate content as per the option chosen
             if part_option == 0:
                 fill_static_and_yearly_info(student_yearly_info, skillGrades, Story)
@@ -2050,6 +2055,17 @@ def fill_student_attendance(student_yearly_info, Story, class_type):
 
     add_table_to_story(Story,data,'CENTER')
     Story.append(Spacer(1,0.25*inch))
+
+def add_student_name(student_yearly_info, Story):
+    student_basic_info = student_yearly_info.StudentBasicInfo
+
+    registration_number = str(student_basic_info.RegistrationNo)
+    student_name = student_basic_info.FirstName + ' ' + student_basic_info.LastName
+    standard_roll_number = str(student_yearly_info.ClassMaster.Standard) + ' ' + str(student_yearly_info.RollNo)
+    student_info = registration_number + '  ' + student_name + '  ' + standard_roll_number
+    
+    style = ParagraphStyle(name = 'StudentNameStyle', fontSize = 9, alignment=TA_RIGHT)
+    Story.append(Paragraph(student_info, style))
 
 #first page, letter head, static info and summary
 def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
@@ -2887,25 +2903,30 @@ def fill_skills_report(student_yearly_info, skillGrades, Story):
     if len(thinkingSkills) == 0:
         add_normal_text_to_story(Story,'No data available')
     else:
-        inquiry=0
-        logicalThinking = 0
-        creativity = 0
-        decisionMaking = 0
+        inquiry_sum=0
+        logicalThinking_sum = 0
+        creativity_sum = 0
+        decisionMaking_sum = 0
         length = len(thinkingSkills)
         #add up grades by teachers
         for thinkingSkill in thinkingSkills:
-            inquiry = inquiry + GRADE_NUM[thinkingSkill.Inquiry]
-            logicalThinking = logicalThinking + GRADE_NUM[thinkingSkill.LogicalThinking]
-            creativity = creativity + GRADE_NUM[thinkingSkill.Creativity]
-            decisionMaking = decisionMaking + GRADE_NUM[thinkingSkill.DecisionMakingAndProblemSolving]
+            inquiry_sum += GRADE_NUM[thinkingSkill.Inquiry]
+            logicalThinking_sum += GRADE_NUM[thinkingSkill.LogicalThinking]
+            creativity_sum += GRADE_NUM[thinkingSkill.Creativity]
+            decisionMaking_sum += GRADE_NUM[thinkingSkill.DecisionMakingAndProblemSolving]
 
         #total grades
-        add_normal_text_to_story(Story,'Inquiry' + ' : ' + GRADE_CHOICES[round(inquiry / length)])
-        add_normal_text_to_story(Story,'LogicalThinking' + ' : ' + GRADE_CHOICES[round(logicalThinking / length)])
-        add_normal_text_to_story(Story,'Creativity' + ' : ' + GRADE_CHOICES[round(creativity / length)])
-        add_normal_text_to_story(Story,'DecisionMakingAndProblemSolving' + ' : ' + GRADE_CHOICES[round(decisionMaking / length)])
+        inquiry = round_skill_marks(inquiry_sum / length)
+        logicalThinking = round_skill_marks(logicalThinking_sum / length)
+        creativity = round_skill_marks(creativity_sum / length)
+        decisionMaking = round_skill_marks(decisionMaking_sum / length)
+        
+        add_normal_text_to_story(Story,'Inquiry' + ' : ' + GRADE_CHOICES[inquiry])
+        add_normal_text_to_story(Story,'LogicalThinking' + ' : ' + GRADE_CHOICES[logicalThinking])
+        add_normal_text_to_story(Story,'Creativity' + ' : ' + GRADE_CHOICES[creativity])
+        add_normal_text_to_story(Story,'DecisionMakingAndProblemSolving' + ' : ' + GRADE_CHOICES[decisionMaking])
         Story.append(Spacer(1,0.05*inch))
-        skillGrades['ThinkingSkill'] = GRADE_CHOICES[round((inquiry + logicalThinking + creativity + decisionMaking) / (4.0 * length))]
+        skillGrades['ThinkingSkill'] = GRADE_CHOICES[round_skill_marks((inquiry + logicalThinking + creativity + decisionMaking) / 4.0)]
         add_normal_text_to_story(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + skillGrades['ThinkingSkill'])
         Story.append(Spacer(1,0.1*inch))
 
@@ -2926,22 +2947,26 @@ def fill_skills_report(student_yearly_info, skillGrades, Story):
     if len(socialSkills) == 0:
         add_normal_text_to_story(Story,'No data available')
     else:
-        communication=0
-        interPersonal=0
-        teamWork=0
+        communication_sum=0
+        interPersonal_sum=0
+        teamWork_sum=0
         length = len(socialSkills)
         #add up grades by teachers
         for socialSkill in socialSkills:
-            communication = communication + GRADE_NUM[socialSkill.Communication]
-            interPersonal = interPersonal + GRADE_NUM[socialSkill.InterPersonal]
-            teamWork = teamWork + GRADE_NUM[socialSkill.TeamWork]
+            communication_sum += GRADE_NUM[socialSkill.Communication]
+            interPersonal_sum += GRADE_NUM[socialSkill.InterPersonal]
+            teamWork_sum += GRADE_NUM[socialSkill.TeamWork]
 
         #total grades
-        add_normal_text_to_story(Story,'Communication' + ' : ' + GRADE_CHOICES[round(communication / length)])
-        add_normal_text_to_story(Story,'InterPersonal' + ' : ' + GRADE_CHOICES[round(interPersonal / length)])
-        add_normal_text_to_story(Story,'Working in group' + ' : ' + GRADE_CHOICES[round(teamWork / length)])
+        communication= round_skill_marks(communication_sum / length)
+        interPersonal= round_skill_marks(interPersonal_sum / length)
+        teamWork= round_skill_marks(teamWork_sum / length)
+        
+        add_normal_text_to_story(Story,'Communication' + ' : ' + GRADE_CHOICES[communication])
+        add_normal_text_to_story(Story,'InterPersonal' + ' : ' + GRADE_CHOICES[interPersonal])
+        add_normal_text_to_story(Story,'Working in group' + ' : ' + GRADE_CHOICES[teamWork])
         Story.append(Spacer(1,0.05*inch))
-        skillGrades['SocialSkill'] = GRADE_CHOICES[round((communication + interPersonal + teamWork) / (3.0 * length))]
+        skillGrades['SocialSkill'] = GRADE_CHOICES[round_skill_marks((communication + interPersonal + teamWork) / 3.0)]
         add_normal_text_to_story(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + skillGrades['SocialSkill'])
         Story.append(Spacer(1,0.1*inch))
 
@@ -2964,22 +2989,26 @@ def fill_skills_report(student_yearly_info, skillGrades, Story):
     if len(emotionalSkills) == 0:
         add_normal_text_to_story(Story,'No data available')
     else:
-        empathy=0
-        expression=0
-        management=0
+        empathy_sum=0
+        expression_sum=0
+        management_sum=0
         length = len(emotionalSkills)
         #add up grades by teachers
         for emotionalSkill in emotionalSkills:
-            empathy = empathy + GRADE_NUM[emotionalSkill.Empathy]
-            expression = expression + GRADE_NUM[emotionalSkill.Expression]
-            management = management + GRADE_NUM[emotionalSkill.Management]
+            empathy_sum += GRADE_NUM[emotionalSkill.Empathy]
+            expression_sum += GRADE_NUM[emotionalSkill.Expression]
+            management_sum += GRADE_NUM[emotionalSkill.Management]
 
         #total grades
-        add_normal_text_to_story(Story,'Emotional understanding' + ' : ' + GRADE_CHOICES[round(empathy / length)])
-        add_normal_text_to_story(Story,'Expression' + ' : ' + GRADE_CHOICES[round(expression / length)])
-        add_normal_text_to_story(Story,'Management' + ' : ' + GRADE_CHOICES[round(management / length)])
+        empathy = round_skill_marks(empathy_sum / length)
+        expression = round_skill_marks(expression_sum / length)
+        management = round_skill_marks(management_sum / length)
+        
+        add_normal_text_to_story(Story,'Emotional understanding' + ' : ' + GRADE_CHOICES[empathy])
+        add_normal_text_to_story(Story,'Expression' + ' : ' + GRADE_CHOICES[expression])
+        add_normal_text_to_story(Story,'Management' + ' : ' + GRADE_CHOICES[management])
         Story.append(Spacer(1,0.05*inch))
-        skillGrades['EmotionalSkill'] = GRADE_CHOICES[round((empathy + expression + management) / (3.0 * length))]
+        skillGrades['EmotionalSkill'] = GRADE_CHOICES[round_skill_marks((empathy + expression + management) / 3.0)]
         add_normal_text_to_story(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + skillGrades['EmotionalSkill'])
         Story.append(Spacer(1,0.1*inch))
 
@@ -3002,25 +3031,30 @@ def fill_skills_report(student_yearly_info, skillGrades, Story):
     if len(attitudeTowardsSchools) == 0:
         add_normal_text_to_story(Story,'No data available')
     else:
-        schoolTeachers=0
-        schoolMates=0
-        schoolPrograms=0
-        schoolEnvironment=0
+        schoolTeachers_sum=0
+        schoolMates_sum=0
+        schoolPrograms_sum=0
+        schoolEnvironment_sum=0
         length = len(attitudeTowardsSchools)
         #add up grades by teachers
         for attitudeTowardsSchool in attitudeTowardsSchools:
-            schoolTeachers = schoolTeachers + GRADE_NUM[attitudeTowardsSchool.SchoolTeachers]
-            schoolMates = schoolMates + GRADE_NUM[attitudeTowardsSchool.SchoolMates]
-            schoolPrograms = schoolPrograms + GRADE_NUM[attitudeTowardsSchool.SchoolPrograms]
-            schoolEnvironment = schoolEnvironment + GRADE_NUM[attitudeTowardsSchool.SchoolEnvironment]
+            schoolTeachers_sum += GRADE_NUM[attitudeTowardsSchool.SchoolTeachers]
+            schoolMates_sum += GRADE_NUM[attitudeTowardsSchool.SchoolMates]
+            schoolPrograms_sum += GRADE_NUM[attitudeTowardsSchool.SchoolPrograms]
+            schoolEnvironment_sum += GRADE_NUM[attitudeTowardsSchool.SchoolEnvironment]
 
         #total grades
-        add_normal_text_to_story(Story,'SchoolTeachers' + ' : ' + GRADE_CHOICES_3[round(schoolTeachers / length)])
-        add_normal_text_to_story(Story,'SchoolMates' + ' : ' + GRADE_CHOICES_3[round(schoolMates / length)])
-        add_normal_text_to_story(Story,'SchoolPrograms' + ' : ' + GRADE_CHOICES_3[round(schoolPrograms / length)])
-        add_normal_text_to_story(Story,'SchoolEnvironment' + ' : ' + GRADE_CHOICES_3[round(schoolEnvironment / length)])
+        schoolTeachers = round_skill_marks(schoolTeachers_sum / length)
+        schoolMates = round_skill_marks(schoolMates_sum / length)
+        schoolPrograms = round_skill_marks(schoolPrograms_sum / length)
+        schoolEnvironment = round_skill_marks(schoolEnvironment_sum / length)
+            
+        add_normal_text_to_story(Story,'SchoolTeachers' + ' : ' + GRADE_CHOICES_3[schoolTeachers])
+        add_normal_text_to_story(Story,'SchoolMates' + ' : ' + GRADE_CHOICES_3[schoolMates])
+        add_normal_text_to_story(Story,'SchoolPrograms' + ' : ' + GRADE_CHOICES_3[schoolPrograms])
+        add_normal_text_to_story(Story,'SchoolEnvironment' + ' : ' + GRADE_CHOICES_3[schoolEnvironment])
         Story.append(Spacer(1,0.05*inch))
-        skillGrades['AttitudeTowardsSchool'] = GRADE_CHOICES_3[round((schoolTeachers + schoolMates + schoolPrograms + schoolEnvironment) / (4.0 * length))]
+        skillGrades['AttitudeTowardsSchool'] = GRADE_CHOICES_3[round_skill_marks((schoolTeachers + schoolMates + schoolPrograms + schoolEnvironment) / 4.0)]
         add_normal_text_to_story(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + skillGrades['AttitudeTowardsSchool'])
         Story.append(Spacer(1,0.1*inch))
 
@@ -3044,24 +3078,29 @@ def fill_skills_report(student_yearly_info, skillGrades, Story):
         add_normal_text_to_story(Story,'No data available')
     else:
         #add up grades by teachers
-        obedience=0
-        honesty=0
-        equality=0
-        responsibility=0
+        obedience_sum=0
+        honesty_sum=0
+        equality_sum=0
+        responsibility_sum=0
         length = len(valuess)
         for values in valuess:
-            obedience = obedience + GRADE_NUM[values.Obedience]
-            honesty = honesty + GRADE_NUM[values.Honesty]
-            equality = equality + GRADE_NUM[values.Equality]
-            responsibility = responsibility + GRADE_NUM[values.Responsibility]
+            obedience_sum += GRADE_NUM[values.Obedience]
+            honesty_sum += GRADE_NUM[values.Honesty]
+            equality_sum += GRADE_NUM[values.Equality]
+            responsibility_sum += GRADE_NUM[values.Responsibility]
 
         #total grades
-        add_normal_text_to_story(Story,'Obedience' + ' : ' + GRADE_CHOICES_3[round(obedience / length)])
-        add_normal_text_to_story(Story,'Honesty' + ' : ' + GRADE_CHOICES_3[round(honesty / length)])
-        add_normal_text_to_story(Story,'Equality' + ' : ' + GRADE_CHOICES_3[round(equality / length)])
-        add_normal_text_to_story(Story,'Responsibility' + ' : ' + GRADE_CHOICES_3[round(responsibility / length)])
+        obedience = round_skill_marks(obedience_sum / length)
+        honesty = round_skill_marks(honesty_sum / length)
+        equality = round_skill_marks(equality_sum / length)
+        responsibility = round_skill_marks(responsibility_sum / length)
+            
+        add_normal_text_to_story(Story,'Obedience' + ' : ' + GRADE_CHOICES_3[obedience])
+        add_normal_text_to_story(Story,'Honesty' + ' : ' + GRADE_CHOICES_3[honesty])
+        add_normal_text_to_story(Story,'Equality' + ' : ' + GRADE_CHOICES_3[equality])
+        add_normal_text_to_story(Story,'Responsibility' + ' : ' + GRADE_CHOICES_3[responsibility])
         Story.append(Spacer(1,0.05*inch))
-        skillGrades['Values'] = GRADE_CHOICES_3[round((obedience + honesty + equality + responsibility) / (4.0 * length))]
+        skillGrades['Values'] = GRADE_CHOICES_3[round_skill_marks((obedience + honesty + equality + responsibility) / 4.0)]
         add_normal_text_to_story(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + skillGrades['Values'])
         Story.append(Spacer(1,0.1*inch))
 
@@ -3077,6 +3116,9 @@ def fill_skills_report(student_yearly_info, skillGrades, Story):
     Story.append(Spacer(1,0.2*inch))
 
     Story.append(PageBreak())
+
+def round_skill_marks(marks):
+    return ceil_marks(marks)
 
 def fill_outdoor_activity_report(student_yearly_info, Story):
     add_main_header_to_story(Story, "Part 5: Outdoor Activity Report")
