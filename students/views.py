@@ -2092,7 +2092,7 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
     Story.append(Spacer(1,0.05*inch))
 
     #photo
-    image_path = 'media/students_photos/' + year + '_' + student_basic_info.RegistrationNo + '.jpg'
+    image_path = 'media/students_photos/' + str(year) + '_' + str(student_basic_info.RegistrationNo) + '.jpg'
     im = Image(image_path, 1*inch, 1*inch)
 
     #basic info
