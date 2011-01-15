@@ -12,7 +12,9 @@ from sms.students.forms import *
 import misc
 import math
 
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer,Table,TableStyle,PageBreak, CondPageBreak
+from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.platypus import Spacer, Table, TableStyle
+from reportlab.platypus import CondPageBreak, PageBreak
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.rl_config import defaultPageSize
@@ -23,7 +25,8 @@ from reportlab.lib import colors
 import time
 import datetime
 
-PAGE_HEIGHT=defaultPageSize[1]; PAGE_WIDTH=defaultPageSize[0]
+PAGE_HEIGHT = defaultPageSize[1]
+PAGE_WIDTH = defaultPageSize[0]
 styles = getSampleStyleSheet()
 
 from sms.students.vars import *
@@ -41,9 +44,16 @@ class generate_report(object):
             student_addtional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info_obj)
         except:
             student_addtional_info = StudentAdditionalInformation()
-        student_yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo=student_basic_info_obj, ClassMaster__AcademicYear=year, ClassMaster__Type=self.classmaster_type)
+        student_yearly_info = StudentYearlyInformation.objects.get(
+            StudentBasicInfo = student_basic_info_obj, 
+            ClassMaster__AcademicYear = year, 
+            ClassMaster__Type = self.classmaster_type
+        )
         classmaster = student_yearly_info.ClassMaster
-        attendance_objs = StudentAttendance.objects.filter(AttendanceMaster__ClassMaster=classmaster, StudentYearlyInformation=student_yearly_info)
+        attendance_objs = StudentAttendance.objects.filter(
+            AttendanceMaster__ClassMaster = classmaster,
+            StudentYearlyInformation = student_yearly_info
+        )
         physical_fitness_info_obj = PhysicalFitnessInfo.objects.filter(StudentYearlyInformation=student_yearly_info)
         test_marks_objs = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
         socialactivity_objs = SocialActivity.objects.filter(StudentYearlyInformation=student_yearly_info)
@@ -83,18 +93,108 @@ class generate_report(object):
         self.data['attitudetowardsschool'] = attitudetowardsschool_objs
         self.data['values'] = values_objs
         tmp_data = {}
-        tmp_data['workexperience'] = {'nos':['Communication', 'Confidence', 'Involvement'],'strings':['Task','PublicComment'], 'keep':['Task'], 'max':6}
-        tmp_data['thinkingskill'] = {'nos':['Inquiry', 'LogicalThinking', 'Creativity', 'DecisionMakingAndProblemSolving'], 'strings':['PublicComment'], 'max':6}
-        tmp_data['socialskill'] = {'nos':['Communication', 'InterPersonal', 'TeamWork'], 'strings':['PublicComment'], 'max':6}
-        tmp_data['emotionalskill'] = {'nos':['Empathy', 'Expression', 'Management'], 'strings':['PublicComment'], 'max':6}
-        tmp_data['attitudetowardsschool'] = {'nos':['SchoolTeachers', 'SchoolMates', 'SchoolPrograms', 'SchoolEnvironment'], 'strings':['PublicComment'],'max':3}
-        tmp_data['values'] = {'nos':['Obedience', 'Honesty', 'Equality', 'Responsibility'],'strings':['PublicComment'], 'max':3}
-        tmp_data['project'] = {'nos':['ProblemSelection', 'Review', 'Planning', 'ExecutionAndHardWork', 'Documentation', 'Communication'],'keep':['Title', 'PublicComment', 'Type', 'Subject'], 'max':3}
-        tmp_data['physical_fitness'] = {'nos':['Grade'], 'keep':['Weight', 'Height', 'FlexibleForwardBending', 'FlexibleBackwardBending', 'SBJ', 'VerticleJump', 'BallThrow', 'ShuttleRun', 'SitUps', 'Sprint', 'Running400m', 'ShortPutThrow', 'Split', 'BodyMassIndex', 'Balancing', 'Pathak', 'Pratod', 'Margadarshak', 'SpecialSport'],'max':3, 'strings':['PublicComment']}
-        tmp_data['socialactivity'] = {'nos':['Grade'], 'keep':['Activity', 'Objectives', 'Date', 'Organizer'], 'max':6, 'strings':['PublicComment']}
-        tmp_data['abhivyaktivikas'] = {'nos':['Participation', 'ReadinessToLearn', 'ContinuityInWork', 'SkillDevelopment', 'Creativity'], 'strings':['PublicComment'], 'keep':['MediumOfExpression', 'Teacher'], 'max':6}
-        tmp_data['elocution'] = {'nos':['Memory', 'Content', 'Understanding', 'Pronunciation', 'Presentation'], 'max':3, 'keep':['Title', 'PublicComment']}
-        tmp_data['physicaleducation'] = {'keep':['Name', 'Pratod'], 'nos':['AbilityToWorkInTeam', 'Cooperation', 'LeadershipSkill'], 'strings':['PublicComment'], 'max':6}
+        tmp_data['workexperience'] = {
+            'nos':['Communication', 'Confidence', 'Involvement'],
+            'strings':['Task','PublicComment'],
+            'keep':['Task'],
+            'max':6
+        }
+        tmp_data['thinkingskill'] = {
+            'nos':['Inquiry', 'LogicalThinking', 'Creativity', 'DecisionMakingAndProblemSolving'],
+            'strings':['PublicComment'],
+            'max':6
+        }
+        tmp_data['socialskill'] = {
+            'nos':['Communication', 'InterPersonal', 'TeamWork'],
+            'strings':['PublicComment'],
+            'max':6
+        }
+        tmp_data['emotionalskill'] = {
+            'nos':['Empathy', 'Expression', 'Management'],
+            'strings':['PublicComment'],
+            'max':6
+        }
+        tmp_data['attitudetowardsschool'] = {
+            'nos':['SchoolTeachers', 'SchoolMates', 'SchoolPrograms', 'SchoolEnvironment'],
+            'strings':['PublicComment'],
+            'max':3
+        }
+        tmp_data['values'] = {
+            'nos':['Obedience', 'Honesty', 'Equality', 'Responsibility'],
+            'strings':['PublicComment'],
+            'max':3
+        }
+        tmp_data['project'] = {
+            'nos':['ProblemSelection', 'Review', 'Planning', 'ExecutionAndHardWork', 'Documentation', 'Communication'],
+            'keep':['Title', 'PublicComment', 'Type', 'Subject'],
+            'max':3
+        }
+        tmp_data['physical_fitness'] = {
+            'nos' : ['Grade'],
+            'keep': [
+                'Weight',
+                'Height',
+                'FlexibleForwardBending',
+                'FlexibleBackwardBending',
+                'SBJ',
+                'VerticleJump',
+                'BallThrow',
+                'ShuttleRun',
+                'SitUps',
+                'Sprint',
+                'Running400m',
+                'ShortPutThrow',
+                'Split',
+                'BodyMassIndex',
+                'Balancing',
+                'Pathak',
+                'Pratod',
+                'Margadarshak',
+                'SpecialSport'
+            ],
+            'max':3,
+            'strings':['PublicComment']
+        }
+        tmp_data['socialactivity'] = {
+            'nos':['Grade'],
+            'keep':[
+                'Activity',
+                'Objectives',
+                'Date',
+                'Organizer'
+            ],
+            'max':6,
+            'strings':['PublicComment']
+        }
+        tmp_data['abhivyaktivikas'] = {
+            'nos':[
+                'Participation',
+                'ReadinessToLearn',
+                'ContinuityInWork',
+                'SkillDevelopment',
+                'Creativity'
+            ],
+            'strings':['PublicComment'],
+            'keep':['MediumOfExpression', 'Teacher'],
+            'max':6
+        }
+        tmp_data['elocution'] = {
+            'nos':[
+                'Memory',
+                'Content',
+                'Understanding',
+                'Pronunciation',
+                'Presentation'
+            ],
+            'max':3,
+            'keep':['Title', 'PublicComment']
+        }
+        tmp_data['physicaleducation'] = {
+            'keep':['Name', 'Pratod'],
+            'nos':['AbilityToWorkInTeam', 'Cooperation', 'LeadershipSkill'],
+            'strings':['PublicComment'],
+            'max':6
+        }
         self.find_avg(tmp_data)
     #
     def find_avg(self, data):
@@ -109,13 +209,13 @@ class generate_report(object):
             for x in t:
                 if data[k].has_key('nos'):
                     for y in data[k]['nos']:
-                        retval[y] += int(getattr(x,y))
+                        retval[y] += int(getattr(x, y))
                 if data[k].has_key('strings'):
                     for y in data[k]['strings']:
-                        retval[y] += getattr(x,y)
+                        retval[y] += getattr(x, y)
                 if data[k].has_key('keep'):
                     for y in data[k]['keep']:
-                        retval[y] = getattr(x,y)
+                        retval[y] = getattr(x, y)
             for x in data[k]['nos']:
                 if len(t):
                     retval[x] /= len(t)
@@ -136,7 +236,7 @@ def report(request):
         student_basic_info = StudentBasicInfo.objects.get(RegistrationNo = reg_no)
         student_yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo = student_basic_info)
         student_add_info = StudentAdditionalInformation.objects.get(Id=student_basic_info)
-        student_data={'FirstName':student_basic_info.FirstName,
+        student_data = {'FirstName':student_basic_info.FirstName,
                       'LastName':student_basic_info.LastName,
                       'DateOfBirth':student_basic_info.DateOfBirth,
                       'MothersName':student_basic_info.MothersName,
@@ -148,8 +248,8 @@ def report(request):
         attendances = StudentAttendance.objects.filter(StudentYearlyInformation = student_yearly_info)
         attendance_data = []
         for attendance in attendances:
-            attendance_data.append({'Month':MONTH_CHOICES[attendance.AttendanceMaster.Month] ,
-                                    'Attendance':attendance.ActualAttendance ,
+            attendance_data.append({'Month':MONTH_CHOICES[attendance.AttendanceMaster.Month],
+                                    'Attendance':attendance.ActualAttendance,
                                     'Working_days':attendance.AttendanceMaster.WorkingDays})
 
         mark_data = {}
@@ -205,8 +305,8 @@ def report(request):
         cumulative_abhi_grade_sum=0
         cumulative_abhi_grade=0
         for abhi_row in abhivyakti_vikas:
-            abhi_grade_row_sum=(GRADE_NUM[abhi_row.Participation])+(GRADE_NUM[abhi_row.ReadinessToLearn])+(GRADE_NUM[abhi_row.ContinuityInWork])+(GRADE_NUM[abhi_row.SkillDevelopment])+(GRADE_NUM[abhi_row.Creativity])
-            cumulative_abhi_grade_sum=cumulative_abhi_grade_sum+int(round(abhi_grade_row_sum/5))
+            abhi_grade_row_sum = (GRADE_NUM[abhi_row.Participation])+(GRADE_NUM[abhi_row.ReadinessToLearn])+(GRADE_NUM[abhi_row.ContinuityInWork])+(GRADE_NUM[abhi_row.SkillDevelopment])+(GRADE_NUM[abhi_row.Creativity])
+            cumulative_abhi_grade_sum = cumulative_abhi_grade_sum+int(round(abhi_grade_row_sum/5))
             abhivyakti_vikas_data.append({'MediumOfExpression':abhi_row.MediumOfExpression ,
                                          'Teacher':abhi_row.Teacher ,
                                          'Participation':GRADE_CHOICES[abhi_row.Participation] ,
@@ -216,15 +316,15 @@ def report(request):
                                          'Creativity':GRADE_CHOICES[abhi_row.Creativity],
                                          'PublicComment':abhi_row.PublicComment})
         if(len(abhivyakti_vikas) > 0):
-            cumulative_abhi_grade=GRADE_CHOICES[int(round(cumulative_abhi_grade_sum/len(abhivyakti_vikas)))]
+            cumulative_abhi_grade = GRADE_CHOICES[int(round(cumulative_abhi_grade_sum/len(abhivyakti_vikas)))]
 
         projects = Project.objects.filter(StudentYearlyInformation = student_yearly_info)
         project_data = []
-        cumulative_project_grade_sum=0
-        cumulative_project_grade=0
+        cumulative_project_grade_sum = 0
+        cumulative_project_grade = 0
         for proj_row in projects:
-            proj_grade_row_sum=(GRADE_NUM[proj_row.ProblemSelection])+(GRADE_NUM[proj_row.Review])+(GRADE_NUM[proj_row.Planning])+(GRADE_NUM[proj_row.Documentation])+(GRADE_NUM[proj_row.Communication])
-            cumulative_project_grade_sum=cumulative_project_grade_sum+int(round(proj_grade_row_sum/5))
+            proj_grade_row_sum = (GRADE_NUM[proj_row.ProblemSelection])+(GRADE_NUM[proj_row.Review])+(GRADE_NUM[proj_row.Planning])+(GRADE_NUM[proj_row.Documentation])+(GRADE_NUM[proj_row.Communication])
+            cumulative_project_grade_sum = cumulative_project_grade_sum+int(round(proj_grade_row_sum/5))
             project_data.append({'Title':proj_row.Title ,
                                          'Type':PROJECT_TYPE_CHOICES[proj_row.Type] ,
                                          'Subject':proj_row.Subject ,
@@ -235,7 +335,7 @@ def report(request):
                                          'Communication':GRADE_CHOICES[proj_row.Communication],
                                          'PublicComment':proj_row.PublicComment})
         if(len(projects) > 0):
-            cumulative_project_grade=GRADE_CHOICES[int(round(cumulative_project_grade_sum/len(projects)))]
+            cumulative_project_grade = GRADE_CHOICES[int(round(cumulative_project_grade_sum/len(projects)))]
 
         elocution = Elocution.objects.filter(StudentYearlyInformation = student_yearly_info)
         elocution_data = []
@@ -835,7 +935,16 @@ def socialactivity_add(request):
                 x = SocialActivityDetailsForm(initial=tmp)
                 data.append(x)
             data.append(SocialActivityDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response(respage, {'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+            return render_to_response(
+                respage, 
+                {
+                    'form':genform,
+                    'data':data,
+                    'name':name,
+                    'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'
+                },
+                context_instance=RequestContext(request)
+            )
         return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
 
 #
@@ -1670,7 +1779,7 @@ def attendance_add(request):
 
 def later_pages(canvas, doc):
     canvas.saveState()
-    canvas.setFont('Times-Roman',6)
+    canvas.setFont('Times-Roman', 6)
     now_time = datetime.datetime.now()
     #epoch_seconds = time.mktime(now_time.timetuple())
     epoch_seconds = now_time.strftime("%d %b %Y %I:%M:%S%p")
@@ -3301,7 +3410,7 @@ def fill_certificate(student_basic_info, Story):
 
     add_signature_space_to_story(Story, "Principal","Jnana Prabodhini Prashala")
 
-    Story.append(Spacer(1,0.1*inch))
+    Story.append(Spacer(1, 0.1*inch))
     Story.append(PageBreak())
 
 # PDF School Leaving :  --------------------------------------------------
@@ -3545,7 +3654,7 @@ def int2word(n):
 
 def cards_later_pages(canvas, doc):
     canvas.saveState()
-    canvas.setFont('Times-Roman',6)
+    canvas.setFont('Times-Roman', 6)
     now_time = datetime.datetime.now()
     epoch_seconds = now_time.strftime("%d %b %Y %I:%M:%S%p")
     #the number at the bottom right of page will let us trace the exact date and time and will never repeat for any documents
@@ -3598,7 +3707,7 @@ def cards_pdf(request):
         #show an unsaved pdf document in the browser, using report_pdf
         response = HttpResponse(mimetype='application/pdf')
 
-        margin=0.01*PAGE_WIDTH
+        margin = 0.01*PAGE_WIDTH
         doc = SimpleDocTemplate(response,
                 leftMargin=margin,
                 rightMargin=margin,
@@ -3749,7 +3858,7 @@ def fill_card_row(Story, student_yearly_infos,
     #table
     data = [cardsRow]
     colWidthValues = [0.49*PAGE_WIDTH,0.49*PAGE_WIDTH]
-    table=Table(data, colWidths=colWidthValues)
+    table = Table(data, colWidths=colWidthValues)
     table_style = TableStyle([('VALIGN',(0,0),(-1,-1), 'TOP')])
     table.setStyle(table_style)
     Story.append(table)
