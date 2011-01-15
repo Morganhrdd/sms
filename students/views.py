@@ -10,6 +10,7 @@ from django.utils.safestring import mark_safe
 from sms.students.models import *
 from sms.students.forms import *
 import misc
+import math
 
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer,Table,TableStyle,PageBreak, CondPageBreak
 from reportlab.lib.styles import getSampleStyleSheet
@@ -2322,14 +2323,15 @@ def fill_academic_report_board_2011_9th(student_yearly_info, Story):
     cumulative_marks=0
     cumulative_maxmarks=0
     data = []
-    data.append(['','F3/10','F4/10','N2/20','S2/60','FA','SA','Total Grade', 'Grade Point'])
+    data.append(['','F3','F4','S2','FA','SA','Total','Total'])
+    data.append(['','20','20','60','Grade','Grade','Grade','Grade Point'])
     for subject_item in temp_sort:
         if not subjects_data.has_key(subject_item):
             continue
         subject_data = subjects_data[subject_item]
         subject_name = subject_item
 
-        F1, F2, F3, F4, N1, N2, S1, S2 = [0 for x in range(8)] 
+        W1, W2, W3, W4, N1, N2, S1, S2 = [0 for x in range(8)] 
                         
         for subject_marks in subject_data:
             test_mapping = subject_marks.TestMapping
@@ -2339,24 +2341,28 @@ def fill_academic_report_board_2011_9th(student_yearly_info, Story):
             marks_obtained = subject_marks.MarksObtained
 
             #weighted marks
-            if test_type == 'F1':
-                F1 = weighted_marks(marks_obtained, maximum_marks, 10)
-            elif test_type == 'F2':
-                F2 = weighted_marks(marks_obtained, maximum_marks, 10)
-            elif test_type == 'F3':
-                F3 = weighted_marks(marks_obtained, maximum_marks, 10)
-            elif test_type == 'F4':
-                F4 = weighted_marks(marks_obtained, maximum_marks, 10)
+            if test_type == 'W1':
+                W1 = weighted_marks(marks_obtained, maximum_marks, 10)
+            elif test_type == 'W2':
+                W2 = weighted_marks(marks_obtained, maximum_marks, 10)
+            elif test_type == 'W3':
+                W3 = weighted_marks(marks_obtained, maximum_marks, 10)
+            elif test_type == 'W4':
+                W4 = weighted_marks(marks_obtained, maximum_marks, 10)
             elif test_type == 'N2':
                 N2 = weighted_marks(marks_obtained, maximum_marks, 20)
             elif test_type == 'S2':
                 S2 = weighted_marks(marks_obtained, maximum_marks, 60)
 
         #pick best two
-        F3, F4 = best_two_of_four_marks(F1, F2, F3, F4)
+        W3, W4 = best_two_of_four_marks(W1, W2, W3, W4)
 
         #summations
-        FA = F3 + F4 + N2
+        N3 = ceil_marks(N2 / 2)
+        N4 = ceil_marks(N2 / 2)
+        F3 = W3 + N3
+        F4 = W4 + N4
+        FA = F3 + F4
         SA = S2
         total = FA + SA
 
@@ -2370,7 +2376,6 @@ def fill_academic_report_board_2011_9th(student_yearly_info, Story):
         data_row.append(subject_name)
         data_row.append(str(F3))
         data_row.append(str(F4))
-        data_row.append(str(N2))
         data_row.append(str(S2))
         data_row.append(grades[grade_point_FA])
         data_row.append(grades[grade_point_SA])
@@ -2417,14 +2422,14 @@ def fill_academic_report_board_2011_10th(student_yearly_info, Story):
     cumulative_maxmarks=0
     data = []
     data.append(['','F1','F2','F3','F4','S1','S2','FA','SA','Total', 'Total'])
-    data.append(['','5','5','5','5','20','40','Grade','Grade','Grade', 'Grade Point'])
+    data.append(['','10','10','10','10','20','40','Grade','Grade','Grade', 'Grade Point'])
     for subject_item in temp_sort:
         if not subjects_data.has_key(subject_item):
             continue
         subject_data = subjects_data[subject_item]
         subject_name = subject_item
 
-        F1, F2, F3, F4, N1, N2, S1, S2 = [0 for x in range(8)]
+        W1, W2, W3, W4, N1, N2, N3, N4, S1, S2 = [0 for x in range(10)]
                         
         for subject_marks in subject_data:
             test_mapping = subject_marks.TestMapping
@@ -2434,28 +2439,32 @@ def fill_academic_report_board_2011_10th(student_yearly_info, Story):
             marks_obtained = subject_marks.MarksObtained
 
             #weighted marks
-            if test_type == 'F1':
-                F1 = weighted_marks(marks_obtained, maximum_marks, 5)
-            elif test_type == 'F2':
-                F2 = weighted_marks(marks_obtained, maximum_marks, 5)
-            elif test_type == 'F3':
-                F3 = weighted_marks(marks_obtained, maximum_marks, 5)
-            elif test_type == 'F4':
-                F4 = weighted_marks(marks_obtained, maximum_marks, 5)
+            if test_type == 'W1':
+                W1 = weighted_marks(marks_obtained, maximum_marks, 5)
+            elif test_type == 'W2':
+                W2 = weighted_marks(marks_obtained, maximum_marks, 5)
+            elif test_type == 'W3':
+                W3 = weighted_marks(marks_obtained, maximum_marks, 5)
+            elif test_type == 'W4':
+                W4 = weighted_marks(marks_obtained, maximum_marks, 5)
             elif test_type == 'N1':
                 N1 = weighted_marks(marks_obtained, maximum_marks, 5)
             elif test_type == 'N2':
                 N2 = weighted_marks(marks_obtained, maximum_marks, 5)
+            elif test_type == 'N3':
+                N3 = weighted_marks(marks_obtained, maximum_marks, 5)
+            elif test_type == 'N4':
+                N4 = weighted_marks(marks_obtained, maximum_marks, 5)
             elif test_type == 'S1':
                 S1 = weighted_marks(marks_obtained, maximum_marks, 20)
             elif test_type == 'S2':
                 S2 = weighted_marks(marks_obtained, maximum_marks, 40)
 
-        #merge N1, N2 marks into FA
-        F1 = round_marks((F1 + N1) / 2)
-        F2 = round_marks((F2 + N1) / 2)
-        F3 = round_marks((F3 + N2) / 2)
-        F4 = round_marks((F4 + N2) / 2)
+        #merge N1 to N4 marks into FA
+        F1 = W1 + N1
+        F2 = W2 + N2
+        F3 = W3 + N3
+        F4 = W4 + N4
 
         #summations
         FA = F1 + F2 + F3 + F4
@@ -2502,12 +2511,12 @@ def fill_academic_report_board_2011_10th(student_yearly_info, Story):
 
 def weighted_marks(test_marks_obtained, test_maximum_marks, weighted_maximum_marks):
     ratio = test_marks_obtained / test_maximum_marks
-    weighted_marks_obtained = round_marks(ratio * weighted_maximum_marks)
+    weighted_marks_obtained = ceil_marks(ratio * weighted_maximum_marks)
     return weighted_marks_obtained
 
 def grade_point(test_marks_obtained, test_maximum_marks):
     ratio = test_marks_obtained / test_maximum_marks
-    percentage = round_marks(ratio * 100)
+    percentage = ceil_marks(ratio * 100)
 
     #grade point
     if (percentage <= 20):
@@ -2538,6 +2547,10 @@ def best_two_of_four_marks(marks1, marks2, marks3, marks4):
 
 def round_marks(marks):
     return int(round(marks))
+
+def ceil_marks(marks):
+    ceiled_marks = math.ceil(marks)
+    return int(ceiled_marks)
 
 def fill_cocurricular_report(student_yearly_info, Story):
     add_main_header_to_story(Story, "Part 3: Co-curricular Activity Report")
