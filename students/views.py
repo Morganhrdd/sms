@@ -21,6 +21,7 @@ from reportlab.rl_config import defaultPageSize
 from reportlab.lib.units import inch, cm
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT
 from reportlab.lib import colors
+from reportlab.platypus import Image
 
 import time
 import datetime
@@ -2061,7 +2062,7 @@ def add_student_name(student_yearly_info, Story):
 
     registration_number = str(student_basic_info.RegistrationNo)
     student_name = student_basic_info.FirstName + ' ' + student_basic_info.LastName
-    standard_roll_number = str(student_yearly_info.ClassMaster.Standard) + ' ' + str(student_yearly_info.RollNo)
+    standard_roll_number = str(student_yearly_info.ClassMaster.Standard) + 'th ' + str(student_yearly_info.RollNo)
     student_info = registration_number + '  ' + student_name + '  ' + standard_roll_number
     
     style = ParagraphStyle(name = 'StudentNameStyle', fontSize = 9, alignment=TA_RIGHT)
@@ -2090,11 +2091,15 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
     Story.append(Paragraph("<strong>" + "Part 1: General Information" + "</strong>", style))
     Story.append(Spacer(1,0.05*inch))
 
+    #photo
+    image_path = 'media/students_photos/' + year + '_' + student_basic_info.RegistrationNo + '.jpg'
+    im = Image(image_path, 1*inch, 1*inch)
+
     #basic info
     data = []
     data=(
             ['Registration No.: ' , student_basic_info.RegistrationNo,''],
-            ['Name: ' , student_basic_info.FirstName + ' ' + student_basic_info.LastName,''],
+            ['Name: ' , student_basic_info.FirstName + ' ' + student_basic_info.LastName,im],
             ["Father's Name: " , student_basic_info.FathersName,''],
             ["Mother's Name: " , student_basic_info.MothersName,''],
             ['Address: ' , student_addtional_info.Address,''],
