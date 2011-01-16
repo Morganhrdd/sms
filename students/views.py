@@ -2093,20 +2093,28 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
 
     #photo
     image_path = 'media/students_photos/' + str(year) + '_' + str(student_basic_info.RegistrationNo) + '.jpg'
-    im = Image(image_path, 1*inch, 1*inch)
+    im = Image(image_path, width=1.5*inch)
 
     #basic info
     data = []
     data=(
-            ['Registration No.: ' , student_basic_info.RegistrationNo,''],
-            ['Name: ' , student_basic_info.FirstName + ' ' + student_basic_info.LastName,im],
+            ['Registration No.: ' , student_basic_info.RegistrationNo,im],
+            ['Name: ' , student_basic_info.FirstName + ' ' + student_basic_info.LastName,''],
             ["Father's Name: " , student_basic_info.FathersName,''],
             ["Mother's Name: " , student_basic_info.MothersName,''],
-            ['Address: ' , student_addtional_info.Address,''],
+            ['Address: ' , Paragraph(student_addtional_info.Address, styles['Normal']),''],
             ['Standard: ' , student_yearly_data.ClassMaster.Standard,''],
             ['Roll No.: ' , student_yearly_data.RollNo,''],
         )
-    add_no_border_table_to_story(Story, data)
+    table=Table(data)
+    table_style = TableStyle([
+        ('FONT', (0,0), (-1,-1), 'Times-Roman'),
+        ('FONTSIZE',(0,0),(-1,-1),9),
+        ('SPAN',(-1,0),(-1,-1))
+        ])
+    table.setStyle(table_style)
+    table.hAlign='LEFT'
+    Story.append(table)
 
     # cumulative Academics
     marks = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
