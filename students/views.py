@@ -1629,7 +1629,7 @@ def scrap_add(request):
                 data.append(x)
             x = ScrapDetailsForm(initial={'User':request.user, 'Delete':'Y'})
             data.append(x)
-            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, }, context_instance=RequestContext(request))
+            return render_to_response(respage,{'form':genform, 'data':data, 'name':name,'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg' }, context_instance=RequestContext(request))
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
 
 
