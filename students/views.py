@@ -2093,7 +2093,9 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
 
     #photo
     image_path = 'media/students_photos/' + str(year) + '_' + str(student_basic_info.RegistrationNo) + '.jpg'
-    im = Image(image_path, width=1.5*inch)
+    im = Image(image_path)
+    image_size = 1.5*inch, 1.5*inch
+    im.thumbnail(image_size, Image.ANTIALIAS)
 
     #basic info
     data = []
