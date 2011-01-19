@@ -20,8 +20,8 @@ FEE_DIVISION_CHOICES = (
 )
 
 FEE_CHOICES = (
-	('1', 'Scholarship'),
-	('2', 'Special Fee'),
+	(1, 'Scholarship'),
+	(2, 'Special Fee'),
 )
 
 
