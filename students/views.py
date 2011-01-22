@@ -25,6 +25,7 @@ from reportlab.platypus import Image
 
 import time
 import datetime
+import os.path
 
 PAGE_HEIGHT = defaultPageSize[1]
 PAGE_WIDTH = defaultPageSize[0]
@@ -2093,9 +2094,12 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
 
     #photo
     image_path = 'media/students_photos/' + str(year) + '_' + str(student_basic_info.RegistrationNo) + '.jpg'
-    im = Image(image_path)
-    image_size = 1.5*inch, 1.5*inch
-    im.thumbnail(image_size, Image.ANTIALIAS)
+    is_file_exists = os.path.isfile(image_path)
+    im = ''
+    if is_file_exists:
+        im = Image(image_path)
+        aspect_ratio = im.imageHeight / im.imageWidth
+        im = Image(image_path, 1*inch, aspect_ratio*inch)
 
     #basic info
     data = []
