@@ -1840,7 +1840,7 @@ def report_pdf(request):
                              + '<BIG>Type of Report</BIG>: <input type="text" name="part_option" value="0" id="part_option" size="3"><br /><br />'
                              + '<BIG>Standard</BIG>: <input type="text" name="standard" value="0" id="standard" size="3"><br /><br />'
                              + '<BIG>Division </BIG>: <input type="text" name="division" value="-" id="division" size="3"><br /><br />'
-                             + 'Year: <input type="text" name="year_option" value="2009-2010" id="year_option" size="10"><br /><br />'
+                             + 'Year: <input type="text" name="year_option" value="2010-2011" id="year_option" size="10"><br /><br />'
                              + '<input type="submit" value="Enter" />'
                              + '</form>'
                              + '<br /><br />'
@@ -2108,9 +2108,11 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
         im = Image(image_path, 1*inch, aspect_ratio*inch)
 
     #basic info
-    add_normal_text_to_story('Registration No.: ' + str(student_basic_info.RegistrationNo) + ',   '
+    student_number = 'Registration No.: ' + str(student_basic_info.RegistrationNo) + ',   '
                              + 'Standard: ' +  str(student_yearly_data.ClassMaster.Standard) + ',   '
-                             + 'Roll No.: ' + str(student_yearly_data.RollNo))
+                             + 'Roll No.: ' + str(student_yearly_data.RollNo)
+
+    add_normal_text_to_story(Story, student_number)
     
     data = []
     data=(
