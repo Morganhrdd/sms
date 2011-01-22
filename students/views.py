@@ -2655,7 +2655,7 @@ def weighted_marks(test_marks_obtained, test_maximum_marks, weighted_maximum_mar
     return weighted_marks_obtained
 
 def grade_point(test_marks_obtained, test_maximum_marks):
-    ratio = test_marks_obtained / test_maximum_marks
+    ratio = float(test_marks_obtained) / float(test_maximum_marks)
     percentage = ceil_marks(ratio * 100)
 
     #grade point
