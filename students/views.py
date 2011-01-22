@@ -2108,9 +2108,9 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
         im = Image(image_path, 1*inch, aspect_ratio*inch)
 
     #basic info
-    add_normal_text_to_story('Registration No.: ' + student_basic_info.RegistrationNo + ',   '
-                             + 'Standard: ' +  student_yearly_data.ClassMaster.Standard + ',   '
-                             + 'Roll No.: ' , student_yearly_data.RollNo)
+    add_normal_text_to_story('Registration No.: ' + str(student_basic_info.RegistrationNo) + ',   '
+                             + 'Standard: ' +  str(student_yearly_data.ClassMaster.Standard) + ',   '
+                             + 'Roll No.: ' + str(student_yearly_data.RollNo))
     
     data = []
     data=(
