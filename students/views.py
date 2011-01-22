@@ -2108,26 +2108,25 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
         im = Image(image_path, 1*inch, aspect_ratio*inch)
 
     #basic info
-    student_number = 'Registration No.: ' + str(student_basic_info.RegistrationNo) + ',   '
-                             + 'Standard: ' +  str(student_yearly_data.ClassMaster.Standard) + ',   '
-                             + 'Roll No.: ' + str(student_yearly_data.RollNo)
-
-    style = ParagraphStyle(name = 'StudentNumberStyle', fontSize = 10, alignment=TA_RIGHT)
+    student_number = '   ' + 'Registration No.: ' + str(student_basic_info.RegistrationNo) + ',   ' + 'Standard: ' +  str(student_yearly_data.ClassMaster.Standard) + ',   ' + 'Roll No.: ' + str(student_yearly_data.RollNo)
+    style = ParagraphStyle(name = 'StudentInfoStyle', fontSize = 9, alignment=TA_LEFT)
     Story.append(Paragraph(student_number, style))
+    Story.append(Spacer(1,0.1*inch))
     
     data = []
     data=(
-            ['Name: ' , student_basic_info.FirstName + ' ' + student_basic_info.LastName,''],
+            ['Name: ' , student_basic_info.FirstName + ' ' + student_basic_info.LastName,im],
             ["Father's Name: " , student_basic_info.FathersName,''],
             ["Mother's Name: " , student_basic_info.MothersName,''],
-            ['Address: ' , Paragraph(student_addtional_info.Address, styles['Normal']),''],
+            ['Address: ' , Paragraph(student_addtional_info.Address, style),''],
         )
     table=Table(data)
     table_style = TableStyle([
         ('FONT', (0,0), (-1,-1), 'Times-Roman'),
         ('FONTSIZE',(0,0),(-1,-1),9),
         ('SPAN',(-1,0),(-1,-1)),
-        ('VALIGN',(0,0),(-1,-1),'TOP')
+        ('VALIGN',(0,0),(-1,-1),'TOP'),
+        ('ALIGN',(0,0),(-1,-1),'RIGHT')
         ])
     table.setStyle(table_style)
     table.hAlign='LEFT'
@@ -2227,6 +2226,7 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
         cumulative_attendance_percentage = str(round((float(cumulative_attendance) / cumulative_workingdays_attendance * 100),2)) + "%"
 
     # Cumulative Grade Table
+    Story.append(Spacer(1,0.1*inch))
     add_sub_header_to_story(Story,"Report Summary")
     data = []
     data=(
