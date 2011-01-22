@@ -1909,8 +1909,14 @@ def fill_pdf_data(Story, registration_nos, part_option, standard, division, year
                 fill_library_and_medical_report(student_yearly_info, Story)
             elif part_option == 1109:
                 fill_academic_report_board_2011_9th(student_yearly_info, Story)
+                Story.append(PageBreak())
             elif part_option == 1110:
                 fill_academic_report_board_2011_10th(student_yearly_info, Story)
+                Story.append(PageBreak())
+            elif part_option == 110910:
+                fill_academic_report_board_2011_9th(student_yearly_info, Story)
+                fill_academic_report_board_2011_10th(student_yearly_info, Story)
+                Story.append(PageBreak())
 
 #helper functions for populating content to pdf report
 def add_table_to_story(Story,data,align):
@@ -2102,21 +2108,24 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
         im = Image(image_path, 1*inch, aspect_ratio*inch)
 
     #basic info
+    add_normal_text_to_story('Registration No.: ' + student_basic_info.RegistrationNo + ',   '
+                             + 'Standard: ' +  student_yearly_data.ClassMaster.Standard + ',   '
+                             + 'Roll No.: ' , student_yearly_data.RollNo)
+    
     data = []
     data=(
-            ['Registration No.: ' , student_basic_info.RegistrationNo,im],
             ['Name: ' , student_basic_info.FirstName + ' ' + student_basic_info.LastName,''],
             ["Father's Name: " , student_basic_info.FathersName,''],
             ["Mother's Name: " , student_basic_info.MothersName,''],
             ['Address: ' , Paragraph(student_addtional_info.Address, styles['Normal']),''],
-            ['Standard: ' , student_yearly_data.ClassMaster.Standard,''],
-            ['Roll No.: ' , student_yearly_data.RollNo,''],
         )
     table=Table(data)
     table_style = TableStyle([
         ('FONT', (0,0), (-1,-1), 'Times-Roman'),
         ('FONTSIZE',(0,0),(-1,-1),9),
-        ('SPAN',(-1,0),(-1,-1))
+        ('SPAN',(-1,0),(-1,-1)),
+        ('VALIGN',(0,0),(-1,-1),'TOP'),
+        ('ALIGN',(-1,0),(-1,-1),'RIGHT')
         ])
     table.setStyle(table_style)
     table.hAlign='LEFT'
@@ -2449,6 +2458,7 @@ def fill_academic_report2010(student_yearly_info, Story):
 
 def fill_academic_report_board_2011_9th(student_yearly_info, Story):
     add_main_header_to_story(Story, "Part 2: Academic Performance")
+    add_main_header_to_story(Story, "9th Standard")
 
     subjects_data = {}
     student_test_data = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
@@ -2543,11 +2553,10 @@ def fill_academic_report_board_2011_9th(student_yearly_info, Story):
         percentage = round((cumulative_marks / cumulative_maxmarks * 100),2)
     add_sub_header_to_story(Story, 'Percentage: ' + str(percentage) + "%")
 
-    Story.append(PageBreak())
-
 def fill_academic_report_board_2011_10th(student_yearly_info, Story):
     add_main_header_to_story(Story, "Part 2: Academic Performance")
-
+    add_main_header_to_story(Story, "10th Standard")
+    
     subjects_data = {}
     student_test_data = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
     for test_marks in student_test_data:
@@ -2650,8 +2659,6 @@ def fill_academic_report_board_2011_10th(student_yearly_info, Story):
     if cumulative_maxmarks > 0:
         percentage = round((cumulative_marks / cumulative_maxmarks * 100),2)
     add_sub_header_to_story(Story, 'Percentage: ' + str(percentage) + "%")
-
-    Story.append(PageBreak())
 
 def weighted_marks(test_marks_obtained, test_maximum_marks, weighted_maximum_marks):
     ratio = test_marks_obtained / test_maximum_marks
