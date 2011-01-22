@@ -2112,7 +2112,8 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
                              + 'Standard: ' +  str(student_yearly_data.ClassMaster.Standard) + ',   '
                              + 'Roll No.: ' + str(student_yearly_data.RollNo)
 
-    add_normal_text_to_story(Story, student_number)
+    style = ParagraphStyle(name = 'StudentNumberStyle', fontSize = 10, alignment=TA_RIGHT)
+    Story.append(Paragraph(student_number, style))
     
     data = []
     data=(
@@ -2126,8 +2127,7 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
         ('FONT', (0,0), (-1,-1), 'Times-Roman'),
         ('FONTSIZE',(0,0),(-1,-1),9),
         ('SPAN',(-1,0),(-1,-1)),
-        ('VALIGN',(0,0),(-1,-1),'TOP'),
-        ('ALIGN',(-1,0),(-1,-1),'RIGHT')
+        ('VALIGN',(0,0),(-1,-1),'TOP')
         ])
     table.setStyle(table_style)
     table.hAlign='LEFT'
