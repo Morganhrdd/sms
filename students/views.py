@@ -2550,7 +2550,7 @@ def fill_academic_report_board_2011_9th(student_yearly_info, Story):
 
     percentage = 0
     if cumulative_maxmarks > 0:
-        percentage = round((cumulative_marks / cumulative_maxmarks * 100),2)
+        percentage = round((float(cumulative_marks) / float(cumulative_maxmarks) * 100),2)
     add_sub_header_to_story(Story, 'Percentage: ' + str(percentage) + "%")
 
 def fill_academic_report_board_2011_10th(student_yearly_info, Story):
@@ -2657,7 +2657,7 @@ def fill_academic_report_board_2011_10th(student_yearly_info, Story):
 
     percentage = 0
     if cumulative_maxmarks > 0:
-        percentage = round((cumulative_marks / cumulative_maxmarks * 100),2)
+        percentage = round((float(cumulative_marks) / float(cumulative_maxmarks) * 100),2)
     add_sub_header_to_story(Story, 'Percentage: ' + str(percentage) + "%")
 
 def weighted_marks(test_marks_obtained, test_maximum_marks, weighted_maximum_marks):
