@@ -20,6 +20,8 @@ class Category(models.Model):
     Description = models.CharField(max_length=30)
     def __unicode__(self):
         return "%s" % (self.Description)
+    class Meta:
+        verbose_name_plural = "Categories"
 
 class User(models.Model):
     Barcode = models.PositiveIntegerField(primary_key=True)
@@ -97,6 +99,8 @@ class Leaves(models.Model):
     Reason = models.CharField(max_length=30, null=True, blank=True)
     def __unicode__(self):
         return "%s %s %s" % (self.Barcode, self.LeaveDate, self.Status)
+    class Meta:
+        verbose_name_plural = "Leaves"
 
 class LeavesBalance(models.Model):
     Barcode = models.ForeignKey(User)
@@ -107,11 +111,15 @@ class LeaveRules(models.Model):
     Category = models.ForeignKey(Category)
     Type = models.PositiveIntegerField(choices=LEAVE_CHOICES)
     Days = models.PositiveIntegerField()
+    class Meta:
+        verbose_name_plural = "Leave Rules"
 
 class EncashLeaves(models.Model):
     Barcode = models.ForeignKey(User)
     Days = models.PositiveIntegerField()
     Status = models.PositiveIntegerField(choices=LEAVESTATUS_CHOICES)
+    class Meta:
+        verbose_name_plural = "Encash Leaves"
     
 class Overtime(models.Model):
     Barcode = models.ForeignKey(User)
@@ -119,6 +127,8 @@ class Overtime(models.Model):
     ApprovalDate = models.DateField(null=True, blank=True)
     Hours = models.FloatField()
     Status = models.PositiveIntegerField(choices=LEAVESTATUS_CHOICES)
+    class Meta:
+        verbose_name_plural = "Overtime"
 
 class LeaveForm(forms.Form):
     Category = forms.ModelChoiceField(queryset=Category.objects.all())
