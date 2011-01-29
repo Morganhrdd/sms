@@ -2690,6 +2690,7 @@ def grade_point(test_marks_obtained, test_maximum_marks):
     percentage = ceil_marks(ratio * 100)
 
     #grade point
+    grade_point = 0
     if (percentage <= 20):
         grade_point = 0
     elif (percentage <= 32):
