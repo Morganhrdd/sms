@@ -2475,7 +2475,7 @@ def fill_academic_report_board_2011_9th(student_yearly_info, Story):
     grades = ['E2','E2','E2','E1','D','C2','C1','B2','B1','A2','A1']
 
     #desired sequence
-    temp_sort = ['ENG', 'HIN', 'MAR', 'SAN', 'MAT', 'SCI', 'SCS']
+    temp_sort = ['ENG', 'SAN', 'MAT', 'SCI', 'SOC']
     cumulative_marks=0
     cumulative_maxmarks=0
     data = []
@@ -2572,7 +2572,7 @@ def fill_academic_report_board_2011_10th(student_yearly_info, Story):
     grades = ['E2','E2','E2','E1','D','C2','C1','B2','B1','A2','A1']
 
     #desired sequence
-    temp_sort = ['ENG', 'HIN', 'MAR', 'SAN', 'MAT', 'SCI', 'SCS']
+    temp_sort = ['ENG', 'SAN', 'MAT', 'SCI', 'SOC']
     cumulative_marks=0
     cumulative_maxmarks=0
     data = []
