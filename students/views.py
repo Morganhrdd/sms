@@ -1913,10 +1913,6 @@ def fill_pdf_data(Story, registration_nos, part_option, standard, division, year
             elif part_option == 1110:
                 fill_academic_report_board_2011_10th(student_yearly_info, Story)
                 Story.append(PageBreak())
-            elif part_option == 110910:
-                fill_academic_report_board_2011_9th(student_yearly_info, Story)
-                fill_academic_report_board_2011_10th(student_yearly_info, Story)
-                Story.append(PageBreak())
 
 #helper functions for populating content to pdf report
 def add_table_to_story(Story,data,align):
@@ -2575,7 +2571,8 @@ def fill_academic_report_board_2011_9th(student_yearly_info, Story):
 
 def fill_academic_report_board_2011_10th(student_yearly_info, Story):
     add_main_header_to_story(Story, "Part 2: Academic Performance")
-    add_main_header_to_story(Story, "10th Standard")
+    standard_header = str(student_yearly_data.ClassMaster.Standard) + "th Standard"
+    add_main_header_to_story(Story, standard_header)
     
     subjects_data = {}
     student_test_data = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
