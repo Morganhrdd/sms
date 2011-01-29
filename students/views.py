@@ -2462,6 +2462,19 @@ def fill_academic_report_board_2011_9th(student_yearly_info, Story):
     add_main_header_to_story(Story, "Part 2: Academic Performance")
     add_main_header_to_story(Story, "9th Standard")
 
+    #science marks
+    sci_w1 = 0
+    sci_w2 = 0
+    for subject_item in ['PHY', 'CHE', 'BIO']:
+        student_test_marks_w1 = StudentTestMarks.objects.filter(TestMapping__TestType='W1', TestMapping__SubjectMaster__Name=subject_item, StudentYearlyInformation=student_yearly_info)
+        for marks_w1 in student_test_marks_w1:
+            sci_w1 += marks_w1.MarksObtained
+
+        student_test_marks_w2 = StudentTestMarks.objects.filter(TestMapping__TestType='W2', TestMapping__SubjectMaster__Name=subject_item, StudentYearlyInformation=student_yearly_info)
+        for marks_w2 in student_test_marks_w2:
+            sci_w2 += marks_w2.MarksObtained
+
+    #subject data
     subjects_data = {}
     student_test_data = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
     for test_marks in student_test_data:
@@ -2505,17 +2518,22 @@ def fill_academic_report_board_2011_9th(student_yearly_info, Story):
                 W3 = weighted_marks(marks_obtained, maximum_marks, 10)
             elif test_type == 'W4':
                 W4 = weighted_marks(marks_obtained, maximum_marks, 10)
-            elif test_type == 'N2':
-                N2 = weighted_marks(marks_obtained, maximum_marks, 20)
+            elif test_type == 'N1':
+                N1 = weighted_marks(marks_obtained, maximum_marks, 20)
             elif test_type == 'S2':
                 S2 = weighted_marks(marks_obtained, maximum_marks, 60)
 
         #pick best two
         W3, W4 = best_two_of_four_marks(W1, W2, W3, W4)
 
+        #science
+        if test_type == 'SCI':
+            W3 = weighted_marks(sci_w1, 25, 10)
+            W4 = weighted_marks(sci_w2, 25, 10)
+
         #summations
-        N3 = ceil_marks(N2 / 2)
-        N4 = ceil_marks(N2 / 2)
+        N3 = ceil_marks(N1 / 2)
+        N4 = ceil_marks(N1 / 2)
         F3 = W3 + N3
         F4 = W4 + N4
         FA = F3 + F4
