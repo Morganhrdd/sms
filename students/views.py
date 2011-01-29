@@ -2114,7 +2114,7 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
             ['Name: ' , student_basic_info.FirstName + ' ' + student_basic_info.LastName,im],
             ["Father's Name: " , student_basic_info.FathersName,''],
             ["Mother's Name: " , student_basic_info.MothersName,''],
-            ['Address: ' , Paragraph(student_addtional_info.Address, style),''],
+            ['Address: ' , Paragraph(student_addtional_info.Address.replace('&', 'and'), style),''],
         )
     table=Table(data)
     table_style = TableStyle([
