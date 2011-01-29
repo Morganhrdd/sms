@@ -2571,7 +2571,7 @@ def fill_academic_report_board_2011_9th(student_yearly_info, Story):
 
 def fill_academic_report_board_2011_10th(student_yearly_info, Story):
     add_main_header_to_story(Story, "Part 2: Academic Performance")
-    standard_header = str(student_yearly_data.ClassMaster.Standard) + "th Standard"
+    standard_header = str(student_yearly_info.ClassMaster.Standard) + "th Standard"
     add_main_header_to_story(Story, standard_header)
     
     subjects_data = {}
