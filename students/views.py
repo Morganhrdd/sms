@@ -244,7 +244,7 @@ def report(request):
                       'MothersName':student_basic_info.MothersName,
                       'FathersName':student_basic_info.FathersName,
                       'RegistrationNo':student_basic_info.RegistrationNo,
-                      'Address':student_add_info.Address,
+                      'Address':student_add_info.Address.replace('&','and'),
                       'photo':student_yearly_info.Photo}
 
         attendances = StudentAttendance.objects.filter(StudentYearlyInformation = student_yearly_info)
