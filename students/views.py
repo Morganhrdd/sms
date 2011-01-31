@@ -1913,6 +1913,13 @@ def fill_pdf_data(Story, registration_nos, part_option, standard, division, year
             elif part_option == 1110:
                 fill_academic_report_board_2011(student_yearly_info, Story)
                 Story.append(PageBreak())
+            elif part_option == 2011:
+                fill_static_and_yearly_info(student_yearly_info, skillGrades, Story)
+                fill_academic_report_2011(student_yearly_info, Story)
+                fill_cocurricular_report(student_yearly_info, Story)
+                Story += skillsStory
+                fill_outdoor_activity_report(student_yearly_info, Story)
+                fill_library_and_medical_report(student_yearly_info, Story)
 
 #helper functions for populating content to pdf report
 def add_table_to_story(Story,data,align):
@@ -2274,18 +2281,20 @@ def fill_academic_report(student_yearly_info, Story):
     isFormat2010 = (int(begin_year[0]) >= 2010)
     
     if isFormat2010:
-        #fill_academic_report2010(student_yearly_info, Story)
-        fill_academic_report_board_2011(student_yearly_info, Story)
-        
-        Story.append(Spacer(1,0.5*inch))
-        add_sub_header_to_story(Story, "School Attendance")
-        fill_student_attendance(student_yearly_info, Story, 'P')
-
-        class_teacher = student_yearly_info.ClassMaster.Teacher.Name
-        add_signature_space_to_story(Story,class_teacher, "Class Teacher")
-        Story.append(PageBreak())
+        fill_academic_report2010(student_yearly_info, Story)
     else:
         fill_academic_report2008(student_yearly_info, Story)
+
+def fill_academic_report_2011(student_yearly_info, Story):
+    fill_academic_report_board_2011(student_yearly_info, Story)
+    
+    Story.append(Spacer(1,0.5*inch))
+    add_sub_header_to_story(Story, "School Attendance")
+    fill_student_attendance(student_yearly_info, Story, 'P')
+
+    class_teacher = student_yearly_info.ClassMaster.Teacher.Name
+    add_signature_space_to_story(Story,class_teacher, "Class Teacher")
+    Story.append(PageBreak())
 
 def fill_academic_report2008(student_yearly_info, Story):
     add_main_header_to_story(Story, "Part 2: Academic Performance")
