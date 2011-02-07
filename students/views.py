@@ -2697,7 +2697,7 @@ def fill_academic_report_board_2011(student_yearly_info, Story):
     add_sub_header_to_story(Story, 'Percentage: ' + str(percentage) + "%")
 
 def weighted_marks(test_marks_obtained, test_maximum_marks, weighted_maximum_marks):
-    ratio = test_marks_obtained / test_maximum_marks
+    ratio = float(test_marks_obtained) / float(test_maximum_marks)
     weighted_marks_obtained = ceil_marks(ratio * weighted_maximum_marks)
     return weighted_marks_obtained
 
