@@ -3969,3 +3969,176 @@ def fill_card_row(Story, student_yearly_infos,
     Story.append(table)
 
 #----------------------------------------------------------------------------------------------------
+
+#
+@csrf_exempt
+@login_required
+def marks_tables_pdf(request):
+    if not can_login(groups=['teacher'], user=request.user):
+        return redirect('/')
+    if request.POST:
+        #pick values from html form
+        subject_name = request.POST['subject_name']
+        registration_number_min = int(request.POST['registration_number_min'])
+        registration_number_max = int(request.POST['registration_number_max'])
+        standard = int(request.POST['standard'])
+        division = request.POST['division']
+        academic_year = request.POST['academic_year']
+
+        #select student yearly informations
+        student_yearly_infos = []
+        select_yearly_infos(student_yearly_infos, registration_number_min, registration_number_max,
+                          standard, division, academic_year)
+
+        #populate content
+        Story = []
+        if subject_name == 'ALL':
+            fill_all_subjects_marks_table(Story, student_yearly_infos)
+        else:
+            fill_subject_marks_table(Story, student_yearly_infos, subject_name)
+
+        #show an unsaved pdf document in the browser, using report_pdf
+        response = HttpResponse(mimetype='application/pdf')
+        doc = SimpleDocTemplate(response)
+        doc.build(Story, onFirstPage=later_pages, onLaterPages=later_pages)
+
+        return response
+    else:
+        return HttpResponse ('<html><body>'
+                             + '<P><B><BIG><BIG>Marks Tables PDF</BIG></BIG></B></P>'
+                             + '<form action="" method="POST">'
+                             + '<BIG>Subject Name: </BIG>: <input type="text" name="subject_name" value="ALL" id="subject_name" size="3"><br /><br />'
+                             + '<BIG>Registration Numbers: </BIG><input type="text" name="registration_number_min" value="1000" id="registration_number_min" size="5"></td>'
+                             + '<BIG> to </BIG><input type="text" name="registration_number_max" value="6000" id="registration_number_max" size="5"><br /><br />'
+                             + '<BIG>Standard</BIG>: <input type="text" name="standard" value="0" id="standard" size="3"><br /><br />'
+                             + '<BIG>Division </BIG>: <input type="text" name="division" value="-" id="division" size="3"><br /><br />'
+                             + 'Year: <input type="text" name="academic_year" value="2010-2011" id="academic_year" size="10"><br /><br />'
+                             + '<input type="submit" value="Enter" />'
+                             + '</form>'
+                             + '<br /><br />'
+                             + 'Standard - 5 to 10 for respective Standard, any other value for All<br />'
+                             + 'Division - B for Boys, G for Girls, any other value for for Both<br /><br />'
+                             + '<P>An unsaved PDF file will be generated.</P>
+                             + '</body></html>')
+
+
+def fill_subject_marks_table(Story, student_yearly_infos, subject_name):
+
+    rows_data = []
+    column_headers = []
+    
+    for student_yearly_info in student_yearly_infos:
+        #student text
+        student_yearly_info = test_marks.StudentYearlyInformation
+        student_text = student_text_for_marks_table(student_yearly_info)
+
+        #test marks
+        test_markss = StudentTestMarks.objects.filter(TestMapping__SubjectMaster__Name=subject_name, StudentYearlyInformation=student_yearly_info)
+
+        #classify by test type
+        row_data = {}
+        row_data['Student'] = student_text
+        for test_marks in test_markss:
+            test_type = test_mapping.TestType
+            test_mapping = test_marks.TestMapping
+
+            #assign marks
+            header = test_type + '/' + str(test_mapping.MaximumMarks)
+            row_data[header] = test_marks.MarksObtained
+
+            #collect column headers
+            if column_headers.count(header) == 0:
+                column_headers.append(header)
+
+        rows_data.append(row_data)
+
+    #sort
+    column_headers.sort()
+
+    #populate table
+    data = []
+    for row_data in rows_data:
+        row = []
+        row.append(str(row_data['Student']))
+        for header in column_headers:
+            if not row_data.has_key(header):
+                row_data[header] = '-'
+            row.append(str(row_data[header]))
+        data.append(row)
+
+    #add to story
+    add_main_header_to_story(Story, subject_name)
+    add_table_to_story(Story, data, 'CENTER')
+    Story.append(PageBreak())
+
+
+def fill_all_subjects_marks_table(Story, student_yearly_infos):
+
+    subjects_rows_data = {}
+    column_headers = []
+    
+    for student_yearly_info in student_yearly_infos:
+        #student text
+        student_yearly_info = test_marks.StudentYearlyInformation
+        student_text = student_text_for_marks_table(student_yearly_info)
+
+        #test marks
+        test_markss = StudentTestMarks.objects.filter(TestMapping__SubjectMaster__Name=subject_name, StudentYearlyInformation=student_yearly_info)
+
+        #classify by test type       
+        for test_marks in test_markss:
+            test_type = test_mapping.TestType
+            test_mapping = test_marks.TestMapping
+
+            #subject data
+            subject_name = test_mapping.SubjectMaster.Name
+            if not subjects_rows_data.has_key(subject_name):
+                subjects_rows_data[subject_name] = {}
+            rows_data = subjects_rows_data[subject_name]
+
+            #row data
+            if not rows_data.has_key(student_text):
+                new_row_data = {}
+                new_row_data['Student'] = student_text
+                rows_data[student_text] = new_row_data
+            row_data = rows_data[student_text]
+
+            #assign marks
+            header = test_type + '/' + str(test_mapping.MaximumMarks)
+            row_data[header] = test_marks.MarksObtained
+            
+            #collect column headers
+            if column_headers.count(header) == 0:
+                column_headers.append(header)          
+
+        rows_data.append(row_data)
+
+    #sort
+    column_headers.sort()
+
+    for rows_data in subjects_rows_data:
+        #populate table
+        data = []
+        for row_data in rows_data:
+            row = []
+            row.append(str(row_data['Student']))
+            for header in column_headers:
+                if not row_data.has_key(header):
+                    row_data[header] = '-'
+                row.append(str(row_data[header]))
+            data.append(row)
+
+        #add to story
+        add_main_header_to_story(Story, subject_name)
+        add_table_to_story(Story, data, 'CENTER')
+        Story.append(PageBreak())
+
+
+def student_text_for_marks_table(student_yearly_info):
+    student_basic_info = student_yearly_info.StudentBasicInfo
+    registration_number = str(student_basic_info.RegistrationNo)
+    standard_roll_number = str(student_yearly_info.ClassMaster.Standard) + 'th ' + str(student_yearly_info.RollNo)
+    student_text = standard_roll_number + ', ' + registration_number
+    return student_text
+
+#----------------------------------------------------------------------------------------------------  
