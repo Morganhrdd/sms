@@ -4028,8 +4028,6 @@ def fill_subject_marks_table(Story, student_yearly_infos, subject_name):
     column_headers = []
     
     for student_yearly_info in student_yearly_infos:
-        #student text
-        student_yearly_info = test_marks.StudentYearlyInformation
         student_text = student_text_for_marks_table(student_yearly_info)
 
         #test marks
@@ -4078,12 +4076,10 @@ def fill_all_subjects_marks_table(Story, student_yearly_infos):
     column_headers = []
     
     for student_yearly_info in student_yearly_infos:
-        #student text
-        student_yearly_info = test_marks.StudentYearlyInformation
         student_text = student_text_for_marks_table(student_yearly_info)
 
         #test marks
-        test_markss = StudentTestMarks.objects.filter(TestMapping__SubjectMaster__Name=subject_name, StudentYearlyInformation=student_yearly_info)
+        test_markss = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
 
         #classify by test type       
         for test_marks in test_markss:
