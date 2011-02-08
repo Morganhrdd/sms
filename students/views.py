@@ -4037,8 +4037,8 @@ def fill_subject_marks_table(Story, student_yearly_infos, subject_name):
         row_data = {}
         row_data['Student'] = student_text
         for test_marks in test_markss:
-            test_type = test_mapping.TestType
             test_mapping = test_marks.TestMapping
+            test_type = test_mapping.TestType
 
             #assign marks
             header = test_type + '/' + str(test_mapping.MaximumMarks)
@@ -4083,8 +4083,8 @@ def fill_all_subjects_marks_table(Story, student_yearly_infos):
 
         #classify by test type       
         for test_marks in test_markss:
-            test_type = test_mapping.TestType
             test_mapping = test_marks.TestMapping
+            test_type = test_mapping.TestType
 
             #subject data
             subject_name = test_mapping.SubjectMaster.Name
