@@ -4055,7 +4055,8 @@ def fill_subject_marks_table(Story, student_yearly_infos, subject_name):
 
     #populate table
     data = []
-    for row_data in rows_data:
+    for key in rows_data:
+        row_data = rows_data[key]
         row = []
         row.append(str(row_data['Student']))
         for header in column_headers:
@@ -4113,7 +4114,8 @@ def fill_all_subjects_marks_table(Story, student_yearly_infos):
     for rows_data in subjects_rows_data:
         #populate table
         data = []
-        for row_data in rows_data:
+        for key in rows_data:
+            row_data = rows_data[key]
             row = []
             row.append(str(row_data['Student']))
             for header in column_headers:
