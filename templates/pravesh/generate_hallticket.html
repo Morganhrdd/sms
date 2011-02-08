@@ -1,0 +1,27 @@
+<html>
+<body>
+    <H1>Search Hall Ticket</H1>
+    <hr />
+    <br />
+    <B><U>Enter details</U></B>
+    <BR /><BR />
+    <a href='/pravesh'>Home</a>
+
+    <form name="add" action="" method="post">
+        <table cellSpacing=0 cellPadding=5 width="50%" border=0 style="WIDTH: 50%" align=center>
+            {{ form.as_table }}
+        </table>
+        <input type="submit" value="Go"/>
+    </form>
+    {% for hallticket_obj in hallticket_objs %}
+    <li>
+        {{ hallticket_obj.Student.FirstName }} {{ hallticket_obj.Student.LastName }}
+        <a href='/pravesh/hallticket/{{hallticket_obj.pk}}'>Print</a>
+        <a href='/pravesh/student/{{hallticket_obj.Student.id}}/edit'>Edit Info</a>
+        
+        
+    </li>
+    {% endfor %}
+
+</body>
+</html>
