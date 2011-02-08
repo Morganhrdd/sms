@@ -4315,8 +4315,8 @@ def fill_all_subjects_marks_table(Story, student_yearly_infos):
     #sort
     column_headers.sort()
 
-    for subjects_key in subjects_rows_data:
-        rows_data = subjects_rows_data[subjects_key]
+    for subject_name in subjects_rows_data:
+        rows_data = subjects_rows_data[subject_name]
 
         #populate table
         data = []
