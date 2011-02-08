@@ -1914,8 +1914,10 @@ def fill_pdf_data(Story, registration_nos, part_option, standard, division, year
                 fill_academic_report_board_2011(student_yearly_info, Story)
                 Story.append(PageBreak())
             elif part_option == 2011:
-                fill_static_and_yearly_info(student_yearly_info, skillGrades, Story)
-                fill_academic_report_2011(student_yearly_info, Story)
+                academics_Story = []
+                academics_percentage = fill_academic_report_2011(student_yearly_info, academics_Story)
+                fill_static_and_yearly_info_2011(student_yearly_info, skillGrades, academics_percentage, Story)
+                Story += academics_Story
                 fill_cocurricular_report(student_yearly_info, Story)
                 Story += skillsStory
                 fill_outdoor_activity_report(student_yearly_info, Story)
@@ -2274,6 +2276,202 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
 
     Story.append(PageBreak())
 
+#first page, letter head, static info and summary
+def fill_static_and_yearly_info_2011(student_yearly_info, skillGrades, academics_percentage, Story):
+    student_basic_info = student_yearly_info.StudentBasicInfo
+
+    try:
+        student_addtional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info.RegistrationNo)
+    except:
+        return
+    student_yearly_data = student_yearly_info
+
+    fill_letter_head(Story)
+
+    #academic year
+    year = student_yearly_data.ClassMaster.AcademicYear.Year
+    style = ParagraphStyle(name = 'SubHeader', fontSize = 10, alignment=TA_CENTER)
+    Story.append(Paragraph("<strong>" + "Year" + " " + year + "</strong>", style))
+    Story.append(Spacer(1,0.05*inch))
+
+    #Part 1 title
+    style = ParagraphStyle(name = 'MainHeader', fontSize = 12, alignment=TA_CENTER)
+    Story.append(Paragraph("<strong>" + "Part 1: General Information" + "</strong>", style))
+    Story.append(Spacer(1,0.05*inch))
+
+    #photo
+    image_path = 'media/students_photos/' + str(year) + '_' + str(student_basic_info.RegistrationNo) + '.jpg'
+    is_file_exists = os.path.isfile(image_path)
+    im = ''
+    if is_file_exists:
+        im = Image(image_path)
+        aspect_ratio = im.imageHeight / im.imageWidth
+        im = Image(image_path, 1*inch, aspect_ratio*inch)
+
+    #basic info
+    student_number = '   ' + 'Registration No.: ' + str(student_basic_info.RegistrationNo) + ',   ' + 'Standard: ' +  str(student_yearly_data.ClassMaster.Standard) + ',   ' + 'Roll No.: ' + str(student_yearly_data.RollNo)
+    style = ParagraphStyle(name = 'StudentInfoStyle', fontSize = 9, alignment=TA_LEFT)
+    Story.append(Paragraph(student_number, style))
+    Story.append(Spacer(1,0.1*inch))
+    
+    data = []
+    data=(
+            ['Name: ' , student_basic_info.FirstName + ' ' + student_basic_info.LastName,im],
+            ["Father's Name: " , student_basic_info.FathersName,''],
+            ["Mother's Name: " , student_basic_info.MothersName,''],
+            ['Address: ' , Paragraph(student_addtional_info.Address.replace('&', 'and'), style),''],
+        )
+    table=Table(data)
+    table_style = TableStyle([
+        ('FONT', (0,0), (-1,-1), 'Times-Roman'),
+        ('FONTSIZE',(0,0),(-1,-1),9),
+        ('SPAN',(-1,0),(-1,-1)),
+        ('VALIGN',(0,0),(-1,-1),'TOP'),
+        ('ALIGN',(0,0),(-1,-1),'RIGHT')
+        ])
+    table.setStyle(table_style)
+    table.hAlign='LEFT'
+    Story.append(table)
+
+    # cumulative Academics
+    marks = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
+    cumulative_marks=0
+    cumulative_maximum_marks=0
+    cumulative_academics='-'
+    for mark in marks:
+        if mark.MarksObtained > 0:
+            cumulative_marks = cumulative_marks + mark.MarksObtained
+            cumulative_maximum_marks = cumulative_maximum_marks + mark.TestMapping.MaximumMarks
+    if cumulative_maximum_marks > 0:
+        cumulative_academics= str(round((cumulative_marks / cumulative_maximum_marks) * 100, 2)) + "%"
+
+    # Cumulative CoCurricular
+    co_curricular = CoCurricular.objects.filter(StudentYearlyInformation = student_yearly_info)
+    cumulative_cocur_grade_sum=0
+    cumulative_cocur_grade='-'
+    for co_cur_acts in co_curricular:
+        cumulative_cocur_grade_sum=cumulative_cocur_grade_sum + GRADE_NUM[co_cur_acts.Grade]
+    if len(co_curricular) > 0:
+        cumulative_cocur_grade=GRADE_CHOICES[int(round(cumulative_cocur_grade_sum/len(co_curricular)))]
+
+    # Cumulative Abhivyakti Vikas
+    abhivyakti_vikas = AbhivyaktiVikas.objects.filter(StudentYearlyInformation = student_yearly_info)
+    cumulative_abhi_grade_sum=0
+    cumulative_abhi_grade='-'
+    for abhi_row in abhivyakti_vikas:
+        abhi_grade_row_sum=(GRADE_NUM[abhi_row.Participation])+(GRADE_NUM[abhi_row.ReadinessToLearn])+(GRADE_NUM[abhi_row.ContinuityInWork])+(GRADE_NUM[abhi_row.SkillDevelopment])+(GRADE_NUM[abhi_row.Creativity])
+        cumulative_abhi_grade_sum=cumulative_abhi_grade_sum+int(round((abhi_grade_row_sum/5)))
+    if len(abhivyakti_vikas) > 0:
+        cumulative_abhi_grade=GRADE_CHOICES[int(round(cumulative_abhi_grade_sum/len(abhivyakti_vikas)))]
+
+    # Cumulative Projects
+    projects = Project.objects.filter(StudentYearlyInformation = student_yearly_info)
+    cumulative_project_grade_sum=0
+    cumulative_project_grade='-'
+    for proj_row in projects:
+        try:
+            proj_grade_row_sum=(GRADE_NUM[proj_row.ProblemSelection])+(GRADE_NUM[proj_row.Review])+(GRADE_NUM[proj_row.Planning])+(GRADE_NUM[proj_row.Documentation])+(GRADE_NUM[proj_row.Communication])
+        except:
+            proj_grade_row_sum=0
+        cumulative_project_grade_sum=cumulative_project_grade_sum+int(round(proj_grade_row_sum/5))
+    if len(projects) > 0:
+        cumulative_project_grade=GRADE_CHOICES_3[int(round(cumulative_project_grade_sum/len(projects)))]
+
+    # Cumulative Elocution
+    elocutions = Elocution.objects.filter(StudentYearlyInformation = student_yearly_info)
+    cumulative_elocution_grade_sum=0
+    cumulative_elocution_grade='-'
+    for elo_row in elocutions:
+        elocution_grade_row_sum=(GRADE_NUM[elo_row.Memory])+(GRADE_NUM[elo_row.Content])+(GRADE_NUM[elo_row.Understanding])+(GRADE_NUM[elo_row.Pronunciation])+(GRADE_NUM[elo_row.Presentation])
+        cumulative_elocution_grade_sum=cumulative_elocution_grade_sum+int(round(elocution_grade_row_sum/5))
+    if len(elocutions) > 0:
+        cumulative_elocution_grade=GRADE_CHOICES_3[int(round(cumulative_elocution_grade_sum/len(elocutions)))]
+
+    # Cumulative Physical Fitness Info
+    physical_fit_info = PhysicalFitnessInfo.objects.filter(StudentYearlyInformation = student_yearly_info)
+    cumulative_physical_grade_sum=0
+    cumulative_physical_grade='-'
+    for ph_data in physical_fit_info:
+        cumulative_physical_grade_sum=cumulative_physical_grade_sum + GRADE_NUM[ph_data.Grade]
+    if len(physical_fit_info) > 0:
+        cumulative_physical_grade=GRADE_CHOICES_3[int(round(cumulative_physical_grade_sum/len(physical_fit_info)))]
+
+    # Cumulative Social Activity
+    social_activities = SocialActivity.objects.filter(StudentYearlyInformation = student_yearly_info)
+    cumulative_social_grade_sum=0
+    cumulative_social_grade='-'
+    for soc_act_data in social_activities:
+        cumulative_social_grade_sum=cumulative_social_grade_sum + GRADE_NUM[soc_act_data.Grade]
+    if len(social_activities) > 0:
+        cumulative_social_grade=GRADE_CHOICES[int(round(cumulative_social_grade_sum/len(social_activities)))]
+
+    # Cumulative Library Grade
+    try:
+        library = Library.objects.get(StudentYearlyInformation = student_yearly_info)
+        cumulative_library_grade = GRADE_CHOICES[library.Grade]
+    except:
+        cumulative_library_grade='-'
+
+    # Cumulative Prashala Attendance
+    attendances = StudentAttendance.objects.filter(StudentYearlyInformation = student_yearly_info)
+    cumulative_attendance=0
+    cumulative_workingdays_attendance=0
+    cumulative_attendance_percentage='-'
+    for attendance in attendances:
+        attendance_master = attendance.AttendanceMaster
+        class_master = attendance_master.ClassMaster
+        if class_master.Type == 'P':
+            cumulative_attendance = cumulative_attendance + attendance.ActualAttendance
+            cumulative_workingdays_attendance = cumulative_workingdays_attendance + attendance.AttendanceMaster.WorkingDays
+    if cumulative_workingdays_attendance > 0:
+        cumulative_attendance_percentage = str(round((float(cumulative_attendance) / cumulative_workingdays_attendance * 100),2)) + "%"
+
+    # Cumulative Grade Table
+    Story.append(Spacer(1,0.1*inch))
+    add_sub_header_to_story(Story,"Report Summary")
+    data = []
+    data=(
+            ['Category','Performance'],
+            ['Academics',academics_percentage],
+            ['Evening Sports Activities',cumulative_physical_grade],
+            ['Co-curricular Activities',cumulative_cocur_grade],
+            ['Self Expression through Arts',cumulative_abhi_grade],
+            ['Projects',cumulative_project_grade],
+            ['Elocution',cumulative_elocution_grade],
+            ['Social activities',cumulative_social_grade],
+            ['Thinking Skill',skillGrades['ThinkingSkill']],
+            ['Social Skill',skillGrades['SocialSkill']],
+            ['Emotional Skill',skillGrades['EmotionalSkill']],
+            ['Attitude Towards School',skillGrades['AttitudeTowardsSchool']],
+            ['Values',skillGrades['Values']],
+            ['Library',cumulative_library_grade],
+            ['Attendance',cumulative_attendance_percentage]
+        )
+    add_table_to_story(Story, data, 'CENTER')
+
+    tipStyle = ParagraphStyle(name = 'Note', fontSize = 6, alignment=TA_CENTER)
+    Story.append(Paragraph('Note: Grades are Outstanding, Excellent, Good, Satisfactory, Needs improvement and Unsatisfactory,', tipStyle))
+    Story.append(Paragraph('which indicate level of participation or performance', tipStyle))
+
+    # Signature
+    Story.append(Spacer(1,0.4*inch))
+    data = []
+    data=(
+            ['Supervisor','Vice Principal','Principal'],
+            ['(Dr.Bhagyashree Harshe)','(Milind Naik)','(Vivek Ponkshe)'],
+        )
+    table=Table(data, colWidths=PAGE_WIDTH*0.25)
+    table_style = TableStyle([
+        ('ALIGN',(0,0),(-1,-1), 'CENTER'),
+        ('TEXTCOLOR',(0,0),(-1,-1),colors.black),
+        ('FONTSIZE',(0,0),(-1,-1),9)
+        ])
+    table.hAlign='CENTER'
+    table.setStyle(table_style)
+    Story.append(table)
+
+    Story.append(PageBreak())
+
 def fill_academic_report(student_yearly_info, Story):
     #decide format based on academic year
     academic_year = student_yearly_info.ClassMaster.AcademicYear.Year
@@ -2286,7 +2484,7 @@ def fill_academic_report(student_yearly_info, Story):
         fill_academic_report2008(student_yearly_info, Story)
 
 def fill_academic_report_2011(student_yearly_info, Story):
-    fill_academic_report_board_2011(student_yearly_info, Story)
+    academics_percentage = fill_academic_report_board_2011(student_yearly_info, Story)
     
     Story.append(Spacer(1,0.5*inch))
     add_sub_header_to_story(Story, "School Attendance")
@@ -2295,6 +2493,7 @@ def fill_academic_report_2011(student_yearly_info, Story):
     class_teacher = student_yearly_info.ClassMaster.Teacher.Name
     add_signature_space_to_story(Story,class_teacher, "Class Teacher")
     Story.append(PageBreak())
+    return academics_percentage
 
 def fill_academic_report2008(student_yearly_info, Story):
     add_main_header_to_story(Story, "Part 2: Academic Performance")
@@ -2695,6 +2894,9 @@ def fill_academic_report_board_2011(student_yearly_info, Story):
     if cumulative_maxmarks > 0:
         percentage = round((float(cumulative_marks) / float(cumulative_maxmarks) * 100),2)
     add_sub_header_to_story(Story, 'Percentage: ' + str(percentage) + "%")
+
+    academics_percentage = str(percentage) + "%"
+    return academics_percentage
 
 def weighted_marks(test_marks_obtained, test_maximum_marks, weighted_maximum_marks):
     ratio = float(test_marks_obtained) / float(test_maximum_marks)
@@ -4111,7 +4313,8 @@ def fill_all_subjects_marks_table(Story, student_yearly_infos):
     #sort
     column_headers.sort()
 
-    for rows_data in subjects_rows_data:
+    for subjects_key in subjects_rows_data:
+        rows_data = subjects_rows_data[subjects_key]
         #populate table
         data = []
         for key in rows_data:
