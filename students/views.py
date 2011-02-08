@@ -4105,9 +4105,7 @@ def fill_all_subjects_marks_table(Story, student_yearly_infos):
             
             #collect column headers
             if column_headers.count(header) == 0:
-                column_headers.append(header)          
-
-        rows_data.append(row_data)
+                column_headers.append(header)
 
     #sort
     column_headers.sort()
