@@ -4018,7 +4018,7 @@ def marks_tables_pdf(request):
                              + '<br /><br />'
                              + 'Standard - 5 to 10 for respective Standard, any other value for All<br />'
                              + 'Division - B for Boys, G for Girls, any other value for for Both<br /><br />'
-                             + '<P>An unsaved PDF file will be generated.</P>
+                             + '<P>An unsaved PDF file will be generated.</P>'
                              + '</body></html>')
 
 
