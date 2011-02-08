@@ -4317,7 +4317,6 @@ def fill_all_subjects_marks_table(Story, student_yearly_infos):
 
     for subjects_key in subjects_rows_data:
         rows_data = subjects_rows_data[subjects_key]
-        rows_data = sortedDictValues(rows_data)
 
         #populate table
         data = []
@@ -4337,11 +4336,6 @@ def fill_all_subjects_marks_table(Story, student_yearly_infos):
         add_main_header_to_story(Story, subject_name)
         add_table_to_story(Story, data, 'CENTER')
         Story.append(PageBreak())
-
-def sortedDictValues(adict):
-    items = adict.items()
-    items.sort()
-    return [value for key, value in items]
 
 def student_text_for_marks_table(student_yearly_info):
     student_basic_info = student_yearly_info.StudentBasicInfo
