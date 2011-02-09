@@ -1595,6 +1595,7 @@ def scrap_add(request):
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
             name = '%s %s' % (student_info.FirstName, student_info.LastName)
             yr = request.POST['Year']
+            yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
             # store data
             if request.POST.has_key('pk'):
                 pk = request.POST['pk']
