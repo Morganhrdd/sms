@@ -4319,14 +4319,13 @@ def fill_all_subjects_marks_table(Story, student_yearly_infos):
     for subject_name in subjects_rows_data:
         rows_data = subjects_rows_data[subject_name]
 
-        #sort
-        rows_data = sort_dict_by_key(rows_data)
-
         #populate table
         data = []
         header_row = ['Student'] + column_headers
         data.append(header_row)
-        for key in rows_data:
+
+        sorted_keys = sorted(rows_data.keys())
+        for key in sorted_keys:
             row_data = rows_data[key]
             row = []
             row.append(str(row_data['Student']))
@@ -4341,20 +4340,12 @@ def fill_all_subjects_marks_table(Story, student_yearly_infos):
         add_table_to_story(Story, data, 'CENTER')
         Story.append(PageBreak())
 
-def sort_dict_by_key(orig_dict):
-    #returns a dictionary sorted by keys
-    sorted_keys = orig_dict.keys()
-    sorted_keys.sort()
-    sorted_dict = {}
-    for key in sorted_keys:
-        sorted_dict[key] = orig_dict[key]
-    return sorted_dict
-
 def student_text_for_marks_table(student_yearly_info):
     student_basic_info = student_yearly_info.StudentBasicInfo
     registration_number = str(student_basic_info.RegistrationNo)
-    standard_roll_number = str(student_yearly_info.ClassMaster.Standard) + 'th ' + str(student_yearly_info.ClassMaster.Division) + ' ' + str(student_yearly_info.RollNo)
-    student_text = standard_roll_number + ', ' + registration_number
+    roll_no = "%(#)03d" % {"#":student_yearly_info.RollNo}
+    standard = str(student_yearly_info.ClassMaster.Standard) + 'th ' + str(student_yearly_info.ClassMaster.Division)
+    student_text = standard + ' ' + roll_no + ', ' + registration_number
     return student_text
 
 #----------------------------------------------------------------------------------------------------  
