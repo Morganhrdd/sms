@@ -4255,7 +4255,7 @@ def fill_subject_marks_table(Story, student_yearly_infos, subject_name):
 
     #sort
     column_headers.sort()
-    rows_data.sort()
+    rows_data.sort(compare_student_row_data)
 
     #populate table
     data = []
@@ -4275,6 +4275,10 @@ def fill_subject_marks_table(Story, student_yearly_infos, subject_name):
     add_table_to_story(Story, data, 'CENTER')
     Story.append(PageBreak())
 
+def compare_student_row_data(row_data_left, row_data_right):
+    left_text = row_data_left['Student']
+    right_text = row_data_right['Student']
+    return cmp(left_text, right_text)
 
 def fill_all_subjects_marks_table(Story, student_yearly_infos):
 
