@@ -2742,12 +2742,12 @@ def fill_academic_report_board_2011_9th(student_yearly_info, Story):
 
         #science
         if test_type == 'SCI':
-            W3 = weighted_marks(sci_w1, 25, 10)
-            W4 = weighted_marks(sci_w2, 25, 10)
+            W3 = weighted_marks(sci_w1, 25*3, 10)
+            W4 = weighted_marks(sci_w2, 25*3, 10)
 
         #summations
-        N3 = ceil_marks(N1 / 2)
-        N4 = ceil_marks(N1 / 2)
+        N3 = ceil_marks(float(N1) / 2.0)
+        N4 = ceil_marks(float(N1) / 2.0)
         F3 = W3 + N3
         F4 = W4 + N4
         FA = F3 + F4
