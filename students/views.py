@@ -4195,10 +4195,7 @@ def marks_tables_pdf(request):
 
         #populate content
         Story = []
-        if subject_name == 'ALL':
-            fill_all_subjects_marks_table(Story, student_yearly_infos)
-        else:
-            fill_subject_marks_table(Story, student_yearly_infos, subject_name)
+        fill_all_subjects_marks_table(Story, student_yearly_infos, subject_name)
 
         #show an unsaved pdf document in the browser, using report_pdf
         response = HttpResponse(mimetype='application/pdf')
@@ -4224,7 +4221,7 @@ def marks_tables_pdf(request):
                              + '<P>An unsaved PDF file will be generated.</P>'
                              + '</body></html>')
 
-
+#remove once tested
 def fill_subject_marks_table(Story, student_yearly_infos, subject_name):
 
     rows_data = []
@@ -4280,7 +4277,7 @@ def compare_student_row_data(row_data_left, row_data_right):
     right_text = row_data_right['Student']
     return cmp(left_text, right_text)
 
-def fill_all_subjects_marks_table(Story, student_yearly_infos):
+def fill_all_subjects_marks_table(Story, student_yearly_infos, selected_subject):
 
     subjects_rows_data = {}
     column_headers = []
@@ -4298,6 +4295,8 @@ def fill_all_subjects_marks_table(Story, student_yearly_infos):
 
             #subject data
             subject_name = test_mapping.SubjectMaster.Name
+            if (selected_subject != 'ALL') and (selected_subject != subject_name):
+                continue
             if not subjects_rows_data.has_key(subject_name):
                 subjects_rows_data[subject_name] = {}
             rows_data = subjects_rows_data[subject_name]
