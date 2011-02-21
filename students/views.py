@@ -2741,7 +2741,7 @@ def fill_academic_report_board_2011_9th(student_yearly_info, Story):
         W3, W4 = best_two_of_four_marks(W1, W2, W3, W4)
 
         #science
-        if test_type == 'SCI':
+        if subject_name == 'SCI':
             W3 = weighted_marks(sci_w1, 25*3, 10)
             W4 = weighted_marks(sci_w2, 25*3, 10)
 
