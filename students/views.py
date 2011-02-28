@@ -1641,7 +1641,7 @@ def additionalinfo_add(request):
     if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     if not request.POST:
-        genform = SearchDetailsForm()
+        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
