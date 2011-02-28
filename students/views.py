@@ -1683,8 +1683,7 @@ def additionalinfo_add(request):
                     additionalinfo_obj.Mothers_Email = request.POST['Mothers_Email']
                     additionalinfo_obj.save()
             # end store data
-            additionalinfo_objs = StudentAdditionalInformation.objects.filter(StudentBasicInfo__RegistrationNo=regno)
-            pprint(additionalinfo_objs)
+            additionalinfo_objs = StudentAdditionalInformation.objects.filter(Id__RegistrationNo=regno)
             data = []
             for additionalinfo_obj in additionalinfo_objs:
                 tmp = {}
