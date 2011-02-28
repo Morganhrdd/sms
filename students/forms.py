@@ -266,7 +266,7 @@ class SMSSendForm(forms.Form):
     Message = forms.CharField(widget=forms.Textarea(attrs={'rows':5}))
 
 
-class StudentAdditionalInformationForm(forms.ModelForm):
+class StudentAdditionalInformationForm(forms.Form):
     pkwidget = forms.HiddenInput()
     pk = forms.IntegerField(widget=pkwidget, required=False)
     Address = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
