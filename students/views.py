@@ -1634,6 +1634,82 @@ def scrap_add(request):
             return render_to_response(respage,{'form':genform, 'data':data, 'name':name,'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg' }, context_instance=RequestContext(request))
         return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
 
+#
+@login_required
+def additionalinfo_add(request):
+    respage = 'students/AddAdditionalInformation.html'
+    if not can_login(groups=['teacher'], user=request.user):
+        return redirect('/')
+    if not request.POST:
+        genform = SearchDetailsForm()
+        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+    else:
+        genform = SearchDetailsForm(request.POST)
+        msg = search_reg_no(request=request)
+        if msg:
+            return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
+        if request.POST.has_key('RegistrationNo'):
+            regno = request.POST['RegistrationNo']
+            student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
+            name = '%s %s' % (student_info.FirstName, student_info.LastName)
+            yr = request.POST['Year']
+            yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
+            # store data
+            if request.POST.has_key('pk'):
+                pk = request.POST['pk']
+                delete = request.POST['Delete']
+                if pk and delete in ('Y', 'y'):
+                    MedicalReport.objects.get(pk=pk).delete()
+                if delete not in ('Y', 'y'):
+                    if pk:
+                        additionalinfo_obj = StudentAdditionalInformation.objects.get(pk=pk)
+                    else:
+                        additionalinfo_obj = StudentAdditionalInformation()
+                    additionalinfo_obj.Id = student_info
+                    additionalinfo_obj.Address = request.POST['Address']
+                    additionalinfo_obj.Strength = request.POST['Strength']
+                    additionalinfo_obj.Weakness = request.POST['Weakness']
+                    additionalinfo_obj.Hobbies = request.POST['Hobbies']
+                    additionalinfo_obj.Family_Background = request.POST['Family_Background']
+                    additionalinfo_obj.Fathers_Income = request.POST['Fathers_Income']
+                    additionalinfo_obj.Fathers_Education = request.POST['Fathers_Education']
+                    additionalinfo_obj.Fathers_Occupation = request.POST['Fathers_Occupation']
+                    additionalinfo_obj.Fathers_Phone_No = request.POST['Fathers_Phone_No']
+                    additionalinfo_obj.Fathers_Email = request.POST['Fathers_Email'] 
+                    additionalinfo_obj.Mothers_Income = request.POST['Mothers_Income'] 
+                    additionalinfo_obj.Mothers_Education = request.POST['Mothers_Education'] 
+                    additionalinfo_obj.Mothers_Occupation = request.POST['Mothers_Occupation'] 
+                    additionalinfo_obj.Mothers_Phone_No = request.POST['Mothers_Phone_No'] 
+                    additionalinfo_obj.Mothers_Email = request.POST['Mothers_Email']
+                    additionalinfo_obj.save()
+            # end store data
+            additionalinfo_objs = StudentAdditionalInformation.objects.filter(StudentBasicInfo__RegistrationNo=regno)
+            pprint(additionalinfo_objs)
+            data = []
+            for additionalinfo_obj in additionalinfo_objs:
+                tmp = {}
+                tmp['pk'] = additionalinfo_obj.pk
+                tmp['Address'] = additionalinfo_obj.Address
+                tmp['Strength'] = additionalinfo_obj.Strength
+                tmp['Weakness'] = additionalinfo_obj.Weakness
+                tmp['Hobbies'] = additionalinfo_obj.Hobbies
+                tmp['Family_Background'] = additionalinfo_obj.Family_Background
+                tmp['Fathers_Income'] = additionalinfo_obj.Fathers_Income
+                tmp['Fathers_Education'] = additionalinfo_obj.Fathers_Education
+                tmp['Fathers_Occupation'] = additionalinfo_obj.Fathers_Occupation
+                tmp['Fathers_Phone_No'] = additionalinfo_obj.Fathers_Phone_No
+                tmp['Fathers_Email'] = additionalinfo_obj.Fathers_Email
+                tmp['Mothers_Income'] = additionalinfo_obj.Mothers_Income
+                tmp['Mothers_Education'] = additionalinfo_obj.Mothers_Education
+                tmp['Mothers_Occupation'] = additionalinfo_obj.Mothers_Occupation
+                tmp['Mothers_Phone_No'] = additionalinfo_obj.Mothers_Phone_No
+                tmp['Mothers_Email'] = additionalinfo_obj.Mothers_Email
+                x = StudentAdditionalInformationForm(initial=tmp)
+                data.append(x)
+            if not len(data):
+                data.append(StudentAdditionalInformationForm(initial={'Delete':'Y'}))
+            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
 
 @login_required
 def send_sms_students(request):

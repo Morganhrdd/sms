@@ -1,5 +1,6 @@
 from django import forms
 from django.forms.extras.widgets import SelectDateWidget
+from django.forms.models import modelformset_factory
 
 from sms.students.vars import *
 from sms.students.models import *
@@ -9,6 +10,12 @@ class SearchDetailsForm(forms.Form):
     RegistrationNo = forms.IntegerField(required=False)
     FirstName = forms.CharField(required=False)
     LastName = forms.CharField(required=False)
+
+class SearchDetailsNoYearForm(forms.Form):
+    RegistrationNo = forms.IntegerField(required=False)
+    FirstName = forms.CharField(required=False)
+    LastName = forms.CharField(required=False)
+
 
 class SearchClassDetailsForm(forms.Form):
     Year = forms.CharField(max_length=9)
@@ -258,6 +265,23 @@ class SMSSendForm(forms.Form):
     Year = forms.CharField(max_length=9)
     Message = forms.CharField(widget=forms.Textarea(attrs={'rows':5}))
 
+
 class StudentAdditionalInformationForm(forms.ModelForm):
-    class Meta:
-        model = StudentAdditionalInformation
+    pkwidget = forms.HiddenInput()
+    pk = forms.IntegerField(widget=pkwidget, required=False)
+    Address = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    Strength = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    Weakness = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    Hobbies = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    Family_Background = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    Fathers_Income = forms.IntegerField()
+    Fathers_Education = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    Fathers_Occupation = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    Fathers_Phone_No = forms.CharField()
+    Fathers_Email = forms.EmailField(required=True)
+    Mothers_Income = forms.IntegerField()
+    Mothers_Education = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    Mothers_Occupation = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
+    Mothers_Phone_No = forms.CharField()
+    Mothers_Email = forms.EmailField(required=True)
+    Delete = forms.CharField(required=False)
