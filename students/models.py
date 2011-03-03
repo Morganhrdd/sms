@@ -241,7 +241,7 @@ class PhysicalFitnessInfo(models.Model):
     ShortPutThrow = models.FloatField(blank=True, null=True)
     Split = models.PositiveIntegerField(blank=True, null=True)
     BodyMassIndex = models.FloatField(blank=True, null=True)
-    Balancing = models.PositiveIntegerField(blank=True, null=True)
+    Balancing = models.FloatField(blank=True, null=True)
     PrivateComment = models.TextField(max_length=200,blank=True, null=True)
     PublicComment = models.TextField(max_length=200,blank=True, null=True)
     DescriptiveIndicator = models.TextField(max_length=200,blank=True, null=True)

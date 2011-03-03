@@ -139,7 +139,7 @@ class PhysicalFitnessInfoDetailsForm(forms.Form):
     ShortPutThrow = forms.FloatField(required=False, help_text='Float field')
     Split = forms.IntegerField(required=False, help_text='Integer field in seconds')
     BodyMassIndex = forms.FloatField(required=False)
-    Balancing = forms.IntegerField(required=False, help_text='Integer field in seconds')
+    Balancing = forms.FloatField(required=False, help_text='Float field in seconds')
     PublicComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     PrivateComment = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
     DescriptiveIndicator = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=False)
