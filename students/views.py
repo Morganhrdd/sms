@@ -1986,6 +1986,9 @@ def fill_pdf_data(Story, registration_nos, part_option, standard, division, year
             elif part_option == 1109:
                 fill_academic_report_board_2011_9th(student_yearly_info, Story)
                 Story.append(PageBreak())
+            elif part_option == 11091:
+                fill_academic_report_board_2011_9th_Enhanced(student_yearly_info, Story)
+                Story.append(PageBreak())
             elif part_option == 1110:
                 fill_academic_report_board_2011(student_yearly_info, Story)
                 Story.append(PageBreak())
@@ -2830,6 +2833,91 @@ def fill_academic_report_board_2011_9th(student_yearly_info, Story):
         F4 = W4 + N4
         FA = F3 + F4
         SA = S2
+        total = FA + SA
+
+        #grade points
+        grade_point_FA = grade_point(FA, 40)
+        grade_point_SA = grade_point(SA, 60)
+        grade_point_total = grade_point(total, 100)
+
+        #fill subject row
+        data_row = []
+        data_row.append(subject_name)
+        data_row.append(str(F3))
+        data_row.append(str(F4))
+        data_row.append(str(S2))
+        data_row.append(grades[grade_point_FA])
+        data_row.append(grades[grade_point_SA])
+        data_row.append(grades[grade_point_total])
+        data_row.append(str(grade_point_total))
+        
+        data.append(data_row)
+        
+        cumulative_marks = cumulative_marks + total
+        cumulative_maxmarks = cumulative_maxmarks + 100
+
+    add_table_to_story(Story, data, 'CENTER')
+    Story.append(Spacer(1,0.25*inch))
+
+    CGPA = grade_point(cumulative_marks, cumulative_maxmarks)
+    add_sub_header_to_story(Story, mark_safe('CGPA: ' +  str(CGPA)))
+    add_sub_header_to_story(Story, mark_safe('Grand Total: ' +  str(cumulative_marks) + " / " + str(cumulative_maxmarks)))
+
+    percentage = 0
+    if cumulative_maxmarks > 0:
+        percentage = round((float(cumulative_marks) / float(cumulative_maxmarks) * 100),2)
+    add_sub_header_to_story(Story, 'Percentage: ' + str(percentage) + "%")
+
+def fill_academic_report_board_2011_9th_Enhanced(student_yearly_info, Story):
+    add_main_header_to_story(Story, "Part 2: Academic Performance")
+    add_main_header_to_story(Story, "9th Standard")
+
+    #subject data
+    subjects_data = {}
+    student_test_data = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
+    for test_marks in student_test_data:
+        test_mapping = test_marks.TestMapping
+        subject_name = test_mapping.SubjectMaster.Name
+        if not subjects_data.has_key(subject_name):
+            subjects_data[subject_name] = []
+        subject_data = subjects_data[subject_name]
+        subject_data.append(test_marks)
+
+    grades = ['E2','E2','E2','E1','D','C2','C1','B2','B1','A2','A1']
+
+    #desired sequence
+    temp_sort = ['ENG', 'SAN', 'MAT', 'SCI', 'SOC']
+    cumulative_marks=0
+    cumulative_maxmarks=0
+    data = []
+    data.append(['','F3','F4','S2','FA','SA','Total','Total'])
+    data.append(['','20','20','60','Grade','Grade','Grade','Grade Point'])
+    for subject_item in temp_sort:
+        if not subjects_data.has_key(subject_item):
+            continue
+        subject_data = subjects_data[subject_item]
+        subject_name = subject_item
+
+        F3E, F4E, S2E = [0 for x in range(3)]
+
+        for subject_marks in subject_data:
+            test_mapping = subject_marks.TestMapping
+            subject_name = test_mapping.SubjectMaster.Name
+            test_type = test_mapping.TestType
+            maximum_marks = test_mapping.MaximumMarks
+            marks_obtained = subject_marks.MarksObtained
+
+            #weighted marks
+            if test_type == 'F3E':
+                F3E = weighted_marks(marks_obtained, maximum_marks, 20)
+            elif test_type == 'F4E':
+                F4E = weighted_marks(marks_obtained, maximum_marks, 20)
+            elif test_type == 'S2E':
+                S2E = weighted_marks(marks_obtained, maximum_marks, 60)
+
+        #summations
+        FA = F3E + F4E
+        SA = S2E
         total = FA + SA
 
         #grade points
