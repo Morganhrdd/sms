@@ -27,9 +27,6 @@ import time
 import datetime
 import os.path
 
-PAGE_HEIGHT = defaultPageSize[1]
-PAGE_WIDTH = defaultPageSize[0]
-styles = getSampleStyleSheet()
 
 from sms.students.vars import *
 
@@ -1862,12 +1859,15 @@ def later_pages(canvas, doc):
     #epoch_seconds = time.mktime(now_time.timetuple())
     epoch_seconds = now_time.strftime("%d %b %Y %I:%M:%S%p")
     #the number at the bottom right of page will let us trace the exact date and time and will never repeat for any documents
+    PAGE_WIDTH = defaultPageSize[0]
     canvas.drawString(0.4 * PAGE_WIDTH, 0.75 * inch, "%s          %s   page %d" % ("Jnana Prabodhini Prashala's Certificate of School Based Evaluation", epoch_seconds, doc.page))
     canvas.restoreState()
     page_border(canvas)
 
 def page_border(canvas):
     #centrally placed rectangle
+    PAGE_HEIGHT = defaultPageSize[1]
+    PAGE_WIDTH = defaultPageSize[0]
     margin=0.7*inch
     canvas.line(margin, margin, margin, PAGE_HEIGHT - margin)
     canvas.line(margin, PAGE_HEIGHT - margin, PAGE_WIDTH - margin, PAGE_HEIGHT - margin)
@@ -2077,6 +2077,7 @@ def fill_letter_head(Story):
         ('LINEBELOW',(0,0),(0,0),1,colors.black)
         ])
     margin=0.7*inch
+    PAGE_WIDTH = defaultPageSize[0]
     column_widths=((PAGE_WIDTH-2*(margin))*0.9)
     table=Table(data, colWidths=column_widths)
     table.setStyle(table_style)
@@ -2340,6 +2341,7 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
             ['Supervisor','Vice Principal','Principal'],
             ['(Dr.Bhagyashree Harshe)','(Milind Naik)','(Vivek Ponkshe)'],
         )
+    PAGE_WIDTH = defaultPageSize[0]
     table=Table(data, colWidths=PAGE_WIDTH*0.25)
     table_style = TableStyle([
         ('ALIGN',(0,0),(-1,-1), 'CENTER'),
@@ -2536,6 +2538,7 @@ def fill_static_and_yearly_info_2011(student_yearly_info, skillGrades, academics
             ['Supervisor','Vice Principal','Principal'],
             ['(Dr.Bhagyashree Harshe)','(Milind Naik)','(Vivek Ponkshe)'],
         )
+    PAGE_WIDTH = defaultPageSize[0]
     table=Table(data, colWidths=PAGE_WIDTH*0.25)
     table_style = TableStyle([
         ('ALIGN',(0,0),(-1,-1), 'CENTER'),
@@ -3623,6 +3626,7 @@ def certificate_later_pages(canvas, doc):
     canvas.setFont('Times-Roman',6)
     now_time = datetime.datetime.now()
     epoch_seconds = time.mktime(now_time.timetuple())
+    PAGE_WIDTH = defaultPageSize[0]
     canvas.drawString(PAGE_WIDTH * 0.6, 0.75 * inch, "%s          ES%dP%d" % ("Jnana Prabodhini Prashala's Bonafide Certificate", epoch_seconds, doc.page))
     canvas.restoreState()
     page_border(canvas)
@@ -3708,6 +3712,7 @@ def fill_certificate_header(Story):
         ('LINEBELOW',(0,0),(0,0),1,colors.black)
         ])
     margin=0.7*inch
+    PAGE_WIDTH = defaultPageSize[0]
     column_widths=((PAGE_WIDTH-2*(margin))*0.9)
     table=Table(data, colWidths=column_widths)
     table.setStyle(table_style)
@@ -3803,6 +3808,7 @@ def school_leaving_later_pages(canvas, doc):
     canvas.setFont('Times-Roman',6)
     now_time = datetime.datetime.now()
     epoch_seconds = time.mktime(now_time.timetuple())
+    PAGE_WIDTH = defaultPageSize[0]
     canvas.drawString(PAGE_WIDTH * 0.55, 0.75 * inch, "%s          ES%dP%d" % ("Jnana Prabodhini Prashala's School Leaving Certificate", epoch_seconds, doc.page))
     canvas.restoreState()
     page_border(canvas)
@@ -3903,6 +3909,7 @@ def fill_school_leaving_header(Story):
         ('LINEBELOW',(0,0),(0,0),1,colors.black)
         ])
     margin=0.7*inch
+    PAGE_WIDTH = defaultPageSize[0]
     column_widths=((PAGE_WIDTH-2*(margin))*0.9)
     table=Table(data, colWidths=column_widths)
     table.setStyle(table_style)
@@ -4041,6 +4048,7 @@ def cards_later_pages(canvas, doc):
     now_time = datetime.datetime.now()
     epoch_seconds = now_time.strftime("%d %b %Y %I:%M:%S%p")
     #the number at the bottom right of page will let us trace the exact date and time and will never repeat for any documents
+    PAGE_WIDTH = defaultPageSize[0]
     canvas.drawString(0.4 * PAGE_WIDTH, 0.1 * inch, "%s          %s   page %d" % ("Jnana Prabodhini Prashala - Students Information", epoch_seconds, doc.page))
     canvas.restoreState()
 
@@ -4090,6 +4098,7 @@ def cards_pdf(request):
         #show an unsaved pdf document in the browser, using report_pdf
         response = HttpResponse(mimetype='application/pdf')
 
+        PAGE_WIDTH = defaultPageSize[0]
         margin = 0.01*PAGE_WIDTH
         doc = SimpleDocTemplate(response,
                 leftMargin=margin,
@@ -4240,6 +4249,7 @@ def fill_card_row(Story, student_yearly_infos,
 
     #table
     data = [cardsRow]
+    PAGE_WIDTH = defaultPageSize[0]
     colWidthValues = [0.49*PAGE_WIDTH,0.49*PAGE_WIDTH]
     table = Table(data, colWidths=colWidthValues)
     table_style = TableStyle([('VALIGN',(0,0),(-1,-1), 'TOP')])
