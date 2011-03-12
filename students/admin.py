@@ -1,9 +1,4 @@
-from sms.students.models import StudentBasicInfo, StudentAdditionalInformation, AcademicYear, Teacher
-from sms.students.models import SubjectMaster, StudentYearlyInformation, ClassMaster, TestMapping
-from sms.students.models import StudentTestMarks, AttendanceMaster, StudentAttendance, PhysicalFitnessInfo
-from sms.students.models import SocialActivity, CoCurricular, CompetitiveExam, Competition, Scrap
-from sms.students.models import AbhivyaktiVikas, Project, Elocution, Library, WorkExperience, PhysicalEducation
-from sms.students.models import ThinkingSkill, SocialSkill, EmotionalSkill, AttitudeTowardsSchool, Values
+from sms.students.models import *
 from django.contrib.auth.models import User
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
@@ -125,7 +120,9 @@ class ValuesAdmin(admin.ModelAdmin):
 class ScrapAdmin(admin.ModelAdmin):
     list_display = ('StudentBasicInfo', 'User', 'data', 'date')
     search_fields = ['StudentBasicInfo', 'User', 'data', 'date']
-
+class MedicalReportAdmin(admin.ModelAdmin):
+    list_display = ('StudentYearlyInformation', 'Doctor', 'BloodGroup')
+    search_fields  = ['StudentYearlyInformation__StudentBasicInfo__RegistrationNo', 'StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName', 'Doctor', 'BloodGroup']
 admin.site.register(AttendanceMaster, AttendanceMasterAdmin)
 admin.site.register(StudentAttendance, StudentAttendanceAdmin)
 admin.site.register(StudentTestMarks, StudentTestMarksAdmin)
@@ -154,3 +151,4 @@ admin.site.register(EmotionalSkill, EmotionalSkillAdmin)
 admin.site.register(AttitudeTowardsSchool, AttitudeTowardsSchoolAdmin)
 admin.site.register(Values, ValuesAdmin)
 admin.site.register(Scrap, ScrapAdmin)
+admin.site.register(MedicalReport, MedicalReportAdmin)
