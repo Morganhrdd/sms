@@ -1225,6 +1225,8 @@ def thinkingskill_add(request):
             try:
                 thinkingskill_obj = ThinkingSkill.objects.get(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
             except:
+                for t in ThinkingSkill.objects.filter(StudentYearlyInformation=yearly_info, Teacher=teacher_obj):
+                    t.delete()
                 thinkingskill_obj = ThinkingSkill(StudentYearlyInformation=yearly_info,Teacher=teacher_obj)
                 delete = 'Y'
             data = []
@@ -1289,6 +1291,8 @@ def socialskill_add(request):
             try:
                 socialskill_obj = SocialSkill.objects.get(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
             except:
+                for t in SocialSkill.objects.filter(StudentYearlyInformation=yearly_info, Teacher=teacher_obj):
+                    t.delete()
                 socialskill_obj = SocialSkill(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
                 delete = 'Y'
             data = []
@@ -1355,6 +1359,8 @@ def attitudetowardsschool_add(request):
             try:
                 attitudetowardsschool_obj = AttitudeTowardsSchool.objects.get(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
             except:
+                for t in AttitudeTowardsSchool.objects.filter(StudentYearlyInformation=yearly_info, Teacher=teacher_obj):
+                    t.delete()
                 attitudetowardsschool_obj = AttitudeTowardsSchool(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
                 delete = 'Y'
             data = []
@@ -1420,7 +1426,10 @@ def emotionalskill_add(request):
             try:
                 emotionalskill_obj = EmotionalSkill.objects.get(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
             except:
+                for t in EmotionalSkill.objects.filter(StudentYearlyInformation=yearly_info, Teacher=teacher_obj):
+                    t.delete()
                 emotionalskill_obj = EmotionalSkill(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
+                delete = 'Y'
             data = []
             tmp = {}
             tmp['pk'] = emotionalskill_obj.pk
@@ -1485,6 +1494,8 @@ def values_add(request):
             try:
                 values_obj = Values.objects.get(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
             except:
+                for t in Values.objects.filter(StudentYearlyInformation=yearly_info, Teacher=teacher_obj):
+                    t.delete()
                 values_obj = Values(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
                 delete = 'Y'
             data = []
