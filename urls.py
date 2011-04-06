@@ -7,8 +7,8 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     (r'^admin/ams/home/', 'ams.views.admin_home'),
-    (r'^admin/(.*)', admin.site.root),
-    #(r'^admin/(.*)', include(admin.site.urls)),
+    #(r'^admin/(.*)', admin.site.root),
+    (r'^admin/(.*)', include(admin.site.urls)),
     (r'^marks_add/', 'students.views.marks_add'),
     (r'^attendance_add/', 'students.views.attendance_add'),
     (r'^report/', 'students.views.report'),
