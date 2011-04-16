@@ -1,0 +1,50 @@
+<html>
+<script lannguage="javascript">
+function setdisabled(disabled)
+{
+ document.leave.Barcode.disabled = disabled;
+ document.leave.Category.disabled = disabled;
+}
+</script>
+<body onload="setdisabled({{disabled}})">
+<div align="center">
+
+<h2>
+Leave Report
+</h2><br/>
+
+<form name="leave_report" action="/leave_report/" method="post">
+<table>
+{{ form.as_table }}
+</table>
+<br/><b>{{ message }}</b><br/><br/>
+<input type="submit" value="Check Status" onClick="setdisabled(false);document.leave_report.submit()"/>
+</form>
+
+</div>
+<br/>
+
+<div id="LeaveBalance" name="LeaveBalance" align="center">
+<h2>
+Leave Summary
+</h2><br/>
+	<table border="1" cellspacing="5" cellpadding="0">
+		<tr><th>User</th> <th colspan=2>Casual</th> <th colspan=2>Sick</th> <th colspan=2>Earned</th> 
+		<th>Absent</th> <th>Half Days</th> <th>Late remarks</th> <th>Forgot checkout</th> </tr>
+		<tr><th></th> <th>Taken</th><th>Balance</th> <th>Taken</th><th>Balance</th> <th>Taken</th><th>Balance</th> 
+		<th></th> <th></th> <th></th> <th></th> </tr>
+	
+			{% for row in data %}
+			<tr>
+				<td>{{ row.usr}}</td> 
+				<td>{{ row.casualtaken}}</td> <td>{{ row.casualbal}}</td> 
+				<td>{{ row.sicktaken}}</td> <td>{{ row.sickbal}}</td> 
+				<td>{{ row.earnedtaken}}</td> <td>{{ row.earnedbal}}</td> 
+				<td>{{ row.absent}}</td> <td>{{ row.half}}</td> <td>{{ row.late}}</td> <td>{{ row.forgot}}</td>
+			</tr>
+			{% endfor %}
+	</table>
+</div>
+
+</body>
+</html>
