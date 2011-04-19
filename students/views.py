@@ -2208,7 +2208,7 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
     #photo
     image_path = 'media/students_photos/' + str(year) + '_' + str(student_basic_info.RegistrationNo) + '.jpg'
     is_file_exists = os.path.isfile(image_path)
-    im = ''
+    im = '.'
     if is_file_exists:
         im = Image(image_path)
         aspect_ratio = im.imageHeight / im.imageWidth
@@ -3107,7 +3107,7 @@ def fill_academic_report_board_2011_5th_to_8th(student_yearly_info, Story):
     cumulative_maxmarks=0
     data = []
     data.append(['','F1','F2','F3','F4','S1','S2','FA','SA','Total', 'Total'])
-    data.append(['','10','10','10','10','20','40','Grade','Grade','Grade', 'Grade Point'])
+    data.append(['','10','10','10','10',' ',' ','Grade','Grade','Grade', 'Grade Point'])
     for subject_item in temp_sort:
         if not subjects_data.has_key(subject_item):
             continue
@@ -3202,8 +3202,8 @@ def fill_academic_report_board_2011_5th_to_8th(student_yearly_info, Story):
         F2Text = str(F2)
         F3Text = str(F3)
         F4Text = str(F4)
-        S1Text = str(S1)
-        S2Text = str(S2)
+        S1Text = str(S1) + '/' + str(S1Weightage)
+        S2Text = str(S2) + '/' + str(S2Weightage)
         FAText = grades[grade_point_FA]
         SAText = grades[grade_point_SA]
         TotalGradeText = grades[grade_point_total]
