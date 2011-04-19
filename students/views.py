@@ -2232,8 +2232,7 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
         ('FONT', (0,0), (-1,-1), 'Times-Roman'),
         ('FONTSIZE',(0,0),(-1,-1),9),
         ('SPAN',(-1,0),(-1,-1)),
-        ('VALIGN',(0,0),(-1,-1),'TOP'),
-        ('ALIGN',(0,0),(-1,-1),'RIGHT')
+        ('VALIGN',(0,0),(-1,-1),'TOP')
         ])
     table.setStyle(table_style)
     table.hAlign='LEFT'
@@ -3116,7 +3115,7 @@ def fill_academic_report_board_2011_5th_to_8th(student_yearly_info, Story):
 
         #subject type by weightage
         subject_weightage_type = 1
-        if ((subject_name == 'ENG') or (subject_name == 'HIN') or (subject_name == 'MAR')):
+        if ((subject_name == 'HIN') or (subject_name == 'MAR') or (subject_name == 'SAN')):
             subject_weightage_type = 2
         elif (subject_name == 'COM'):
             subject_weightage_type = 3
