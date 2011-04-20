@@ -2005,8 +2005,8 @@ def fill_pdf_data(Story, registration_nos, part_option, standard, division, year
                 Story.append(PageBreak())
             elif part_option == 2011:
                 academics_Story = []
-                academics_percentage = fill_academic_report_board_2011(student_yearly_info, academics_Story)
-                fill_static_and_yearly_info_2011(student_yearly_info, skillGrades, academics_percentage, Story)
+                academics_score = fill_academic_report_board_2011(student_yearly_info, academics_Story)
+                fill_static_and_yearly_info_2011(student_yearly_info, skillGrades, academics_score, Story)
                 Story += academics_Story
                 fill_academic_report_attendance(student_yearly_info, Story)
                 fill_cocurricular_report(student_yearly_info, Story)
@@ -2015,8 +2015,8 @@ def fill_pdf_data(Story, registration_nos, part_option, standard, division, year
                 fill_library_and_medical_report(student_yearly_info, Story)
             elif part_option == 20115:
                 academics_Story = []
-                academics_percentage = fill_academic_report_board_2011_5th_to_8th(student_yearly_info, academics_Story)
-                fill_static_and_yearly_info_2011(student_yearly_info, skillGrades, academics_percentage, Story)
+                academics_score = fill_academic_report_board_2011_5th_to_8th(student_yearly_info, academics_Story)
+                fill_static_and_yearly_info_2011(student_yearly_info, skillGrades, academics_score, Story)
                 Story += academics_Story
                 fill_academic_report_attendance(student_yearly_info, Story)
                 fill_cocurricular_report(student_yearly_info, Story)
@@ -3044,27 +3044,53 @@ def fill_academic_report_board_2011(student_yearly_info, Story):
         SA = S1 + S2
         total = FA + SA
 
-        #grade points
-        grade_point_FA = grade_point(FA, 40)
-        grade_point_SA = grade_point(SA, 60)
-        grade_point_total = grade_point(total, 100)
+##        #grade points
+##        grade_point_FA = grade_point(FA, 40)
+##        grade_point_SA = grade_point(SA, 60)
+##        grade_point_total = grade_point(total, 100)
+##
+##        #fill subject row
+##        data_row = []
+##        data_row.append(subject_name)
+##        data_row.append(str(F1))
+##        data_row.append(str(F2))
+##        data_row.append(str(F3))
+##        data_row.append(str(F4))
+##        data_row.append(str(S1))
+##        data_row.append(str(S2))
+##        data_row.append(grades[grade_point_FA])
+##        data_row.append(grades[grade_point_SA])
+##        data_row.append(grades[grade_point_total])
+##        data_row.append(str(grade_point_total))
+
+        #grades
+        F1Grade = grades[grade_point(F1, 10)]
+        F2Grade = grades[grade_point(F2, 10)]
+        S1Grade = grades[grade_point(S1, 20)]
+        F3Grade = grades[grade_point(F3, 10)]
+        F4Grade = grades[grade_point(F4, 10)]
+        S2Grade = grades[grade_point(S2, 40)]
+        FAGrade = grades[grade_point(FA, 40)]
+        SAGrade = grades[grade_point(SA, 60)]
+        TotalGrade = grades[grade_point(total, 100)]
+        TotalGradePoint = str(grade_point(total, 100))
 
         #fill subject row
         data_row = []
         data_row.append(subject_name)
-        data_row.append(str(F1))
-        data_row.append(str(F2))
-        data_row.append(str(F3))
-        data_row.append(str(F4))
-        data_row.append(str(S1))
-        data_row.append(str(S2))
-        data_row.append(grades[grade_point_FA])
-        data_row.append(grades[grade_point_SA])
-        data_row.append(grades[grade_point_total])
-        data_row.append(str(grade_point_total))
-        
+        data_row.append(F1Grade)
+        data_row.append(F2Grade)
+        data_row.append(S1Grade)
+        data_row.append(F3Grade)
+        data_row.append(F4Grade)
+        data_row.append(S2Grade)
+        data_row.append(FAGrade)
+        data_row.append(SAGrade)
+        data_row.append(TotalGrade)
+        data_row.append(TotalGradePoint)
+
         data.append(data_row)
-        
+
         cumulative_marks = cumulative_marks + total
         cumulative_maxmarks = cumulative_maxmarks + 100
 
@@ -3072,16 +3098,11 @@ def fill_academic_report_board_2011(student_yearly_info, Story):
     Story.append(Spacer(1,0.25*inch))
 
     CGPA = grade_point(cumulative_marks, cumulative_maxmarks)
-    add_sub_header_to_story(Story, mark_safe('CGPA: ' +  str(CGPA)))
-    add_sub_header_to_story(Story, mark_safe('Grand Total: ' +  str(cumulative_marks) + " / " + str(cumulative_maxmarks)))
+    add_sub_header_to_story(Story, mark_safe('CGPA : ' + str(CGPA)))
+    add_sub_header_to_story(Story, mark_safe('Grade: ' + grades[CGPA]))
 
-    percentage = 0
-    if cumulative_maxmarks > 0:
-        percentage = round((float(cumulative_marks) / float(cumulative_maxmarks) * 100),2)
-    add_sub_header_to_story(Story, 'Percentage: ' + str(percentage) + "%")
-
-    academics_percentage = str(percentage) + "%"
-    return academics_percentage
+    academics_score = "Grade : " + grades[CGPA];
+    return academics_score
 
 def fill_academic_report_board_2011_5th_to_8th(student_yearly_info, Story):
     add_main_header_to_story(Story, "Part 2: Academic Performance")
@@ -3105,8 +3126,7 @@ def fill_academic_report_board_2011_5th_to_8th(student_yearly_info, Story):
     cumulative_marks=0
     cumulative_maxmarks=0
     data = []
-    data.append(['','F1','F2','F3','F4','S1','S2','FA','SA','Total', 'Total'])
-    data.append(['','10','10','10','10',' ',' ','Grade','Grade','Grade', 'Grade Point'])
+    data.append(['','F1','F2','S1','F3','F4','S2','FA','SA','Total', 'Total'])
     for subject_item in temp_sort:
         if not subjects_data.has_key(subject_item):
             continue
@@ -3196,42 +3216,42 @@ def fill_academic_report_board_2011_5th_to_8th(student_yearly_info, Story):
             grade_point_SA = grade_point(SA, 50)
             grade_point_total = grade_point(total, 50)
 
-        #text in table
-        F1Text = str(F1)
-        F2Text = str(F2)
-        F3Text = str(F3)
-        F4Text = str(F4)
-        S1Text = str(S1) + '/' + str(S1Weightage)
-        S2Text = str(S2) + '/' + str(S2Weightage)
-        FAText = grades[grade_point_FA]
-        SAText = grades[grade_point_SA]
-        TotalGradeText = grades[grade_point_total]
-        TotalText = str(grade_point_total)
+        #grades
+        F1Grade = grades[grade_point(F1, 10)]
+        F2Grade = grades[grade_point(F2, 10)]
+        S1Grade = grades[grade_point(S1, S1Weightage)]
+        F3Grade = grades[grade_point(F3, 10)]
+        F4Grade = grades[grade_point(F4, 10)]
+        S2Grade = grades[grade_point(S2, S2Weightage)]
+        FAGrade = grades[grade_point_FA]
+        SAGrade = grades[grade_point_SA]
+        TotalGrade = grades[grade_point_total]
+        TotalGradePoint = str(grade_point_total)
 
         if (subject_weightage_type == 2):
-            F2Text = "-"
-            F4Text = "-"
+            F2Grade = "-"
+            F4Grade = "-"
         elif (subject_weightage_type == 3):
-            F1Text = "-"
-            F2Text = "-"
-            F3Text = "-"
-            F4Text = "-"
-            FAText = "-"
-            
+            F1Grade = "-"
+            F2Grade = "-"
+            F3Grade = "-"
+            F4Grade = "-"
+            FAGrade = "-"
+
         #fill subject row
         data_row = []
         data_row.append(subject_name)
-        data_row.append(str(F1Text))
-        data_row.append(str(F2Text))
-        data_row.append(str(F3Text))
-        data_row.append(str(F4Text))
-        data_row.append(str(S1Text))
-        data_row.append(str(S2Text))
-        data_row.append(FAText)
-        data_row.append(SAText)
-        data_row.append(TotalGradeText)
-        data_row.append(TotalText)
- 
+        data_row.append(F1Grade)
+        data_row.append(F2Grade)
+        data_row.append(S1Grade)
+        data_row.append(F3Grade)
+        data_row.append(F4Grade)
+        data_row.append(S2Grade)
+        data_row.append(FAGrade)
+        data_row.append(SAGrade)
+        data_row.append(TotalGrade)
+        data_row.append(TotalGradePoint)
+
         data.append(data_row)
 
         #weightage
@@ -3248,16 +3268,11 @@ def fill_academic_report_board_2011_5th_to_8th(student_yearly_info, Story):
     Story.append(Spacer(1,0.25*inch))
 
     CGPA = grade_point(cumulative_marks, cumulative_maxmarks)
-    add_sub_header_to_story(Story, mark_safe('CGPA: ' +  str(CGPA)))
-    add_sub_header_to_story(Story, mark_safe('Grand Total: ' +  str(cumulative_marks) + " / " + str(cumulative_maxmarks)))
+    add_sub_header_to_story(Story, mark_safe('CGPA : ' + str(CGPA)))
+    add_sub_header_to_story(Story, mark_safe('Grade: ' + grades[CGPA]))
 
-    percentage = 0
-    if cumulative_maxmarks > 0:
-        percentage = round((float(cumulative_marks) / float(cumulative_maxmarks) * 100),2)
-    add_sub_header_to_story(Story, 'Percentage: ' + str(percentage) + "%")
-
-    academics_percentage = str(percentage) + "%"
-    return academics_percentage
+    academics_score = "Grade : " + grades[CGPA];
+    return academics_score
 
 def weighted_marks(test_marks_obtained, test_maximum_marks, weighted_maximum_marks):
     ratio = float(test_marks_obtained) / float(test_maximum_marks)
