@@ -2798,7 +2798,7 @@ def fill_academic_report_board_2011_9th(student_yearly_info, Story):
         subject_data = subjects_data[subject_name]
         subject_data.append(test_marks)
 
-    grades = ['E2','E2','E2','E1','D','C2','C1','B2','B1','A2','A1']
+    grades = ['E','E','E','E','D','C2','C1','B2','B1','A2','A1']
 
     #desired sequence
     temp_sort = ['ENG', 'SAN', 'MAT', 'SCI', 'SOC']
@@ -3287,24 +3287,24 @@ def grade_point(test_marks_obtained, test_maximum_marks):
     #grade point
     grade_point = 0
     if (percentage <= 20):
-        grade_point = 0
+        grade_point = 0  # E2 --> E
     elif (percentage <= 32):
-        grade_point = 0
+        grade_point = 0  # E1 --> E
     elif (percentage <= 40):
-        grade_point = 4
+        grade_point = 4  # D
     elif (percentage <= 50):
-        grade_point = 5
+        grade_point = 5  # C2
     elif (percentage <= 60):
-        grade_point = 6
+        grade_point = 6  # C1
     elif (percentage <= 70):
-        grade_point = 7
+        grade_point = 7  # B2
     elif (percentage <= 80):
-        grade_point = 8
+        grade_point = 8  # B1
     elif (percentage <= 90):
-        grade_point = 9
+        grade_point = 9  # A2
     elif (percentage <= 100):
-        grade_point = 10
-   
+        grade_point = 10 # A1
+
     return grade_point
 
 def best_two_of_four_marks(marks1, marks2, marks3, marks4):
