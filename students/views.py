@@ -2994,8 +2994,9 @@ def fill_academic_report_board_2011(student_yearly_info, Story):
     cumulative_marks=0
     cumulative_maxmarks=0
     data = []
-    data.append(['','F1','F2','F3','F4','S1','S2','FA','SA','Total', 'Total'])
-    data.append(['','10','10','10','10','20','40','Grade','Grade','Grade', 'Grade Point'])
+##    data.append(['','F1','F2','F3','F4','S1','S2','FA','SA','Total', 'Total'])
+##    data.append(['','10','10','10','10','20','40','Grade','Grade','Grade', 'Grade Point'])
+    data.append(['','F1','F2','S1','F3','F4','S2','FA','SA','Total', 'Total'])
     for subject_item in temp_sort:
         if not subjects_data.has_key(subject_item):
             continue
