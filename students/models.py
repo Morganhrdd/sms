@@ -197,7 +197,7 @@ class TestMapping(models.Model):
     Teacher = models.ForeignKey(Teacher)
     AcademicYear = models.ForeignKey(AcademicYear)
     def __unicode__(self):
-        return "%s-%s-%s" % (self.SubjectMaster, self.TestType, self.Teacher)
+        return "%s-%s-%s %s" % (self.SubjectMaster, self.TestType, self.Teacher, self.AcademicYear.Year)
 
 
 class StudentTestMarks(models.Model):
