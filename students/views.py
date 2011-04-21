@@ -2234,6 +2234,7 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
         ('SPAN',(-1,0),(-1,-1)),
         ('VALIGN',(0,0),(-1,-1),'TOP')
         ])
+    table._argW[0]=1.5*inch
     table.setStyle(table_style)
     table.hAlign='LEFT'
     Story.append(table)
@@ -2418,10 +2419,10 @@ def fill_static_and_yearly_info_2011(student_yearly_info, skillGrades, academics
     
     data = []
     data=(
-            ['Name: ' , student_basic_info.FirstName + ' ' + student_basic_info.LastName,im],
-            ["Father's Name: " , student_basic_info.FathersName,''],
-            ["Mother's Name: " , student_basic_info.MothersName,''],
-            ['Address: ' , Paragraph(student_addtional_info.Address.replace('&', 'and'), style),''],
+            [Paragraph('Name: ', style) , Paragraph(student_basic_info.FirstName + ' ' + student_basic_info.LastName, style),im],
+            [Paragraph("Father's Name: ", style) , Paragraph(student_basic_info.FathersName, style),''],
+            [Paragraph("Mother's Name: ", style) , Paragraph(student_basic_info.MothersName, style),''],
+            [Paragraph('Address: ', style) , Paragraph(student_addtional_info.Address.replace('&', 'and'), style),'']
         )
     table=Table(data)
     table_style = TableStyle([
@@ -2431,6 +2432,7 @@ def fill_static_and_yearly_info_2011(student_yearly_info, skillGrades, academics
         ('VALIGN',(0,0),(-1,-1),'TOP'),
         ('ALIGN',(0,0),(-1,-1),'RIGHT')
         ])
+    table._argW[0]=1.5*inch
     table.setStyle(table_style)
     table.hAlign='LEFT'
     Story.append(table)
@@ -2901,7 +2903,7 @@ def fill_academic_report_board_2011_9th_Enhanced(student_yearly_info, Story):
         subject_data = subjects_data[subject_name]
         subject_data.append(test_marks)
 
-    grades = ['E2','E2','E2','E1','D','C2','C1','B2','B1','A2','A1']
+    grades = ['E','E','E','E','D','C2','C1','B2','B1','A2','A1']
 
     #desired sequence
     temp_sort = ['ENG', 'SAN', 'MAT', 'SCI', 'SOC']
@@ -2986,7 +2988,7 @@ def fill_academic_report_board_2011(student_yearly_info, Story):
         subject_data = subjects_data[subject_name]
         subject_data.append(test_marks)
 
-    grades = ['E2','E2','E2','E1','D','C2','C1','B2','B1','A2','A1']
+    grades = ['E','E','E','E','D','C2','C1','B2','B1','A2','A1']
 
     #desired sequence
     #temp_sort = ['ENG', 'SAN', 'MAT', 'SCI', 'SOC'] #Only for 10th
@@ -3120,7 +3122,7 @@ def fill_academic_report_board_2011_5th_to_8th(student_yearly_info, Story):
         subject_data = subjects_data[subject_name]
         subject_data.append(test_marks)
 
-    grades = ['E2','E2','E2','E1','D','C2','C1','B2','B1','A2','A1']
+    grades = ['E','E','E','E','D','C2','C1','B2','B1','A2','A1']
 
     #desired sequence
     temp_sort = ['ENG', 'HIN', 'MAR', 'SAN', 'MAT', 'SCI', 'SOC', 'COM']
