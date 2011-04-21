@@ -1225,6 +1225,8 @@ def thinkingskill_add(request):
             try:
                 thinkingskill_obj = ThinkingSkill.objects.get(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
             except:
+                for t in ThinkingSkill.objects.filter(StudentYearlyInformation=yearly_info, Teacher=teacher_obj):
+                    t.delete()
                 thinkingskill_obj = ThinkingSkill(StudentYearlyInformation=yearly_info,Teacher=teacher_obj)
                 delete = 'Y'
             data = []
@@ -1289,6 +1291,8 @@ def socialskill_add(request):
             try:
                 socialskill_obj = SocialSkill.objects.get(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
             except:
+                for t in SocialSkill.objects.filter(StudentYearlyInformation=yearly_info, Teacher=teacher_obj):
+                    t.delete()
                 socialskill_obj = SocialSkill(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
                 delete = 'Y'
             data = []
@@ -1355,6 +1359,8 @@ def attitudetowardsschool_add(request):
             try:
                 attitudetowardsschool_obj = AttitudeTowardsSchool.objects.get(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
             except:
+                for t in AttitudeTowardsSchool.objects.filter(StudentYearlyInformation=yearly_info, Teacher=teacher_obj):
+                    t.delete()
                 attitudetowardsschool_obj = AttitudeTowardsSchool(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
                 delete = 'Y'
             data = []
@@ -1420,7 +1426,10 @@ def emotionalskill_add(request):
             try:
                 emotionalskill_obj = EmotionalSkill.objects.get(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
             except:
+                for t in EmotionalSkill.objects.filter(StudentYearlyInformation=yearly_info, Teacher=teacher_obj):
+                    t.delete()
                 emotionalskill_obj = EmotionalSkill(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
+                delete = 'Y'
             data = []
             tmp = {}
             tmp['pk'] = emotionalskill_obj.pk
@@ -1485,6 +1494,8 @@ def values_add(request):
             try:
                 values_obj = Values.objects.get(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
             except:
+                for t in Values.objects.filter(StudentYearlyInformation=yearly_info, Teacher=teacher_obj):
+                    t.delete()
                 values_obj = Values(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
                 delete = 'Y'
             data = []
@@ -1994,9 +2005,20 @@ def fill_pdf_data(Story, registration_nos, part_option, standard, division, year
                 Story.append(PageBreak())
             elif part_option == 2011:
                 academics_Story = []
-                academics_percentage = fill_academic_report_2011(student_yearly_info, academics_Story)
-                fill_static_and_yearly_info_2011(student_yearly_info, skillGrades, academics_percentage, Story)
+                academics_score = fill_academic_report_board_2011(student_yearly_info, academics_Story)
+                fill_static_and_yearly_info_2011(student_yearly_info, skillGrades, academics_score, Story)
                 Story += academics_Story
+                fill_academic_report_attendance(student_yearly_info, Story)
+                fill_cocurricular_report(student_yearly_info, Story)
+                Story += skillsStory
+                fill_outdoor_activity_report(student_yearly_info, Story)
+                fill_library_and_medical_report(student_yearly_info, Story)
+            elif part_option == 20115:
+                academics_Story = []
+                academics_score = fill_academic_report_board_2011_5th_to_8th(student_yearly_info, academics_Story)
+                fill_static_and_yearly_info_2011(student_yearly_info, skillGrades, academics_score, Story)
+                Story += academics_Story
+                fill_academic_report_attendance(student_yearly_info, Story)
                 fill_cocurricular_report(student_yearly_info, Story)
                 Story += skillsStory
                 fill_outdoor_activity_report(student_yearly_info, Story)
@@ -2186,7 +2208,7 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
     #photo
     image_path = 'media/students_photos/' + str(year) + '_' + str(student_basic_info.RegistrationNo) + '.jpg'
     is_file_exists = os.path.isfile(image_path)
-    im = ''
+    im = '.'
     if is_file_exists:
         im = Image(image_path)
         aspect_ratio = im.imageHeight / im.imageWidth
@@ -2210,8 +2232,7 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
         ('FONT', (0,0), (-1,-1), 'Times-Roman'),
         ('FONTSIZE',(0,0),(-1,-1),9),
         ('SPAN',(-1,0),(-1,-1)),
-        ('VALIGN',(0,0),(-1,-1),'TOP'),
-        ('ALIGN',(0,0),(-1,-1),'RIGHT')
+        ('VALIGN',(0,0),(-1,-1),'TOP')
         ])
     table.setStyle(table_style)
     table.hAlign='LEFT'
@@ -2565,9 +2586,7 @@ def fill_academic_report(student_yearly_info, Story):
     else:
         fill_academic_report2008(student_yearly_info, Story)
 
-def fill_academic_report_2011(student_yearly_info, Story):
-    academics_percentage = fill_academic_report_board_2011(student_yearly_info, Story)
-    
+def fill_academic_report_attendance(student_yearly_info, Story):
     Story.append(Spacer(1,0.5*inch))
     add_sub_header_to_story(Story, "School Attendance")
     fill_student_attendance(student_yearly_info, Story, 'P')
@@ -2575,7 +2594,6 @@ def fill_academic_report_2011(student_yearly_info, Story):
     class_teacher = student_yearly_info.ClassMaster.Teacher.Name
     add_signature_space_to_story(Story,class_teacher, "Class Teacher")
     Story.append(PageBreak())
-    return academics_percentage
 
 def fill_academic_report2008(student_yearly_info, Story):
     add_main_header_to_story(Story, "Part 2: Academic Performance")
@@ -3026,27 +3044,53 @@ def fill_academic_report_board_2011(student_yearly_info, Story):
         SA = S1 + S2
         total = FA + SA
 
-        #grade points
-        grade_point_FA = grade_point(FA, 40)
-        grade_point_SA = grade_point(SA, 60)
-        grade_point_total = grade_point(total, 100)
+##        #grade points
+##        grade_point_FA = grade_point(FA, 40)
+##        grade_point_SA = grade_point(SA, 60)
+##        grade_point_total = grade_point(total, 100)
+##
+##        #fill subject row
+##        data_row = []
+##        data_row.append(subject_name)
+##        data_row.append(str(F1))
+##        data_row.append(str(F2))
+##        data_row.append(str(F3))
+##        data_row.append(str(F4))
+##        data_row.append(str(S1))
+##        data_row.append(str(S2))
+##        data_row.append(grades[grade_point_FA])
+##        data_row.append(grades[grade_point_SA])
+##        data_row.append(grades[grade_point_total])
+##        data_row.append(str(grade_point_total))
+
+        #grades
+        F1Grade = grades[grade_point(F1, 10)]
+        F2Grade = grades[grade_point(F2, 10)]
+        S1Grade = grades[grade_point(S1, 20)]
+        F3Grade = grades[grade_point(F3, 10)]
+        F4Grade = grades[grade_point(F4, 10)]
+        S2Grade = grades[grade_point(S2, 40)]
+        FAGrade = grades[grade_point(FA, 40)]
+        SAGrade = grades[grade_point(SA, 60)]
+        TotalGrade = grades[grade_point(total, 100)]
+        TotalGradePoint = str(grade_point(total, 100))
 
         #fill subject row
         data_row = []
         data_row.append(subject_name)
-        data_row.append(str(F1))
-        data_row.append(str(F2))
-        data_row.append(str(F3))
-        data_row.append(str(F4))
-        data_row.append(str(S1))
-        data_row.append(str(S2))
-        data_row.append(grades[grade_point_FA])
-        data_row.append(grades[grade_point_SA])
-        data_row.append(grades[grade_point_total])
-        data_row.append(str(grade_point_total))
-        
+        data_row.append(F1Grade)
+        data_row.append(F2Grade)
+        data_row.append(S1Grade)
+        data_row.append(F3Grade)
+        data_row.append(F4Grade)
+        data_row.append(S2Grade)
+        data_row.append(FAGrade)
+        data_row.append(SAGrade)
+        data_row.append(TotalGrade)
+        data_row.append(TotalGradePoint)
+
         data.append(data_row)
-        
+
         cumulative_marks = cumulative_marks + total
         cumulative_maxmarks = cumulative_maxmarks + 100
 
@@ -3054,16 +3098,181 @@ def fill_academic_report_board_2011(student_yearly_info, Story):
     Story.append(Spacer(1,0.25*inch))
 
     CGPA = grade_point(cumulative_marks, cumulative_maxmarks)
-    add_sub_header_to_story(Story, mark_safe('CGPA: ' +  str(CGPA)))
-    add_sub_header_to_story(Story, mark_safe('Grand Total: ' +  str(cumulative_marks) + " / " + str(cumulative_maxmarks)))
+    add_sub_header_to_story(Story, mark_safe('CGPA : ' + str(CGPA)))
+    add_sub_header_to_story(Story, mark_safe('Grade: ' + grades[CGPA]))
 
-    percentage = 0
-    if cumulative_maxmarks > 0:
-        percentage = round((float(cumulative_marks) / float(cumulative_maxmarks) * 100),2)
-    add_sub_header_to_story(Story, 'Percentage: ' + str(percentage) + "%")
+    academics_score = "Grade : " + grades[CGPA];
+    return academics_score
 
-    academics_percentage = str(percentage) + "%"
-    return academics_percentage
+def fill_academic_report_board_2011_5th_to_8th(student_yearly_info, Story):
+    add_main_header_to_story(Story, "Part 2: Academic Performance")
+    standard_header = str(student_yearly_info.ClassMaster.Standard) + "th Standard"
+    add_main_header_to_story(Story, standard_header)
+    
+    subjects_data = {}
+    student_test_data = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
+    for test_marks in student_test_data:
+        test_mapping = test_marks.TestMapping
+        subject_name = test_mapping.SubjectMaster.Name
+        if not subjects_data.has_key(subject_name):
+            subjects_data[subject_name] = []
+        subject_data = subjects_data[subject_name]
+        subject_data.append(test_marks)
+
+    grades = ['E2','E2','E2','E1','D','C2','C1','B2','B1','A2','A1']
+
+    #desired sequence
+    temp_sort = ['ENG', 'HIN', 'MAR', 'SAN', 'MAT', 'SCI', 'SOC', 'COM']
+    cumulative_marks=0
+    cumulative_maxmarks=0
+    data = []
+    data.append(['','F1','F2','S1','F3','F4','S2','FA','SA','Total', 'Total'])
+    for subject_item in temp_sort:
+        if not subjects_data.has_key(subject_item):
+            continue
+        subject_data = subjects_data[subject_item]
+        subject_name = subject_item
+
+        #subject type by weightage
+        subject_weightage_type = 1
+        if ((subject_name == 'HIN') or (subject_name == 'MAR') or (subject_name == 'SAN')):
+            subject_weightage_type = 2
+        elif (subject_name == 'COM'):
+            subject_weightage_type = 3
+
+        #term and final exam weightage
+        S1Weightage = 20
+        S2Weightage = 40
+        if (subject_weightage_type == 2):
+            S1Weightage = 10
+            S2Weightage = 20
+        elif (subject_weightage_type == 3):
+            S1Weightage = 20
+            S2Weightage = 30
+
+        W1, W2, W3, W4, N1, N2, N3, N4, S1, S2 = [0 for x in range(10)]
+                        
+        for subject_marks in subject_data:
+            test_mapping = subject_marks.TestMapping
+            subject_name = test_mapping.SubjectMaster.Name
+            test_type = test_mapping.TestType
+            maximum_marks = test_mapping.MaximumMarks
+            marks_obtained = subject_marks.MarksObtained
+
+            #weighted marks
+            if test_type == 'W1':
+                W1 = weighted_marks(marks_obtained, maximum_marks, 5)
+            elif test_type == 'W2':
+                W2 = weighted_marks(marks_obtained, maximum_marks, 5)
+            elif test_type == 'W3':
+                W3 = weighted_marks(marks_obtained, maximum_marks, 5)
+            elif test_type == 'W4':
+                W4 = weighted_marks(marks_obtained, maximum_marks, 5)
+            elif test_type == 'N1':
+                N1 = weighted_marks(marks_obtained, maximum_marks, 5)
+            elif test_type == 'N2':
+                N2 = weighted_marks(marks_obtained, maximum_marks, 5)
+            elif test_type == 'N3':
+                N3 = weighted_marks(marks_obtained, maximum_marks, 5)
+            elif test_type == 'N4':
+                N4 = weighted_marks(marks_obtained, maximum_marks, 5)
+            elif test_type == 'S1':
+                S1 = weighted_marks(marks_obtained, maximum_marks, S1Weightage)
+            elif test_type == 'S2':
+                S2 = weighted_marks(marks_obtained, maximum_marks, S2Weightage)
+
+        #merge N1 to N4 marks into FA
+        F1 = W1 + N1
+        F2 = W2 + N2
+        F3 = W3 + N3
+        F4 = W4 + N4
+
+        #summations
+        FA = 0
+        if (subject_weightage_type == 1):
+            FA = F1 + F2 + F3 + F4
+        elif (subject_weightage_type == 2):
+            FA = F1 + F3
+        elif (subject_weightage_type == 3):
+            FA = 0
+
+        SA = S1 + S2
+        total = FA + SA
+
+        #grade points
+        grade_point_FA = 0
+        grade_point_SA = 0
+        grade_point_total = 0
+
+        if (subject_weightage_type == 1):
+            grade_point_FA = grade_point(FA, 40)
+            grade_point_SA = grade_point(SA, 60)
+            grade_point_total = grade_point(total, 100)
+        elif (subject_weightage_type == 2):
+            grade_point_FA = grade_point(FA, 20)
+            grade_point_SA = grade_point(SA, 30)
+            grade_point_total = grade_point(total, 50)
+        elif (subject_weightage_type == 3):
+            grade_point_SA = grade_point(SA, 50)
+            grade_point_total = grade_point(total, 50)
+
+        #grades
+        F1Grade = grades[grade_point(F1, 10)]
+        F2Grade = grades[grade_point(F2, 10)]
+        S1Grade = grades[grade_point(S1, S1Weightage)]
+        F3Grade = grades[grade_point(F3, 10)]
+        F4Grade = grades[grade_point(F4, 10)]
+        S2Grade = grades[grade_point(S2, S2Weightage)]
+        FAGrade = grades[grade_point_FA]
+        SAGrade = grades[grade_point_SA]
+        TotalGrade = grades[grade_point_total]
+        TotalGradePoint = str(grade_point_total)
+
+        if (subject_weightage_type == 2):
+            F2Grade = "-"
+            F4Grade = "-"
+        elif (subject_weightage_type == 3):
+            F1Grade = "-"
+            F2Grade = "-"
+            F3Grade = "-"
+            F4Grade = "-"
+            FAGrade = "-"
+
+        #fill subject row
+        data_row = []
+        data_row.append(subject_name)
+        data_row.append(F1Grade)
+        data_row.append(F2Grade)
+        data_row.append(S1Grade)
+        data_row.append(F3Grade)
+        data_row.append(F4Grade)
+        data_row.append(S2Grade)
+        data_row.append(FAGrade)
+        data_row.append(SAGrade)
+        data_row.append(TotalGrade)
+        data_row.append(TotalGradePoint)
+
+        data.append(data_row)
+
+        #weightage
+        subject_maximum_marks = 100
+        if (subject_weightage_type == 2):
+            subject_maximum_marks = 50
+        elif (subject_weightage_type == 3):
+            subject_maximum_marks = 50
+
+        cumulative_marks = cumulative_marks + total
+        cumulative_maxmarks = cumulative_maxmarks + subject_maximum_marks
+
+    add_table_to_story(Story, data, 'CENTER')
+    Story.append(Spacer(1,0.25*inch))
+
+    CGPA = grade_point(cumulative_marks, cumulative_maxmarks)
+    add_sub_header_to_story(Story, mark_safe('CGPA : ' + str(CGPA)))
+    add_sub_header_to_story(Story, mark_safe('Grade: ' + grades[CGPA]))
+
+    academics_score = "Grade : " + grades[CGPA];
+    return academics_score
 
 def weighted_marks(test_marks_obtained, test_maximum_marks, weighted_maximum_marks):
     ratio = float(test_marks_obtained) / float(test_maximum_marks)
