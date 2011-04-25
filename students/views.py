@@ -3804,7 +3804,8 @@ def fill_outdoor_activity_report(student_yearly_info, Story):
         short_put = physical_fitness_info.ShortPutThrow
         split = physical_fitness_info.Split
         bmi = physical_fitness_info.BodyMassIndex
-        bmi = round(float(weight) / (float(height / 100.0) * float(height / 100.0)), 2)
+        if height > 0.0:
+            bmi = round(float(weight) / (float(height / 100.0) * float(height / 100.0)), 2)
         balancing = physical_fitness_info.Balancing
         try:
             grade = GRADE_CHOICES_3[physical_fitness_info.Grade]
