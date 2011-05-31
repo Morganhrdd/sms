@@ -26,9 +26,10 @@ class Category(models.Model):
 class User(models.Model):
     Barcode = models.PositiveIntegerField(primary_key=True)
     Category = models.ForeignKey(Category)
-    Name = models.CharField(max_length=30)
+    Name = models.CharField(max_length=50)
     Email = models.EmailField(unique=True)
     Phone = models.CharField(max_length=15)
+    TerminationDate = models.DateField(null=True, blank=True)
     def __unicode__(self):
         return "%s" % (self.Name)
     def __str__(self):
