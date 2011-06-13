@@ -10,6 +10,7 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -18,6 +19,18 @@ DATABASES = {
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+    }
+}
+'''
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+            'NAME': 'sms',                      # Or path to database file if using sqlite3.
+            'USER': 'sms',                      # Not used with sqlite3.
+            'PASSWORD': 'pgsql123',                  # Not used with sqlite3.
+            'HOST': 'student.jnanaprabodhini.org',                      # Set to empty string for localhost. Not used with sqlite3.
+            'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
 
@@ -77,8 +90,8 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    #"/Users/shantanoo/repo/sms/templates",
-    'f:/Documents/Chinmay/JPP/sms/templates',
+    "/Users/shantanoo/repo/sms/templates",
+    #'f:/Documents/Chinmay/JPP/sms/templates',
     #"/home/shantanoo/repo/sms/templates",
     #'C:/Documents and Settings/aditya/Desktop/JPP/latest_bitbucket/sms/templates'
     #'C:/Users/aloks/Work/jp_sms/templates'
@@ -103,10 +116,11 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE = 600
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value.
 
+'''
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         'LOCATION': '127.0.0.1:11211',
     }
 }
-
+'''
