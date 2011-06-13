@@ -1,8 +1,8 @@
 import xlrd, os, sys, datetime, re
 os.environ['DJANGO_SETTINGS_MODULE'] = 'sms.settings'
 sys.path.append(os.environ['DATAPY'])
-from jp_sms.students.models import *
-from jp_sms.fees.models import *
+from sms.students.models import *
+from sms.fees.models import *
 
 def get_yrly_info(regno, year, std, div, class_type='P'):
     try:
