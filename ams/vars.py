@@ -41,6 +41,7 @@ REMARK_CHOICES = (
 STATUS_CHOICES = (
 	('I', 'In'),
 	('O', 'Out'),
+        ('T', 'Termination'),
 )
 
 LEAVE_CHOICES = (
