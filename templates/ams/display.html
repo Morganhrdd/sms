@@ -262,7 +262,7 @@ function clockUpdate()
 <col width="15%">
 <col width="15%">
 <col width="70%">
-<th>Leave Requests</th><th>Absent</th><th>Attendance Status</th>
+<th>Leave Requests</th><th>Leave Approved</th><th>Absent</th><th>Attendance Status</th>
 
 <tr><td align="center" valign="top">
 <div align="center">
@@ -271,6 +271,19 @@ function clockUpdate()
 {% for row in leaves %}
 <tr>
 <td><a href="/admin/ams/leaves/{{row.leave.pk}}" target="_blank">{{ row.leave.Barcode}}</td><td> ({{ row.leave.LeaveDate|date:"D d-m-Y"}})</a></td>
+</tr>
+{% endfor %}
+</table>
+</div>
+</td>
+
+<td align="center" valign="top">
+<div align="center">
+<table>
+<th>User (Date)</th>
+{% for row in aleaves %}
+<tr>
+<td><a href="/admin/ams/leaves/{{row.aleave.pk}}" target="_blank">{{ row.aleave.Barcode}}</td><td> ({{ row.aleave.LeaveDate|date:"D d-m-Y"}})</a></td>
 </tr>
 {% endfor %}
 </table>
