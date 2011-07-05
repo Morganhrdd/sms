@@ -454,6 +454,19 @@ def populate_user(request,message,template):
         for pleave in pendingleaves:
             leaves.append({'leave':pleave})
             
+    # Find approved leave requests for template ams/display.html
+    dat = date
+    oneday = datetime.timedelta(1)
+    i = 1
+    appleaves = []
+    while i < 7:
+        approvedleaves = Leaves.objects.filter(Status=2).filter(LeaveDate=dat)
+        if approvedleaves:
+            for aleave in approvedleaves:
+                appleaves.append({'aleave':aleave})
+        dat = dat + oneday
+        i = i + 1
+            
     # Find absent remarks for which there is no corresponding leave request for template ams/display.html
     current_year = AcademicYear.objects.get(Status=1)
     absentremarks = Attendance.objects.filter(Remark__in=('A','H')).filter(Year=current_year)
@@ -464,7 +477,7 @@ def populate_user(request,message,template):
             
     return render_to_response(template,Context({'come': come,'yettocome':yettocome,'gone':gone,'absent':absent,
                                 'forgotcheckout':forgotcheckout,'message':message,'jsdate': jsdate,'datestr': datestr,'leaves':leaves,
-                                'absentnoleave':absentnoleave}))
+                                'absentnoleave':absentnoleave,'aleaves':appleaves}))
 
 #
 @csrf_exempt
