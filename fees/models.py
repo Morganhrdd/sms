@@ -17,7 +17,7 @@ class FeeReceipt(models.Model):
 	Date = models.DateField()
 	StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
 	FeeType = models.ForeignKey(FeeType)
-	Amount = models.PositiveIntegerField()
+	Amount = models.IntegerField()
 	ChequeNo = models.PositiveIntegerField(null=True,blank=True)
 	Bank = models.CharField(max_length=30,null=True,blank=True)
 	Status = models.PositiveIntegerField(choices=RECEIPT_CHOICES)
