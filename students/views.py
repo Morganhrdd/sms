@@ -2,7 +2,6 @@
 from django.shortcuts import render_to_response, redirect
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.models import User
 from django.template import Context, RequestContext
 from django.contrib.auth.decorators import login_required
 from django.utils.safestring import mark_safe
@@ -15,7 +14,6 @@ import math
 from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.platypus import Spacer, Table, TableStyle
 from reportlab.platypus import CondPageBreak, PageBreak
-from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.rl_config import defaultPageSize
 from reportlab.lib.units import inch, cm
@@ -424,14 +422,6 @@ def student_summary(request):
         return render_to_response('students/student_summary.htm',Context({'yrly_infos': student_yearly_infos}), context_instance=RequestContext(request))
     return HttpResponse('Invalid user')
 # Used by HTML Report
-def marks_add1(request):
-    if request.POST:
-        keys = request.POST.keys()
-        test_id = request.POST['test_id']
-        keys.request('test_id')
-        if request.user.is_superuser or request.user.email == test.Teacher.Email:
-            test = TestMapping.objects.get(id=test_id)
-
 @login_required
 def marks_add(request):
     if not can_login(groups=['teacher'], user=request.user):
