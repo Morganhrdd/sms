@@ -93,7 +93,7 @@ class leavesAdmin(admin.ModelAdmin):
 				attendance.save()
 				
 				pno = [obj.Barcode.Phone]
-				psms = "Your leave for "+str(obj.LeaveDate.day)+'/'+str(obj.LeaveDate.month)+'/'+str(obj.LeaveDate.year)+" has been approved."
+				psms = "Your leave for "+unicode(obj.LeaveDate.day)+'/'+unicode(obj.LeaveDate.month)+'/'+unicode(obj.LeaveDate.year)+" has been approved."
 				misc.sms_send(nos=pno,msg=psms)
 			else:
 				att = LeaveAttendance.objects.filter(Date=obj.LeaveDate).filter(Barcode=obj.Barcode)
@@ -102,7 +102,7 @@ class leavesAdmin(admin.ModelAdmin):
 				
 				if obj.Status == 3:
 					pno = [obj.Barcode.Phone]
-					psms = "Your leave for "+str(obj.LeaveDate.day)+'/'+str(obj.LeaveDate.month)+'/'+str(obj.LeaveDate.year)+" has been denied."
+					psms = "Your leave for "+unicode(obj.LeaveDate.day)+'/'+unicode(obj.LeaveDate.month)+'/'+unicode(obj.LeaveDate.year)+" has been denied."
 					misc.sms_send(nos=pno,msg=psms)
 		obj.save()
 		
