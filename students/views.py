@@ -28,22 +28,28 @@ import os.path
 
 from sms.students.vars import *
 
+
 class generate_report(object):
     def __init__(self, regno=None, year=None, classmaster_type='P'):
         self.regno = regno
         self.year = year
         self.classmaster_type = classmaster_type
         self.data = {}
+
     def generate_data(self):
-        student_basic_info_obj = StudentBasicInfo.objects.get(RegistrationNo=self.regno)
+        student_basic_info_obj = StudentBasicInfo.objects.get(
+            RegistrationNo=self.regno
+        )
         year = AcademicYear.objects.get(Year=self.year)
         try:
-            student_addtional_info = StudentAdditionalInformation.objects.get(Id=student_basic_info_obj)
+            student_addtional_info = StudentAdditionalInformation.objects.get(
+                Id=student_basic_info_obj
+            )
         except:
             student_addtional_info = StudentAdditionalInformation()
         student_yearly_info = StudentYearlyInformation.objects.get(
-            StudentBasicInfo = student_basic_info_obj, 
-            ClassMaster__AcademicYear = year, 
+            StudentBasicInfo = student_basic_info_obj,
+            ClassMaster__AcademicYear = year,
             ClassMaster__Type = self.classmaster_type
         )
         classmaster = student_yearly_info.ClassMaster
@@ -51,23 +57,57 @@ class generate_report(object):
             AttendanceMaster__ClassMaster = classmaster,
             StudentYearlyInformation = student_yearly_info
         )
-        physical_fitness_info_obj = PhysicalFitnessInfo.objects.filter(StudentYearlyInformation=student_yearly_info)
-        test_marks_objs = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
-        socialactivity_objs = SocialActivity.objects.filter(StudentYearlyInformation=student_yearly_info)
-        cocurricular_objs = CoCurricular.objects.filter(StudentYearlyInformation=student_yearly_info)
-        competitiveexam_objs = CompetitiveExam.objects.filter(StudentYearlyInformation=student_yearly_info)
-        competition_objs = Competition.objects.filter(StudentYearlyInformation=student_yearly_info)
-        abhivyaktivikas_objs = AbhivyaktiVikas.objects.filter(StudentYearlyInformation=student_yearly_info)
-        project_objs = Project.objects.filter(StudentYearlyInformation=student_yearly_info)
-        elocution_objs = Elocution.objects.filter(StudentYearlyInformation=student_yearly_info)
-        library_objs = Library.objects.filter(StudentYearlyInformation=student_yearly_info)
-        workexperience_objs = WorkExperience.objects.filter(StudentYearlyInformation=student_yearly_info)
-        physicaleducation_objs = PhysicalEducation.objects.filter(StudentYearlyInformation=student_yearly_info)
-        thinkingskill_objs = ThinkingSkill.objects.filter(StudentYearlyInformation=student_yearly_info)
-        socialskill_objs = SocialSkill.objects.filter(StudentYearlyInformation=student_yearly_info)
-        emotionalskill_objs = EmotionalSkill.objects.filter(StudentYearlyInformation=student_yearly_info)
-        attitudetowardsschool_objs = AttitudeTowardsSchool.objects.filter(StudentYearlyInformation=student_yearly_info)
-        values_objs = Values.objects.filter(StudentYearlyInformation=student_yearly_info)
+        physical_fitness_info_obj = PhysicalFitnessInfo.objects.filter(
+            StudentYearlyInformation=student_yearly_info
+        )
+        test_marks_objs = StudentTestMarks.objects.filter(
+            StudentYearlyInformation=student_yearly_info
+        )
+        socialactivity_objs = SocialActivity.objects.filter(
+            StudentYearlyInformation=student_yearly_info
+        )
+        cocurricular_objs = CoCurricular.objects.filter(
+            StudentYearlyInformation=student_yearly_info
+        )
+        competitiveexam_objs = CompetitiveExam.objects.filter(
+            StudentYearlyInformation=student_yearly_info
+        )
+        competition_objs = Competition.objects.filter(
+            StudentYearlyInformation=student_yearly_info
+        )
+        abhivyaktivikas_objs = AbhivyaktiVikas.objects.filter(
+            StudentYearlyInformation=student_yearly_info
+        )
+        project_objs = Project.objects.filter(
+            StudentYearlyInformation=student_yearly_info
+        )
+        elocution_objs = Elocution.objects.filter(
+            StudentYearlyInformation=student_yearly_info
+        )
+        library_objs = Library.objects.filter(
+            StudentYearlyInformation=student_yearly_info
+        )
+        workexperience_objs = WorkExperience.objects.filter(
+            StudentYearlyInformation=student_yearly_info
+        )
+        physicaleducation_objs = PhysicalEducation.objects.filter(
+            StudentYearlyInformation=student_yearly_info
+        )
+        thinkingskill_objs = ThinkingSkill.objects.filter(
+            StudentYearlyInformation=student_yearly_info
+        )
+        socialskill_objs = SocialSkill.objects.filter(
+            StudentYearlyInformation=student_yearly_info
+        )
+        emotionalskill_objs = EmotionalSkill.objects.filter(
+            StudentYearlyInformation=student_yearly_info
+        )
+        attitudetowardsschool_objs = AttitudeTowardsSchool.objects.filter(
+            StudentYearlyInformation=student_yearly_info
+        )
+        values_objs = Values.objects.filter(
+            StudentYearlyInformation=student_yearly_info
+        )
         self.data['basic_info'] = student_basic_info_obj
         self.data['additional_info'] = student_addtional_info
         self.data['yearly_info'] = student_yearly_info
@@ -91,43 +131,60 @@ class generate_report(object):
         self.data['values'] = values_objs
         tmp_data = {}
         tmp_data['workexperience'] = {
-            'nos':['Communication', 'Confidence', 'Involvement'],
-            'strings':['Task','PublicComment'],
-            'keep':['Task'],
-            'max':6
+            'nos': ['Communication', 'Confidence', 'Involvement'],
+            'strings': ['Task', 'PublicComment'],
+            'keep': ['Task'],
+            'max': 6
         }
         tmp_data['thinkingskill'] = {
-            'nos':['Inquiry', 'LogicalThinking', 'Creativity', 'DecisionMakingAndProblemSolving'],
-            'strings':['PublicComment'],
-            'max':6
+            'nos': [
+                'Inquiry',
+                'LogicalThinking',
+                'Creativity',
+                'DecisionMakingAndProblemSolving'
+            ],
+            'strings': ['PublicComment'],
+            'max': 6
         }
         tmp_data['socialskill'] = {
-            'nos':['Communication', 'InterPersonal', 'TeamWork'],
-            'strings':['PublicComment'],
-            'max':6
+            'nos': ['Communication', 'InterPersonal', 'TeamWork'],
+            'strings': ['PublicComment'],
+            'max': 6
         }
         tmp_data['emotionalskill'] = {
-            'nos':['Empathy', 'Expression', 'Management'],
-            'strings':['PublicComment'],
-            'max':6
+            'nos': ['Empathy', 'Expression', 'Management'],
+            'strings': ['PublicComment'],
+            'max': 6
         }
         tmp_data['attitudetowardsschool'] = {
-            'nos':['SchoolTeachers', 'SchoolMates', 'SchoolPrograms', 'SchoolEnvironment'],
-            'strings':['PublicComment'],
-            'max':3
+            'nos': [
+                'SchoolTeachers',
+                'SchoolMates',
+                'SchoolPrograms',
+                'SchoolEnvironment'
+            ],
+            'strings': ['PublicComment'],
+            'max': 3
         }
         tmp_data['values'] = {
-            'nos':['Obedience', 'Honesty', 'Equality', 'Responsibility'],
-            'strings':['PublicComment'],
-            'max':3
+            'nos': ['Obedience', 'Honesty', 'Equality', 'Responsibility'],
+            'strings': ['PublicComment'],
+            'max': 3
         }
         tmp_data['project'] = {
-            'nos':['ProblemSelection', 'Review', 'Planning', 'ExecutionAndHardWork', 'Documentation', 'Communication'],
-            'keep':['Title', 'PublicComment', 'Type', 'Subject'],
-            'max':3
+            'nos': [
+                'ProblemSelection',
+                'Review',
+                'Planning',
+                'ExecutionAndHardWork',
+                'Documentation',
+                'Communication'
+            ],
+            'keep': ['Title', 'PublicComment', 'Type', 'Subject'],
+            'max': 3
         }
         tmp_data['physical_fitness'] = {
-            'nos' : ['Grade'],
+            'nos': ['Grade'],
             'keep': [
                 'Weight',
                 'Height',
@@ -149,77 +206,78 @@ class generate_report(object):
                 'Margadarshak',
                 'SpecialSport'
             ],
-            'max':3,
-            'strings':['PublicComment']
+            'max': 3,
+            'strings': ['PublicComment']
         }
         tmp_data['socialactivity'] = {
-            'nos':['Grade'],
-            'keep':[
+            'nos': ['Grade'],
+            'keep': [
                 'Activity',
                 'Objectives',
                 'Date',
                 'Organizer'
             ],
-            'max':6,
-            'strings':['PublicComment']
+            'max': 6,
+            'strings': ['PublicComment']
         }
         tmp_data['abhivyaktivikas'] = {
-            'nos':[
+            'nos': [
                 'Participation',
                 'ReadinessToLearn',
                 'ContinuityInWork',
                 'SkillDevelopment',
                 'Creativity'
             ],
-            'strings':['PublicComment'],
-            'keep':['MediumOfExpression', 'Teacher'],
-            'max':6
+            'strings': ['PublicComment'],
+            'keep': ['MediumOfExpression', 'Teacher'],
+            'max': 6
         }
         tmp_data['elocution'] = {
-            'nos':[
+            'nos': [
                 'Memory',
                 'Content',
                 'Understanding',
                 'Pronunciation',
                 'Presentation'
             ],
-            'max':3,
-            'keep':['Title', 'PublicComment']
+            'max': 3,
+            'keep': ['Title', 'PublicComment']
         }
         tmp_data['physicaleducation'] = {
-            'keep':['Name', 'Pratod'],
-            'nos':['AbilityToWorkInTeam', 'Cooperation', 'LeadershipSkill'],
-            'strings':['PublicComment'],
-            'max':6
+            'keep': ['Name', 'Pratod'],
+            'nos': ['AbilityToWorkInTeam', 'Cooperation', 'LeadershipSkill'],
+            'strings': ['PublicComment'],
+            'max': 6
         }
         self.find_avg(tmp_data)
     #
+
     def find_avg(self, data):
-        for k in data.keys():
+        for k in data:
             retval = {}
             t = self.data[k]
             for x in data[k]['nos']:
                 retval[x] = 0
-            if data[k].has_key('strings'):
+            if 'strings' in data[k]:
                 for x in data[k]['strings']:
                     retval[x] = ''
             for x in t:
-                if data[k].has_key('nos'):
+                if 'nos' in data[k]:
                     for y in data[k]['nos']:
                         retval[y] += int(getattr(x, y))
-                if data[k].has_key('strings'):
+                if 'strings' in data[k]:
                     for y in data[k]['strings']:
                         retval[y] += getattr(x, y)
-                if data[k].has_key('keep'):
+                if 'keep' in data[k]:
                     for y in data[k]['keep']:
                         retval[y] = getattr(x, y)
             for x in data[k]['nos']:
                 if len(t):
                     retval[x] /= len(t)
                     retval[x] = round(retval[x])
-                    if data[k].has_key('max') and data[k]['max'] == 6:
+                    if 'max' in data[k] and data[k]['max'] == 6:
                         retval[x] = GRADE_CHOICES[retval[x]]
-                    if data[k].has_key('max') and data[k]['max'] == 3:
+                    if 'max' in data[k] and data[k]['max'] == 3:
                         retval[x] = GRADE_CHOICES_3[retval[x]]
             self.data[k] = [retval]
 # HTML Report:
@@ -412,7 +470,7 @@ def report(request):
         'social_activity_data':social_activity_data,
         'cumulative_social_grade':cumulative_social_grade}), context_instance=RequestContext(request))
     else:
-        return HttpResponse ('<html><body>Enter Registration Number<form action="" method="POST"><input type="text" name="reg_no" value="" id="reg_no" size="20"></td>  <input type="submit" value="Enter" /></form></body></html>')
+        return HttpResponse('<html><body>Enter Registration Number<form action="" method="POST"><input type="text" name="reg_no" value="" id="reg_no" size="20"></td>  <input type="submit" value="Enter" /></form></body></html>')
 
 @login_required
 def student_summary(request):
@@ -448,7 +506,7 @@ def marks_add(request):
         else:
             return HttpResponse('Permission denied')
     else:
-        if not request.GET.has_key('test_id'):
+        if 'test_id' not in request.GET:
             tests = TestMapping.objects.all()
             test_details = ''
             for test in tests:
@@ -501,14 +559,14 @@ def competition_add(request):
         msg = search_reg_no(request=request)
         if msg:
             return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
-        if request.POST.has_key('RegistrationNo'):
+        if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
             name = '%s %s' % (student_info.FirstName, student_info.LastName)
             yr = request.POST['Year']
             yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
             # store data
-            if request.POST.has_key('pk'):
+            if 'pk' in request.POST:
                 pk = request.POST['pk']
                 delete = request.POST['Delete']
                 if pk and delete in ('Y', 'y'):
@@ -563,14 +621,14 @@ def elocution_add(request):
         msg = search_reg_no(request=request)
         if msg:
             return render_to_response(respage, {'form':genform,'msg':msg}, context_instance=RequestContext(request))
-        if request.POST.has_key('RegistrationNo'):
+        if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
             name = '%s %s' % (student_info.FirstName, student_info.LastName)
             yr = request.POST['Year']
             yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
             # store data
-            if request.POST.has_key('pk'):
+            if 'pk' in request.POST:
                 pk = request.POST['pk']
                 delete = request.POST['Delete']
                 if pk and delete in ('Y', 'y'):
@@ -626,14 +684,14 @@ def project_add(request):
         msg = search_reg_no(request=request)
         if msg:
             return render_to_response(respage, {'form':genform,'msg':msg}, context_instance=RequestContext(request))
-        if request.POST.has_key('RegistrationNo'):
+        if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
             name = '%s %s' % (student_info.FirstName, student_info.LastName)
             yr = request.POST['Year']
             yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
             # store data
-            if request.POST.has_key('pk'):
+            if 'pk' in request.POST:
                 pk = request.POST['pk']
                 delete = request.POST['Delete']
                 if pk and delete in ('Y', 'y'):
@@ -694,14 +752,14 @@ def abhivyaktivikas_add(request):
         msg = search_reg_no(request=request)
         if msg:
             return render_to_response(respage, {'form':genform,'msg':msg}, context_instance=RequestContext(request))
-        if request.POST.has_key('RegistrationNo'):
+        if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
             name = '%s %s' % (student_info.FirstName, student_info.LastName)
             yr = request.POST['Year']
             yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
             # store data
-            if request.POST.has_key('pk'):
+            if 'pk' in request.POST:
                 pk = request.POST['pk']
                 delete = request.POST['Delete']
                 if pk and delete in ('Y', 'y'):
@@ -758,14 +816,14 @@ def competitiveexam_add(request):
         msg = search_reg_no(request=request)
         if msg:
             return render_to_response(respage, {'form':genform,'msg':msg}, context_instance=RequestContext(request))
-        if request.POST.has_key('RegistrationNo'):
+        if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
             name = '%s %s' % (student_info.FirstName, student_info.LastName)
             yr = request.POST['Year']
             yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
             # store data
-            if request.POST.has_key('pk'):
+            if 'pk' in request.POST:
                 pk = request.POST['pk']
                 delete = request.POST['Delete']
                 if pk and delete in ('Y', 'y'):
@@ -819,7 +877,7 @@ def cocurricular_add(request):
         msg = search_reg_no(request=request)
         if msg:
             return render_to_response(respage, {'form':genform,'msg':msg}, context_instance=RequestContext(request))
-        if request.POST.has_key('RegistrationNo'):
+        if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
             name = '%s %s' % (student_info.FirstName, student_info.LastName)
@@ -880,7 +938,7 @@ def socialactivity_add(request):
         msg = search_reg_no(request=request)
         if msg:
             return render_to_response(respage, {'form':genform,'msg':msg}, context_instance=RequestContext(request))
-        if request.POST.has_key('RegistrationNo'):
+        if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
             name = '%s %s' % (student_info.FirstName, student_info.LastName)
@@ -950,7 +1008,7 @@ def physicalfitnessinfo_add(request):
         msg = search_reg_no(request=request)
         if msg:
             return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
-        if request.POST.has_key('RegistrationNo'):
+        if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
             name = '%s %s' % (student_info.FirstName, student_info.LastName)
@@ -968,8 +1026,6 @@ def physicalfitnessinfo_add(request):
                     else:
                         physicalfitnessinfo_obj = PhysicalFitnessInfo()
                     physicalfitnessinfo_obj.StudentYearlyInformation = yearly_info
-
-
                     physicalfitnessinfo_obj.Weight = request.POST['Weight']
                     physicalfitnessinfo_obj.Height = request.POST['Height']
                     physicalfitnessinfo_obj.FlexibleForwardBending = request.POST['FlexibleForwardBending']
@@ -1059,7 +1115,7 @@ def workexperience_add(request):
         msg = search_reg_no(request=request)
         if msg:
             return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
-        if request.POST.has_key('RegistrationNo'):
+        if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
             name = '%s %s' % (student_info.FirstName, student_info.LastName)
@@ -1119,7 +1175,7 @@ def physicaleducation_add(request):
         msg = search_reg_no(request=request)
         if msg:
             return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
-        if request.POST.has_key('RegistrationNo'):
+        if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
             name = '%s %s' % (student_info.FirstName, student_info.LastName)
@@ -1181,7 +1237,7 @@ def thinkingskill_add(request):
         msg = search_reg_no(request=request)
         if msg:
             return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
-        if request.POST.has_key('RegistrationNo'):
+        if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
             name = '%s %s' % (student_info.FirstName, student_info.LastName)
@@ -1248,7 +1304,7 @@ def socialskill_add(request):
         msg = search_reg_no(request=request)
         if msg:
             return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
-        if request.POST.has_key('RegistrationNo'):
+        if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
             name = '%s %s' % (student_info.FirstName, student_info.LastName)
@@ -1315,7 +1371,7 @@ def attitudetowardsschool_add(request):
         msg = search_reg_no(request=request)
         if msg:
             return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
-        if request.POST.has_key('RegistrationNo'):
+        if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
             name = '%s %s' % (student_info.FirstName, student_info.LastName)
@@ -1383,7 +1439,7 @@ def emotionalskill_add(request):
         msg = search_reg_no(request=request)
         if msg:
             return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
-        if request.POST.has_key('RegistrationNo'):
+        if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
             name = '%s %s' % (student_info.FirstName, student_info.LastName)
@@ -1450,7 +1506,7 @@ def values_add(request):
         msg = search_reg_no(request=request)
         if msg:
             return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
-        if request.POST.has_key('RegistrationNo'):
+        if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
             name = '%s %s' % (student_info.FirstName, student_info.LastName)
@@ -1520,7 +1576,7 @@ def medicalreport_add(request):
         msg = search_reg_no(request=request)
         if msg:
             return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
-        if request.POST.has_key('RegistrationNo'):
+        if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
             name = '%s %s' % (student_info.FirstName, student_info.LastName)
@@ -1588,7 +1644,7 @@ def scrap_add(request):
         msg = search_reg_no(request=request)
         if msg:
             return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
-        if request.POST.has_key('RegistrationNo'):
+        if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
             name = '%s %s' % (student_info.FirstName, student_info.LastName)
@@ -1617,7 +1673,6 @@ def scrap_add(request):
             except:
                 scrap_obj = Scrap(StudentBasicInfo=student_info)
                 delete = 'Y'
-            
             data = []
             for tmp_data in Scrap.objects.filter(StudentBasicInfo=student_info):
                 tmp = {}
@@ -1629,8 +1684,8 @@ def scrap_add(request):
                 data.append(x)
             x = ScrapDetailsForm(initial={'User':request.user, 'Delete':'Y'})
             data.append(x)
-            return render_to_response(respage,{'form':genform, 'data':data, 'name':name,'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg' }, context_instance=RequestContext(request))
-        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+            return render_to_response(respage, {'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
 
 #
 @login_required
@@ -1640,13 +1695,13 @@ def additionalinfo_add(request):
         return redirect('/')
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year':'2010-2011'})
-        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
-        if request.POST.has_key('RegistrationNo'):
+            return render_to_response(respage, {'form':genform, 'msg':msg}, context_instance=RequestContext(request))
+        if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
             name = '%s %s' % (student_info.FirstName, student_info.LastName)
@@ -1780,8 +1835,8 @@ def generate_name_columns(request):
 
 
         #
-        pages  = []
-        dr=[]
+        pages = []
+        dr = []
         for i in data:
             dr.append(.55*cm)
         table = Table(data,dl,dr)
@@ -1909,7 +1964,7 @@ def report_pdf(request):
 
         return response
     else:
-        return HttpResponse ('<html><body>'
+        return HttpResponse('<html><body>'
                              + '<P><B><BIG><BIG>Report in PDF format</BIG></BIG></B></P>'
                              + '<form action="" method="POST">'
                              + '<BIG>Registration Numbers: </BIG><input type="text" name="registration_number_min" value="1000" id="registration_number_min" size="5"></td>'
@@ -1959,11 +2014,9 @@ def fill_pdf_data(Story, registration_nos, part_option, standard, division, year
                 'Values': '-'
             }
             fill_skills_report(student_yearly_info, skillGrades, skillsStory)
-
             #add student name at beginning for partial reports
             if part_option != 0:
                 add_student_name(student_yearly_info, Story)
-            
             #populate content as per the option chosen
             if part_option == 0:
                 fill_static_and_yearly_info(student_yearly_info, skillGrades, Story)
@@ -2205,7 +2258,7 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
         im = Image(image_path, 1*inch, aspect_ratio*inch)
 
     #basic info
-    student_number = '   ' + 'Registration No.: ' + str(student_basic_info.RegistrationNo) + ',   ' + 'Standard: ' +  str(student_yearly_data.ClassMaster.Standard) + ',   ' + 'Roll No.: ' + str(student_yearly_data.RollNo)
+    student_number = '   ' + 'Registration No.: ' + str(student_basic_info.RegistrationNo) + ',   ' + 'Standard: ' + str(student_yearly_data.ClassMaster.Standard) + ',   ' + 'Roll No.: ' + str(student_yearly_data.RollNo)
     style = ParagraphStyle(name = 'StudentInfoStyle', fontSize = 9, alignment=TA_LEFT)
     Story.append(Paragraph(student_number, style))
     Story.append(Spacer(1,0.1*inch))
@@ -2402,7 +2455,7 @@ def fill_static_and_yearly_info_2011(student_yearly_info, skillGrades, academics
         im = Image(image_path, 1*inch, aspect_ratio*inch)
 
     #basic info
-    student_number = '   ' + 'Registration No.: ' + str(student_basic_info.RegistrationNo) + ',   ' + 'Standard: ' +  str(student_yearly_data.ClassMaster.Standard) + ',   ' + 'Roll No.: ' + str(student_yearly_data.RollNo)
+    student_number = '   ' + 'Registration No.: ' + str(student_basic_info.RegistrationNo) + ',   ' + 'Standard: ' + str(student_yearly_data.ClassMaster.Standard) + ',   ' + 'Roll No.: ' + str(student_yearly_data.RollNo)
     style = ParagraphStyle(name = 'StudentInfoStyle', fontSize = 9, alignment=TA_LEFT)
     Story.append(Paragraph(student_number, style))
     Story.append(Spacer(1,0.1*inch))
@@ -2663,7 +2716,7 @@ def fill_academic_report2008(student_yearly_info, Story):
     percentage = 0
     if cumulative_maxmarks > 0:
         percentage = round((cumulative_marks / cumulative_maxmarks * 100),2)
-    add_sub_header_to_story(Story, mark_safe('Grand Total: ' +  str(cumulative_marks) + " / " + str(cumulative_maxmarks)))
+    add_sub_header_to_story(Story, mark_safe('Grand Total: ' + str(cumulative_marks) + " / " + str(cumulative_maxmarks)))
     add_sub_header_to_story(Story, 'Percentage: ' + str(percentage) + "%")
 
     Story.append(Spacer(1,0.5*inch))
@@ -2752,7 +2805,7 @@ def fill_academic_report2010(student_yearly_info, Story):
     percentage = 0
     if cumulative_maxmarks > 0:
         percentage = round((cumulative_marks / cumulative_maxmarks * 100),2)
-    add_sub_header_to_story(Story, mark_safe('Grand Total: ' +  str(cumulative_marks) + " / " + str(cumulative_maxmarks)))
+    add_sub_header_to_story(Story, mark_safe('Grand Total: ' + str(cumulative_marks) + " / " + str(cumulative_maxmarks)))
     add_sub_header_to_story(Story, 'Percentage: ' + str(percentage) + "%")
 
     Story.append(Spacer(1,0.5*inch))
@@ -2870,8 +2923,8 @@ def fill_academic_report_board_2011_9th(student_yearly_info, Story):
     Story.append(Spacer(1,0.25*inch))
 
     CGPA = grade_point(cumulative_marks, cumulative_maxmarks)
-    add_sub_header_to_story(Story, mark_safe('CGPA: ' +  str(CGPA)))
-    add_sub_header_to_story(Story, mark_safe('Grand Total: ' +  str(cumulative_marks) + " / " + str(cumulative_maxmarks)))
+    add_sub_header_to_story(Story, mark_safe('CGPA: ' + str(CGPA)))
+    add_sub_header_to_story(Story, mark_safe('Grand Total: ' + str(cumulative_marks) + " / " + str(cumulative_maxmarks)))
 
     percentage = 0
     if cumulative_maxmarks > 0:
@@ -2955,8 +3008,8 @@ def fill_academic_report_board_2011_9th_Enhanced(student_yearly_info, Story):
     Story.append(Spacer(1,0.25*inch))
 
     CGPA = grade_point(cumulative_marks, cumulative_maxmarks)
-    add_sub_header_to_story(Story, mark_safe('CGPA: ' +  str(CGPA)))
-    add_sub_header_to_story(Story, mark_safe('Grand Total: ' +  str(cumulative_marks) + " / " + str(cumulative_maxmarks)))
+    add_sub_header_to_story(Story, mark_safe('CGPA: ' + str(CGPA)))
+    add_sub_header_to_story(Story, mark_safe('Grand Total: ' + str(cumulative_marks) + " / " + str(cumulative_maxmarks)))
 
     percentage = 0
     if cumulative_maxmarks > 0:
@@ -3094,7 +3147,7 @@ def fill_academic_report_board_2011(student_yearly_info, Story):
     add_sub_header_to_story(Story, mark_safe('CGPA : ' + str(CGPA)))
     add_sub_header_to_story(Story, mark_safe('Grade: ' + grades[CGPA]))
 
-    academics_score = "Grade : " + grades[CGPA];
+    academics_score = "Grade : " + grades[CGPA]
     return academics_score
 
 def fill_academic_report_board_2011_5th_to_8th(student_yearly_info, Story):
@@ -3264,7 +3317,7 @@ def fill_academic_report_board_2011_5th_to_8th(student_yearly_info, Story):
     add_sub_header_to_story(Story, mark_safe('CGPA : ' + str(CGPA)))
     add_sub_header_to_story(Story, mark_safe('Grade: ' + grades[CGPA]))
 
-    academics_score = "Grade : " + grades[CGPA];
+    academics_score = "Grade : " + grades[CGPA]
     return academics_score
 
 def weighted_marks(test_marks_obtained, test_maximum_marks, weighted_maximum_marks):
@@ -3953,7 +4006,7 @@ def certificate_pdf(request):
         doc.build(Story, onFirstPage=certificate_later_pages, onLaterPages=certificate_later_pages)
         return response
     else:
-        return HttpResponse ('<html><body>'
+        return HttpResponse('<html><body>'
                              + '<P><B><BIG><BIG>Bonafide Certificate in PDF format</BIG></BIG></B></P>'
                              + '<form action="" method="POST">'
                              + '<BIG>Registration Numbers: </BIG><input type="text" name="registration_number_min" value="0" id="registration_number_min" size="5"></td>'
@@ -4133,7 +4186,7 @@ def school_leaving_pdf(request):
 
         return response
     else:
-        return HttpResponse ('<html><body>'
+        return HttpResponse('<html><body>'
                              + '<P><B><BIG><BIG>School Leaving Certificate in PDF format</BIG></BIG></B></P>'
                              + '<form action="" method="POST">'
                              + '<BIG>Registration Numbers: </BIG><input type="text" name="registration_number_min" value="0" id="registration_number_min" size="5"></td>'
@@ -4400,7 +4453,7 @@ def cards_pdf(request):
 
         return response
     else:
-        return HttpResponse ('<html><body>'
+        return HttpResponse('<html><body>'
                              + '<P><B><BIG><BIG>Cards in PDF format</BIG></BIG></B></P>'
                              + '<form action="" method="POST">'
                              + '<BIG>Registration Numbers: </BIG><input type="text" name="registration_number_min" value="1000" id="registration_number_min" size="5"></td>'
@@ -4580,7 +4633,7 @@ def marks_tables_pdf(request):
 
         return response
     else:
-        return HttpResponse ('<html><body>'
+        return HttpResponse('<html><body>'
                              + '<P><B><BIG><BIG>Marks Tables PDF</BIG></BIG></B></P>'
                              + '<form action="" method="POST">'
                              + '<BIG>Subject Name: </BIG>: <input type="text" name="subject_name" value="ALL" id="subject_name" size="3"><br /><br />'
