@@ -52,7 +52,7 @@ def get_barcode(request):
                 t1_m = lastin.hour*60 + lastin.minute
                 t2_m = time.hour*60 + time.minute
                 if t2_m - t1_m < 30:
-                    message = str(user) + " already checked in"
+                    message = unicode(user) + u' already checked in'
                     return populate_user(request,message,'ams/barcode.html')        
         else:
             if remqs:
@@ -63,9 +63,9 @@ def get_barcode(request):
                     t1_m = lastin.hour*60 + lastin.minute
                     t2_m = time.hour*60 + time.minute
                     if t2_m - t1_m < 30:
-                        message = str(user) + " already checked out"
+                        message = unicode(user) + u' already checked out'
                     else:
-                        message = str(user) + " entry for today already marked"
+                        message = unicode(user) + u' entry for today already marked'
                     return populate_user(request,message,'ams/barcode.html')        
             userstatus.Status = 'I'
 
@@ -573,7 +573,7 @@ def app_leave(request):
                 else:
                     message = "Enter correct dates!"
                     return render_to_response('ams/leaveapp.html', {'form': form, 'message': message, 'disabled':disabled})
-                message = "Leave application submitted for user " + str(barcode)
+                message = "Leave application submitted for user " + unicode(barcode)
         elif request.POST['applyforleave'] == '2':
             if form.is_valid():
                 fdate = form.cleaned_data['FromDate']
@@ -612,7 +612,7 @@ def app_leave(request):
                 else:
                     message = "Enter correct dates!"
                     return render_to_response('ams/leaveapp.html', {'form': form, 'message': message, 'disabled':disabled})
-                message = "Leave cancellation submitted for user " + str(barcode)
+                message = "Leave cancellation submitted for user " + unicode(barcode)
         elif request.POST['applyforleave'] == '3':
             if form.is_valid():
                 days = form.cleaned_data['Days']            
@@ -626,7 +626,7 @@ def app_leave(request):
                 enleave.Days = days
                 enleave.Status = 1
                 enleave.save()
-                message = "Leave encashment submitted for user " + str(barcode)
+                message = "Leave encashment submitted for user " + unicode(barcode)
                 
         barcode = form.cleaned_data['Barcode']
         category = form.cleaned_data['Category']
