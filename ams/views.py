@@ -69,7 +69,7 @@ def get_barcode(request):
                     return populate_user(request,message,'ams/barcode.html')        
             userstatus.Status = 'I'
 
-        message = "Time " + dt.strftime("%H:%M:%S") + " recorded for " + str(user)
+        message = "Time " + dt.strftime("%H:%M:%S") + " recorded for " + unicode(user)
         userstatus.save()
         status = userstatus.Status
         
