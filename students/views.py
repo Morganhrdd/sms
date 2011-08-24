@@ -48,14 +48,14 @@ class generate_report(object):
         except:
             student_addtional_info = StudentAdditionalInformation()
         student_yearly_info = StudentYearlyInformation.objects.get(
-            StudentBasicInfo = student_basic_info_obj,
-            ClassMaster__AcademicYear = year,
-            ClassMaster__Type = self.classmaster_type
+            StudentBasicInfo=student_basic_info_obj,
+            ClassMaster__AcademicYear=year,
+            ClassMaster__Type=self.classmaster_type
         )
         classmaster = student_yearly_info.ClassMaster
         attendance_objs = StudentAttendance.objects.filter(
-            AttendanceMaster__ClassMaster = classmaster,
-            StudentYearlyInformation = student_yearly_info
+            AttendanceMaster__ClassMaster=classmaster,
+            StudentYearlyInformation=student_yearly_info
         )
         physical_fitness_info_obj = PhysicalFitnessInfo.objects.filter(
             StudentYearlyInformation=student_yearly_info
@@ -280,6 +280,8 @@ class generate_report(object):
                     if 'max' in data[k] and data[k]['max'] == 3:
                         retval[x] = GRADE_CHOICES_3[retval[x]]
             self.data[k] = [retval]
+
+
 # HTML Report:
 @login_required
 def report(request):
@@ -288,88 +290,115 @@ def report(request):
     if request.POST:
         reg_no = request.POST['reg_no']
 
-        student_basic_info = StudentBasicInfo.objects.get(RegistrationNo = reg_no)
-        student_yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo = student_basic_info)
-        student_add_info = StudentAdditionalInformation.objects.get(Id=student_basic_info)
-        student_data = {'FirstName':student_basic_info.FirstName,
-                      'LastName':student_basic_info.LastName,
-                      'DateOfBirth':student_basic_info.DateOfBirth,
-                      'MothersName':student_basic_info.MothersName,
-                      'FathersName':student_basic_info.FathersName,
-                      'RegistrationNo':student_basic_info.RegistrationNo,
-                      'Address':student_add_info.Address.replace('&','and'),
-                      'photo':student_yearly_info.Photo}
+        student_basic_info = StudentBasicInfo.objects.get(
+            RegistrationNo=reg_no
+        )
+        student_yearly_info = StudentYearlyInformation.objects.get(
+            StudentBasicInfo=student_basic_info
+        )
+        student_add_info = StudentAdditionalInformation.objects.get(
+            Id=student_basic_info
+        )
+        student_data = {
+            'FirstName': student_basic_info.FirstName,
+            'LastName': student_basic_info.LastName,
+            'DateOfBirth': student_basic_info.DateOfBirth,
+            'MothersName': student_basic_info.MothersName,
+            'FathersName': student_basic_info.FathersName,
+            'RegistrationNo': student_basic_info.RegistrationNo,
+            'Address': student_add_info.Address.replace('&', 'and'),
+            'photo': student_yearly_info.Photo
+        }
 
-        attendances = StudentAttendance.objects.filter(StudentYearlyInformation = student_yearly_info)
+        attendances = StudentAttendance.objects.filter(
+            StudentYearlyInformation=student_yearly_info
+        )
         attendance_data = []
         for attendance in attendances:
-            attendance_data.append({'Month':MONTH_CHOICES[attendance.AttendanceMaster.Month],
-                                    'Attendance':attendance.ActualAttendance,
-                                    'Working_days':attendance.AttendanceMaster.WorkingDays})
+            attendance_data.append({
+                'Month': MONTH_CHOICES[attendance.AttendanceMaster.Month],
+                'Attendance': attendance.ActualAttendance,
+                'Working_days': attendance.AttendanceMaster.WorkingDays
+            })
 
         mark_data = {}
-        marks_summary={'TotalMarksObtained':0 , 'TotalMaximumMarks':0}
+        marks_summary = {'TotalMarksObtained': 0, 'TotalMaximumMarks': 0}
 
-        co_curricular = CoCurricular.objects.filter(StudentYearlyInformation = student_yearly_info)
+        co_curricular = CoCurricular.objects.filter(
+            StudentYearlyInformation=student_yearly_info
+        )
         co_curricular_data = []
-        cumulative_cocur_grade_sum=0
-        cumulative_cocur_grade=0
+        cumulative_cocur_grade_sum = 0
+        cumulative_cocur_grade = 0
         for co_cur_acts in co_curricular:
-            cumulative_cocur_grade_sum=cumulative_cocur_grade_sum + GRADE_NUM[co_cur_acts.Grade]
-            co_curricular_data.append({'Activity':co_cur_acts.Activity ,
-                                       'Objectives':co_cur_acts.Objectives ,
-                                       'Date':co_cur_acts.Date ,
-                                       'Guide':co_cur_acts.Guide ,
-                                       'Grade':co_cur_acts.Grade ,
-                                       'PublicComment':co_cur_acts.PublicComment})
-        if len(co_curricular)>0:
-            cumulative_cocur_grade=GRADE_CHOICES[int(round(cumulative_cocur_grade_sum/len(co_curricular)))]
+            cumulative_cocur_grade_sum = cumulative_cocur_grade_sum + \
+                GRADE_NUM[co_cur_acts.Grade]
+            co_curricular_data.append({
+                'Activity': co_cur_acts.Activity,
+                'Objectives': co_cur_acts.Objectives,
+                'Date': co_cur_acts.Date,
+                'Guide': co_cur_acts.Guide,
+                'Grade': co_cur_acts.Grade,
+                'PublicComment': co_cur_acts.PublicComment
+            })
+        if len(co_curricular) > 0:
+            cumulative_cocur_grade = GRADE_CHOICES[int(round(cumulative_cocur_grade_sum / len(co_curricular)))]
 
-        competitive_exam = CompetitiveExam.objects.filter(StudentYearlyInformation = student_yearly_info)
+        competitive_exam = CompetitiveExam.objects.filter(StudentYearlyInformation=student_yearly_info)
         competitive_exam_data = []
-        cumulative_compexam_grade_sum=0
-        cumulative_compexam_grade=0
+        cumulative_compexam_grade_sum = 0
+        cumulative_compexam_grade = 0
         for exams in competitive_exam:
             #cumulative_compexam_grade_sum=cumulative_compexam_grade_sum + GRADE_NUM[exams.Grade]
-            competitive_exam_data.append({'Name':exams.Name ,
-                                          'Subject':exams.Subject,
-                                          'Level':exams.Level,
-                                          'Date':exams.Date,
-                                          'Grade':exams.Grade,
-                                          'PublicComment':exams.PublicComment})
-        if len(competitive_exam)>0:
-            cumulative_compexam_grade=GRADE_CHOICES[int(round(cumulative_compexam_grade_sum/len(competitive_exam)))]
+            competitive_exam_data.append({
+                'Name': exams.Name,
+                'Subject': exams.Subject,
+                'Level': exams.Level,
+                'Date': exams.Date,
+                'Grade': exams.Grade,
+                'PublicComment': exams.PublicComment
+            })
+        if len(competitive_exam) > 0:
+            cumulative_compexam_grade = GRADE_CHOICES[int(round(cumulative_compexam_grade_sum / len(competitive_exam)))]
 
-        competitions = Competition.objects.filter(StudentYearlyInformation = student_yearly_info)
+        competitions = Competition.objects.filter(StudentYearlyInformation=student_yearly_info)
         competitions_data = []
-        cumulative_comp_grade_sum=0
-        cumulative_comp_grade=0
+        cumulative_comp_grade_sum = 0
+        cumulative_comp_grade = 0
         for comps in competitions:
-            cumulative_comp_grade_sum=0 #cumulative_comp_grade_sum + GRADE_NUM[comps.Achievement]
-            competitions_data.append({'Organizer':comps.Organizer ,
-                                          'Subject':comps.Subject ,
-                                          'Date':comps.Date ,
-                                          'Achievement':comps.Achievement,
-                                          'Guide':comps.Guide ,
-                                          'PublicComment':comps.PublicComment})
-        if len(competitions)>0:
-            cumulative_comp_grade=GRADE_CHOICES[int(round(cumulative_comp_grade_sum/len(competitions)))]
+            cumulative_comp_grade_sum = 0  # cumulative_comp_grade_sum + GRADE_NUM[comps.Achievement]
+            competitions_data.append({
+                'Organizer': comps.Organizer,
+                'Subject': comps.Subject,
+                'Date': comps.Date,
+                'Achievement': comps.Achievement,
+                'Guide': comps.Guide,
+                'PublicComment': comps.PublicComment
+            })
+        if len(competitions) > 0:
+            cumulative_comp_grade = GRADE_CHOICES[int(round(cumulative_comp_grade_sum / len(competitions)))]
 
         abhivyakti_vikas = AbhivyaktiVikas.objects.filter(StudentYearlyInformation = student_yearly_info)
         abhivyakti_vikas_data = []
-        cumulative_abhi_grade_sum=0
-        cumulative_abhi_grade=0
+        cumulative_abhi_grade_sum = 0
+        cumulative_abhi_grade = 0
         for abhi_row in abhivyakti_vikas:
-            abhi_grade_row_sum = (GRADE_NUM[abhi_row.Participation])+(GRADE_NUM[abhi_row.ReadinessToLearn])+(GRADE_NUM[abhi_row.ContinuityInWork])+(GRADE_NUM[abhi_row.SkillDevelopment])+(GRADE_NUM[abhi_row.Creativity])
-            cumulative_abhi_grade_sum = cumulative_abhi_grade_sum+int(round(abhi_grade_row_sum/5))
-            abhivyakti_vikas_data.append({'MediumOfExpression':abhi_row.MediumOfExpression ,
-                                         'Teacher':abhi_row.Teacher ,
-                                         'Participation':GRADE_CHOICES[abhi_row.Participation] ,
-                                         'ReadinessToLearn':GRADE_CHOICES[abhi_row.ReadinessToLearn] ,
-                                         'ContinuityInWork':GRADE_CHOICES[abhi_row.ContinuityInWork] ,
-                                         'SkillDevelopment':GRADE_CHOICES[abhi_row.SkillDevelopment],
-                                         'Creativity':GRADE_CHOICES[abhi_row.Creativity],
-                                         'PublicComment':abhi_row.PublicComment})
+            abhi_grade_row_sum = GRADE_NUM[abhi_row.Participation] + \
+                GRADE_NUM[abhi_row.ReadinessToLearn] + \
+                GRADE_NUM[abhi_row.ContinuityInWork] + \
+                GRADE_NUM[abhi_row.SkillDevelopment] + \
+                GRADE_NUM[abhi_row.Creativity]
+            cumulative_abhi_grade_sum = cumulative_abhi_grade_sum + int(round(abhi_grade_row_sum / 5))
+            abhivyakti_vikas_data.append({
+                'MediumOfExpression': abhi_row.MediumOfExpression,
+                'Teacher': abhi_row.Teacher,
+                'Participation': GRADE_CHOICES[abhi_row.Participation],
+                'ReadinessToLearn': GRADE_CHOICES[abhi_row.ReadinessToLearn],
+                'ContinuityInWork': GRADE_CHOICES[abhi_row.ContinuityInWork],
+                'SkillDevelopment': GRADE_CHOICES[abhi_row.SkillDevelopment],
+                'Creativity': GRADE_CHOICES[abhi_row.Creativity],
+                'PublicComment': abhi_row.PublicComment
+            })
         if(len(abhivyakti_vikas) > 0):
             cumulative_abhi_grade = GRADE_CHOICES[int(round(cumulative_abhi_grade_sum/len(abhivyakti_vikas)))]
 
@@ -380,95 +409,113 @@ def report(request):
         for proj_row in projects:
             proj_grade_row_sum = (GRADE_NUM[proj_row.ProblemSelection])+(GRADE_NUM[proj_row.Review])+(GRADE_NUM[proj_row.Planning])+(GRADE_NUM[proj_row.Documentation])+(GRADE_NUM[proj_row.Communication])
             cumulative_project_grade_sum = cumulative_project_grade_sum+int(round(proj_grade_row_sum/5))
-            project_data.append({'Title':proj_row.Title ,
-                                         'Type':PROJECT_TYPE_CHOICES[proj_row.Type] ,
-                                         'Subject':proj_row.Subject ,
-                                         'ProblemSelection':GRADE_CHOICES[proj_row.ProblemSelection] ,
-                                         'Review':GRADE_CHOICES[proj_row.Review] ,
-                                         'Planning':GRADE_CHOICES[proj_row.Planning],
-                                         'Documentation':GRADE_CHOICES[proj_row.Documentation],
-                                         'Communication':GRADE_CHOICES[proj_row.Communication],
-                                         'PublicComment':proj_row.PublicComment})
+            project_data.append({
+                'Title': proj_row.Title,
+                'Type': PROJECT_TYPE_CHOICES[proj_row.Type],
+                'Subject': proj_row.Subject,
+                'ProblemSelection': GRADE_CHOICES[proj_row.ProblemSelection],
+                'Review': GRADE_CHOICES[proj_row.Review],
+                'Planning': GRADE_CHOICES[proj_row.Planning],
+                'Documentation': GRADE_CHOICES[proj_row.Documentation],
+                'Communication': GRADE_CHOICES[proj_row.Communication],
+                'PublicComment': proj_row.PublicComment
+            })
         if(len(projects) > 0):
-            cumulative_project_grade = GRADE_CHOICES[int(round(cumulative_project_grade_sum/len(projects)))]
+            cumulative_project_grade = GRADE_CHOICES[int(round(cumulative_project_grade_sum / len(projects)))]
 
         elocution = Elocution.objects.filter(StudentYearlyInformation = student_yearly_info)
         elocution_data = []
-        cumulative_elocution_grade_sum=0
-        cumulative_elocution_grade=0
+        cumulative_elocution_grade_sum = 0
+        cumulative_elocution_grade = 0
         for elo_row in elocution:
-            elocution_grade_row_sum=(GRADE_NUM[elo_row.Memory])+(GRADE_NUM[elo_row.Content])+(GRADE_NUM[elo_row.Understanding])+(GRADE_NUM[elo_row.Pronunciation])+(GRADE_NUM[elo_row.Presentation])
-            cumulative_elocution_grade_sum=cumulative_elocution_grade_sum+int(round(elocution_grade_row_sum/5))
-            elocution_data.append({'Title':elo_row.Title ,
-                                         'Memory':GRADE_CHOICES[elo_row.Memory] ,
-                                         'Content':GRADE_CHOICES[elo_row.Content] ,
-                                         'Understanding':GRADE_CHOICES[elo_row.Understanding] ,
-                                         'Pronunciation':GRADE_CHOICES[elo_row.Pronunciation] ,
-                                         'Presentation':GRADE_CHOICES[elo_row.Presentation],
-                                         'PublicComment':elo_row.PublicComment})
+            elocution_grade_row_sum = \
+                GRADE_NUM[elo_row.Memory] + \
+                GRADE_NUM[elo_row.Content] + \
+                GRADE_NUM[elo_row.Understanding] + \
+                GRADE_NUM[elo_row.Pronunciation] + \
+                GRADE_NUM[elo_row.Presentation]
+            cumulative_elocution_grade_sum = cumulative_elocution_grade_sum + \
+                int(round(elocution_grade_row_sum / 5))
+            elocution_data.append({
+                'Title': elo_row.Title,
+                'Memory': GRADE_CHOICES[elo_row.Memory],
+                'Content': GRADE_CHOICES[elo_row.Content],
+                'Understanding': GRADE_CHOICES[elo_row.Understanding],
+                'Pronunciation': GRADE_CHOICES[elo_row.Pronunciation],
+                'Presentation': GRADE_CHOICES[elo_row.Presentation],
+                'PublicComment': elo_row.PublicComment
+            })
         if(len(elocution) > 0):
-            cumulative_elocution_grade=GRADE_CHOICES[int(round(cumulative_elocution_grade_sum/len(elocution)))]
+            cumulative_elocution_grade = GRADE_CHOICES[int(round(cumulative_elocution_grade_sum / len(elocution)))]
 
         physical_fit_info = PhysicalFitnessInfo.objects.filter(StudentYearlyInformation = student_yearly_info)
         physical_fit_info_data = []
-        cumulative_physical_grade_sum=0
-        cumulative_physical_grade=0
+        cumulative_physical_grade_sum = 0
+        cumulative_physical_grade = 0
         for ph_data in physical_fit_info:
-            cumulative_physical_grade_sum=cumulative_physical_grade_sum + GRADE_NUM[ph_data.Grade]
-            physical_fit_info_data.append({'Pathak':ph_data.Pathak ,
-                                           'Pratod':ph_data.Pratod ,
-                                           'Margadarshak':ph_data.Margadarshak ,
-                                           'SpecialSport':ph_data.SpecialSport ,
-                                           'Weight':ph_data.Weight ,
-                                           'Height':ph_data.Height ,
-                                           'FlexibleForwardBending':ph_data.FlexibleForwardBending ,
-                                           'FlexibleBackwardBending':ph_data.FlexibleBackwardBending ,
-                                           'SBJ':ph_data.SBJ ,
-                                           'VerticleJump':ph_data.VerticleJump ,
-                                           'BallThrow':ph_data.BallThrow ,
-                                           'ShuttleRun':ph_data.ShuttleRun ,
-                                           'SitUps':ph_data.SitUps ,
-                                           'Sprint':ph_data.Sprint ,
-                                           'Running400m':ph_data.Running400m ,
-                                           'ShortPutThrow':ph_data.ShortPutThrow ,
-                                           'BodyMassIndex':ph_data.BodyMassIndex ,
-                                           'Balancing':ph_data.Balancing ,
-                                           'Grade':ph_data.Grade ,
-                                           'PublicComment':ph_data.PublicComment})
+            cumulative_physical_grade_sum = cumulative_physical_grade_sum + GRADE_NUM[ph_data.Grade]
+            physical_fit_info_data.append({
+                'Pathak': ph_data.Pathak,
+                'Pratod': ph_data.Pratod,
+                'Margadarshak': ph_data.Margadarshak,
+                'SpecialSport': ph_data.SpecialSport,
+                'Weight': ph_data.Weight,
+                'Height': ph_data.Height,
+                'FlexibleForwardBending': ph_data.FlexibleForwardBending,
+                'FlexibleBackwardBending': ph_data.FlexibleBackwardBending,
+                'SBJ': ph_data.SBJ,
+                'VerticleJump': ph_data.VerticleJump,
+                'BallThrow': ph_data.BallThrow,
+                'ShuttleRun': ph_data.ShuttleRun,
+                'SitUps': ph_data.SitUps,
+                'Sprint': ph_data.Sprint,
+                'Running400m': ph_data.Running400m,
+                'ShortPutThrow': ph_data.ShortPutThrow,
+                'BodyMassIndex': ph_data.BodyMassIndex,
+                'Balancing': ph_data.Balancing,
+                'Grade': ph_data.Grade,
+                'PublicComment': ph_data.PublicComment
+            })
         if(len(physical_fit_info) > 0):
-            cumulative_physical_grade=GRADE_CHOICES[int(round(cumulative_physical_grade_sum/len(physical_fit_info)))]
+            cumulative_physical_grade = GRADE_CHOICES[int(round(cumulative_physical_grade_sum / len(physical_fit_info)))]
 
-        social_activities = SocialActivity.objects.filter(StudentYearlyInformation = student_yearly_info)
+        social_activities = SocialActivity.objects.filter(StudentYearlyInformation=student_yearly_info)
         social_activity_data = []
-        cumulative_social_grade_sum=0
-        cumulative_social_grade=0
+        cumulative_social_grade_sum = 0
+        cumulative_social_grade = 0
         for soc_act_data in social_activities:
             cumulative_social_grade_sum=cumulative_social_grade_sum + GRADE_NUM[soc_act_data.Grade]
-            social_activity_data.append({'Activity':soc_act_data.Activity ,
-                                         'Objectives':soc_act_data.Objectives ,
-                                         'Date':soc_act_data.Date ,
-                                         'Organizer':soc_act_data.Organizer ,
-                                         'Grade':soc_act_data.Grade ,
-                                         'PublicComment':soc_act_data.PublicComment})
+            social_activity_data.append({'Activity': soc_act_data.Activity ,
+                                         'Objectives': soc_act_data.Objectives ,
+                                         'Date': soc_act_data.Date ,
+                                         'Organizer': soc_act_data.Organizer ,
+                                         'Grade': soc_act_data.Grade ,
+                                         'PublicComment': soc_act_data.PublicComment})
         if(len(social_activities) > 0):
             cumulative_social_grade=GRADE_CHOICES[int(round(cumulative_social_grade_sum/len(social_activities)))]
 
-        return render_to_response('students/Marks_Report.html',Context({'student_data':student_data ,
-        'mark_data':mark_data ,
-        'marks_summary':marks_summary,
-        'attendance_data':attendance_data ,
-        'co_curricular_data':co_curricular_data,
-        'cumulative_cocur_grade':cumulative_cocur_grade,
-        'abhivyakti_vikas_data':abhivyakti_vikas_data ,
-        'cumulative_abhi_grade': cumulative_abhi_grade,
-        'project_data':project_data ,
-        'cumulative_project_grade':cumulative_project_grade,
-        'elocution_data':elocution_data,
-        'cumulative_elocution_grade': cumulative_elocution_grade,
-        'physical_fit_info_data':physical_fit_info_data,
-        'cumulative_physical_grade':cumulative_physical_grade,
-        'social_activity_data':social_activity_data,
-        'cumulative_social_grade':cumulative_social_grade}), context_instance=RequestContext(request))
+        return render_to_response(
+            'students/Marks_Report.html',
+            Context({
+                'student_data': student_data,
+                'mark_data': mark_data ,
+                'marks_summary': marks_summary,
+                'attendance_data': attendance_data ,
+                'co_curricular_data': co_curricular_data,
+                'cumulative_cocur_grade': cumulative_cocur_grade,
+                'abhivyakti_vikas_data': abhivyakti_vikas_data ,
+                'cumulative_abhi_grade': cumulative_abhi_grade,
+                'project_data': project_data ,
+                'cumulative_project_grade': cumulative_project_grade,
+                'elocution_data': elocution_data,
+                'cumulative_elocution_grade': cumulative_elocution_grade,
+                'physical_fit_info_data': physical_fit_info_data,
+                'cumulative_physical_grade': cumulative_physical_grade,
+                'social_activity_data': social_activity_data,
+                'cumulative_social_grade': cumulative_social_grade
+            }),
+            context_instance=RequestContext(request)
+        )
     else:
         return HttpResponse('<html><body>Enter Registration Number<form action="" method="POST"><input type="text" name="reg_no" value="" id="reg_no" size="20"></td>  <input type="submit" value="Enter" /></form></body></html>')
 
@@ -533,8 +580,8 @@ def marks_add(request):
         for student_test_mark_obj in student_test_marks_objs:
             name = '%s %s' % (student_test_mark_obj.StudentYearlyInformation.StudentBasicInfo.FirstName, student_test_mark_obj.StudentYearlyInformation.StudentBasicInfo.LastName)
             rollno = student_test_mark_obj.StudentYearlyInformation.RollNo
-            data.append({'id':student_test_mark_obj.StudentYearlyInformation.id, 'name':name, 'rollno':rollno,'marks_obtained':student_test_mark_obj.MarksObtained})
-        return render_to_response('students/AddMarks.html',Context({'test_details': test_details,'test_id':test_id, 'data':data}), context_instance=RequestContext(request))
+            data.append({'id': student_test_mark_obj.StudentYearlyInformation.id, 'name': name, 'rollno': rollno,'marks_obtained': student_test_mark_obj.MarksObtained})
+        return render_to_response('students/AddMarks.html',Context({'test_details': test_details,'test_id': test_id, 'data': data}), context_instance=RequestContext(request))
 
 def can_login(groups=None, user=None):
     if not user.is_active:
@@ -552,13 +599,13 @@ def competition_add(request):
         return redirect('/')
     respage = 'students/AddCompetition.html'
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
-        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+        genform = SearchDetailsForm(initial={'Year': '2010-2011'})
+        return render_to_response(respage,{'form': genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage,{'form': genform,'msg': msg}, context_instance=RequestContext(request))
         if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -602,9 +649,9 @@ def competition_add(request):
                 tmp['DescriptiveIndicator'] = competition_obj.DescriptiveIndicator
                 x = CompetitionDetailsForm(initial=tmp)
                 data.append(x)
-            data.append(CompetitionDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
+            data.append(CompetitionDetailsForm(initial={'Delete': 'Y'}))
+            return render_to_response(respage,{'form': genform, 'data': data, 'name': name, 'photo': '/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form': genform}, context_instance=RequestContext(request))
 
 
 #
@@ -614,13 +661,13 @@ def elocution_add(request):
         return redirect('/')
     respage = 'students/AddElocution.html'
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
-        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
+        genform = SearchDetailsForm(initial={'Year': '2010-2011'})
+        return render_to_response(respage, {'form': genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage, {'form':genform,'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage, {'form': genform,'msg': msg}, context_instance=RequestContext(request))
         if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -666,9 +713,9 @@ def elocution_add(request):
                 tmp['DescriptiveIndicator'] = elocution_obj.DescriptiveIndicator
                 x = ElocutionDetailsForm(initial=tmp)
                 data.append(x)
-            data.append(ElocutionDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response(respage, {'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
+            data.append(ElocutionDetailsForm(initial={'Delete': 'Y'}))
+            return render_to_response(respage, {'form': genform, 'data': data, 'name': name, 'photo': '/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form': genform}, context_instance=RequestContext(request))
 
 #
 @login_required
@@ -677,13 +724,13 @@ def project_add(request):
         return redirect('/')
     respage = 'students/AddProject.html'
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
-        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
+        genform = SearchDetailsForm(initial={'Year': '2010-2011'})
+        return render_to_response(respage, {'form': genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage, {'form':genform,'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage, {'form': genform,'msg': msg}, context_instance=RequestContext(request))
         if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -735,9 +782,9 @@ def project_add(request):
                 tmp['DescriptiveIndicator'] = project_obj.DescriptiveIndicator
                 x = ProjectDetailsForm(initial=tmp)
                 data.append(x)
-            data.append(ProjectDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response(respage, {'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
+            data.append(ProjectDetailsForm(initial={'Delete': 'Y'}))
+            return render_to_response(respage, {'form': genform, 'data': data, 'name': name, 'photo': '/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form': genform}, context_instance=RequestContext(request))
 #
 @login_required
 def abhivyaktivikas_add(request):
@@ -745,13 +792,13 @@ def abhivyaktivikas_add(request):
         return redirect('/')
     respage = 'students/AddAbhivyaktiVikas.html'
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
-        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
+        genform = SearchDetailsForm(initial={'Year': '2010-2011'})
+        return render_to_response(respage, {'form': genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage, {'form':genform,'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage, {'form': genform,'msg': msg}, context_instance=RequestContext(request))
         if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -799,9 +846,9 @@ def abhivyaktivikas_add(request):
                 tmp['DescriptiveIndicator'] = abhivyaktivikas_obj.DescriptiveIndicator
                 x = AbhivyaktiVikasDetailsForm(initial=tmp)
                 data.append(x)
-            data.append(AbhivyaktiVikasDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response(respage, {'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
+            data.append(AbhivyaktiVikasDetailsForm(initial={'Delete': 'Y'}))
+            return render_to_response(respage, {'form': genform, 'data': data, 'name': name, 'photo': '/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form': genform}, context_instance=RequestContext(request))
 
 #
 def competitiveexam_add(request):
@@ -809,13 +856,13 @@ def competitiveexam_add(request):
         return redirect('/')
     respage = 'students/AddCompetitiveExam.html'
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
-        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
+        genform = SearchDetailsForm(initial={'Year': '2010-2011'})
+        return render_to_response(respage, {'form': genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage, {'form':genform,'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage, {'form': genform,'msg': msg}, context_instance=RequestContext(request))
         if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -859,9 +906,9 @@ def competitiveexam_add(request):
                 tmp['DescriptiveIndicator'] = competitiveexam_obj.DescriptiveIndicator
                 x = CompetitiveExamDetailsForm(initial=tmp)
                 data.append(x)
-            data.append(CompetitiveExamDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response(respage, {'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
+            data.append(CompetitiveExamDetailsForm(initial={'Delete': 'Y'}))
+            return render_to_response(respage, {'form': genform, 'data': data, 'name': name, 'photo': '/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form': genform}, context_instance=RequestContext(request))
 
 #
 @login_required
@@ -870,13 +917,13 @@ def cocurricular_add(request):
         return redirect('/')
     respage = 'students/AddCocurricular.html'
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
-        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
+        genform = SearchDetailsForm(initial={'Year': '2010-2011'})
+        return render_to_response(respage, {'form': genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage, {'form':genform,'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage, {'form': genform,'msg': msg}, context_instance=RequestContext(request))
         if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -884,7 +931,7 @@ def cocurricular_add(request):
             yr = request.POST['Year']
             yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
             # store data
-            if request.POST.has_key('pk'):
+            if 'pk' in request.POST:
                 pk = request.POST['pk']
                 delete = request.POST['Delete']
                 if pk and delete in ('Y', 'y'):
@@ -920,9 +967,9 @@ def cocurricular_add(request):
                 tmp['DescriptiveIndicator'] = cocurricular_obj.DescriptiveIndicator
                 x = CoCurricularDetailsForm(initial=tmp)
                 data.append(x)
-            data.append(CoCurricularDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response(respage, {'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
+            data.append(CoCurricularDetailsForm(initial={'Delete': 'Y'}))
+            return render_to_response(respage, {'form': genform, 'data': data, 'name': name, 'photo': '/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form': genform}, context_instance=RequestContext(request))
 
 #
 @login_required
@@ -931,13 +978,13 @@ def socialactivity_add(request):
         return redirect('/')
     respage = 'students/AddSocialActivity.html'
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
-        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
+        genform = SearchDetailsForm(initial={'Year': '2010-2011'})
+        return render_to_response(respage, {'form': genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage, {'form':genform,'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage, {'form': genform,'msg': msg}, context_instance=RequestContext(request))
         if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -945,7 +992,7 @@ def socialactivity_add(request):
             yr = request.POST['Year']
             yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
             # store data
-            if request.POST.has_key('pk'):
+            if 'pk' in request.POST:
                 pk = request.POST['pk']
                 delete = request.POST['Delete']
                 if pk and delete in ('Y', 'y'):
@@ -981,18 +1028,18 @@ def socialactivity_add(request):
                 tmp['DescriptiveIndicator'] = socialactivity_obj.DescriptiveIndicator
                 x = SocialActivityDetailsForm(initial=tmp)
                 data.append(x)
-            data.append(SocialActivityDetailsForm(initial={'Delete':'Y'}))
+            data.append(SocialActivityDetailsForm(initial={'Delete': 'Y'}))
             return render_to_response(
                 respage, 
                 {
-                    'form':genform,
-                    'data':data,
-                    'name':name,
-                    'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'
+                    'form': genform,
+                    'data': data,
+                    'name': name,
+                    'photo': '/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'
                 },
                 context_instance=RequestContext(request)
             )
-        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form': genform}, context_instance=RequestContext(request))
 
 #
 @login_required
@@ -1001,13 +1048,13 @@ def physicalfitnessinfo_add(request):
         return redirect('/')
     respage = 'students/AddPhysicalFitnessInfo.html'
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
-        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+        genform = SearchDetailsForm(initial={'Year': '2010-2011'})
+        return render_to_response(respage,{'form': genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage,{'form': genform,'msg': msg}, context_instance=RequestContext(request))
         if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -1015,7 +1062,7 @@ def physicalfitnessinfo_add(request):
             yr = request.POST['Year']
             yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
             # store data
-            if request.POST.has_key('pk'):
+            if 'pk' in request.POST:
                 pk = request.POST['pk']
                 delete = request.POST['Delete']
                 if pk and delete in ('Y', 'y'):
@@ -1080,15 +1127,15 @@ def physicalfitnessinfo_add(request):
                 x = PhysicalFitnessInfoDetailsForm(initial=tmp)
                 data.append(x)
             if not len(data):
-                data.append(PhysicalFitnessInfoDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response(respage, {'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
+                data.append(PhysicalFitnessInfoDetailsForm(initial={'Delete': 'Y'}))
+            return render_to_response(respage, {'form': genform, 'data': data, 'name': name, 'photo': '/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form': genform}, context_instance=RequestContext(request))
 
 #
 def search_reg_no(request=None):
     if not request:
         return
-    if not request.POST['RegistrationNo'] and (request.POST.has_key('FirstName') or request.POST.has_key('LastName')):
+    if not request.POST['RegistrationNo'] and ('FirstName' in request.POST or 'LastName' in request.POST):
         tmp = {}
         if request.POST['FirstName']:
             tmp['FirstName'] = request.POST['FirstName']
@@ -1108,13 +1155,13 @@ def workexperience_add(request):
         return redirect('/')
     respage = 'students/AddWorkExperience.html'
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
-        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+        genform = SearchDetailsForm(initial={'Year': '2010-2011'})
+        return render_to_response(respage,{'form': genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage,{'form': genform,'msg': msg}, context_instance=RequestContext(request))
         if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -1122,7 +1169,7 @@ def workexperience_add(request):
             yr = request.POST['Year']
             yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
             # store data
-            if request.POST.has_key('pk'):
+            if 'pk' in request.POST:
                 pk = request.POST['pk']
                 delete = request.POST['Delete']
                 if pk and delete in ('Y', 'y'):
@@ -1157,9 +1204,9 @@ def workexperience_add(request):
                 tmp['PrivateComment'] = workexperience_obj.PrivateComment
                 x = WorkExperienceDetailsForm(initial=tmp)
                 data.append(x)
-            data.append(WorkExperienceDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+            data.append(WorkExperienceDetailsForm(initial={'Delete': 'Y'}))
+            return render_to_response(respage,{'form': genform, 'data': data, 'name': name, 'photo': '/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage,{'form': genform}, context_instance=RequestContext(request))
 
 #
 @login_required
@@ -1168,13 +1215,13 @@ def physicaleducation_add(request):
     if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
-        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+        genform = SearchDetailsForm(initial={'Year': '2010-2011'})
+        return render_to_response(respage,{'form': genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage,{'form': genform,'msg': msg}, context_instance=RequestContext(request))
         if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -1182,7 +1229,7 @@ def physicaleducation_add(request):
             yr = request.POST['Year']
             yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
             # store data
-            if request.POST.has_key('pk'):
+            if 'pk' in request.POST:
                 pk = request.POST['pk']
                 delete = request.POST['Delete']
                 if pk and delete in ('Y', 'y'):
@@ -1219,9 +1266,9 @@ def physicaleducation_add(request):
                 x = PhysicalEducationDetailsForm(initial=tmp)
                 data.append(x)
             if not len(data):
-                data.append(PhysicalEducationDetailsForm(initial={'Delete':'Y'}))
-            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+                data.append(PhysicalEducationDetailsForm(initial={'Delete': 'Y'}))
+            return render_to_response(respage,{'form': genform, 'data': data, 'name': name, 'photo': '/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage,{'form': genform}, context_instance=RequestContext(request))
 
 #
 @login_required
@@ -1230,13 +1277,13 @@ def thinkingskill_add(request):
     if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
-        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+        genform = SearchDetailsForm(initial={'Year': '2010-2011'})
+        return render_to_response(respage,{'form': genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage,{'form': genform,'msg': msg}, context_instance=RequestContext(request))
         if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -1244,7 +1291,7 @@ def thinkingskill_add(request):
             yr = request.POST['Year']
             yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
             # store data
-            if request.POST.has_key('pk'):
+            if 'pk' in request.POST:
                 pk = request.POST['pk']
                 delete = request.POST['Delete']
                 if pk and delete in ('Y', 'y'):
@@ -1288,8 +1335,8 @@ def thinkingskill_add(request):
             tmp['Delete'] = delete
             x = ThinkingSkillDetailsForm(initial=tmp)
             data.append(x)
-            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+            return render_to_response(respage,{'form': genform, 'data': data, 'name': name, 'teacher': teacher_obj, 'photo': '/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage,{'form': genform}, context_instance=RequestContext(request))
 
 #
 def socialskill_add(request):
@@ -1297,13 +1344,13 @@ def socialskill_add(request):
     if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
-        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+        genform = SearchDetailsForm(initial={'Year': '2010-2011'})
+        return render_to_response(respage,{'form': genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage,{'form': genform,'msg': msg}, context_instance=RequestContext(request))
         if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -1311,7 +1358,7 @@ def socialskill_add(request):
             yr = request.POST['Year']
             yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
             # store data
-            if request.POST.has_key('pk'):
+            if 'pk' in request.POST:
                 pk = request.POST['pk']
                 delete = request.POST['Delete']
                 if pk and delete in ('Y', 'y'):
@@ -1354,8 +1401,8 @@ def socialskill_add(request):
             tmp['Delete'] = delete
             x = SocialSkillDetailsForm(initial=tmp)
             data.append(x)
-            return render_to_response(respage, {'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
+            return render_to_response(respage, {'form': genform, 'data': data, 'name': name, 'teacher': teacher_obj, 'photo': '/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form': genform}, context_instance=RequestContext(request))
 
 #
 @login_required
@@ -1364,13 +1411,13 @@ def attitudetowardsschool_add(request):
     if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
-        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+        genform = SearchDetailsForm(initial={'Year': '2010-2011'})
+        return render_to_response(respage,{'form': genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage,{'form': genform,'msg': msg}, context_instance=RequestContext(request))
         if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -1378,7 +1425,7 @@ def attitudetowardsschool_add(request):
             yr = request.POST['Year']
             yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
             # store data
-            if request.POST.has_key('pk'):
+            if 'pk' in request.POST:
                 pk = request.POST['pk']
                 delete = request.POST['Delete']
                 if pk and delete in ('Y', 'y'):
@@ -1423,8 +1470,8 @@ def attitudetowardsschool_add(request):
             tmp['Delete'] = delete
             x = AttitudeTowardsSchoolDetailsForm(initial=tmp)
             data.append(x)
-            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+            return render_to_response(respage,{'form': genform, 'data': data, 'name': name, 'teacher': teacher_obj, 'photo': '/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage,{'form': genform}, context_instance=RequestContext(request))
 #
 @login_required
 def emotionalskill_add(request):
@@ -1432,13 +1479,13 @@ def emotionalskill_add(request):
     if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
-        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+        genform = SearchDetailsForm(initial={'Year': '2010-2011'})
+        return render_to_response(respage,{'form': genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage,{'form': genform,'msg': msg}, context_instance=RequestContext(request))
         if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -1446,7 +1493,7 @@ def emotionalskill_add(request):
             yr = request.POST['Year']
             yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
             # store data
-            if request.POST.has_key('pk'):
+            if 'pk' in request.POST:
                 pk = request.POST['pk']
                 delete = request.POST['Delete']
                 if pk and delete in ('Y', 'y'):
@@ -1489,8 +1536,8 @@ def emotionalskill_add(request):
             tmp['Delete'] = delete
             x = EmotionalSkillDetailsForm(initial=tmp)
             data.append(x)
-            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+            return render_to_response(respage,{'form': genform, 'data': data, 'name': name, 'teacher': teacher_obj, 'photo': '/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage,{'form': genform}, context_instance=RequestContext(request))
 
 #
 @login_required
@@ -1499,13 +1546,13 @@ def values_add(request):
     if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
-        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+        genform = SearchDetailsForm(initial={'Year': '2010-2011'})
+        return render_to_response(respage,{'form': genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage,{'form': genform,'msg': msg}, context_instance=RequestContext(request))
         if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -1513,7 +1560,7 @@ def values_add(request):
             yr = request.POST['Year']
             yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
             # store data
-            if request.POST.has_key('pk'):
+            if 'pk' in request.POST:
                 pk = request.POST['pk']
                 delete = request.POST['Delete']
                 if pk and delete in ('Y', 'y'):
@@ -1558,8 +1605,8 @@ def values_add(request):
             tmp['Delete'] = delete
             x = ValuesDetailsForm(initial=tmp)
             data.append(x)
-            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'teacher':teacher_obj, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+            return render_to_response(respage,{'form': genform, 'data': data, 'name': name, 'teacher': teacher_obj, 'photo': '/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage,{'form': genform}, context_instance=RequestContext(request))
 
 
 #
@@ -1569,13 +1616,13 @@ def medicalreport_add(request):
     if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
-        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+        genform = SearchDetailsForm(initial={'Year': '2010-2011'})
+        return render_to_response(respage,{'form': genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage,{'form': genform,'msg': msg}, context_instance=RequestContext(request))
         if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -1583,7 +1630,7 @@ def medicalreport_add(request):
             yr = request.POST['Year']
             yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
             # store data
-            if request.POST.has_key('pk'):
+            if 'pk' in request.POST:
                 pk = request.POST['pk']
                 delete = request.POST['Delete']
                 if pk and delete in ('Y', 'y'):
@@ -1626,9 +1673,9 @@ def medicalreport_add(request):
                 x = MedicalReportForm(initial=tmp)
                 data.append(x)
             if not len(data):
-                data.append(MedicalReportForm(initial={'Delete':'Y'}))
-            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+                data.append(MedicalReportForm(initial={'Delete': 'Y'}))
+            return render_to_response(respage,{'form': genform, 'data': data, 'name': name, 'photo': '/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage,{'form': genform}, context_instance=RequestContext(request))
 
 #
 @login_required
@@ -1637,13 +1684,13 @@ def scrap_add(request):
     if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
-        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+        genform = SearchDetailsForm(initial={'Year': '2010-2011'})
+        return render_to_response(respage,{'form': genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage,{'form':genform,'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage,{'form': genform,'msg': msg}, context_instance=RequestContext(request))
         if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -1651,7 +1698,7 @@ def scrap_add(request):
             yr = request.POST['Year']
             yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
             # store data
-            if request.POST.has_key('pk'):
+            if 'pk' in request.POST:
                 pk = request.POST['pk']
                 delete = request.POST['Delete']
                 if pk and delete in ('Y', 'y'):
@@ -1682,10 +1729,10 @@ def scrap_add(request):
                 tmp['date'] = tmp_data.date
                 x = ScrapDetailsForm(initial=tmp)
                 data.append(x)
-            x = ScrapDetailsForm(initial={'User':request.user, 'Delete':'Y'})
+            x = ScrapDetailsForm(initial={'User': request.user, 'Delete': 'Y'})
             data.append(x)
-            return render_to_response(respage, {'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
+            return render_to_response(respage, {'form': genform, 'data': data, 'name': name, 'photo': '/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage, {'form': genform}, context_instance=RequestContext(request))
 
 #
 @login_required
@@ -1694,13 +1741,13 @@ def additionalinfo_add(request):
     if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     if not request.POST:
-        genform = SearchDetailsForm(initial={'Year':'2010-2011'})
-        return render_to_response(respage, {'form':genform}, context_instance=RequestContext(request))
+        genform = SearchDetailsForm(initial={'Year': '2010-2011'})
+        return render_to_response(respage, {'form': genform}, context_instance=RequestContext(request))
     else:
         genform = SearchDetailsForm(request.POST)
         msg = search_reg_no(request=request)
         if msg:
-            return render_to_response(respage, {'form':genform, 'msg':msg}, context_instance=RequestContext(request))
+            return render_to_response(respage, {'form': genform, 'msg': msg}, context_instance=RequestContext(request))
         if 'RegistrationNo' in request.POST:
             regno = request.POST['RegistrationNo']
             student_info = StudentBasicInfo.objects.get(RegistrationNo=regno)
@@ -1708,7 +1755,7 @@ def additionalinfo_add(request):
             yr = request.POST['Year']
             yearly_info = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
             # store data
-            if request.POST.has_key('pk'):
+            if 'pk' in request.POST:
                 pk = request.POST['pk']
                 delete = request.POST['Delete']
                 if pk and delete in ('Y', 'y'):
@@ -1759,9 +1806,9 @@ def additionalinfo_add(request):
                 x = StudentAdditionalInformationForm(initial=tmp)
                 data.append(x)
             if not len(data):
-                data.append(StudentAdditionalInformationForm(initial={'Delete':'Y'}))
-            return render_to_response(respage,{'form':genform, 'data':data, 'name':name, 'photo':'/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
-        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+                data.append(StudentAdditionalInformationForm(initial={'Delete': 'Y'}))
+            return render_to_response(respage,{'form': genform, 'data': data, 'name': name, 'photo': '/media/students_photos/'+yearly_info.ClassMaster.AcademicYear.Year+'_'+regno+'.jpg'}, context_instance=RequestContext(request))
+        return render_to_response(respage,{'form': genform}, context_instance=RequestContext(request))
 
 @login_required
 def send_sms_students(request):
@@ -1769,8 +1816,8 @@ def send_sms_students(request):
     if not can_login(groups=['teacher', 'Pratod'], user=request.user):
         return redirect('/')
     if not request.POST:
-        genform = SMSSendForm(initial={'Year':'2010-2011'})
-        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+        genform = SMSSendForm(initial={'Year': '2010-2011'})
+        return render_to_response(respage,{'form': genform}, context_instance=RequestContext(request))
     else:
         regno = []
         yr = request.POST['Year']
@@ -1803,8 +1850,8 @@ def generate_name_columns(request):
     if not can_login(groups=['teacher'], user=request.user):
         return redirect('/')
     if not request.POST:
-        genform = SearchClassDetailsForm(initial={'Year':'2010-2011'})
-        return render_to_response(respage,{'form':genform}, context_instance=RequestContext(request))
+        genform = SearchClassDetailsForm(initial={'Year': '2010-2011'})
+        return render_to_response(respage,{'form': genform}, context_instance=RequestContext(request))
     else:
         table_style = TableStyle([
                ('FONT', (0,0), (-1,0), 'Times-Bold'),
@@ -1817,11 +1864,11 @@ def generate_name_columns(request):
         tmp = []
         data = []
         dl = []
-        dl.append(1.5*cm)
-        dl.append(1.75*cm)
-        dl.append(2*inch)
+        dl.append(1.5 * cm)
+        dl.append(1.75 * cm)
+        dl.append(2 * inch)
         cols = int(request.POST['Columns'])
-        col_width = (defaultPageSize[0]-(5*inch))/cols
+        col_width = (defaultPageSize[0]-(5 * inch))/cols
         yr = request.POST['Year']
         std = request.POST['Standard']
         div = request.POST['Division']
@@ -1838,7 +1885,7 @@ def generate_name_columns(request):
         pages = []
         dr = []
         for i in data:
-            dr.append(.55*cm)
+            dr.append(.55 * cm)
         table = Table(data,dl,dr)
         table.setStyle(table_style)
         pages.append(table)
@@ -1882,7 +1929,7 @@ def attendance_add(request):
                 pass
         return HttpResponse('Successfully added record.<br/>\n<a href="/attendance_add">Select test for entering data</a>')
     else:
-        if not request.GET.has_key('attendance_id'):
+        if 'attendance_id' not in request.GET:
             attendancemaster = AttendanceMaster.objects.all()
             attendance_details = ''
             for attendance in attendancemaster:
@@ -1902,8 +1949,8 @@ def attendance_add(request):
                 attendance = StudentAttendance.objects.get(StudentYearlyInformation=student, AttendanceMaster=attendance_obj).ActualAttendance
             except:
                 attendance = ''
-            data.append({'id':student.id,'roll_no':student.RollNo, 'name':name, 'attendance':attendance})
-        return render_to_response('students/AddAttendance.html',Context({'attendance_id':attendance_id, 'attendance_details':attendance_obj.ClassMaster, 'data':data}), context_instance=RequestContext(request))
+            data.append({'id': student.id,'roll_no': student.RollNo, 'name': name, 'attendance': attendance})
+        return render_to_response('students/AddAttendance.html',Context({'attendance_id': attendance_id, 'attendance_details': attendance_obj.ClassMaster, 'data': data}), context_instance=RequestContext(request))
     return HttpResponse()
 
 # PDF Report :  --------------------------------------------------
@@ -1924,7 +1971,7 @@ def page_border(canvas):
     #centrally placed rectangle
     PAGE_HEIGHT = defaultPageSize[1]
     PAGE_WIDTH = defaultPageSize[0]
-    margin=0.7*inch
+    margin = 0.7 * inch
     canvas.line(margin, margin, margin, PAGE_HEIGHT - margin)
     canvas.line(margin, PAGE_HEIGHT - margin, PAGE_WIDTH - margin, PAGE_HEIGHT - margin)
     canvas.line(PAGE_WIDTH - margin, PAGE_HEIGHT - margin, PAGE_WIDTH - margin, margin)
@@ -1932,7 +1979,7 @@ def page_border(canvas):
 
     #line separator for footer
     canvas.setLineWidth(0.1)
-    canvas.line(PAGE_WIDTH - margin, margin + 0.16*inch, margin, margin + 0.16*inch)
+    canvas.line(PAGE_WIDTH - margin, margin + 0.16 * inch, margin, margin + 0.16 * inch)
 
 #
 @csrf_exempt
@@ -2081,7 +2128,7 @@ def add_table_to_story(Story,data,align):
     table.setStyle(table_style)
     table.hAlign=align
     Story.append(table)
-    Story.append(Spacer(1,0.1*inch))
+    Story.append(Spacer(1,0.1 * inch))
 
 def add_no_border_table_to_story(Story, data):
     table=Table(data)
@@ -2098,16 +2145,16 @@ def format_date(dateObj):
 def add_main_header_to_story(Story,header_text):
     style = ParagraphStyle(name = 'MainHeader', fontSize = 12, alignment=TA_CENTER)
     Story.append(Paragraph("<strong>" + header_text + "</strong>", style))
-    Story.append(Spacer(1,0.20*inch))
+    Story.append(Spacer(1,0.20 * inch))
 
 def add_sub_header_to_story(Story,header_text):
-    Story.append(CondPageBreak(1*inch))
+    Story.append(CondPageBreak(1 * inch))
     style = ParagraphStyle(name = 'SubHeader', fontSize = 10, alignment=TA_CENTER)
     Story.append(Paragraph("<strong>" + header_text + "</strong>", style))
-    Story.append(Spacer(1,0.20*inch))
+    Story.append(Spacer(1,0.20 * inch))
 
 def add_signature_space_to_story(Story,signature_text,designation):
-    Story.append(Spacer(1,0.3*inch))
+    Story.append(Spacer(1,0.3 * inch))
     style = ParagraphStyle(name = 'SignatureStyle', fontSize = 10, alignment=TA_RIGHT)
     Story.append(Paragraph(signature_text, style))
     Story.append(Paragraph(designation, style))
@@ -2121,7 +2168,7 @@ def fill_letter_head(Story):
     style = ParagraphStyle(name='styleName', fontName ='Times-Bold', fontSize = 18, alignment=TA_CENTER)
     Story.append(Paragraph("Jnana Prabodhini Prashala", style))
 
-    Story.append(Spacer(1,0.2*inch))
+    Story.append(Spacer(1,0.2 * inch))
 
     style = ParagraphStyle(name='styleName', fontName ='Times-Roman', fontSize = 7, alignment=TA_CENTER)
     Story.append(Paragraph("School Affiliation No:1130001", style))
@@ -2144,20 +2191,20 @@ def fill_letter_head(Story):
         ('LINEABOVE',(0,0),(0,0),1,colors.black),
         ('LINEBELOW',(0,0),(0,0),1,colors.black)
         ])
-    margin=0.7*inch
+    margin = 0.7 * inch
     PAGE_WIDTH = defaultPageSize[0]
-    column_widths=((PAGE_WIDTH-2*(margin))*0.9)
+    column_widths=((PAGE_WIDTH-2 * (margin)) * 0.9)
     table=Table(data, colWidths=column_widths)
     table.setStyle(table_style)
     table.hAlign = 'CENTER'
     Story.append(table)
 
-    Story.append(Spacer(1,0.1*inch))
+    Story.append(Spacer(1,0.1 * inch))
 
 def fill_student_attendance(student_yearly_info, Story, class_type):
     attendances = StudentAttendance.objects.filter(StudentYearlyInformation = student_yearly_info)
-    cumulative_attendance=0
-    cumulative_workingdays=0
+    cumulative_attendance = 0
+    cumulative_workingdays = 0
 
     data = []
 
@@ -2212,16 +2259,14 @@ def fill_student_attendance(student_yearly_info, Story, class_type):
     data.append(data_row)
 
     add_table_to_story(Story,data,'CENTER')
-    Story.append(Spacer(1,0.25*inch))
+    Story.append(Spacer(1,0.25 * inch))
 
 def add_student_name(student_yearly_info, Story):
     student_basic_info = student_yearly_info.StudentBasicInfo
-
     registration_number = str(student_basic_info.RegistrationNo)
     student_name = student_basic_info.FirstName + ' ' + student_basic_info.LastName
     standard_roll_number = str(student_yearly_info.ClassMaster.Standard) + 'th ' + str(student_yearly_info.RollNo)
     student_info = registration_number + '  ' + student_name + '  ' + standard_roll_number
-    
     style = ParagraphStyle(name = 'StudentNameStyle', fontSize = 9, alignment=TA_RIGHT)
     Story.append(Paragraph(student_info, style))
 
@@ -2241,12 +2286,12 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
     year = student_yearly_data.ClassMaster.AcademicYear.Year
     style = ParagraphStyle(name = 'SubHeader', fontSize = 10, alignment=TA_CENTER)
     Story.append(Paragraph("<strong>" + "Year" + " " + year + "</strong>", style))
-    Story.append(Spacer(1,0.05*inch))
+    Story.append(Spacer(1,0.05 * inch))
 
     #Part 1 title
     style = ParagraphStyle(name = 'MainHeader', fontSize = 12, alignment=TA_CENTER)
     Story.append(Paragraph("<strong>" + "Part 1: General Information" + "</strong>", style))
-    Story.append(Spacer(1,0.05*inch))
+    Story.append(Spacer(1,0.05 * inch))
 
     #photo
     image_path = 'media/students_photos/' + str(year) + '_' + str(student_basic_info.RegistrationNo) + '.jpg'
@@ -2255,20 +2300,22 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
     if is_file_exists:
         im = Image(image_path)
         aspect_ratio = im.imageHeight / im.imageWidth
-        im = Image(image_path, 1*inch, aspect_ratio*inch)
+        im = Image(image_path, 1 * inch, aspect_ratio * inch)
 
     #basic info
-    student_number = '   ' + 'Registration No.: ' + str(student_basic_info.RegistrationNo) + ',   ' + 'Standard: ' + str(student_yearly_data.ClassMaster.Standard) + ',   ' + 'Roll No.: ' + str(student_yearly_data.RollNo)
+    student_number = '   ' + 'Registration No.: ' + \
+        str(student_basic_info.RegistrationNo) + ',   ' + 'Standard: ' + \
+        str(student_yearly_data.ClassMaster.Standard) + ',   ' + \
+        'Roll No.: ' + str(student_yearly_data.RollNo)
     style = ParagraphStyle(name = 'StudentInfoStyle', fontSize = 9, alignment=TA_LEFT)
     Story.append(Paragraph(student_number, style))
-    Story.append(Spacer(1,0.1*inch))
-    
+    Story.append(Spacer(1, 0.1 * inch))
     data = []
     data=(
-            ['Name: ' , student_basic_info.FirstName + ' ' + student_basic_info.LastName,im],
-            ["Father's Name: " , student_basic_info.FathersName,''],
-            ["Mother's Name: " , student_basic_info.MothersName,''],
-            ['Address: ' , Paragraph(student_addtional_info.Address.replace('&', 'and'), style),''],
+            ['Name: ', student_basic_info.FirstName + ' ' + student_basic_info.LastName, im],
+            ["Father's Name: ", student_basic_info.FathersName, ''],
+            ["Mother's Name: ", student_basic_info.MothersName, ''],
+            ['Address: ', Paragraph(student_addtional_info.Address.replace('&', 'and'), style), ''],
         )
     table=Table(data)
     table_style = TableStyle([
@@ -2276,16 +2323,16 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
         ('FONTSIZE',(0,0),(-1,-1),9),
         ('SPAN',(-1,0),(-1,-1)),
         ('VALIGN',(0,0),(-1,-1),'TOP')
-        ])
-    table._argW[0]=1.5*inch
+    ])
+    table._argW[0]=1.5 * inch
     table.setStyle(table_style)
     table.hAlign='LEFT'
     Story.append(table)
 
     # cumulative Academics
     marks = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
-    cumulative_marks=0
-    cumulative_maximum_marks=0
+    cumulative_marks = 0
+    cumulative_maximum_marks = 0
     cumulative_academics='-'
     for mark in marks:
         if mark.MarksObtained > 0:
@@ -2296,7 +2343,7 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
 
     # Cumulative CoCurricular
     co_curricular = CoCurricular.objects.filter(StudentYearlyInformation = student_yearly_info)
-    cumulative_cocur_grade_sum=0
+    cumulative_cocur_grade_sum = 0
     cumulative_cocur_grade='-'
     for co_cur_acts in co_curricular:
         cumulative_cocur_grade_sum=cumulative_cocur_grade_sum + GRADE_NUM[co_cur_acts.Grade]
@@ -2305,7 +2352,7 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
 
     # Cumulative Abhivyakti Vikas
     abhivyakti_vikas = AbhivyaktiVikas.objects.filter(StudentYearlyInformation = student_yearly_info)
-    cumulative_abhi_grade_sum=0
+    cumulative_abhi_grade_sum = 0
     cumulative_abhi_grade='-'
     for abhi_row in abhivyakti_vikas:
         abhi_grade_row_sum=(GRADE_NUM[abhi_row.Participation])+(GRADE_NUM[abhi_row.ReadinessToLearn])+(GRADE_NUM[abhi_row.ContinuityInWork])+(GRADE_NUM[abhi_row.SkillDevelopment])+(GRADE_NUM[abhi_row.Creativity])
@@ -2315,20 +2362,20 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
 
     # Cumulative Projects
     projects = Project.objects.filter(StudentYearlyInformation = student_yearly_info)
-    cumulative_project_grade_sum=0
+    cumulative_project_grade_sum = 0
     cumulative_project_grade='-'
     for proj_row in projects:
         try:
             proj_grade_row_sum=(GRADE_NUM[proj_row.ProblemSelection])+(GRADE_NUM[proj_row.Review])+(GRADE_NUM[proj_row.Planning])+(GRADE_NUM[proj_row.Documentation])+(GRADE_NUM[proj_row.Communication])
         except:
-            proj_grade_row_sum=0
+            proj_grade_row_sum = 0
         cumulative_project_grade_sum=cumulative_project_grade_sum+int(round(proj_grade_row_sum/5))
     if len(projects) > 0:
         cumulative_project_grade=GRADE_CHOICES_3[int(round(cumulative_project_grade_sum/len(projects)))]
 
     # Cumulative Elocution
     elocutions = Elocution.objects.filter(StudentYearlyInformation = student_yearly_info)
-    cumulative_elocution_grade_sum=0
+    cumulative_elocution_grade_sum = 0
     cumulative_elocution_grade='-'
     for elo_row in elocutions:
         elocution_grade_row_sum=(GRADE_NUM[elo_row.Memory])+(GRADE_NUM[elo_row.Content])+(GRADE_NUM[elo_row.Understanding])+(GRADE_NUM[elo_row.Pronunciation])+(GRADE_NUM[elo_row.Presentation])
@@ -2338,7 +2385,7 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
 
     # Cumulative Physical Fitness Info
     physical_fit_info = PhysicalFitnessInfo.objects.filter(StudentYearlyInformation = student_yearly_info)
-    cumulative_physical_grade_sum=0
+    cumulative_physical_grade_sum = 0
     cumulative_physical_grade='-'
     for ph_data in physical_fit_info:
         cumulative_physical_grade_sum=cumulative_physical_grade_sum + GRADE_NUM[ph_data.Grade]
@@ -2347,7 +2394,7 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
 
     # Cumulative Social Activity
     social_activities = SocialActivity.objects.filter(StudentYearlyInformation = student_yearly_info)
-    cumulative_social_grade_sum=0
+    cumulative_social_grade_sum = 0
     cumulative_social_grade='-'
     for soc_act_data in social_activities:
         cumulative_social_grade_sum=cumulative_social_grade_sum + GRADE_NUM[soc_act_data.Grade]
@@ -2363,20 +2410,20 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
 
     # Cumulative Prashala Attendance
     attendances = StudentAttendance.objects.filter(StudentYearlyInformation = student_yearly_info)
-    cumulative_attendance=0
-    cumulative_workingdays_attendance=0
+    cumulative_attendance = 0
+    cumulative_workingdays_attendance = 0
     cumulative_attendance_percentage='-'
     for attendance in attendances:
         attendance_master = attendance.AttendanceMaster
         class_master = attendance_master.ClassMaster
-        if class_master.Type == 'P':
+        if class_master.Type == 'P': 
             cumulative_attendance = cumulative_attendance + attendance.ActualAttendance
             cumulative_workingdays_attendance = cumulative_workingdays_attendance + attendance.AttendanceMaster.WorkingDays
     if cumulative_workingdays_attendance > 0:
         cumulative_attendance_percentage = str(round((float(cumulative_attendance) / cumulative_workingdays_attendance * 100),2)) + "%"
 
     # Cumulative Grade Table
-    Story.append(Spacer(1,0.1*inch))
+    Story.append(Spacer(1,0.1 * inch))
     add_sub_header_to_story(Story,"Report Summary")
     data = []
     data=(
@@ -2403,14 +2450,14 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
     Story.append(Paragraph('which indicate level of participation or performance', tipStyle))
 
     # Signature
-    Story.append(Spacer(1,0.4*inch))
+    Story.append(Spacer(1,0.4 * inch))
     data = []
     data=(
             ['Supervisor','Vice Principal','Principal'],
             ['(Dr.Bhagyashree Harshe)','(Milind Naik)','(Vivek Ponkshe)'],
         )
     PAGE_WIDTH = defaultPageSize[0]
-    table=Table(data, colWidths=PAGE_WIDTH*0.25)
+    table=Table(data, colWidths=PAGE_WIDTH * 0.25)
     table_style = TableStyle([
         ('ALIGN',(0,0),(-1,-1), 'CENTER'),
         ('TEXTCOLOR',(0,0),(-1,-1),colors.black),
@@ -2438,12 +2485,12 @@ def fill_static_and_yearly_info_2011(student_yearly_info, skillGrades, academics
     year = student_yearly_data.ClassMaster.AcademicYear.Year
     style = ParagraphStyle(name = 'SubHeader', fontSize = 10, alignment=TA_CENTER)
     Story.append(Paragraph("<strong>" + "Year" + " " + year + "</strong>", style))
-    Story.append(Spacer(1,0.05*inch))
+    Story.append(Spacer(1,0.05 * inch))
 
     #Part 1 title
     style = ParagraphStyle(name = 'MainHeader', fontSize = 12, alignment=TA_CENTER)
     Story.append(Paragraph("<strong>" + "Part 1: General Information" + "</strong>", style))
-    Story.append(Spacer(1,0.05*inch))
+    Story.append(Spacer(1,0.05 * inch))
 
     #photo
     image_path = 'media/students_photos/' + str(year) + '_' + str(student_basic_info.RegistrationNo) + '.jpg'
@@ -2452,20 +2499,19 @@ def fill_static_and_yearly_info_2011(student_yearly_info, skillGrades, academics
     if is_file_exists:
         im = Image(image_path)
         aspect_ratio = im.imageHeight / im.imageWidth
-        im = Image(image_path, 1*inch, aspect_ratio*inch)
+        im = Image(image_path, 1 * inch, aspect_ratio * inch)
 
     #basic info
     student_number = '   ' + 'Registration No.: ' + str(student_basic_info.RegistrationNo) + ',   ' + 'Standard: ' + str(student_yearly_data.ClassMaster.Standard) + ',   ' + 'Roll No.: ' + str(student_yearly_data.RollNo)
     style = ParagraphStyle(name = 'StudentInfoStyle', fontSize = 9, alignment=TA_LEFT)
     Story.append(Paragraph(student_number, style))
-    Story.append(Spacer(1,0.1*inch))
-    
+    Story.append(Spacer(1,0.1 * inch))
     data = []
     data=(
-            [Paragraph('Name: ', style) , Paragraph(student_basic_info.FirstName + ' ' + student_basic_info.LastName, style),im],
-            [Paragraph("Father's Name: ", style) , Paragraph(student_basic_info.FathersName, style),''],
-            [Paragraph("Mother's Name: ", style) , Paragraph(student_basic_info.MothersName, style),''],
-            [Paragraph('Address: ', style) , Paragraph(student_addtional_info.Address.replace('&', 'and'), style),'']
+            [Paragraph('Name: ', style), Paragraph(student_basic_info.FirstName + ' ' + student_basic_info.LastName, style),im],
+            [Paragraph("Father's Name: ", style), Paragraph(student_basic_info.FathersName, style),''],
+            [Paragraph("Mother's Name: ", style), Paragraph(student_basic_info.MothersName, style),''],
+            [Paragraph('Address: ', style), Paragraph(student_addtional_info.Address.replace('&', 'and'), style),'']
         )
     table=Table(data)
     table_style = TableStyle([
@@ -2475,15 +2521,15 @@ def fill_static_and_yearly_info_2011(student_yearly_info, skillGrades, academics
         ('VALIGN',(0,0),(-1,-1),'TOP'),
         ('ALIGN',(0,0),(-1,-1),'RIGHT')
         ])
-    table._argW[0]=1.5*inch
+    table._argW[0]=1.5 * inch
     table.setStyle(table_style)
     table.hAlign='LEFT'
     Story.append(table)
 
     # cumulative Academics
     marks = StudentTestMarks.objects.filter(StudentYearlyInformation=student_yearly_info)
-    cumulative_marks=0
-    cumulative_maximum_marks=0
+    cumulative_marks = 0
+    cumulative_maximum_marks = 0
     cumulative_academics='-'
     for mark in marks:
         if mark.MarksObtained > 0:
@@ -2494,7 +2540,7 @@ def fill_static_and_yearly_info_2011(student_yearly_info, skillGrades, academics
 
     # Cumulative CoCurricular
     co_curricular = CoCurricular.objects.filter(StudentYearlyInformation = student_yearly_info)
-    cumulative_cocur_grade_sum=0
+    cumulative_cocur_grade_sum = 0
     cumulative_cocur_grade='-'
     for co_cur_acts in co_curricular:
         cumulative_cocur_grade_sum=cumulative_cocur_grade_sum + GRADE_NUM[co_cur_acts.Grade]
@@ -2503,7 +2549,7 @@ def fill_static_and_yearly_info_2011(student_yearly_info, skillGrades, academics
 
     # Cumulative Abhivyakti Vikas
     abhivyakti_vikas = AbhivyaktiVikas.objects.filter(StudentYearlyInformation = student_yearly_info)
-    cumulative_abhi_grade_sum=0
+    cumulative_abhi_grade_sum = 0
     cumulative_abhi_grade='-'
     for abhi_row in abhivyakti_vikas:
         abhi_grade_row_sum=(GRADE_NUM[abhi_row.Participation])+(GRADE_NUM[abhi_row.ReadinessToLearn])+(GRADE_NUM[abhi_row.ContinuityInWork])+(GRADE_NUM[abhi_row.SkillDevelopment])+(GRADE_NUM[abhi_row.Creativity])
@@ -2513,20 +2559,20 @@ def fill_static_and_yearly_info_2011(student_yearly_info, skillGrades, academics
 
     # Cumulative Projects
     projects = Project.objects.filter(StudentYearlyInformation = student_yearly_info)
-    cumulative_project_grade_sum=0
+    cumulative_project_grade_sum = 0
     cumulative_project_grade='-'
     for proj_row in projects:
         try:
             proj_grade_row_sum=(GRADE_NUM[proj_row.ProblemSelection])+(GRADE_NUM[proj_row.Review])+(GRADE_NUM[proj_row.Planning])+(GRADE_NUM[proj_row.Documentation])+(GRADE_NUM[proj_row.Communication])
         except:
-            proj_grade_row_sum=0
+            proj_grade_row_sum = 0
         cumulative_project_grade_sum=cumulative_project_grade_sum+int(round(proj_grade_row_sum/5))
     if len(projects) > 0:
         cumulative_project_grade=GRADE_CHOICES_3[int(round(cumulative_project_grade_sum/len(projects)))]
 
     # Cumulative Elocution
     elocutions = Elocution.objects.filter(StudentYearlyInformation = student_yearly_info)
-    cumulative_elocution_grade_sum=0
+    cumulative_elocution_grade_sum = 0
     cumulative_elocution_grade='-'
     for elo_row in elocutions:
         elocution_grade_row_sum=(GRADE_NUM[elo_row.Memory])+(GRADE_NUM[elo_row.Content])+(GRADE_NUM[elo_row.Understanding])+(GRADE_NUM[elo_row.Pronunciation])+(GRADE_NUM[elo_row.Presentation])
@@ -2536,7 +2582,7 @@ def fill_static_and_yearly_info_2011(student_yearly_info, skillGrades, academics
 
     # Cumulative Physical Fitness Info
     physical_fit_info = PhysicalFitnessInfo.objects.filter(StudentYearlyInformation = student_yearly_info)
-    cumulative_physical_grade_sum=0
+    cumulative_physical_grade_sum = 0
     cumulative_physical_grade='-'
     for ph_data in physical_fit_info:
         cumulative_physical_grade_sum=cumulative_physical_grade_sum + GRADE_NUM[ph_data.Grade]
@@ -2545,7 +2591,7 @@ def fill_static_and_yearly_info_2011(student_yearly_info, skillGrades, academics
 
     # Cumulative Social Activity
     social_activities = SocialActivity.objects.filter(StudentYearlyInformation = student_yearly_info)
-    cumulative_social_grade_sum=0
+    cumulative_social_grade_sum = 0
     cumulative_social_grade='-'
     for soc_act_data in social_activities:
         cumulative_social_grade_sum=cumulative_social_grade_sum + GRADE_NUM[soc_act_data.Grade]
@@ -2561,39 +2607,39 @@ def fill_static_and_yearly_info_2011(student_yearly_info, skillGrades, academics
 
     # Cumulative Prashala Attendance
     attendances = StudentAttendance.objects.filter(StudentYearlyInformation = student_yearly_info)
-    cumulative_attendance=0
-    cumulative_workingdays_attendance=0
+    cumulative_attendance = 0
+    cumulative_workingdays_attendance = 0
     cumulative_attendance_percentage='-'
     for attendance in attendances:
         attendance_master = attendance.AttendanceMaster
         class_master = attendance_master.ClassMaster
-        if class_master.Type == 'P':
+        if class_master.Type == 'P': 
             cumulative_attendance = cumulative_attendance + attendance.ActualAttendance
             cumulative_workingdays_attendance = cumulative_workingdays_attendance + attendance.AttendanceMaster.WorkingDays
     if cumulative_workingdays_attendance > 0:
         cumulative_attendance_percentage = str(round((float(cumulative_attendance) / cumulative_workingdays_attendance * 100),2)) + "%"
 
     # Cumulative Grade Table
-    Story.append(Spacer(1,0.1*inch))
+    Story.append(Spacer(1,0.1 * inch))
     add_sub_header_to_story(Story,"Report Summary")
     data = []
-    data=(
-            ['Category','Performance'],
-            ['Academics',academics_percentage],
-            ['Evening Sports Activities',cumulative_physical_grade],
-            ['Co-curricular Activities',cumulative_cocur_grade],
-            ['Self Expression through Arts',cumulative_abhi_grade],
-            ['Projects',cumulative_project_grade],
-            ['Elocution',cumulative_elocution_grade],
-            ['Social activities',cumulative_social_grade],
-            ['Thinking Skill',skillGrades['ThinkingSkill']],
-            ['Social Skill',skillGrades['SocialSkill']],
-            ['Emotional Skill',skillGrades['EmotionalSkill']],
-            ['Attitude Towards School',skillGrades['AttitudeTowardsSchool']],
-            ['Values',skillGrades['Values']],
-            ['Library',cumulative_library_grade],
-            ['Attendance',cumulative_attendance_percentage]
-        )
+    data = (
+        ['Category', 'Performance'],
+        ['Academics', academics_percentage],
+        ['Evening Sports Activities', cumulative_physical_grade],
+        ['Co-curricular Activities', cumulative_cocur_grade],
+        ['Self Expression through Arts', cumulative_abhi_grade],
+        ['Projects', cumulative_project_grade],
+        ['Elocution', cumulative_elocution_grade],
+        ['Social activities', cumulative_social_grade],
+        ['Thinking Skill', skillGrades['ThinkingSkill']],
+        ['Social Skill', skillGrades['SocialSkill']],
+        ['Emotional Skill', skillGrades['EmotionalSkill']],
+        ['Attitude Towards School', skillGrades['AttitudeTowardsSchool']],
+        ['Values', skillGrades['Values']],
+        ['Library', cumulative_library_grade],
+        ['Attendance', cumulative_attendance_percentage]
+    )
     add_table_to_story(Story, data, 'CENTER')
 
     tipStyle = ParagraphStyle(name = 'Note', fontSize = 6, alignment=TA_CENTER)
@@ -2601,19 +2647,19 @@ def fill_static_and_yearly_info_2011(student_yearly_info, skillGrades, academics
     Story.append(Paragraph('which indicate level of participation or performance', tipStyle))
 
     # Signature
-    Story.append(Spacer(1,0.4*inch))
+    Story.append(Spacer(1,0.4 * inch))
     data = []
     data=(
             ['Supervisor','Vice Principal','Principal'],
             ['(Dr.Bhagyashree Harshe)','(Milind Naik)','(Vivek Ponkshe)'],
         )
     PAGE_WIDTH = defaultPageSize[0]
-    table=Table(data, colWidths=PAGE_WIDTH*0.25)
+    table=Table(data, colWidths=PAGE_WIDTH * 0.25)
     table_style = TableStyle([
         ('ALIGN',(0,0),(-1,-1), 'CENTER'),
         ('TEXTCOLOR',(0,0),(-1,-1),colors.black),
         ('FONTSIZE',(0,0),(-1,-1),9)
-        ])
+    ])
     table.hAlign='CENTER'
     table.setStyle(table_style)
     Story.append(table)
@@ -2625,14 +2671,13 @@ def fill_academic_report(student_yearly_info, Story):
     academic_year = student_yearly_info.ClassMaster.AcademicYear.Year
     begin_year = academic_year.split('-')
     isFormat2010 = (int(begin_year[0]) >= 2010)
-    
     if isFormat2010:
         fill_academic_report2010(student_yearly_info, Story)
     else:
         fill_academic_report2008(student_yearly_info, Story)
 
 def fill_academic_report_attendance(student_yearly_info, Story):
-    Story.append(Spacer(1,0.5*inch))
+    Story.append(Spacer(1,0.5 * inch))
     add_sub_header_to_story(Story, "School Attendance")
     fill_student_attendance(student_yearly_info, Story, 'P')
 
@@ -2650,24 +2695,24 @@ def fill_academic_report2008(student_yearly_info, Story):
     for test_marks in student_test_data:
         test_mapping = test_marks.TestMapping
         subject_name = test_mapping.SubjectMaster.Name
-        if not subjects_data.has_key(subject_name):
+        if subject_name not in subjects_data:
             subjects_data[subject_name] = []
         subject_data = subjects_data[subject_name]
         subject_data.append(test_marks)
 
     #desired sequence
     temp_sort = ['ENG', 'HIN', 'MAR', 'SAN', 'MAT', 'PHY', 'CHE', 'BIO', 'PRA', 'SCI', 'SCS', 'HIS', 'GEO', 'ECO', 'POL', 'SOC', 'COM']
-    cumulative_marks=0
-    cumulative_maxmarks=0
+    cumulative_marks = 0
+    cumulative_maxmarks = 0
     data = []
     data.append(['','W1','W2','W3','W4','T1','N1','F1','Total','%'])
     for subject_item in temp_sort:
-        if not subjects_data.has_key(subject_item):
+        if subject_item not in subjects_data:
             continue
         subject_data = subjects_data[subject_item]
         subject_name = subject_item
-        cumulative_subject_marks=0
-        cumulative_subject_maxmarks=0
+        cumulative_subject_marks = 0
+        cumulative_subject_maxmarks = 0
         subject_test_marks = {}
         subject_test_marks['W1'] = '-'
         subject_test_marks['W2'] = '-'
@@ -2711,7 +2756,7 @@ def fill_academic_report2008(student_yearly_info, Story):
         cumulative_maxmarks = cumulative_maxmarks + cumulative_subject_maxmarks
 
     add_table_to_story(Story, data, 'CENTER')
-    Story.append(Spacer(1,0.25*inch))
+    Story.append(Spacer(1,0.25 * inch))
 
     percentage = 0
     if cumulative_maxmarks > 0:
@@ -2719,7 +2764,7 @@ def fill_academic_report2008(student_yearly_info, Story):
     add_sub_header_to_story(Story, mark_safe('Grand Total: ' + str(cumulative_marks) + " / " + str(cumulative_maxmarks)))
     add_sub_header_to_story(Story, 'Percentage: ' + str(percentage) + "%")
 
-    Story.append(Spacer(1,0.5*inch))
+    Story.append(Spacer(1,0.5 * inch))
     add_sub_header_to_story(Story, "School Attendance")
     fill_student_attendance(student_yearly_info, Story, 'P')
 
@@ -2737,24 +2782,24 @@ def fill_academic_report2010(student_yearly_info, Story):
     for test_marks in student_test_data:
         test_mapping = test_marks.TestMapping
         subject_name = test_mapping.SubjectMaster.Name
-        if not subjects_data.has_key(subject_name):
+        if subject_name not in subjects_data:
             subjects_data[subject_name] = []
         subject_data = subjects_data[subject_name]
         subject_data.append(test_marks)
 
     #desired sequence
     temp_sort = ['ENG', 'HIN', 'MAR', 'SAN', 'MAT', 'SCI', 'SCS']
-    cumulative_marks=0
-    cumulative_maxmarks=0
+    cumulative_marks = 0
+    cumulative_maxmarks = 0
     data = []
     data.append(['','F1','F2','F3','F4','N1','N2','S1','S2','Total','%'])
     for subject_item in temp_sort:
-        if not subjects_data.has_key(subject_item):
+        if subject_item not in subjects_data:
             continue
         subject_data = subjects_data[subject_item]
         subject_name = subject_item
-        cumulative_subject_marks=0
-        cumulative_subject_maxmarks=0
+        cumulative_subject_marks = 0
+        cumulative_subject_maxmarks = 0
         subject_test_marks = {}
         subject_test_marks['F1'] = '-'
         subject_test_marks['F2'] = '-'
@@ -2800,7 +2845,7 @@ def fill_academic_report2010(student_yearly_info, Story):
         cumulative_maxmarks = cumulative_maxmarks + cumulative_subject_maxmarks
 
     add_table_to_story(Story, data, 'CENTER')
-    Story.append(Spacer(1,0.25*inch))
+    Story.append(Spacer(1,0.25 * inch))
 
     percentage = 0
     if cumulative_maxmarks > 0:
@@ -2808,7 +2853,7 @@ def fill_academic_report2010(student_yearly_info, Story):
     add_sub_header_to_story(Story, mark_safe('Grand Total: ' + str(cumulative_marks) + " / " + str(cumulative_maxmarks)))
     add_sub_header_to_story(Story, 'Percentage: ' + str(percentage) + "%")
 
-    Story.append(Spacer(1,0.5*inch))
+    Story.append(Spacer(1,0.5 * inch))
     add_sub_header_to_story(Story, "School Attendance")
     fill_student_attendance(student_yearly_info, Story, 'P')
 
@@ -2838,7 +2883,7 @@ def fill_academic_report_board_2011_9th(student_yearly_info, Story):
     for test_marks in student_test_data:
         test_mapping = test_marks.TestMapping
         subject_name = test_mapping.SubjectMaster.Name
-        if not subjects_data.has_key(subject_name):
+        if subject_name not in subjects_data:
             subjects_data[subject_name] = []
         subject_data = subjects_data[subject_name]
         subject_data.append(test_marks)
@@ -2847,13 +2892,13 @@ def fill_academic_report_board_2011_9th(student_yearly_info, Story):
 
     #desired sequence
     temp_sort = ['ENG', 'SAN', 'MAT', 'SCI', 'SOC']
-    cumulative_marks=0
-    cumulative_maxmarks=0
+    cumulative_marks = 0
+    cumulative_maxmarks = 0
     data = []
     data.append(['','F3','F4','S2','FA','SA','Total','Total'])
     data.append(['','20','20','60','Grade','Grade','Grade','Grade Point'])
     for subject_item in temp_sort:
-        if not subjects_data.has_key(subject_item):
+        if subject_item not in subjects_data:
             continue
         subject_data = subjects_data[subject_item]
         subject_name = subject_item
@@ -2868,26 +2913,26 @@ def fill_academic_report_board_2011_9th(student_yearly_info, Story):
             marks_obtained = subject_marks.MarksObtained
 
             #weighted marks
-            if test_type == 'W1':
+            if test_type == 'W1': 
                 W1 = weighted_marks(marks_obtained, maximum_marks, 10)
-            elif test_type == 'W2':
+            elif test_type == 'W2': 
                 W2 = weighted_marks(marks_obtained, maximum_marks, 10)
-            elif test_type == 'W3':
+            elif test_type == 'W3': 
                 W3 = weighted_marks(marks_obtained, maximum_marks, 10)
-            elif test_type == 'W4':
+            elif test_type == 'W4': 
                 W4 = weighted_marks(marks_obtained, maximum_marks, 10)
-            elif test_type == 'N1':
+            elif test_type == 'N1': 
                 N1 = weighted_marks(marks_obtained, maximum_marks, 20)
-            elif test_type == 'S2':
+            elif test_type == 'S2': 
                 S2 = weighted_marks(marks_obtained, maximum_marks, 60)
 
         #pick best two
         W3, W4 = best_two_of_four_marks(W1, W2, W3, W4)
 
         #science
-        if subject_name == 'SCI':
-            W3 = weighted_marks(sci_w1, 25*3, 10)
-            W4 = weighted_marks(sci_w2, 25*3, 10)
+        if subject_name == 'SCI': 
+            W3 = weighted_marks(sci_w1, 25 * 3, 10)
+            W4 = weighted_marks(sci_w2, 25 * 3, 10)
 
         #summations
         N3 = ceil_marks(float(N1) / 2.0)
@@ -2920,7 +2965,7 @@ def fill_academic_report_board_2011_9th(student_yearly_info, Story):
         cumulative_maxmarks = cumulative_maxmarks + 100
 
     add_table_to_story(Story, data, 'CENTER')
-    Story.append(Spacer(1,0.25*inch))
+    Story.append(Spacer(1,0.25 * inch))
 
     CGPA = grade_point(cumulative_marks, cumulative_maxmarks)
     add_sub_header_to_story(Story, mark_safe('CGPA: ' + str(CGPA)))
@@ -2941,7 +2986,7 @@ def fill_academic_report_board_2011_9th_Enhanced(student_yearly_info, Story):
     for test_marks in student_test_data:
         test_mapping = test_marks.TestMapping
         subject_name = test_mapping.SubjectMaster.Name
-        if not subjects_data.has_key(subject_name):
+        if subject_name not in subjects_data:
             subjects_data[subject_name] = []
         subject_data = subjects_data[subject_name]
         subject_data.append(test_marks)
@@ -2950,13 +2995,13 @@ def fill_academic_report_board_2011_9th_Enhanced(student_yearly_info, Story):
 
     #desired sequence
     temp_sort = ['ENG', 'SAN', 'MAT', 'SCI', 'SOC']
-    cumulative_marks=0
-    cumulative_maxmarks=0
+    cumulative_marks = 0
+    cumulative_maxmarks = 0
     data = []
     data.append(['','F3','F4','S2','FA','SA','Total','Total'])
     data.append(['','20','20','60','Grade','Grade','Grade','Grade Point'])
     for subject_item in temp_sort:
-        if not subjects_data.has_key(subject_item):
+        if subject_item not in subjects_data:
             continue
         subject_data = subjects_data[subject_item]
         subject_name = subject_item
@@ -2971,11 +3016,11 @@ def fill_academic_report_board_2011_9th_Enhanced(student_yearly_info, Story):
             marks_obtained = subject_marks.MarksObtained
 
             #weighted marks
-            if test_type == 'F3E':
+            if test_type == 'F3E': 
                 F3E = weighted_marks(marks_obtained, maximum_marks, 20)
-            elif test_type == 'F4E':
+            elif test_type == 'F4E': 
                 F4E = weighted_marks(marks_obtained, maximum_marks, 20)
-            elif test_type == 'S2E':
+            elif test_type == 'S2E': 
                 S2E = weighted_marks(marks_obtained, maximum_marks, 60)
 
         #summations
@@ -3005,7 +3050,7 @@ def fill_academic_report_board_2011_9th_Enhanced(student_yearly_info, Story):
         cumulative_maxmarks = cumulative_maxmarks + 100
 
     add_table_to_story(Story, data, 'CENTER')
-    Story.append(Spacer(1,0.25*inch))
+    Story.append(Spacer(1,0.25 * inch))
 
     CGPA = grade_point(cumulative_marks, cumulative_maxmarks)
     add_sub_header_to_story(Story, mark_safe('CGPA: ' + str(CGPA)))
@@ -3026,7 +3071,7 @@ def fill_academic_report_board_2011(student_yearly_info, Story):
     for test_marks in student_test_data:
         test_mapping = test_marks.TestMapping
         subject_name = test_mapping.SubjectMaster.Name
-        if not subjects_data.has_key(subject_name):
+        if subject_name not in subjects_data:
             subjects_data[subject_name] = []
         subject_data = subjects_data[subject_name]
         subject_data.append(test_marks)
@@ -3036,14 +3081,14 @@ def fill_academic_report_board_2011(student_yearly_info, Story):
     #desired sequence
     #temp_sort = ['ENG', 'SAN', 'MAT', 'SCI', 'SOC'] #Only for 10th
     temp_sort = ['ENG', 'HIN', 'MAR', 'SAN', 'MAT', 'SCI', 'SOC', 'COM']
-    cumulative_marks=0
-    cumulative_maxmarks=0
+    cumulative_marks = 0
+    cumulative_maxmarks = 0
     data = []
 ##    data.append(['','F1','F2','F3','F4','S1','S2','FA','SA','Total', 'Total'])
 ##    data.append(['','10','10','10','10','20','40','Grade','Grade','Grade', 'Grade Point'])
     data.append(['','F1','F2','S1','F3','F4','S2','FA','SA','Total', 'Total'])
     for subject_item in temp_sort:
-        if not subjects_data.has_key(subject_item):
+        if subject_item not in subjects_data:
             continue
         subject_data = subjects_data[subject_item]
         subject_name = subject_item
@@ -3058,25 +3103,25 @@ def fill_academic_report_board_2011(student_yearly_info, Story):
             marks_obtained = subject_marks.MarksObtained
 
             #weighted marks
-            if test_type == 'W1':
+            if test_type == 'W1': 
                 W1 = weighted_marks(marks_obtained, maximum_marks, 5)
-            elif test_type == 'W2':
+            elif test_type == 'W2': 
                 W2 = weighted_marks(marks_obtained, maximum_marks, 5)
-            elif test_type == 'W3':
+            elif test_type == 'W3': 
                 W3 = weighted_marks(marks_obtained, maximum_marks, 5)
-            elif test_type == 'W4':
+            elif test_type == 'W4': 
                 W4 = weighted_marks(marks_obtained, maximum_marks, 5)
-            elif test_type == 'N1':
+            elif test_type == 'N1': 
                 N1 = weighted_marks(marks_obtained, maximum_marks, 5)
-            elif test_type == 'N2':
+            elif test_type == 'N2': 
                 N2 = weighted_marks(marks_obtained, maximum_marks, 5)
-            elif test_type == 'N3':
+            elif test_type == 'N3': 
                 N3 = weighted_marks(marks_obtained, maximum_marks, 5)
-            elif test_type == 'N4':
+            elif test_type == 'N4': 
                 N4 = weighted_marks(marks_obtained, maximum_marks, 5)
-            elif test_type == 'S1':
+            elif test_type == 'S1': 
                 S1 = weighted_marks(marks_obtained, maximum_marks, 20)
-            elif test_type == 'S2':
+            elif test_type == 'S2': 
                 S2 = weighted_marks(marks_obtained, maximum_marks, 40)
 
         #merge N1 to N4 marks into FA
@@ -3141,7 +3186,7 @@ def fill_academic_report_board_2011(student_yearly_info, Story):
         cumulative_maxmarks = cumulative_maxmarks + 100
 
     add_table_to_story(Story, data, 'CENTER')
-    Story.append(Spacer(1,0.25*inch))
+    Story.append(Spacer(1,0.25 * inch))
 
     CGPA = grade_point(cumulative_marks, cumulative_maxmarks)
     add_sub_header_to_story(Story, mark_safe('CGPA : ' + str(CGPA)))
@@ -3160,7 +3205,7 @@ def fill_academic_report_board_2011_5th_to_8th(student_yearly_info, Story):
     for test_marks in student_test_data:
         test_mapping = test_marks.TestMapping
         subject_name = test_mapping.SubjectMaster.Name
-        if not subjects_data.has_key(subject_name):
+        if subject_name not in subjects_data:
             subjects_data[subject_name] = []
         subject_data = subjects_data[subject_name]
         subject_data.append(test_marks)
@@ -3169,12 +3214,12 @@ def fill_academic_report_board_2011_5th_to_8th(student_yearly_info, Story):
 
     #desired sequence
     temp_sort = ['ENG', 'HIN', 'MAR', 'SAN', 'MAT', 'SCI', 'SOC', 'COM']
-    cumulative_marks=0
-    cumulative_maxmarks=0
+    cumulative_marks = 0
+    cumulative_maxmarks = 0
     data = []
     data.append(['','F1','F2','S1','F3','F4','S2','FA','SA','Total', 'Total'])
     for subject_item in temp_sort:
-        if not subjects_data.has_key(subject_item):
+        if subject_item not in subjects_data:
             continue
         subject_data = subjects_data[subject_item]
         subject_name = subject_item
@@ -3206,25 +3251,25 @@ def fill_academic_report_board_2011_5th_to_8th(student_yearly_info, Story):
             marks_obtained = subject_marks.MarksObtained
 
             #weighted marks
-            if test_type == 'W1':
+            if test_type == 'W1': 
                 W1 = weighted_marks(marks_obtained, maximum_marks, 5)
-            elif test_type == 'W2':
+            elif test_type == 'W2': 
                 W2 = weighted_marks(marks_obtained, maximum_marks, 5)
-            elif test_type == 'W3':
+            elif test_type == 'W3': 
                 W3 = weighted_marks(marks_obtained, maximum_marks, 5)
-            elif test_type == 'W4':
+            elif test_type == 'W4': 
                 W4 = weighted_marks(marks_obtained, maximum_marks, 5)
-            elif test_type == 'N1':
+            elif test_type == 'N1': 
                 N1 = weighted_marks(marks_obtained, maximum_marks, 5)
-            elif test_type == 'N2':
+            elif test_type == 'N2': 
                 N2 = weighted_marks(marks_obtained, maximum_marks, 5)
-            elif test_type == 'N3':
+            elif test_type == 'N3': 
                 N3 = weighted_marks(marks_obtained, maximum_marks, 5)
-            elif test_type == 'N4':
+            elif test_type == 'N4': 
                 N4 = weighted_marks(marks_obtained, maximum_marks, 5)
-            elif test_type == 'S1':
+            elif test_type == 'S1': 
                 S1 = weighted_marks(marks_obtained, maximum_marks, S1Weightage)
-            elif test_type == 'S2':
+            elif test_type == 'S2': 
                 S2 = weighted_marks(marks_obtained, maximum_marks, S2Weightage)
 
         #merge N1 to N4 marks into FA
@@ -3311,7 +3356,7 @@ def fill_academic_report_board_2011_5th_to_8th(student_yearly_info, Story):
         cumulative_maxmarks = cumulative_maxmarks + subject_maximum_marks
 
     add_table_to_story(Story, data, 'CENTER')
-    Story.append(Spacer(1,0.25*inch))
+    Story.append(Spacer(1,0.25 * inch))
 
     CGPA = grade_point(cumulative_marks, cumulative_maxmarks)
     add_sub_header_to_story(Story, mark_safe('CGPA : ' + str(CGPA)))
@@ -3348,7 +3393,7 @@ def grade_point(test_marks_obtained, test_maximum_marks):
     elif (percentage <= 90):
         grade_point = 9  # A2
     elif (percentage <= 100):
-        grade_point = 10 # A1
+        grade_point = 10  # A1
 
     return grade_point
 
@@ -3372,7 +3417,7 @@ def fill_cocurricular_report(student_yearly_info, Story):
     abhivyaktiVikass = AbhivyaktiVikas.objects.filter(StudentYearlyInformation=student_yearly_info)
     if len(abhivyaktiVikass) == 0:
         add_normal_text_to_story(Story,'No Activities')
-    i=0
+    i = 0
     for abhivyaktiVikas in abhivyaktiVikass:
         i = i + 1
         mediumOfExpression = abhivyaktiVikas.MediumOfExpression
@@ -3388,23 +3433,23 @@ def fill_cocurricular_report(student_yearly_info, Story):
         add_normal_text_to_story(Story,'<strong>' + 'Abhivyakti' + ' ' + str(i) + '</strong>')
         add_normal_text_to_story(Story,'Medium of Expression' + '' + ' : ' + mediumOfExpression)
         add_normal_text_to_story(Story,'Teacher' + ' : ' + teacher_name)
-        Story.append(Spacer(1,0.2*inch))
+        Story.append(Spacer(1,0.2 * inch))
         data = []
         data.append(['Participation','Readiness to Learn','Continuity in Work','Skill Development','Creativity'])
         data.append([participation,readinessToLearn,continuityInWork,skillDevelopment,creativity])
         add_table_to_story(Story, data, 'CENTER')
         add_normal_text_to_story(Story,'Comment' + ' : ' + comment)
-        Story.append(Spacer(1,0.2*inch))
+        Story.append(Spacer(1,0.2 * inch))
 
     add_signature_space_to_story(Story,"Incharge", "Abhivyakti")
-    Story.append(Spacer(1,0.5*inch))
+    Story.append(Spacer(1,0.5 * inch))
 
     # Competitive Exams
     add_sub_header_to_story(Story,"Competitive Examinations")
     competitive_exams = CompetitiveExam.objects.filter(StudentYearlyInformation=student_yearly_info)
     if len(competitive_exams) == 0:
         add_normal_text_to_story(Story,'No Activities')
-    i=0
+    i = 0
     for competitive_exam in competitive_exams:
         i = i + 1
         name = competitive_exam.Name
@@ -3424,17 +3469,17 @@ def fill_cocurricular_report(student_yearly_info, Story):
         data.append([name,subject,level,date,grade])
         add_table_to_story(Story, data, 'CENTER')
         add_normal_text_to_story(Story,'Comment' + ' : ' + comment)
-        Story.append(Spacer(1,0.2*inch))
+        Story.append(Spacer(1,0.2 * inch))
 
     add_signature_space_to_story(Story,"Incharge", "Competitive Exams")
-    Story.append(Spacer(1,0.5*inch))
+    Story.append(Spacer(1,0.5 * inch))
 
     # Competitions
     add_sub_header_to_story(Story,"Competitions")
     competitions = Competition.objects.filter(StudentYearlyInformation=student_yearly_info)
     if len(competitions) == 0:
         add_normal_text_to_story(Story,'No Activities')
-    i=0
+    i = 0
     for competition in competitions:
         i = i + 1
         organizer = competition.Organizer
@@ -3451,7 +3496,7 @@ def fill_cocurricular_report(student_yearly_info, Story):
         data.append([organizer,subject,date,achievement,guide])
         add_table_to_story(Story, data, 'CENTER')
         add_normal_text_to_story(Story,'Comment' + ' : ' + comment)
-        Story.append(Spacer(1,0.2*inch))
+        Story.append(Spacer(1,0.2 * inch))
 
     add_signature_space_to_story(Story,"Incharge", "Competition")
     Story.append(PageBreak())
@@ -3461,7 +3506,7 @@ def fill_cocurricular_report(student_yearly_info, Story):
     projects = Project.objects.filter(StudentYearlyInformation=student_yearly_info)
     if len(projects) == 0:
         add_normal_text_to_story(Story,'No Activities')
-    i=0
+    i = 0
     for project in projects:
         i = i + 1
         title = project.Title
@@ -3483,23 +3528,23 @@ def fill_cocurricular_report(student_yearly_info, Story):
         add_normal_text_to_story(Story,'Title' + ' : ' + title)
         add_normal_text_to_story(Story,'Type' + ' : ' + project_type)
         add_normal_text_to_story(Story,'Subject' + ' : ' + subject)
-        Story.append(Spacer(1,0.1*inch))
+        Story.append(Spacer(1,0.1 * inch))
         data = []
         data.append(['Problem Selection','Review of topic','Planning','Execution','Documentation','Communication'])
         data.append([problem_selection,review,planning,executionAndHardWork,documentation,communication])
         add_table_to_story(Story, data, 'CENTER')
         add_normal_text_to_story(Story,'Comment' + ' : ' + comment)
-        Story.append(Spacer(1,0.2*inch))
+        Story.append(Spacer(1,0.2 * inch))
 
     add_signature_space_to_story(Story,"Incharge", "Projects")
-    Story.append(Spacer(1,0.5*inch))
+    Story.append(Spacer(1,0.5 * inch))
 
     # Elocutions
     add_sub_header_to_story(Story,"Elocutions")
     elocutions = Elocution.objects.filter(StudentYearlyInformation=student_yearly_info)
     if len(elocutions) == 0:
         add_normal_text_to_story(Story,'No Activities')
-    i=0
+    i = 0
     for elocution in elocutions:
         i = i + 1
         title = elocution.Title
@@ -3518,17 +3563,17 @@ def fill_cocurricular_report(student_yearly_info, Story):
         data.append([memory,content,understanding,pronunciation,presentation])
         add_table_to_story(Story, data, 'CENTER')
         add_normal_text_to_story(Story,'Comment' + ' : ' + comment)
-        Story.append(Spacer(1,0.2*inch))
+        Story.append(Spacer(1,0.2 * inch))
 
     add_signature_space_to_story(Story,"Incharge", "Elocution")
-    Story.append(Spacer(1,0.5*inch))
+    Story.append(Spacer(1,0.5 * inch))
 
     # Work Experience
     add_sub_header_to_story(Story, "Work Experiences")
     workExperiences = WorkExperience.objects.filter(StudentYearlyInformation=student_yearly_info)
     if len(workExperiences) == 0:
         add_normal_text_to_story(Story,'No Activities')
-    i=0
+    i = 0
     for workEx in workExperiences:
         i = i + 1
         teacherName = workEx.Teacher.Name
@@ -3546,17 +3591,17 @@ def fill_cocurricular_report(student_yearly_info, Story):
         add_normal_text_to_story(Story,'Confidence' + ' : ' + confidence)
         add_normal_text_to_story(Story,'Involvement' + ' : ' + involvement)
         add_normal_text_to_story(Story,'Comment' + ' : ' + comment)
-        Story.append(Spacer(1,0.2*inch))
+        Story.append(Spacer(1,0.2 * inch))
 
     add_signature_space_to_story(Story,"Incharge", "Work Experience")
-    Story.append(Spacer(1,0.5*inch))
+    Story.append(Spacer(1,0.5 * inch))
 
     # Other CoCurricular Activities
     add_sub_header_to_story(Story, "Other Co-curricular Activities")
     coCurriculars = CoCurricular.objects.filter(StudentYearlyInformation=student_yearly_info)
     if len(coCurriculars) == 0:
         add_normal_text_to_story(Story,'No Activities')
-    i=0
+    i = 0
     for coCurricular in coCurriculars:
         i = i + 1
         activity = coCurricular.Activity
@@ -3577,7 +3622,7 @@ def fill_cocurricular_report(student_yearly_info, Story):
         add_normal_text_to_story(Story,'Guide' + ' : ' + guide)
         add_normal_text_to_story(Story,'Grade' + ' : ' + grade)
         add_normal_text_to_story(Story,'Comment' + ' : ' + comment)
-        Story.append(Spacer(1,0.2*inch))
+        Story.append(Spacer(1,0.2 * inch))
 
     Story.append(PageBreak())
 
@@ -3590,7 +3635,7 @@ def fill_skills_report(student_yearly_info, skillGrades, Story):
     if len(thinkingSkills) == 0:
         add_normal_text_to_story(Story,'No data available')
     else:
-        inquiry_sum=0
+        inquiry_sum = 0
         logicalThinking_sum = 0
         creativity_sum = 0
         decisionMaking_sum = 0
@@ -3612,13 +3657,13 @@ def fill_skills_report(student_yearly_info, skillGrades, Story):
         add_normal_text_to_story(Story,'LogicalThinking' + ' : ' + GRADE_CHOICES[logicalThinking])
         add_normal_text_to_story(Story,'Creativity' + ' : ' + GRADE_CHOICES[creativity])
         add_normal_text_to_story(Story,'DecisionMakingAndProblemSolving' + ' : ' + GRADE_CHOICES[decisionMaking])
-        Story.append(Spacer(1,0.05*inch))
+        Story.append(Spacer(1,0.05 * inch))
         skillGrades['ThinkingSkill'] = GRADE_CHOICES[round_skill_marks((inquiry + logicalThinking + creativity + decisionMaking) / 4.0)]
         add_normal_text_to_story(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + skillGrades['ThinkingSkill'])
-        Story.append(Spacer(1,0.1*inch))
+        Story.append(Spacer(1,0.1 * inch))
 
         add_normal_text_to_story(Story,'Comments:')
-        i=0
+        i = 0
         for thinkingSkill in thinkingSkills:
             comment = thinkingSkill.PublicComment
             comment = comment.replace('&','and')
@@ -3626,7 +3671,7 @@ def fill_skills_report(student_yearly_info, skillGrades, Story):
                 i=i+1
                 add_normal_text_to_story(Story, str(i) + '. ' + comment)
 
-    Story.append(Spacer(1,0.2*inch))
+    Story.append(Spacer(1,0.2 * inch))
 
     # Social Skill
     add_sub_header_to_story(Story, "Social Skill")
@@ -3634,9 +3679,9 @@ def fill_skills_report(student_yearly_info, skillGrades, Story):
     if len(socialSkills) == 0:
         add_normal_text_to_story(Story,'No data available')
     else:
-        communication_sum=0
-        interPersonal_sum=0
-        teamWork_sum=0
+        communication_sum = 0
+        interPersonal_sum = 0
+        teamWork_sum = 0
         length = len(socialSkills)
         #add up grades by teachers
         for socialSkill in socialSkills:
@@ -3652,13 +3697,13 @@ def fill_skills_report(student_yearly_info, skillGrades, Story):
         add_normal_text_to_story(Story,'Communication' + ' : ' + GRADE_CHOICES[communication])
         add_normal_text_to_story(Story,'InterPersonal' + ' : ' + GRADE_CHOICES[interPersonal])
         add_normal_text_to_story(Story,'Working in group' + ' : ' + GRADE_CHOICES[teamWork])
-        Story.append(Spacer(1,0.05*inch))
+        Story.append(Spacer(1,0.05 * inch))
         skillGrades['SocialSkill'] = GRADE_CHOICES[round_skill_marks((communication + interPersonal + teamWork) / 3.0)]
         add_normal_text_to_story(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + skillGrades['SocialSkill'])
-        Story.append(Spacer(1,0.1*inch))
+        Story.append(Spacer(1,0.1 * inch))
 
         add_normal_text_to_story(Story,'Comments:')
-        i=0
+        i = 0
         for socialSkill in socialSkills:
             comment = socialSkill.PublicComment
             comment = comment.replace('&','and')
@@ -3666,7 +3711,7 @@ def fill_skills_report(student_yearly_info, skillGrades, Story):
                 i=i+1
                 add_normal_text_to_story(Story, str(i) + '. ' + comment)
 
-    Story.append(Spacer(1,0.2*inch))
+    Story.append(Spacer(1,0.2 * inch))
 
 
 
@@ -3676,9 +3721,9 @@ def fill_skills_report(student_yearly_info, skillGrades, Story):
     if len(emotionalSkills) == 0:
         add_normal_text_to_story(Story,'No data available')
     else:
-        empathy_sum=0
-        expression_sum=0
-        management_sum=0
+        empathy_sum = 0
+        expression_sum = 0
+        management_sum = 0
         length = len(emotionalSkills)
         #add up grades by teachers
         for emotionalSkill in emotionalSkills:
@@ -3694,13 +3739,13 @@ def fill_skills_report(student_yearly_info, skillGrades, Story):
         add_normal_text_to_story(Story,'Emotional understanding' + ' : ' + GRADE_CHOICES[empathy])
         add_normal_text_to_story(Story,'Expression' + ' : ' + GRADE_CHOICES[expression])
         add_normal_text_to_story(Story,'Management' + ' : ' + GRADE_CHOICES[management])
-        Story.append(Spacer(1,0.05*inch))
+        Story.append(Spacer(1,0.05 * inch))
         skillGrades['EmotionalSkill'] = GRADE_CHOICES[round_skill_marks((empathy + expression + management) / 3.0)]
         add_normal_text_to_story(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + skillGrades['EmotionalSkill'])
-        Story.append(Spacer(1,0.1*inch))
+        Story.append(Spacer(1,0.1 * inch))
 
         add_normal_text_to_story(Story,'Comments:')
-        i=0
+        i = 0
         for emotionalSkill in emotionalSkills:
             comment = emotionalSkill.PublicComment
             comment = comment.replace('&','and')
@@ -3708,7 +3753,7 @@ def fill_skills_report(student_yearly_info, skillGrades, Story):
                 i=i+1
                 add_normal_text_to_story(Story, str(i) + '. ' + comment)
 
-    Story.append(Spacer(1,0.2*inch))
+    Story.append(Spacer(1,0.2 * inch))
 
 
 
@@ -3718,10 +3763,10 @@ def fill_skills_report(student_yearly_info, skillGrades, Story):
     if len(attitudeTowardsSchools) == 0:
         add_normal_text_to_story(Story,'No data available')
     else:
-        schoolTeachers_sum=0
-        schoolMates_sum=0
-        schoolPrograms_sum=0
-        schoolEnvironment_sum=0
+        schoolTeachers_sum = 0
+        schoolMates_sum = 0
+        schoolPrograms_sum = 0
+        schoolEnvironment_sum = 0
         length = len(attitudeTowardsSchools)
         #add up grades by teachers
         for attitudeTowardsSchool in attitudeTowardsSchools:
@@ -3740,13 +3785,13 @@ def fill_skills_report(student_yearly_info, skillGrades, Story):
         add_normal_text_to_story(Story,'SchoolMates' + ' : ' + GRADE_CHOICES_3[schoolMates])
         add_normal_text_to_story(Story,'SchoolPrograms' + ' : ' + GRADE_CHOICES_3[schoolPrograms])
         add_normal_text_to_story(Story,'SchoolEnvironment' + ' : ' + GRADE_CHOICES_3[schoolEnvironment])
-        Story.append(Spacer(1,0.05*inch))
+        Story.append(Spacer(1,0.05 * inch))
         skillGrades['AttitudeTowardsSchool'] = GRADE_CHOICES_3[round_skill_marks((schoolTeachers + schoolMates + schoolPrograms + schoolEnvironment) / 4.0)]
         add_normal_text_to_story(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + skillGrades['AttitudeTowardsSchool'])
-        Story.append(Spacer(1,0.1*inch))
+        Story.append(Spacer(1,0.1 * inch))
 
         add_normal_text_to_story(Story,'Comments:')
-        i=0
+        i = 0
         for attitudeTowardsSchool in attitudeTowardsSchools:
             comment = attitudeTowardsSchool.PublicComment
             comment = comment.replace('&','and')
@@ -3754,7 +3799,7 @@ def fill_skills_report(student_yearly_info, skillGrades, Story):
                 i=i+1
                 add_normal_text_to_story(Story, str(i) + '. ' + comment)
 
-    Story.append(Spacer(1,0.2*inch))
+    Story.append(Spacer(1,0.2 * inch))
 
 
 
@@ -3765,10 +3810,10 @@ def fill_skills_report(student_yearly_info, skillGrades, Story):
         add_normal_text_to_story(Story,'No data available')
     else:
         #add up grades by teachers
-        obedience_sum=0
-        honesty_sum=0
-        equality_sum=0
-        responsibility_sum=0
+        obedience_sum = 0
+        honesty_sum = 0
+        equality_sum = 0
+        responsibility_sum = 0
         length = len(valuess)
         for values in valuess:
             obedience_sum += GRADE_NUM[values.Obedience]
@@ -3786,13 +3831,13 @@ def fill_skills_report(student_yearly_info, skillGrades, Story):
         add_normal_text_to_story(Story,'Honesty' + ' : ' + GRADE_CHOICES_3[honesty])
         add_normal_text_to_story(Story,'Equality' + ' : ' + GRADE_CHOICES_3[equality])
         add_normal_text_to_story(Story,'Responsibility' + ' : ' + GRADE_CHOICES_3[responsibility])
-        Story.append(Spacer(1,0.05*inch))
+        Story.append(Spacer(1,0.05 * inch))
         skillGrades['Values'] = GRADE_CHOICES_3[round_skill_marks((obedience + honesty + equality + responsibility) / 4.0)]
         add_normal_text_to_story(Story,'<strong>' + 'Grade' + '</strong>' + ' : ' + skillGrades['Values'])
-        Story.append(Spacer(1,0.1*inch))
+        Story.append(Spacer(1,0.1 * inch))
 
         add_normal_text_to_story(Story,'Comments:')
-        i=0
+        i = 0
         for values in valuess:
             comment = values.PublicComment
             comment = comment.replace('&','and')
@@ -3800,7 +3845,7 @@ def fill_skills_report(student_yearly_info, skillGrades, Story):
                 i=i+1
                 add_normal_text_to_story(Story, str(i) + '. ' + comment)
 
-    Story.append(Spacer(1,0.2*inch))
+    Story.append(Spacer(1,0.2 * inch))
 
     Story.append(PageBreak())
 
@@ -3825,7 +3870,7 @@ def fill_outdoor_activity_report(student_yearly_info, Story):
         add_normal_text_to_story(Story,'Comment' + ' : ' + comment)
     except:
         add_normal_text_to_story(Story,'Not available')
-    Story.append(Spacer(1,0.2*inch))
+    Story.append(Spacer(1,0.2 * inch))
 
     pratod = ''
     # Physical Fitness Report
@@ -3866,9 +3911,9 @@ def fill_outdoor_activity_report(student_yearly_info, Story):
         add_table_to_story(Story, data, 'CENTER')
         add_normal_text_to_story(Story,'Special Sport' + ' : ' + special_sport)
         add_normal_text_to_story(Story,'House' + ' : ' + pathak)
-        Story.append(Spacer(1,0.2*inch))
+        Story.append(Spacer(1,0.2 * inch))
         pratod = physical_fitness_info.Pratod
-        Story.append(Spacer(1,0.2*inch))
+        Story.append(Spacer(1,0.2 * inch))
     except:
         add_normal_text_to_story(Story,'Not available')
         pratod = ''
@@ -3879,17 +3924,17 @@ def fill_outdoor_activity_report(student_yearly_info, Story):
     add_sub_header_to_story(Story,"Evening Sports Attendance")
     fill_student_attendance(student_yearly_info, Story, 'D')
 
-    Story.append(Spacer(1,0.1*inch))
+    Story.append(Spacer(1,0.1 * inch))
     add_normal_text_to_story(Story,'<strong>' + 'Grade' + ' : ' + grade + '</strong>')
     add_normal_text_to_story(Story,'Comment' + ' : ' + comment)
-    Story.append(Spacer(1,0.25*inch))
+    Story.append(Spacer(1,0.25 * inch))
 
     # Social Activities
     add_sub_header_to_story(Story,"Social Activities")
     social_activities = SocialActivity.objects.filter(StudentYearlyInformation=student_yearly_info)
     if len(social_activities) == 0:
         add_normal_text_to_story(Story,'No Activities')
-    i=0
+    i = 0
     for social_activity in social_activities:
         i = i + 1
         activity = social_activity.Activity
@@ -3910,10 +3955,10 @@ def fill_outdoor_activity_report(student_yearly_info, Story):
         add_normal_text_to_story(Story,'Organizer' + ' : ' + organizer)
         add_normal_text_to_story(Story,'Grade' + ' : ' + grade)
         add_normal_text_to_story(Story,'Comment' + ' : ' + comment)
-        Story.append(Spacer(1,0.2*inch))
-    Story.append(Spacer(1,0.5*inch))
+        Story.append(Spacer(1,0.2 * inch))
+    Story.append(Spacer(1,0.5 * inch))
 
-    add_signature_space_to_story(Story,pratod , "Activity Incharge")
+    add_signature_space_to_story(Story,pratod, "Activity Incharge")
     Story.append(PageBreak())
 
 def fill_library_and_medical_report(student_yearly_info, Story):
@@ -3935,9 +3980,9 @@ def fill_library_and_medical_report(student_yearly_info, Story):
     except:
         add_normal_text_to_story(Story,'Not available')
 
-    Story.append(Spacer(1,0.3*inch))
+    Story.append(Spacer(1,0.3 * inch))
     add_signature_space_to_story(Story, "","Librarian")
-    Story.append(Spacer(1,1*inch))
+    Story.append(Spacer(1,1 * inch))
 
 
     #Medical Report
@@ -3978,7 +4023,7 @@ def certificate_later_pages(canvas, doc):
 def add_certificate_text_to_story(Story,header_text):
     style = ParagraphStyle(name = 'Text', fontSize = 11, alignment=TA_CENTER)
     Story.append(Paragraph(header_text, style))
-    Story.append(Spacer(1,0.05*inch))
+    Story.append(Spacer(1,0.05 * inch))
 
 def add_certificate_number_text_to_story(Story,header_text):
     style = ParagraphStyle(name = 'NumberText', fontSize = 8, alignment=TA_RIGHT)
@@ -4032,7 +4077,7 @@ def fill_certificate_header(Story):
     style = ParagraphStyle(name='styleName', fontName ='Times-Bold', fontSize = 18, alignment=TA_CENTER)
     Story.append(Paragraph("Jnana Prabodhini Prashala", style))
 
-    Story.append(Spacer(1,0.1*inch))
+    Story.append(Spacer(1,0.1 * inch))
 
     style = ParagraphStyle(name='styleName', fontName ='Times-Roman', fontSize = 8, alignment=TA_CENTER)
     Story.append(Paragraph("School Affiliation No:1130001", style))
@@ -4055,15 +4100,15 @@ def fill_certificate_header(Story):
         ('LINEABOVE',(0,0),(0,0),1,colors.black),
         ('LINEBELOW',(0,0),(0,0),1,colors.black)
         ])
-    margin=0.7*inch
+    margin = 0.7 * inch
     PAGE_WIDTH = defaultPageSize[0]
-    column_widths=((PAGE_WIDTH-2*(margin))*0.9)
+    column_widths=((PAGE_WIDTH-2 * (margin)) * 0.9)
     table=Table(data, colWidths=column_widths)
     table.setStyle(table_style)
     table.hAlign = 'CENTER'
     Story.append(table)
 
-    Story.append(Spacer(1,0.1*inch))
+    Story.append(Spacer(1,0.1 * inch))
 
 def fill_certificate(student_basic_info, Story):
     certificateNumber = str(student_basic_info.RegistrationNo)
@@ -4072,13 +4117,13 @@ def fill_certificate(student_basic_info, Story):
     schoolRegistrationNumber = str(student_basic_info.RegistrationNo)
     add_certificate_number_text_to_story(Story, "School Registration No. : " + schoolRegistrationNumber)
 
-    Story.append(Spacer(1,0.2*inch))
+    Story.append(Spacer(1,0.2 * inch))
 
     now_time = datetime.datetime.now()
     date = format_date(now_time)
     add_certificate_number_text_to_story(Story, "Date : " + date)
 
-    Story.append(Spacer(1,0.7*inch))
+    Story.append(Spacer(1,0.7 * inch))
     studentName = student_basic_info.FirstName + ' ' + student_basic_info.LastName
     add_certificate_text_to_story(Story, "This is to certify that <strong>" + studentName + "</strong> is/was a bona fide student of")
 
@@ -4138,11 +4183,11 @@ def fill_certificate(student_basic_info, Story):
 
     add_certificate_text_to_story(Story, "To the best of my knowledge and belief, " + genderMentionSmall + " bears good moral character.")
 
-    Story.append(Spacer(1,0.7*inch))
+    Story.append(Spacer(1,0.7 * inch))
 
     add_signature_space_to_story(Story, "Principal","Jnana Prabodhini Prashala")
 
-    Story.append(Spacer(1, 0.1*inch))
+    Story.append(Spacer(1, 0.1 * inch))
     Story.append(PageBreak())
 
 # PDF School Leaving :  --------------------------------------------------
@@ -4160,7 +4205,7 @@ def school_leaving_later_pages(canvas, doc):
 def add_school_leaving_text_to_story(Story,header_text):
     style = ParagraphStyle(name = 'Text', fontSize = 11, alignment=TA_CENTER)
     Story.append(Paragraph(header_text, style))
-    Story.append(Spacer(1,0.05*inch))
+    Story.append(Spacer(1,0.05 * inch))
 
 #
 def school_leaving_pdf(request):
@@ -4229,7 +4274,7 @@ def fill_school_leaving_header(Story):
     style = ParagraphStyle(name='styleName', fontName ='Times-Bold', fontSize = 18, alignment=TA_CENTER)
     Story.append(Paragraph("Jnana Prabodhini Prashala", style))
 
-    Story.append(Spacer(1,0.1*inch))
+    Story.append(Spacer(1,0.1 * inch))
 
     style = ParagraphStyle(name='styleName', fontName ='Times-Roman', fontSize = 8, alignment=TA_CENTER)
     Story.append(Paragraph("School Affiliation No:1130001", style))
@@ -4252,15 +4297,15 @@ def fill_school_leaving_header(Story):
         ('LINEABOVE',(0,0),(0,0),1,colors.black),
         ('LINEBELOW',(0,0),(0,0),1,colors.black)
         ])
-    margin=0.7*inch
+    margin = 0.7 * inch
     PAGE_WIDTH = defaultPageSize[0]
-    column_widths=((PAGE_WIDTH-2*(margin))*0.9)
+    column_widths=((PAGE_WIDTH-2 * (margin)) * 0.9)
     table=Table(data, colWidths=column_widths)
     table.setStyle(table_style)
     table.hAlign = 'CENTER'
     Story.append(table)
 
-    Story.append(Spacer(1,0.1*inch))
+    Story.append(Spacer(1,0.1 * inch))
 
 def fill_school_leaving(student_yearly_info, Story):
     student_basic_info = student_yearly_info.StudentBasicInfo
@@ -4271,7 +4316,7 @@ def fill_school_leaving(student_yearly_info, Story):
     schoolRegistrationNumber = str(student_basic_info.RegistrationNo)
     add_certificate_number_text_to_story(Story, "School Registration No. : " + schoolRegistrationNumber)
 
-    Story.append(Spacer(1,0.2*inch))
+    Story.append(Spacer(1,0.2 * inch))
 
     now_time = datetime.datetime.now()
     date = format_date(now_time)
@@ -4304,21 +4349,21 @@ def fill_school_leaving(student_yearly_info, Story):
     conduct = ""
     reason = student_basic_info.ReasonOfLeavingSchool
 
-    Story.append(Spacer(1,0.1*inch))
+    Story.append(Spacer(1,0.1 * inch))
     data = []
     data=(
-            ["Name of the Pupil: " , studentName],
-            ["Nationality: " , nationality],
-            ["Scheduled Caste or Tribe (if any): " , caste],
-            ["Place of Birth: " , place],
-            ["Date of Birth (dd/mm/yyyy): " , birthDate],
-            ["Date of Birth (in Words): " , birthDateInWords],
-            ["Last School attended: " , lastSchool],
-            ["Date of Admission: " , dateOfRegistration],
-            ["Progress: " , progress],
-            ["Conduct: " , conduct],
-            ["Date of Leaving School: " , terminationDate],
-            ["Reason of Leaving School: " , reason],
+            ["Name of the Pupil: ", studentName],
+            ["Nationality: ", nationality],
+            ["Scheduled Caste or Tribe (if any): ", caste],
+            ["Place of Birth: ", place],
+            ["Date of Birth (dd/mm/yyyy): ", birthDate],
+            ["Date of Birth (in Words): ", birthDateInWords],
+            ["Last School attended: ", lastSchool],
+            ["Date of Admission: ", dateOfRegistration],
+            ["Progress: ", progress],
+            ["Conduct: ", conduct],
+            ["Date of Leaving School: ", terminationDate],
+            ["Reason of Leaving School: ", reason],
         )
     table=Table(data)
     table_style = TableStyle([
@@ -4327,15 +4372,15 @@ def fill_school_leaving(student_yearly_info, Story):
     table.setStyle(table_style)
     table.hAlign='LEFT'
     Story.append(table)
-    Story.append(Spacer(1,0.2*inch))
+    Story.append(Spacer(1,0.2 * inch))
 
     add_school_leaving_text_to_story(Story, "Certified that the above information is in accordance with the School Register.")
 
-    Story.append(Spacer(1,0.7*inch))
+    Story.append(Spacer(1,0.7 * inch))
 
     add_signature_space_to_story(Story, "Principal","Jnana Prabodhini Prashala")
 
-    Story.append(Spacer(1,0.1*inch))
+    Story.append(Spacer(1,0.1 * inch))
     Story.append(PageBreak())
 
 def int2word(n):
@@ -4443,7 +4488,7 @@ def cards_pdf(request):
         response = HttpResponse(mimetype='application/pdf')
 
         PAGE_WIDTH = defaultPageSize[0]
-        margin = 0.01*PAGE_WIDTH
+        margin = 0.01 * PAGE_WIDTH
         doc = SimpleDocTemplate(response,
                 leftMargin=margin,
                 rightMargin=margin,
@@ -4560,7 +4605,7 @@ def fill_card_row(Story, student_yearly_infos,
             rollNo = str(student_yearly_info.ClassMaster.Standard) + 'th Std' + ',    ' + 'RollNo' + ' ' + str(student_yearly_info.RollNo)
             studentCardText += rollNo
 
-        if studentCardText != '':
+        if studentCardText != '': 
             studentCardText += '<br/>'
 
         if isShowName:
@@ -4589,12 +4634,12 @@ def fill_card_row(Story, student_yearly_infos,
     if len(student_yearly_infos) < 2:
         cardsRow.append('')
 
-    Story.append(CondPageBreak(1*inch))
+    Story.append(CondPageBreak(1 * inch))
 
     #table
     data = [cardsRow]
     PAGE_WIDTH = defaultPageSize[0]
-    colWidthValues = [0.49*PAGE_WIDTH,0.49*PAGE_WIDTH]
+    colWidthValues = [0.49 * PAGE_WIDTH,0.49 * PAGE_WIDTH]
     table = Table(data, colWidths=colWidthValues)
     table_style = TableStyle([('VALIGN',(0,0),(-1,-1), 'TOP')])
     table.setStyle(table_style)
@@ -4691,7 +4736,7 @@ def fill_subject_marks_table(Story, student_yearly_infos, subject_name):
         row = []
         row.append(str(row_data['Student']))
         for header in column_headers:
-            if not row_data.has_key(header):
+            if header not in row_data:
                 row_data[header] = '-'
             row.append(str(row_data[header]))
         data.append(row)
@@ -4726,12 +4771,12 @@ def fill_all_subjects_marks_table(Story, student_yearly_infos, selected_subject)
             subject_name = test_mapping.SubjectMaster.Name
             if (selected_subject != 'ALL') and (selected_subject != subject_name):
                 continue
-            if not subjects_rows_data.has_key(subject_name):
+            if subject_name not in subjects_rows_data:
                 subjects_rows_data[subject_name] = {}
             rows_data = subjects_rows_data[subject_name]
 
             #row data
-            if not rows_data.has_key(student_text):
+            if student_text not in rows_data:
                 new_row_data = {}
                 new_row_data['Student'] = student_text
                 rows_data[student_text] = new_row_data
@@ -4762,7 +4807,7 @@ def fill_all_subjects_marks_table(Story, student_yearly_infos, selected_subject)
             row = []
             row.append(str(row_data['Student']))
             for header in column_headers:
-                if not row_data.has_key(header):
+                if header not in row_data:
                     row_data[header] = '-'
                 row.append(str(row_data[header]))
             data.append(row)
