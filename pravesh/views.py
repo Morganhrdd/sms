@@ -1,6 +1,6 @@
 from django.db.models import Q, Count
 from django.shortcuts import render_to_response, redirect
-from django.http import HttpResponse 
+from django.http import HttpResponse
 from django.template import Context
 from django.template.loader import get_template
 from django.contrib.auth.decorators import login_required
@@ -15,30 +15,66 @@ import urllib
 import logging
 
 LOG_FILENAME = '/tmp/sms.log'
-logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG)
+logging.basicConfig(filename=LOG_FILENAME, level=logging.DEBUG)
 
-MEDIUM = {'E':'English', 'M':'Marathi'}
+MEDIUM = {'E': 'English', 'M': 'Marathi'}
 
-def sms_send(user=None, password=None, senderid=None, nos=None, msg=None, schedule=None):
+
+def sms_send(
+        user=None,
+        password=None,
+        senderid=None,
+        nos=None,
+        msg=None,
+        schedule=None
+    ):
     for no in nos:
-        params = urllib.urlencode({'user': user, 'pwd': password, 'senderid': senderid, 'mobileno':str(no), 'msgtext': msg, 'priority':'High'})
+        params = urllib.urlencode({
+            'user': user,
+            'pwd': password,
+            'senderid': senderid,
+            'mobileno': str(no),
+            'msgtext': msg,
+            'priority': 'High'
+        })
         conn = httplib.HTTPConnection('bulksmsindia.mobi', 80, timeout=10)
-        conn.request("GET", "/sendurl.asp?%s"%(params))
+        conn.request("GET", "/sendurl.asp?%s" % (params))
         response = conn.getresponse()
-        logging.debug('Number: %s, Status: %s, Reason: %s, Output: %s' % (no, response.status, response.reason, response.read()))
+        logging.debug('Number: %s, Status: %s, Reason: %s, Output: %s' % \
+            (no, response.status, response.reason, response.read()))
         conn.close()
-        
+
+
 def add(request):
     if not request.POST:
         applicationform = ApplicationForm()
-        return render_to_response('pravesh/add.html', {'form': applicationform, 'button_name':'Add'})
+        return render_to_response(
+            'pravesh/add.html',
+            {
+                'form': applicationform,
+                'button_name': 'Add'
+            }
+        )
     else:
         applicationform = ApplicationForm(request.POST)
         if not applicationform.is_valid():
-            return render_to_response('pravesh/add.html', {'form': applicationform, 'button_name':'Add'})
+            return render_to_response(
+                'pravesh/add.html',
+                {
+                    'form': applicationform,
+                    'button_name': 'Add'
+                }
+            )
         if request.POST['PayMode'] == 'DD' and not request.POST['DDNo']:
-            return render_to_response('pravesh/add.html', {'form': applicationform, 'message':'DD Number is mandatory', 'button_name':'Add'})
-        if request.POST.has_key('edit'):
+            return render_to_response(
+                'pravesh/add.html',
+                {
+                    'form': applicationform,
+                    'message': 'DD Number is mandatory',
+                    'button_name': 'Add'
+                }
+            )
+        if 'edit' in request.POST:
             student_obj = Student(pk=request.POST['edit'])
         else:
             student_obj = Student()
@@ -63,15 +99,16 @@ def add(request):
         student_obj.DDNo = request.POST['DDNo']
         student_obj.save()
         x = get_seatnumber(medium=student_obj.Medium)
-        if not request.POST.has_key('edit'):
+        if 'edit' not in request.POST:
             hallticket_obj = HallTicket()
             hallticket_obj.Student = student_obj
             hallticket_obj.ClassRoom = ClassRoom.objects.get(pk=x['classroom'])
             hallticket_obj.SeatNumber = x['seatnumber']
             hallticket_obj.save()
-            return redirect('/pravesh/hallticket/%s'%(hallticket_obj.pk))
+            return redirect('/pravesh/hallticket/%s' % (hallticket_obj.pk))
         return redirect('/pravesh')
-#
+
+
 def edit(request, pk):
     try:
         student_obj = Student.objects.get(pk=pk)
@@ -94,14 +131,27 @@ def edit(request, pk):
         data['PayMode'] = student_obj.PayMode
         data['DDNo'] = student_obj.DDNo
         applicationform = ApplicationForm(initial=data)
-        return render_to_response('pravesh/add.html', {'form':applicationform, 'button_name':'Update', 'edit':student_obj.pk})
+        return render_to_response(
+            'pravesh/add.html',
+            {
+                'form': applicationform,
+                'button_name': 'Update',
+                'edit': student_obj.pk
+            }
+        )
     except:
-        return render_to_response('pravesh/add.html', {'message':'Record not found'})
+        return render_to_response(
+            'pravesh/add.html',
+            {'message': 'Record not found'}
+        )
     try:
         hallticket_obj = HallTicket.objects.filter(pk=pk)
         applicationform = ApplicationForm()
         applicationform.FirstName = hallticket_obj.Student.FirstName
-        return render_to_response('pravesh/add.html', {'form':applicationform})
+        return render_to_response(
+            'pravesh/add.html',
+            {'form': applicationform}
+        )
     except:
         return redirect('/pravesh/')
 
@@ -113,23 +163,44 @@ def display_hallticket(request, pk):
         data['firstname'] = hallticket_obj.Student.FirstName
         data['middlename'] = hallticket_obj.Student.MiddleName
         data['lastname'] = hallticket_obj.Student.LastName
-        data['hall_id'] = '%s%s-%s' % (hallticket_obj.ClassRoom.Medium, hallticket_obj.ClassRoom.Number, hallticket_obj.SeatNumber)
+        data['hall_id'] = '%s%s-%s' % (
+            hallticket_obj.ClassRoom.Medium,
+            hallticket_obj.ClassRoom.Number,
+            hallticket_obj.SeatNumber
+        )
         data['classroom'] = hallticket_obj.ClassRoom.Name
         data['medium'] = MEDIUM[hallticket_obj.Student.Medium]
-        data['date'] = hallticket_obj.ClassRoom.Session.Start.strftime('%d-%b-%Y')
+        data['date'] = \
+            hallticket_obj.ClassRoom.Session.Start.strftime('%d-%b-%Y')
         data['session'] = hallticket_obj.ClassRoom.Session.Name
-        data['session_time'] = '%s to %s' % (hallticket_obj.ClassRoom.Session.Start.strftime('%H:%M'), hallticket_obj.ClassRoom.Session.End.strftime('%H:%M'))
-        return render_to_response('pravesh/hallticket.html', {'data':data})
+        data['session_time'] = '%s to %s' % (
+            hallticket_obj.ClassRoom.Session.Start.strftime('%H:%M'),
+            hallticket_obj.ClassRoom.Session.End.strftime('%H:%M')
+        )
+        return render_to_response('pravesh/hallticket.html', {'data': data})
     except:
-        return render_to_response('pravesh/hallticket.html', {'msg': 'Seat number [<i>%s</i>] does not exists' % (pk)})
+        return render_to_response(
+            'pravesh/hallticket.html',
+            {
+                'msg': 'Seat number [<i>%s</i>] does not exists' % (pk)
+            }
+        )
+
 
 def index(request):
     data = {}
     data['stats'] = {}
-    data['stats']['MM'] = Student.objects.filter(Gender='M', Medium='M').aggregate(Count('Gender'))['Gender__count']
-    data['stats']['ME'] = Student.objects.filter(Gender='M', Medium='E').aggregate(Count('Gender'))['Gender__count']
-    data['stats']['FM'] = Student.objects.filter(Gender='F', Medium='M').aggregate(Count('Gender'))['Gender__count']
-    data['stats']['FE'] = Student.objects.filter(Gender='F', Medium='E').aggregate(Count('Gender'))['Gender__count']
+    data['stats']['MM'] = Student.objects.filter(
+        Gender='M', Medium='M'
+    ).aggregate(Count('Gender'))['Gender__count']
+    data['stats']['ME'] = Student.objects.filter(
+        Gender='M', Medium='E'
+    ).aggregate(Count('Gender'))['Gender__count']
+    data['stats']['FM'] = Student.objects.filter(
+        Gender='F', Medium='M'
+    ).aggregate(Count('Gender'))['Gender__count']
+    data['stats']['FE'] = Student.objects.filter(
+        Gender='F', Medium='E').aggregate(Count('Gender'))['Gender__count']
     data['stats']['MMFM'] = data['stats']['MM'] + data['stats']['FM']
     data['stats']['MEFE'] = data['stats']['ME'] + data['stats']['FE']
     data['stats']['MMME'] = data['stats']['MM'] + data['stats']['ME']
@@ -138,24 +209,31 @@ def index(request):
     data['add_url'] = '/pravesh/add'
     data['generate_hallticket_url'] = '/pravesh/generate_hallticket'
     data['generate_report_url'] = '/pravesh/generate_report'
-    return render_to_response('pravesh/index.html',{'data':data})
-    
+    return render_to_response('pravesh/index.html', {'data': data})
+
 
 def edit_hallticket(request, seatnumber):
     if not request.POST:
         genform = GenerateHallTicketForm()
-        return render_to_response('pravesh/generate_hallticket.html',{'form':genform})
+        return render_to_response(
+            'pravesh/generate_hallticket.html',
+            {'form': genform}
+        )
     data = {}
     if request.POST['FirstName']:
         data['Student__FirstName__icontains'] = request.POST['FirstName']
     if request.POST['LastName']:
         data['Student__LastName__icontains'] = request.POST['LastName']
     hallticket_objs = HallTicket.objects.filter(**data)
-    
+
+
 def generate_hallticket(request):
     genform = GenerateHallTicketForm()
     if not request.POST:
-        return render_to_response('pravesh/generate_hallticket.html',{'form':genform})
+        return render_to_response(
+            'pravesh/generate_hallticket.html',
+            {'form': genform}
+        )
     data = {}
     if request.POST['FirstName']:
         data['Student__FirstName__icontains'] = request.POST['FirstName']
@@ -163,20 +241,31 @@ def generate_hallticket(request):
         data['Student__LastName__icontains'] = request.POST['LastName']
     hallticket_objs = HallTicket.objects.filter(**data)
     if len(hallticket_objs):
-        return render_to_response('pravesh/generate_hallticket.html', {'form':genform, 'hallticket_objs':hallticket_objs})
-    return render_to_response('pravesh/generate_hallticket.html', {'form':genform})
+        return render_to_response(
+            'pravesh/generate_hallticket.html',
+            {'form': genform, 'hallticket_objs': hallticket_objs}
+        )
+    return render_to_response(
+        'pravesh/generate_hallticket.html',
+        {'form': genform}
+    )
 
 
 def get_seatnumber(medium=None):
     session_objs = Session.objects.all().order_by('Number', 'pk')
     data = {}
     for session_obj in session_objs:
-        data[session_obj.pk] =  {}
-        classroom_objs = ClassRoom.objects.filter(Session=session_obj, Medium=medium).order_by('Number','pk')
+        data[session_obj.pk] = {}
+        classroom_objs = ClassRoom.objects.filter(
+            Session=session_obj,
+            Medium=medium
+        ).order_by('Number', 'pk')
         for classroom_obj in classroom_objs:
             data[session_obj.pk][classroom_obj.pk] = {}
-            data[session_obj.pk][classroom_obj.pk]['Capacity'] = classroom_obj.Capacity
-            data[session_obj.pk][classroom_obj.pk]['Current'] = len(HallTicket.objects.filter(ClassRoom=classroom_obj))
+            data[session_obj.pk][classroom_obj.pk]['Capacity'] = \
+                classroom_obj.Capacity
+            data[session_obj.pk][classroom_obj.pk]['Current'] = \
+                len(HallTicket.objects.filter(ClassRoom=classroom_obj))
     retval = {}
     sessions = data.keys()
     sessions.sort()
@@ -187,19 +276,31 @@ def get_seatnumber(medium=None):
         for c in classrooms:
             retval['classroom'] = c
             if data[s][c]['Current'] < data[s][c]['Capacity']:
-                retval['seatnumber'] = data[s][c]['Current']+1
+                retval['seatnumber'] = data[s][c]['Current'] + 1
                 return retval
     raise Exception("ERROR")
+
 
 def generate_classreport(request):
     try:
         medium = request.GET['medium']
         number = request.GET['number']
-        data = HallTicket.objects.filter(ClassRoom__Medium = medium, ClassRoom__Number = number).order_by('SeatNumber')
-        return render_to_response('pravesh/display_report.html', {'data':data})
+        data = HallTicket.objects.filter(
+            ClassRoom__Medium=medium,
+            ClassRoom__Number=number
+        ).order_by('SeatNumber')
+        return render_to_response(
+            'pravesh/display_report.html',
+            {'data': data}
+        )
     except:
         data = ClassRoom.objects.all()
-        return render_to_response('pravesh/display_report.html', {'classrooms':data})
+        return render_to_response(
+            'pravesh/display_report.html',
+            {'classrooms': data}
+        )
+
+
 add = login_required(add)
 display_hallticket = login_required(display_hallticket)
 generate_hallticket = login_required(generate_hallticket)
