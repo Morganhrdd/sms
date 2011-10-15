@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class ClassRoomAdmin(admin.ModelAdmin):
-    list_display = ['Number', 'Medium', 'Name', 'Capacity']
+    list_display = ['id','Number', 'Medium', 'Name', 'Capacity']
     search_fields = ['Number', 'Medium', 'Name', 'Capacity']
 
 class SessionAdmin(admin.ModelAdmin):
@@ -12,8 +12,8 @@ class SessionAdmin(admin.ModelAdmin):
     search_fields = ['Number', 'Name', 'Start', 'End']
 
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ['FirstName', 'LastName', 'Email', 'Gender']
-    search_fields = ['FirstName', 'LastName', 'Email', 'Gender']
+    list_display = ['id', 'FirstName', 'LastName', 'Email', 'Gender', 'PhoneMobile', 'PayMode']
+    search_fields = ['FirstName', 'LastName', 'Email', 'Gender', 'PhoneMobile', 'PayMode']
 
 class HallTicketAdmin(admin.ModelAdmin):
     list_display = ['Student', 'ClassRoom', 'SeatNumber']

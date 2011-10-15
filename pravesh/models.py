@@ -70,19 +70,19 @@ class HallTicket(models.Model):
 
 
 class ApplicationForm(forms.Form):
-    FirstName = forms.CharField(max_length=30)
+    FirstName = forms.CharField(max_length=30, help_text='Enter name')
     MiddleName = forms.CharField(max_length=30)
     LastName = forms.CharField(max_length=30)
     FatherName = forms.CharField(max_length=30, required=False)
     MotherName = forms.CharField(max_length=30, required=False)
     Address = forms.CharField(widget=forms.widgets.Textarea(attrs={'rows':4}),max_length=30)
-    Pincode = forms.IntegerField(required=False) 
+    Pincode = forms.IntegerField(required=False, help_text='6 digits') 
     PhoneHome = forms.IntegerField(required=False) 
-    PhoneMobile = forms.IntegerField(required=False)
+    PhoneMobile = forms.IntegerField(required=False, help_text='Mandatory. Enter 10 digit number')
     Email = forms.EmailField(required=False)
     Medium = forms.ChoiceField(choices=MEDIUM_CHOICES)
     Gender = forms.ChoiceField(choices=GENDER_CHOICES)
-    DateOfBirth = forms.DateField()
+    DateOfBirth = forms.DateField(help_text='Format yyyy-mm-dd')
     CurrentSchool = forms.CharField(max_length=50, required=False)
     CurrentStd = forms.IntegerField(required=False)
     PayMode = forms.ChoiceField(choices=PAYMODE_CHOICES)
