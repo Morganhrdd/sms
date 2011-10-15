@@ -1,0 +1,66 @@
+<html>
+<body onLoad="populatename('{{student.FirstName}} {{student.LastName}}')">
+<div align="center">
+
+<h2>
+Jnana Prabodhini Prashala<br/>
+510, Sadashiv Peth, Pune - 30<br/>
+</h2><br/>
+<div name="receiptnum" style="position:absolute;right:200;top:100">
+<table>
+<tr> <td><b>Date</b></td><td>{{date}}</td></tr>
+<!--<tr> <td><b>Receipt Number</b></td><td>{{receiptnumber}}</td></tr>-->
+</table>
+</div>
+<form name="feeparent" action="/parent/fee/" method="post"> {% csrf_token %}
+<br/><b>{{ message }}</b><br/><br/>
+</form>
+
+</div>
+
+<br/><br/>
+
+<div>
+<table align="center">
+{% for row in years %}
+<th>{{row.ClassMaster.AcademicYear}} / {{row.ClassMaster.Standard}}</th>
+<th width="10">
+</th>
+{% endfor %}
+
+<tr>
+{% for row in years %}
+<td align="center" valign="top">
+<div id="{{row.ClassMaster.Standard}}" name="{{row.ClassMaster.Standard}}" align="top">
+<table border="1" cellspacing="5" cellpadding="0">
+{% for frow in row.FeeInfo %}
+<tr><th colspan=2>{{frow.Type}}</th><th colspan=3>{{frow.Amount}}</th></tr>
+{% for fda in frow.FeeDateAmount %}
+<tr><td></td><td></td><td><a href="javascript:printreceipt({{fda.ReceiptNo}})">{{fda.ReceiptNo}}</a></td><td>{{fda.Date}}</td><td>{{fda.Amount}}</td></tr>
+{% endfor %}
+{% for sfee in frow.SpecialFee %}
+<tr><td></td><td></td><td colspan=2>SpecialFee<td>{{sfee.Amount}}</td></tr>
+{% endfor %}
+{% for schol in frow.Scholarship %}
+<tr><td></td><td></td><td colspan=2>Scholarship<td>{{schol.Amount}}</td></tr>
+{% endfor %}
+<tr><th colspan=2>Total Paid</th><th colspan=3>{{frow.Total}}</th></tr>
+<tr><th colspan=2>Balance</th><th colspan=3><a href="javascript:populatedata('{{row.ClassMaster.Standard}}','{{row.ClassMaster.AcademicYear}}','{{frow.Type}}','{{frow.Balance}}')">{{frow.Balance}}</a></th></tr>
+{% endfor %}
+
+</table>
+</div>
+</td>
+<td width="10">
+</td>
+{% endfor %}
+</tr>
+</table>
+</div>
+
+<form name="printform" action="/fee_receipt/" method="POST"> {% csrf_token %}
+<input type="hidden" name="receiptno"/>
+</form>
+
+</body>
+</html>
