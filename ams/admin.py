@@ -18,9 +18,9 @@ class categoryAdmin(admin.ModelAdmin):
 
 
 class userAdmin(admin.ModelAdmin):
-    list_display = ('Name', 'Barcode', 'Category', 'Email')
-    ordering = ('Barcode')
-    search_fields = ['Barcode', 'Name']
+    list_display = ('Name','Barcode','Category','Email', 'Phone')
+    ordering = ('Barcode',)
+    search_fields =['Barcode', 'Name', 'Phone']
 
     def save_model(self, request, obj, form, change):
         if not change:
@@ -60,14 +60,14 @@ class dayrulesAdmin(admin.ModelAdmin):
 class attendanceAdmin(admin.ModelAdmin):
     list_display = ('Barcode', 'Date', 'Remark', 'Comment')
     ordering = ('Barcode', 'Date')
-    search_fields = ['Barcode__Barcode', ]
+    search_fields = ['Barcode__Barcode', 'Barcode__Name']
     list_filter = ['Year', 'Barcode', 'Date']
 
 
 class timerecordsAdmin(admin.ModelAdmin):
     list_display = ('Barcode', 'Type', 'Date', 'Time')
-    ordering = ('Barcode')
-    search_fields = ['Date', 'Barcode__Barcode']
+    ordering = ('Barcode',)
+    search_fields = ['Date', 'Barcode__Barcode', 'Barcode__Name']
     list_filter = ['Barcode', 'Date']
 
     def save_model(self, request, obj, form, change):
@@ -115,12 +115,13 @@ class leavesAdmin(admin.ModelAdmin):
                 else:
                     attendance.Remark = 'O'
                 attendance.save()
-                pno = [obj.Barcode.Phone]
-                psms = "Your leave for " + unicode(obj.LeaveDate.day) + \
-                    '/' + unicode(obj.LeaveDate.month) + \
-                    '/' + unicode(obj.LeaveDate.year) + \
-                    " has been approved."
-                misc.sms_send(nos=pno, msg=psms)
+                pno = [obj.Barcode.Phone[-10:]]
+                psms = "Leave application for " + unicode(obj.Barcode.Name) + \
+                " for " + unicode(obj.LeaveDate.day) + '/' + \
+                unicode(obj.LeaveDate.month) + '/' + \
+                unicode(obj.LeaveDate.year) + \
+                " has been approved."
+                misc.sms_send(nos=pno,msg=psms)
             else:
                 att = LeaveAttendance.objects.filter(
                     Date=obj.LeaveDate
@@ -128,11 +129,12 @@ class leavesAdmin(admin.ModelAdmin):
                 if att:
                     att[0].delete()
                 if obj.Status == 3:
-                    pno = [obj.Barcode.Phone]
-                    psms = "Your leave for " + unicode(obj.LeaveDate.day) + \
-                        '/' + unicode(obj.LeaveDate.month) + \
-                        '/' + unicode(obj.LeaveDate.year) + \
-                        " has been denied."
+                    pno = [obj.Barcode.Phone[-10:]]
+                    psms = "Leave application for " + unicode(obj.Barcode.Name) + \
+                    " for " + unicode(obj.LeaveDate.day) + '/' + \
+                    unicode(obj.LeaveDate.month) + '/' + \
+                    unicode(obj.LeaveDate.year) + \
+                    " has been denied."
                     misc.sms_send(nos=pno, msg=psms)
         obj.save()
 
@@ -141,7 +143,7 @@ class leaverulesAdmin(admin.ModelAdmin):
     list_display = ('Category', 'Type', 'Days')
     ordering = ('Category')
     search_fields = ['Category__Id']
-#   list_filter = ['Category__Description']
+    #list_filter = ['Category__Description']
 
 
 class academicyearAdmin(admin.ModelAdmin):
