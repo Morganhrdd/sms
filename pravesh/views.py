@@ -4,45 +4,20 @@ from django.http import HttpResponse
 from django.template import Context
 from django.template.loader import get_template
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from sms.pravesh.models import ApplicationForm, GenerateHallTicketForm
 from sms.pravesh.models import HallTicket, Session, ClassRoom, Student
-
+import logging
 # Create your views here.
 
 import httplib
 import datetime
 import urllib
-import logging
+import misc
 
 LOG_FILENAME = '/tmp/sms.log'
-logging.basicConfig(filename=LOG_FILENAME, level=logging.DEBUG)
-
-MEDIUM = {'E': 'English', 'M': 'Marathi'}
-
-
-def sms_send(
-        user=None,
-        password=None,
-        senderid=None,
-        nos=None,
-        msg=None,
-        schedule=None
-    ):
-    for no in nos:
-        params = urllib.urlencode({
-            'user': user,
-            'pwd': password,
-            'senderid': senderid,
-            'mobileno': str(no),
-            'msgtext': msg,
-            'priority': 'High'
-        })
-        conn = httplib.HTTPConnection('bulksmsindia.mobi', 80, timeout=10)
-        conn.request("GET", "/sendurl.asp?%s" % (params))
-        response = conn.getresponse()
-        logging.debug('Number: %s, Status: %s, Reason: %s, Output: %s' % \
-            (no, response.status, response.reason, response.read()))
-        conn.close()
+logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG)
+MEDIUM = {'E':'English', 'M':'Marathi'}
 
 
 def add(request):
@@ -105,10 +80,17 @@ def add(request):
             hallticket_obj.ClassRoom = ClassRoom.objects.get(pk=x['classroom'])
             hallticket_obj.SeatNumber = x['seatnumber']
             hallticket_obj.save()
-            return redirect('/pravesh/hallticket/%s' % (hallticket_obj.pk))
+            msg = 'Name: %s %s %s. Number: %s%s-%s Classroom: %s Medium: %s Date: %s Session: %s Time of test: %s to %s' %(student_obj.FirstName, student_obj.MiddleName, student_obj.LastName, hallticket_obj.ClassRoom.Medium, hallticket_obj.ClassRoom.Number, hallticket_obj.SeatNumber, hallticket_obj.ClassRoom.Name, student_obj.Medium, hallticket_obj.ClassRoom.Session.Start.strftime('%d-%b-%Y'), hallticket_obj.ClassRoom.Session.Name, hallticket_obj.ClassRoom.Session.Start.strftime('%H:%M'), hallticket_obj.ClassRoom.Session.End.strftime('%H:%M'))
+            misc.sms_send(nos=[student_obj.PhoneMobile], msg=msg)
+            return redirect('/pravesh/hallticket/%s'%(hallticket_obj.pk))
+        else:
+            hallticket_obj = HallTicket.objects.get(Student = student_obj)
+            msg = 'Name: %s %s %s. Number: %s%s-%s Classroom: %s Medium: %s Date: %s Session: %s Time of test: %s to %s' %(student_obj.FirstName, student_obj.MiddleName, student_obj.LastName, hallticket_obj.ClassRoom.Medium, hallticket_obj.ClassRoom.Number, hallticket_obj.SeatNumber, hallticket_obj.ClassRoom.Name, student_obj.Medium, hallticket_obj.ClassRoom.Session.Start.strftime('%d-%b-%Y'), hallticket_obj.ClassRoom.Session.Name, hallticket_obj.ClassRoom.Session.Start.strftime('%H:%M'), hallticket_obj.ClassRoom.Session.End.strftime('%H:%M'))
+            misc.sms_send(nos=[student_obj.PhoneMobile], msg=msg)
         return redirect('/pravesh')
+#
 
-
+@csrf_exempt
 def edit(request, pk):
     try:
         student_obj = Student.objects.get(pk=pk)
@@ -140,22 +122,10 @@ def edit(request, pk):
             }
         )
     except:
-        return render_to_response(
-            'pravesh/add.html',
-            {'message': 'Record not found'}
-        )
-    try:
-        hallticket_obj = HallTicket.objects.filter(pk=pk)
-        applicationform = ApplicationForm()
-        applicationform.FirstName = hallticket_obj.Student.FirstName
-        return render_to_response(
-            'pravesh/add.html',
-            {'form': applicationform}
-        )
-    except:
-        return redirect('/pravesh/')
+        return render_to_response('pravesh/add.html', {'message':'Record not found'})
 
 
+@csrf_exempt
 def display_hallticket(request, pk):
     try:
         hallticket_obj = HallTicket.objects.get(pk=pk)
@@ -173,34 +143,18 @@ def display_hallticket(request, pk):
         data['date'] = \
             hallticket_obj.ClassRoom.Session.Start.strftime('%d-%b-%Y')
         data['session'] = hallticket_obj.ClassRoom.Session.Name
-        data['session_time'] = '%s to %s' % (
-            hallticket_obj.ClassRoom.Session.Start.strftime('%H:%M'),
-            hallticket_obj.ClassRoom.Session.End.strftime('%H:%M')
-        )
-        return render_to_response('pravesh/hallticket.html', {'data': data})
-    except:
-        return render_to_response(
-            'pravesh/hallticket.html',
-            {
-                'msg': 'Seat number [<i>%s</i>] does not exists' % (pk)
-            }
-        )
-
+        data['session_time'] = '%s to %s' % (hallticket_obj.ClassRoom.Session.Start.strftime('%H:%M'), hallticket_obj.ClassRoom.Session.End.strftime('%H:%M'))
+        return render_to_response('pravesh/hallticket.html', {'data':data})
+    except Exception, e:
+        return render_to_response('pravesh/hallticket.html', {'msg': 'Seat number [<i>%s</i>] does not exists' % (pk)})
 
 def index(request):
     data = {}
     data['stats'] = {}
-    data['stats']['MM'] = Student.objects.filter(
-        Gender='M', Medium='M'
-    ).aggregate(Count('Gender'))['Gender__count']
-    data['stats']['ME'] = Student.objects.filter(
-        Gender='M', Medium='E'
-    ).aggregate(Count('Gender'))['Gender__count']
-    data['stats']['FM'] = Student.objects.filter(
-        Gender='F', Medium='M'
-    ).aggregate(Count('Gender'))['Gender__count']
-    data['stats']['FE'] = Student.objects.filter(
-        Gender='F', Medium='E').aggregate(Count('Gender'))['Gender__count']
+    data['stats']['MM'] = len(HallTicket.objects.filter(Student__Gender='M', Student__Medium='M'))
+    data['stats']['ME'] = len(HallTicket.objects.filter(Student__Gender='M', Student__Medium='E'))
+    data['stats']['FM'] = len(HallTicket.objects.filter(Student__Gender='F', Student__Medium='M'))
+    data['stats']['FE'] = len(HallTicket.objects.filter(Student__Gender='F', Student__Medium='E'))
     data['stats']['MMFM'] = data['stats']['MM'] + data['stats']['FM']
     data['stats']['MEFE'] = data['stats']['ME'] + data['stats']['FE']
     data['stats']['MMME'] = data['stats']['MM'] + data['stats']['ME']
@@ -212,6 +166,7 @@ def index(request):
     return render_to_response('pravesh/index.html', {'data': data})
 
 
+@csrf_exempt
 def edit_hallticket(request, seatnumber):
     if not request.POST:
         genform = GenerateHallTicketForm()
@@ -225,8 +180,8 @@ def edit_hallticket(request, seatnumber):
     if request.POST['LastName']:
         data['Student__LastName__icontains'] = request.POST['LastName']
     hallticket_objs = HallTicket.objects.filter(**data)
-
-
+    
+@csrf_exempt
 def generate_hallticket(request):
     genform = GenerateHallTicketForm()
     if not request.POST:
