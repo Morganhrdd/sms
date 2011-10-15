@@ -199,6 +199,74 @@ def fee_receipt(request):
                                             'receiptnumber':receiptnumber, 'student':student, 'years':years })                    
 
 #
+def fee_parent(request):
+    if request.user.username.isdigit():
+        regno = request.user.username
+
+	message = "Fee Details for Registration Number: " + unicode(request.user.username)
+    dt = datetime.datetime.now()
+    date = dt.date()
+    receiptnumber = "------"
+
+    studentbi = StudentBasicInfo.objects.filter(RegistrationNo=regno)
+    if not studentbi:
+        message = "Invalid Registration Number"
+        return render_to_response('fees/feeparents.html', {'form': form, 'message': message, 'date':date,'receiptnumber':receiptnumber })                    
+
+    student = studentbi[0]
+    years = []
+    classmaster = StudentYearlyInformation.objects.filter(StudentBasicInfo=student).order_by('-ClassMaster__Standard')
+    if classmaster:
+        for data in classmaster:
+            hostel = data.Hostel
+            feetypes = FeeType.objects.filter(ClassMaster=data.ClassMaster)
+            feeinfo = []
+            if feetypes:
+                for ftype in feetypes:
+                    tschol = 0
+                    tspecialfee = 0
+                    amount = ftype.Amount
+                    if ftype.Type == 'Hostel':
+                        if hostel == 1:
+                            continue
+                        elif hostel == 3:
+                            amount = amount / 2
+                    feereceipts = FeeReceipt.objects.filter(StudentYearlyInformation=data).filter(FeeType=ftype).filter(Status=1)
+                    feedateamount = []
+                    total = 0
+                    if feereceipts:
+                        for fr in feereceipts:
+                            feedateamount.append({'ReceiptNo':fr.ReceiptNumber, 'Date':fr.Date, 'Amount':fr.Amount})
+                            total += fr.Amount
+                    scholarshipqs = ScholarshipOrFee.objects.filter(StudentYearlyInformation=data).filter(FeeType=ftype)
+                    if scholarshipqs:
+                        for schol in scholarshipqs:
+                            if schol.Type == 1:
+                                tschol += schol.Amount
+                            else:
+                                tspecialfee += schol.Amount
+
+                    scholarship = []
+                    specialfee = []
+                    if tschol > 0:
+                        #total += tschol
+                        scholarship.append({'Amount': tschol})
+                    if tspecialfee > 0:
+                        specialfee.append({'Amount': tspecialfee})
+
+                    if tschol > 0 or tspecialfee > 0:
+                        feeinfo.append({'Type':ftype.Type, 'Amount':amount, 'FeeDateAmount': feedateamount, 'Total':total,
+                            'Balance':amount - total + tspecialfee - tschol, 'Scholarship': scholarship, 'SpecialFee': specialfee})
+                    else:
+                        feeinfo.append({'Type':ftype.Type, 'Amount':amount, 'FeeDateAmount': feedateamount, 'Total':total,
+                            'Balance':amount - total})
+
+            years.append({'ClassMaster':data.ClassMaster, 'FeeInfo': feeinfo})                                                            
+
+    return render_to_response('fees/feeparents.html', {'form': form, 'message': message, 'date':date,
+                                'receiptnumber':receiptnumber, 'student':student, 'years':years })                    
+
+#
 def fee_report(request):
     message = ""
     STYLE_OPEN_TAG = '<b>'
