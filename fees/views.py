@@ -23,13 +23,14 @@ from sms.fees.num2word_EN import Num2Word_EN
 
 
 def fee_valid_user(user):
-    if user.is_superuser:
+    if user.is_superuser or user.username in ['vidyarathod']:
         return True
     else:
         return False
 
 
 #
+@csrf_exempt
 def fee_receipt(request):
     if not fee_valid_user(request.user):
         return redirect('/')
@@ -52,7 +53,6 @@ def fee_receipt(request):
                     message = "Invalid Registration Number"
                     return render_to_response('fees/feeform.html', {'form': form, 'message': message, 'date':date,'receiptnumber':receiptnumber })                    
                 student = studentbi[0]
-
                 year = form.cleaned_data['Year']
                 acadyears = AcademicYear.objects.filter(Year=year)
                 if not acadyears:
@@ -177,7 +177,6 @@ def fee_receipt(request):
                                             tschol += schol.Amount
                                         else:
                                             tspecialfee += schol.Amount
-
                                 scholarship = []
                                 specialfee = []
                                 if tschol > 0:
@@ -267,6 +266,8 @@ def fee_parent(request):
                                 'receiptnumber':receiptnumber, 'student':student, 'years':years })                    
 
 #
+
+@csrf_exempt
 def fee_report(request):
     message = ""
     STYLE_OPEN_TAG = '<b>'
@@ -364,6 +365,7 @@ def fee_report(request):
             return render_to_response('fees/feereport.html', {'form': form, 'message': message})
         
 #
+@csrf_exempt
 def fee_collection(request):
     message = ""
     if not request.POST:
@@ -394,6 +396,7 @@ def fee_collection(request):
 
 
 #
+@csrf_exempt
 def reprint_receipt(request):
     if request.POST:
         receiptno = request.POST['receiptno']
@@ -405,6 +408,7 @@ def reprint_receipt(request):
     return HttpResponse ('<html><body></body></html>')
 
 #
+@csrf_exempt
 def print_receipt(feerct):
     student = feerct.StudentYearlyInformation.StudentBasicInfo
     id = feerct.ReceiptNumber
@@ -425,7 +429,6 @@ def print_receipt(feerct):
                 
     Story = []
     Story.append(Spacer(1,1*inch))
-
     ptable_style = TableStyle([
         ('FONT', (0,0), (-1,-1), 'Times-Roman'),
         ('FONTSIZE',(0,0),(-1,-1),12)])
