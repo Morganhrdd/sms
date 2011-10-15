@@ -13,13 +13,13 @@ import misc
 
 class categoryAdmin(admin.ModelAdmin):
     list_display = ('Description', 'Id')
-    ordering = ('Id')
+    ordering = ['Id']
     search_fields = ['Description']
 
 
 class userAdmin(admin.ModelAdmin):
     list_display = ('Name','Barcode','Category','Email', 'Phone')
-    ordering = ('Barcode',)
+    ordering = ['Barcode',]
     search_fields =['Barcode', 'Name', 'Phone']
 
     def save_model(self, request, obj, form, change):
@@ -33,7 +33,7 @@ class userAdmin(admin.ModelAdmin):
 
 class userstatusAdmin(admin.ModelAdmin):
     list_display = ('Barcode', 'Status')
-    ordering = ('Barcode')
+    ordering = ['Barcode']
     search_fields = ['Barcode__Barcode']
 
 
@@ -47,26 +47,26 @@ class timerulesAdmin(admin.ModelAdmin):
         'EarlyOut',
         'TimeOut'
     )
-    ordering = ('Type')
+    ordering = ['Type']
     search_fields = ['Type']
 
 
 class dayrulesAdmin(admin.ModelAdmin):
     list_display = ('Category', 'Barcode', 'Day', 'Date', 'Type')
-    ordering = ('Category', 'Date', 'Day')
+    ordering = ['Category', 'Date', 'Day']
     search_fields = ['Type__Type']
 
 
 class attendanceAdmin(admin.ModelAdmin):
     list_display = ('Barcode', 'Date', 'Remark', 'Comment')
-    ordering = ('Barcode', 'Date')
+    ordering = ['Barcode', 'Date']
     search_fields = ['Barcode__Barcode', 'Barcode__Name']
     list_filter = ['Year', 'Barcode', 'Date']
 
 
 class timerecordsAdmin(admin.ModelAdmin):
     list_display = ('Barcode', 'Type', 'Date', 'Time')
-    ordering = ('Barcode',)
+    ordering = ['Barcode',]
     search_fields = ['Date', 'Barcode__Barcode', 'Barcode__Name']
     list_filter = ['Barcode', 'Date']
 
@@ -89,7 +89,7 @@ class leavesAdmin(admin.ModelAdmin):
         'Type',
         'Status'
     )
-    ordering = ('Barcode')
+    ordering = ['Barcode']
     search_fields = ['Barcode__Barcode', 'Barcode__Name', 'LeaveDate']
     list_filter = ['LeaveDate', 'Status', 'Barcode']
 
@@ -141,14 +141,14 @@ class leavesAdmin(admin.ModelAdmin):
 
 class leaverulesAdmin(admin.ModelAdmin):
     list_display = ('Category', 'Type', 'Days')
-    ordering = ('Category')
+    ordering = ['Category']
     search_fields = ['Category__Id']
     #list_filter = ['Category__Description']
 
 
 class academicyearAdmin(admin.ModelAdmin):
     list_display = ('Title', 'StartDate', 'EndDate', 'Status')
-    ordering = ('Title')
+    ordering = ['Title']
     search_fields = ['Status', 'Title']
 
     def save_model(self, request, obj, form, change):
@@ -161,19 +161,19 @@ class academicyearAdmin(admin.ModelAdmin):
 
 class leavesbalanceAdmin(admin.ModelAdmin):
     list_display = ('Barcode', 'Type', 'Days')
-    ordering = ('Barcode')
+    ordering = ['Barcode']
     list_filter = ['Barcode']
 
 
 class encashleavesAdmin(admin.ModelAdmin):
     list_display = ('Barcode', 'Days', 'Status')
-    ordering = ('Barcode')
+    ordering = ['Barcode']
     list_filter = ['Barcode', 'Status']
 
 
 class overtimeAdmin(admin.ModelAdmin):
     list_display = ('Barcode', 'Date', 'Hours', 'Status')
-    ordering = ('Barcode')
+    ordering = ['Barcode']
     list_filter = ['Barcode', 'Status']
 
     def save_model(self, request, obj, form, change):
@@ -185,13 +185,13 @@ class overtimeAdmin(admin.ModelAdmin):
 
 class forgotcheckoutAdmin(admin.ModelAdmin):
     list_display = ('Barcode', 'Date', 'Status')
-    ordering = ('Barcode')
+    ordering = ['Barcode']
     list_filter = ['Barcode', 'Date', 'Status']
 
 
 class userjoiningdateAdmin(admin.ModelAdmin):
     list_display = ('Barcode', 'JoiningDate')
-    ordering = ('Barcode')
+    ordering = ['Barcode']
     list_filter = ['Barcode']
 
 admin.site.register(Category, categoryAdmin)
