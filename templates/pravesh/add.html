@@ -3,7 +3,7 @@
     <br/><b>{{ message }}</b><br/><br/>
     <a href='/pravesh'>Home</a>
     {% if form %}
-    <form name="add" action="/pravesh/add/" method="post">
+    <form name="add" action="/pravesh/add/" method="post"> {% csrf_token %}
         <table>
             {{ form.as_table }}
         </table>
