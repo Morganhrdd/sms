@@ -17,7 +17,7 @@ from reportlab.platypus import CondPageBreak, PageBreak
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.rl_config import defaultPageSize
 from reportlab.lib.units import inch, cm
-from reportlab.lib.enums import TA_CENTER, TA_RIGHT
+from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_LEFT
 from reportlab.lib import colors
 from reportlab.platypus import Image
 
@@ -591,6 +591,7 @@ def can_login(groups=None, user=None):
     for group in groups:
         if group in [x.name for x in user.groups.all()]:
             return 1
+    return 0
 
 
 @login_required
@@ -913,7 +914,7 @@ def competitiveexam_add(request):
 #
 @login_required
 def cocurricular_add(request):
-    if not can_login(groups=['teacher'], user=request.user):
+    if not can_login(groups=['teacher', 'Pratod'], user=request.user):
         return redirect('/')
     respage = 'students/AddCocurricular.html'
     if not request.POST:
@@ -974,7 +975,7 @@ def cocurricular_add(request):
 #
 @login_required
 def socialactivity_add(request):
-    if not can_login(groups=['teacher'], user=request.user):
+    if not can_login(groups=['Pratod', 'teacher'], user=request.user):
         return redirect('/')
     respage = 'students/AddSocialActivity.html'
     if not request.POST:
@@ -1044,7 +1045,7 @@ def socialactivity_add(request):
 #
 @login_required
 def physicalfitnessinfo_add(request):
-    if not can_login(groups=['teacher'], user=request.user):
+    if not can_login(groups=['Pratod'], user=request.user):
         return redirect('/')
     respage = 'students/AddPhysicalFitnessInfo.html'
     if not request.POST:
@@ -1212,7 +1213,7 @@ def workexperience_add(request):
 @login_required
 def physicaleducation_add(request):
     respage = 'students/AddPhysicalEducation.html'
-    if not can_login(groups=['teacher'], user=request.user):
+    if not can_login(groups=['Pratod'], user=request.user):
         return redirect('/')
     if not request.POST:
         genform = SearchDetailsForm(initial={'Year': '2010-2011'})
@@ -1339,6 +1340,7 @@ def thinkingskill_add(request):
         return render_to_response(respage,{'form': genform}, context_instance=RequestContext(request))
 
 #
+@login_required
 def socialskill_add(request):
     respage = 'students/AddSocialSkill.html'
     if not can_login(groups=['teacher'], user=request.user):
@@ -1380,7 +1382,10 @@ def socialskill_add(request):
             # end store data
             delete = ''
             # error handling to be done for teacher_obj
-            teacher_obj = Teacher.objects.get(Email=request.user.email)
+            try:
+                teacher_obj = Teacher.objects.get(Email=request.user.email)
+            except:
+                teacher_obj = Teacher()
             try:
                 socialskill_obj = SocialSkill.objects.get(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
             except:
@@ -1451,7 +1456,7 @@ def attitudetowardsschool_add(request):
             teacher_obj = Teacher.objects.get(Email=request.user.email)
             try:
                 attitudetowardsschool_obj = AttitudeTowardsSchool.objects.get(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
-            except:
+            except Exception, e:
                 for t in AttitudeTowardsSchool.objects.filter(StudentYearlyInformation=yearly_info, Teacher=teacher_obj):
                     t.delete()
                 attitudetowardsschool_obj = AttitudeTowardsSchool(StudentYearlyInformation=yearly_info, Teacher=teacher_obj)
@@ -1842,6 +1847,8 @@ def send_sms_students(request):
                         pass
         misc.sms_send(nos=nos,msg=msg, senderid='PRASHALA')
         return redirect('/sms_send')
+
+
 #
 @csrf_exempt
 @login_required
@@ -1908,7 +1915,7 @@ def display_report(request, regno=None, year=None):
 # Used by HTML Report
 @login_required
 def attendance_add(request):
-    if not can_login(groups=['teacher'], user=request.user):
+    if not can_login(groups=['teacher', 'Pratod'], user=request.user):
         return redirect('/')
     if request.POST:
         keys = request.POST.keys()
@@ -2008,6 +2015,7 @@ def report_pdf(request):
         response = HttpResponse(mimetype='application/pdf')
         doc = SimpleDocTemplate(response)
         doc.build(Story, onFirstPage=later_pages, onLaterPages=later_pages)
+        #f.close()
 
         return response
     else:
@@ -2294,13 +2302,13 @@ def fill_static_and_yearly_info(student_yearly_info, skillGrades, Story):
     Story.append(Spacer(1,0.05 * inch))
 
     #photo
-    image_path = 'media/students_photos/' + str(year) + '_' + str(student_basic_info.RegistrationNo) + '.jpg'
+    image_path = '/home/webapps/sms/media/students_photos/' + str(year) + '_' + str(student_basic_info.RegistrationNo) + '.jpg'
     is_file_exists = os.path.isfile(image_path)
     im = '.'
     if is_file_exists:
         im = Image(image_path)
-        aspect_ratio = im.imageHeight / im.imageWidth
-        im = Image(image_path, 1 * inch, aspect_ratio * inch)
+        aspect_ratio = float(im.imageHeight) / float(im.imageWidth)
+        im = Image(image_path, 1*inch, aspect_ratio*inch)
 
     #basic info
     student_number = '   ' + 'Registration No.: ' + \
@@ -2864,7 +2872,6 @@ def fill_academic_report2010(student_yearly_info, Story):
 def fill_academic_report_board_2011_9th(student_yearly_info, Story):
     add_main_header_to_story(Story, "Part 2: Academic Performance")
     add_main_header_to_story(Story, "9th Standard")
-
     #science marks
     sci_w1 = 0
     sci_w2 = 0
@@ -2942,6 +2949,7 @@ def fill_academic_report_board_2011_9th(student_yearly_info, Story):
         FA = F3 + F4
         SA = S2
         total = FA + SA
+        #print subject_name, test_type, N3, N4, F3, F4, W3, W4, FA, SA, sci_w1, sci_w2, total
 
         #grade points
         grade_point_FA = grade_point(FA, 40)
@@ -3134,6 +3142,7 @@ def fill_academic_report_board_2011(student_yearly_info, Story):
         FA = F1 + F2 + F3 + F4
         SA = S1 + S2
         total = FA + SA
+        #f.write('%s,%s,%s,%d,%d,%d,%d,%d\n' % (str(student_yearly_info.RollNo), str(student_yearly_info.ClassMaster.Division), subject_name, F1,F2,S1,F3,F4))
 
 ##        #grade points
 ##        grade_point_FA = grade_point(FA, 40)
@@ -3374,6 +3383,7 @@ def grade_point(test_marks_obtained, test_maximum_marks):
     ratio = float(test_marks_obtained) / float(test_maximum_marks)
     percentage = ceil_marks(ratio * 100)
 
+    grade_point = 0
     #grade point
     grade_point = 0
     if (percentage <= 20):
