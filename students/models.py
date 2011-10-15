@@ -182,7 +182,7 @@ class StudentYearlyInformation(models.Model):
     StudentBasicInfo = models.ForeignKey(StudentBasicInfo)
     RollNo = models.PositiveIntegerField()
     ClassMaster = models.ForeignKey(ClassMaster)
-    Photo = models.ImageField(upload_to='media', blank=True)
+    Photo = models.ImageField(upload_to='students_photos', blank=True)
     Hostel = models.PositiveIntegerField(choices=HOSTEL_CHOICES)
     Sankalp = models.TextField(max_length=200, blank=True)
     Sankalp_Comment = models.TextField(max_length=200, blank=True)
@@ -242,13 +242,13 @@ class PhysicalFitnessInfo(models.Model):
     Split = models.PositiveIntegerField(blank=True, null=True)
     BodyMassIndex = models.FloatField(blank=True, null=True)
     Balancing = models.FloatField(blank=True, null=True)
-    PrivateComment = models.TextField(max_length=200,blank=True, null=True)
-    PublicComment = models.TextField(max_length=200,blank=True, null=True)
-    DescriptiveIndicator = models.TextField(max_length=200,blank=True, null=True)
-    Pathak = models.CharField(max_length=50,blank=True, null=True)
-    Pratod = models.CharField(max_length=50,blank=True, null=True)
-    Margadarshak = models.CharField(max_length=50,blank=True, null=True)
-    SpecialSport = models.CharField(max_length=50,blank=True, null=True)
+    PrivateComment = models.TextField(max_length=1000, blank=True, null=True)
+    PublicComment = models.TextField(max_length=1000, blank=True, null=True)
+    DescriptiveIndicator = models.TextField(max_length=1000, blank=True, null=True)
+    Pathak = models.CharField(max_length=50, blank=True, null=True)
+    Pratod = models.CharField(max_length=50, blank=True, null=True)
+    Margadarshak = models.CharField(max_length=50, blank=True, null=True)
+    SpecialSport = models.CharField(max_length=50, blank=True, null=True)
     Grade = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
     class Meta:
         verbose_name_plural = "Physical Fitness Information"
@@ -256,13 +256,13 @@ class PhysicalFitnessInfo(models.Model):
 class SocialActivity(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
     Activity = models.CharField(max_length=50)
-    Objectives = models.CharField(max_length=200)
+    Objectives = models.CharField(max_length=1000)
     Date = models.DateField()
     Organizer = models.CharField(max_length=50)
     Grade = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    PublicComment = models.TextField(max_length=200)
-    PrivateComment = models.TextField(max_length=200)
-    DescriptiveIndicator = models.TextField(max_length=200,blank=True, null=True)
+    PublicComment = models.TextField(max_length=1000)
+    PrivateComment = models.TextField(max_length=1000)
+    DescriptiveIndicator = models.TextField(max_length=1000, blank=True, null=True)
     class Meta:
         verbose_name_plural = "Social Activities"
 
@@ -275,7 +275,7 @@ class CoCurricular(models.Model):
     Grade = models.CharField(max_length=1, choices=GRADE_CHOICES)
     PublicComment = models.TextField(max_length=200)
     PrivateComment = models.TextField(max_length=200)
-    DescriptiveIndicator = models.TextField(max_length=200,blank=True, null=True)
+    DescriptiveIndicator = models.TextField(max_length=1000, blank=True, null=True)
     def __unicode__(self):
         return "%s, %s" % (self.Activity, self.StudentYearlyInformation)
 
@@ -288,7 +288,7 @@ class CompetitiveExam(models.Model):
     Grade = models.CharField(max_length=50)
     PublicComment = models.TextField(max_length=200)
     PrivateComment = models.TextField(max_length=200)
-    DescriptiveIndicator = models.TextField(max_length=200,blank=True, null=True)
+    DescriptiveIndicator = models.TextField(max_length=1000, blank=True, null=True)
     def __unicode__(self):
         return "%s, %s" % (self.Name, self.StudentYearlyInformation)
 
@@ -299,24 +299,24 @@ class Competition(models.Model):
     Date = models.DateField()
     Achievement = models.CharField(max_length=20, blank=True)
     Guide = models.CharField(max_length=30)
-    PublicComment = models.TextField(max_length=200, blank=True)
-    PrivateComment = models.TextField(max_length=200, blank=True)
-    DescriptiveIndicator = models.TextField(max_length=200,blank=True, null=True)
+    PublicComment = models.TextField(max_length=1000, blank=True)
+    PrivateComment = models.TextField(max_length=1000, blank=True)
+    DescriptiveIndicator = models.TextField(max_length=1000, blank=True, null=True)
     def __unicode__(self):
         return "%s, %s" % (self.Subject, self.StudentYearlyInformation)
 
 class AbhivyaktiVikas(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
-    MediumOfExpression = models.CharField(max_length=10)
+    MediumOfExpression = models.CharField(max_length=50)
     Teacher = models.ForeignKey(Teacher)
     Participation = models.CharField(max_length=1, choices=GRADE_CHOICES)
     ReadinessToLearn = models.CharField(max_length=1, choices=GRADE_CHOICES)
     ContinuityInWork = models.CharField(max_length=1, choices=GRADE_CHOICES)
     SkillDevelopment = models.CharField(max_length=1, choices=GRADE_CHOICES)
     Creativity = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    PublicComment = models.TextField(max_length=200)
-    PrivateComment = models.TextField(max_length=200)
-    DescriptiveIndicator = models.TextField(max_length=200,blank=True, null=True)
+    PublicComment = models.TextField(max_length=1000)
+    PrivateComment = models.TextField(max_length=1000)
+    DescriptiveIndicator = models.TextField(max_length=1000, blank=True, null=True)
     class Meta:
         verbose_name_plural = "Abhivyakti Vikas"
     def __unicode__(self):
@@ -333,9 +333,9 @@ class Project(models.Model):
     ExecutionAndHardWork = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
     Documentation = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
     Communication = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
-    PublicComment = models.TextField(max_length=200)
-    PrivateComment = models.TextField(max_length=200)
-    DescriptiveIndicator = models.TextField(max_length=200,blank=True, null=True)
+    PublicComment = models.TextField(max_length=1000)
+    PrivateComment = models.TextField(max_length=1000)
+    DescriptiveIndicator = models.TextField(max_length=1000, blank=True, null=True)
 
 class Elocution(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
@@ -345,9 +345,9 @@ class Elocution(models.Model):
     Understanding = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
     Pronunciation = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
     Presentation = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
-    PublicComment = models.TextField(max_length=200)
-    PrivateComment = models.TextField(max_length=200)
-    DescriptiveIndicator = models.TextField(max_length=200,blank=True, null=True)
+    PublicComment = models.TextField(max_length=1000)
+    PrivateComment = models.TextField(max_length=1000)
+    DescriptiveIndicator = models.TextField(max_length=1000, blank=True, null=True)
     def __unicode__(self):
         return "%s, %s" % (self.Title, self.StudentYearlyInformation)
 
@@ -355,33 +355,33 @@ class Library(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
     BooksRead = models.PositiveIntegerField()
     Grade = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    PublicComment = models.TextField(max_length=200)
-    PrivateComment = models.TextField(max_length=200)
-    DescriptiveIndicator = models.TextField(max_length=200,blank=True, null=True)
+    PublicComment = models.TextField(max_length=1000)
+    PrivateComment = models.TextField(max_length=1000)
+    DescriptiveIndicator = models.TextField(max_length=1000, blank=True, null=True)
     class Meta:
         verbose_name_plural = "Libraries"
 
 class WorkExperience(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
     Teacher = models.ForeignKey(Teacher)
-    Task = models.CharField(max_length=200)
+    Task = models.CharField(max_length=1000)
     Communication = models.CharField(max_length=1, choices=GRADE_CHOICES)
     Confidence = models.CharField(max_length=1, choices=GRADE_CHOICES)
     Involvement = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    PublicComment = models.TextField(max_length=200)
-    PrivateComment = models.TextField(max_length=200)
-    DescriptiveIndicator = models.TextField(max_length=200,blank=True, null=True)
+    PublicComment = models.TextField(max_length=1000)
+    PrivateComment = models.TextField(max_length=1000)
+    DescriptiveIndicator = models.TextField(max_length=1000, blank=True, null=True)
 
 class PhysicalEducation(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
     Name = models.CharField(max_length=50)
-    Pratod = models.CharField(max_length=50,blank=True, null=True)
+    Pratod = models.CharField(max_length=50, blank=True, null=True)
     AbilityToWorkInTeam = models.CharField(max_length=1, choices=GRADE_CHOICES)
     Cooperation = models.CharField(max_length=1, choices=GRADE_CHOICES)
     LeadershipSkill = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    PublicComment = models.TextField(max_length=200)
-    PrivateComment = models.TextField(max_length=200)
-    DescriptiveIndicator = models.TextField(max_length=200,blank=True, null=True)
+    PublicComment = models.TextField(max_length=1000)
+    PrivateComment = models.TextField(max_length=1000)
+    DescriptiveIndicator = models.TextField(max_length=1000, blank=True, null=True)
 
 class ThinkingSkill(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
@@ -390,9 +390,11 @@ class ThinkingSkill(models.Model):
     LogicalThinking = models.CharField(max_length=1, choices=GRADE_CHOICES)
     Creativity = models.CharField(max_length=1, choices=GRADE_CHOICES)
     DecisionMakingAndProblemSolving = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    PublicComment = models.TextField(max_length=200)
-    PrivateComment = models.TextField(max_length=200)
-    DescriptiveIndicator = models.TextField(max_length=200,blank=True, null=True)
+    PublicComment = models.TextField(max_length=1000)
+    PrivateComment = models.TextField(max_length=1000)
+    DescriptiveIndicator = models.TextField(max_length=1000, blank=True, null=True)
+    def __unicode__(self):
+        return '%s %s' % (self.StudentYearlyInformation, self.Teacher)
 
 class SocialSkill(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
@@ -400,9 +402,9 @@ class SocialSkill(models.Model):
     Communication = models.CharField(max_length=1, choices=GRADE_CHOICES)
     InterPersonal = models.CharField(max_length=1, choices=GRADE_CHOICES)
     TeamWork = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    PublicComment = models.TextField(max_length=200)
-    PrivateComment = models.TextField(max_length=200)
-    DescriptiveIndicator = models.TextField(max_length=200,blank=True, null=True)
+    PublicComment = models.TextField(max_length=1000)
+    PrivateComment = models.TextField(max_length=1000)
+    DescriptiveIndicator = models.TextField(max_length=1000, blank=True, null=True)
 
 class EmotionalSkill(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
@@ -410,9 +412,9 @@ class EmotionalSkill(models.Model):
     Empathy = models.CharField(max_length=1, choices=GRADE_CHOICES)
     Expression = models.CharField(max_length=1, choices=GRADE_CHOICES)
     Management = models.CharField(max_length=1, choices=GRADE_CHOICES)
-    PublicComment = models.TextField(max_length=200)
-    PrivateComment = models.TextField(max_length=200)
-    DescriptiveIndicator = models.TextField(max_length=200,blank=True, null=True)
+    PublicComment = models.TextField(max_length=1000)
+    PrivateComment = models.TextField(max_length=1000)
+    DescriptiveIndicator = models.TextField(max_length=1000, blank=True, null=True)
 
 class AttitudeTowardsSchool(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
@@ -421,9 +423,9 @@ class AttitudeTowardsSchool(models.Model):
     SchoolMates = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
     SchoolPrograms = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
     SchoolEnvironment = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
-    PublicComment = models.TextField(max_length=200)
-    PrivateComment = models.TextField(max_length=200)
-    DescriptiveIndicator = models.TextField(max_length=200,blank=True, null=True)
+    PublicComment = models.TextField(max_length=1000)
+    PrivateComment = models.TextField(max_length=1000)
+    DescriptiveIndicator = models.TextField(max_length=1000, blank=True, null=True)
 
 class Values(models.Model):
     StudentYearlyInformation = models.ForeignKey(StudentYearlyInformation)
@@ -432,9 +434,9 @@ class Values(models.Model):
     Honesty = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
     Equality = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
     Responsibility = models.CharField(max_length=1, choices=GRADE_CHOICES_3)
-    PublicComment = models.TextField(max_length=200)
-    PrivateComment = models.TextField(max_length=200)
-    DescriptiveIndicator = models.TextField(max_length=200,blank=True, null=True)
+    PublicComment = models.TextField(max_length=1000)
+    PrivateComment = models.TextField(max_length=1000)
+    DescriptiveIndicator = models.TextField(max_length=1000, blank=True, null=True)
     class Meta:
         verbose_name_plural = "Values"
 
@@ -443,11 +445,12 @@ class MedicalReport(models.Model):
     Height = models.FloatField()
     Weight = models.FloatField()
     BloodGroup = models.CharField(max_length=5, choices=BLOOD_GROUP_CHOICES)
-    VisionL = models.TextField(max_length=200)
-    VisionR = models.TextField(max_length=200)
-    Teeth = models.TextField(max_length=200)
-    OralHygiene = models.TextField(max_length=200)
-    SpecificAilment = models.TextField(max_length=200)
-    Doctor = models.TextField(max_length=200)
-    ClinicAddress = models.TextField(max_length=200)
+    VisionL = models.TextField(max_length=1000)
+    VisionR = models.TextField(max_length=1000)
+    Teeth = models.TextField(max_length=1000)
+    OralHygiene = models.TextField(max_length=1000)
+    SpecificAilment = models.TextField(max_length=1000)
+    Doctor = models.TextField(max_length=1000)
+    ClinicAddress = models.TextField(max_length=1000)
     Phone = models.CharField(max_length=15)
+
