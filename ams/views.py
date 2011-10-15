@@ -22,9 +22,14 @@ catqs = Category.objects.filter(Description='ALL')
 if catqs:
     CATEGORY_ALL = catqs[0]
 
-#
 @csrf_exempt
 def get_barcode(request):
+    flag = 0
+    for inet_str in inets_str:
+        if request.META['REMOTE_ADDR'].startswith(inet_str):
+            flag = 1
+    if not flag:
+        return HttpResponse("Unable to display the page. Permission denied."+request.META['REMOTE_ADDR'])
     message = ""
     if request.POST.has_key('barcode') and request.POST['barcode'].isdigit():
         dt = datetime.datetime.now()

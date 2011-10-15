@@ -99,7 +99,9 @@ class Attendance(models.Model):
     Remark = models.CharField(max_length=1, choices=REMARK_CHOICES)
     Year = models.ForeignKey(AcademicYear)
     Comment = models.CharField(max_length=30, null=True, blank=True)
-
+    def __unicode__(self):
+        return '%s' % (self.Barcode)
+    
 
 class LeaveAttendance(models.Model):
     Barcode = models.ForeignKey(User)
