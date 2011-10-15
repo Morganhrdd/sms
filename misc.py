@@ -2,6 +2,9 @@
 import httplib
 import datetime
 import urllib
+USER = '_change_me_'
+PASSWORD = '_change_me_'
+SENDERID = '_change_me_'
 
 '''
 def sms_send(user=USER, password=PASSWORD, senderid=SENDERID, nos=None, msg=None, schedule=None):
