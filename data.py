@@ -1,6 +1,8 @@
 import xlrd, os, sys, datetime, re
 os.environ['DJANGO_SETTINGS_MODULE'] = 'sms.settings'
 sys.path.append(os.environ['DATAPY'])
+from django.contrib.auth.models import User
+
 from sms.students.models import *
 from sms.fees.models import *
 
@@ -213,21 +215,24 @@ def add_attendance():
     else:
         print 'Invalid type'
         sys.exit(1)
-    sh = book.sheet_by_name(sheet_name)
-    yr = '2008-2009'
+    #sh = book.sheet_by_name(sheet_name)
+    sh = book.sheet_by_index(0)
+    yr = '2009-2010'
     months = [6, 7, 8, 9, 10, 11, 12, 1, 2, 3]
     row = sh.row_values(1)
     months_max = row[1:11]
     print months_max
-#    sys.exit()
+    #sys.exit()
     
     for rx in range(2, sh.nrows):
         row = sh.row_values(rx)
         regno = row[0]
         print row
         try:
-            yrlyinfo = get_yrly_info(regno, yr, std, div, 'P')
-        except:
+            #yrlyinfo = get_yrly_info(regno, yr, std, div, attendance_type)
+            yrlyinfo = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year='2009-2010')
+        except Exception, e:
+            print e
             print 'yearly info not found for', regno
             continue
         try:
@@ -265,14 +270,14 @@ def add_attendance():
 
 
 def add_marks():
-    yr = AcademicYear.objects.get(Year='2008-2009')  
+    yr = AcademicYear.objects.get(Year='2009-2010')  
     xls_file = raw_input('Enter filename: ')
     div=raw_input('Enter Division: ')
     std=raw_input('Enter Standard: ')
     book = xlrd.open_workbook(xls_file)
     sh = book.sheet_by_index(0)
     row = sh.row_values(0)
-    subjects = row[5:]
+    subjects = row[1:]
     for subject in subjects:
         try:
             SubObj = SubjectMaster.objects.get(Standard=std, Name=subject[:3])
@@ -282,11 +287,10 @@ def add_marks():
             SubObj.Standard = std
             SubObj.save()
             print 'Added new subject', subject[:3]
-    yr = AcademicYear.objects.get(Year='2008-2009')
     row = sh.row_values(1)
-    teachers = row[5:]
+    teachers = row[1:]
     row = sh.row_values(2)
-    max_marks = row[5:]
+    max_marks = row[1:]
     for teacher, subject, max_mark in zip(teachers, subjects, max_marks):
         if teacher:
             try:
@@ -298,10 +302,13 @@ def add_marks():
                 SubObj = SubjectMaster.objects.get(Standard=std, Name=subject[:3])
             except:
                 print 'Subject does not exist ', subject[:3]
+                sys.exit()
             try:
+                print SubObj, subject, subject[3:], TeacherObj
                 testmapping = TestMapping.objects.get(SubjectMaster = SubObj, TestType = subject[3:], MaximumMarks = max_mark, Teacher = TeacherObj, AcademicYear = yr)
                 continue
-            except:
+            except Exception, e:
+                print e
                 testmapping = TestMapping()
                 testmapping.SubjectMaster = SubObj
                 testmapping.TestType = subject[3:]
@@ -312,9 +319,10 @@ def add_marks():
                 print subject, 'successfully added'
     for rx in range(3, sh.nrows):
         row = sh.row_values(rx)
-        row = sh.row_values(rx)
+        print row
         regno = row[0]
-        marks = row[5:]
+        marks = row[1:]
+        print row
         for teacher, subject, mark, max_mark in zip(teachers, subjects, marks, max_marks):
             if teacher:
                 try:
@@ -805,24 +813,39 @@ def populate_project():
 def populate_library():
     print 'Library'
     xls_file = raw_input('Enter filename: ')
-    div = raw_input('Enter Division: ')
-    std = raw_input('Enter Standard: ')
+    #div = raw_input('Enter Division: ')
+    #std = raw_input('Enter Standard: ')
     book = xlrd.open_workbook(xls_file)
-    yr = '2008-2009'
-    sh = book.sheet_by_name('Library')
+    yr = '2009-2010'
+    sh = book.sheet_by_name('Sheet1')
     for rx in range(1, sh.nrows):
         row = sh.row_values(rx)
+        try:
+            int(row[0])
+        except:
+            continue
         regno = row[0]
         try:
-            yrlyinfo = get_yrly_info(regno, yr, std, div)
+            yrlyinfo = StudentYearlyInformation.objects.get(StudentBasicInfo__RegistrationNo=regno, ClassMaster__AcademicYear__Year=yr)
         except:
             print 'yearly info not found in db for ', regno
         print row
         booksread = row[1]
-        grade = row[2]
-        comment = row[3]
+        if not booksread:
+            booksread = 0
+        grade = '1'
+        if int(booksread) > 10:
+            grade = '2'
+        if int(booksread) > 20:
+            grade = '3'
+        if int(booksread) > 30:
+            grade = '4'
+        if int(booksread) > 40:
+            grade = '5'
+        print '---', grade
+        comment = row[2]
         try:
-            library_obj = Library.objects.get(StudentYearlyInformation=yrlyinfo, BooksRead=booksread, Grade=grade, PublicComment=comment)
+            library_obj = Library.objects.get(StudentYearlyInformation=yrlyinfo)
         except:
             library_obj = Library()
         library_obj.StudentYearlyInformation = yrlyinfo
@@ -1072,55 +1095,24 @@ def update_yrly_info():
             yrl_obj.save()
     
     
-
-def add_basic_info():
-    print 'Adding basic info'
-    xls_file = raw_input('Enter filename: ')
-    book = xlrd.open_workbook(xls_file)
-    sh = book.sheet_by_index(0)
-    for rx in range(4,26):
-        row = sh.row_values(rx)
-        s = StudentBasicInfo()
-        s.RegistrationNo = row[1]
-        tmp = row[2].split('/')
-        s.DateOfRegistration = datetime.date(int(tmp[2]),int(tmp[1]),int(tmp[0]))
-        (s.FirstName, s.FathersName, s.LastName) = re.sub('\s+', ' ',row[3].strip()).split(r' ')
-        s.FirstName = s.FirstName.capitalize()
-        s.FathersName = s.FathersName.capitalize()
-        s.LastName = s.LastName.capitalize()
-        tmp = row[4].split('/')
-        s.DateOfBirth = datetime.date(int(tmp[2]),int(tmp[1]),int(tmp[0]))
-        s.BirthPlace = row[5]
-        s.Gender = row[6][0]
-        s.Caste = row[7]
-        s.Category = row[8]
-        s.save()
-        additional_info = StudentAdditionalInformation()
-        additional_info.Id = s
-        additional_info.Address = row[9]
-        additional_info.save()
-
-
-    '''
-    RegistrationNo = models.PositiveIntegerField(primary_key=True)
-    DateOfRegistration = models.DateField()
-    FirstName = models.CharField(max_length=30)
-    LastName = models.CharField(max_length=30)
-    DateOfBirth = models.DateField()
-    Gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-    FathersName = models.CharField(max_length=60, blank=True)
-    MothersName = models.CharField(max_length=60, blank=True)
-    TerminationDate = models.DateField(null=True, blank=True)
-    Caste = models.CharField(max_length=50, blank=True)
-    Nationality = models.CharField(max_length=50, blank=True)
-    BirthPlace = models.CharField(max_length=50, blank=True)
-    ReasonOfLeavingSchool = models.TextField(max_length=100, blank=True)
-    PreviousSchool = models.CharField(max_length=200, blank=True)
-    Category = models.CharField(max_length=200, blank=True)
-    '''
-
-
-#add_basic_info()
+def create_parent_login():
+    students = StudentBasicInfo.objects.all()
+    for s in  students:
+        additional_info = False
+        try:
+            additional_info = StudentAdditionalInformation.objects.get(Id=s)
+        except:
+            additional_info = StudentAdditionalInformation()
+            pass
+        user = False
+        try:
+            user = User.objects.create_user(str(s.RegistrationNo), additional_info.Fathers_Email, str(s.RegistrationNo)+'passwd')
+            user.is_active = False
+            user.save()
+        except:
+            pass
+        print user
+create_parent_login()
 #update_yrly_info()
 #copy_yrly_info()
 #populate_abhivyakti()
@@ -1131,7 +1123,9 @@ def add_basic_info():
 #populate_project()
 #add_test()
 #add_marks()
+#add_attendance()
 #reg_no()
 #populate_fee_receipts('fee1.xls')
+#populate_library()
 
 sys.exit()

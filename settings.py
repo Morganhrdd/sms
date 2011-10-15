@@ -1,8 +1,10 @@
 #test change
 # Django settings for jp project.
 
+#DEBUG = False
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
+#TEMPLATE_DEBUG = DEBUG
+TEMPLATE_DEBUG = False
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
@@ -10,37 +12,27 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-'''
+#'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'students.db',                      # Or path to database file if using sqlite3.
+        'NAME': 'sms.db',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
-'''
+#'''
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-            'NAME': 'sms',                      # Or path to database file if using sqlite3.
-            'USER': 'sms',                      # Not used with sqlite3.
-            'PASSWORD': 'pgsql123',                  # Not used with sqlite3.
-            'HOST': 'student.jnanaprabodhini.org',                      # Set to empty string for localhost. Not used with sqlite3.
-            'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-    }
-}
 
 # Local time zone for this installation. Choices can be found here:
 # http://www.postgresql.org/docs/8.1/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE
 # although not all variations may be possible on all operating systems.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'Asia/Calcutta'
-
+#TIME_ZONE = 'IST'
+TIME_ZONE = 'Asia/Kolkata'
 # Language code for this installation. All choices can be found here:
 # http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
 # http://blogs.law.harvard.edu/tech/stories/storyReader$15
@@ -58,12 +50,12 @@ MEDIA_ROOT = ''
 
 # URL that handles the media served from MEDIA_ROOT.
 # Example: "http://media.lawrence.com"
-MEDIA_URL = ''
+#MEDIA_URL = 'http://student.jnanaprabodhini.org/media/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.http://trac-hg.assembla.com/paupdate/browser
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/'
+ADMIN_MEDIA_PREFIX = '/admin-media/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '^ss3(a9*8p=8hmzpg+8ul8s!#p+p7ej*tr)-2z+&vjvl=_j#uv'
@@ -81,6 +73,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.transaction.TransactionMiddleware',
 )
 
 
@@ -90,11 +83,9 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    "/Users/shantanoo/repo/sms/templates",
-    #'f:/Documents/Chinmay/JPP/sms/templates',
-    #"/home/shantanoo/repo/sms/templates",
-    #'C:/Documents and Settings/aditya/Desktop/JPP/latest_bitbucket/sms/templates'
-    #'C:/Users/aloks/Work/jp_sms/templates'
+    #'/home/webapps/sms/templates'
+    #'C:/Documents and Settings/aditya/Desktop/JPP/latest/sms/templates'
+    #'C:/Users/aloks/Work/sms/templates'
 )
 
 INSTALLED_APPS = (
@@ -113,9 +104,8 @@ INSTALLED_APPS = (
 )
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_COOKIE_AGE = 600
+#SESSION_COOKIE_AGE = 3600
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value.
-
 '''
 CACHES = {
     'default': {
