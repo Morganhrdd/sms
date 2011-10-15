@@ -260,8 +260,8 @@ class ScrapDetailsForm(forms.Form):
     date = forms.DateField(widget=SelectDateWidget())
 
 class SMSSendForm(forms.Form):
-    Standard = forms.IntegerField(help_text='"," seperated standards. e.g. "5,6,7"')
-    Division = forms.CharField(help_text='"," seperated division. e.g. "B,G"')
+    Standard = forms.IntegerField(help_text='"," seperated standards. e.g. 5,6,7')
+    Division = forms.CharField(help_text='"," seperated division. e.g. B,G')
     Year = forms.CharField(max_length=9)
     Message = forms.CharField(widget=forms.Textarea(attrs={'rows':5}))
 

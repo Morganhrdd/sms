@@ -12,7 +12,7 @@ class StudentAdditionalInformationAdmin(admin.ModelAdmin):
     list_display = ('Id', 'Strength', 'Weakness', 'Hobbies', 'Family_Background', 'Fathers_Income',
                     'Fathers_Education', 'Fathers_Occupation', 'Fathers_Phone_No', 'Fathers_Email', 'Mothers_Income' ,'Mothers_Education',
                     'Mothers_Occupation', 'Mothers_Phone_No', 'Mothers_Email', 'Address')
-    search_fields = ['Id__RegistrationNo', 'Id__FirstName', 'Id__LastName']
+    search_fields = ['Id__RegistrationNo', 'Id__FirstName', 'Id__LastName', 'Fathers_Email', 'Mothers_Email', 'Fathers_Occupation', 'Mothers_Occupation']
     ordering = ('Id',)
 
 class AcademicYearAdmin(admin.ModelAdmin):
@@ -40,12 +40,12 @@ class ClassMasterAdmin(admin.ModelAdmin):
     search_fields = ['AcademicYear__Year', 'Standard', 'Division', 'Teacher__Name']
     
 class TestMappingAdmin(admin.ModelAdmin):
-    list_display = ('SubjectMaster', 'TestType', 'MaximumMarks', 'Teacher', 'AcademicYear')
+    list_display = ('pk', 'SubjectMaster', 'TestType', 'MaximumMarks', 'Teacher', 'AcademicYear')
     search_fields = ['TestType', 'SubjectMaster__Name', 'Teacher__Name', 'AcademicYear__Year']
     
 class StudentTestMarksAdmin(admin.ModelAdmin):
-    list_display = ('StudentYearlyInformation', 'TestMapping', 'MarksObtained')
-    search_fields = ['MarksObtained', 'TestMapping__SubjectMaster__Name', 'TestMapping__SubjectMaster__Standard', 'StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName', 'TestMapping__Teacher__Name']
+    list_display = ('pk','StudentYearlyInformation', 'TestMapping', 'MarksObtained')
+    search_fields = ['MarksObtained', 'TestMapping__SubjectMaster__Name', 'TestMapping__SubjectMaster__Standard', 'StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName', 'TestMapping__Teacher__Name', 'StudentYearlyInformation__StudentBasicInfo__RegistrationNo']
 
 class AttendanceMasterAdmin(admin.ModelAdmin):
     list_display = ('ClassMaster', 'WorkingDays', 'Month',)
@@ -60,7 +60,7 @@ class PhysicalFitnessInfoAdmin(admin.ModelAdmin):
     search_fields = ('StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName', 'StudentYearlyInformation__StudentBasicInfo__RegistrationNo')
     
 class SocialActivityAdmin(admin.ModelAdmin):
-    list_display = ('StudentYearlyInformation', 'Activity', 'Objectives', 'Date', 'Organizer', 'Grade', 'PublicComment')
+    list_display = ('StudentYearlyInformation', 'Activity', 'Objectives', 'Date', 'Organizer', 'Grade', 'PublicComment', 'DescriptiveIndicator')
     search_fields = ('StudentYearlyInformation__StudentBasicInfo__RegistrationNo','StudentYearlyInformation__StudentBasicInfo__FirstName', 'Activity', 'Objectives')
 
 class CoCurricularAdmin(admin.ModelAdmin):
@@ -76,7 +76,7 @@ class CompetitionAdmin(admin.ModelAdmin):
     search_fields = ('StudentYearlyInformation__StudentBasicInfo__FirstName', 'Subject', 'Guide', 'Organizer', 'StudentYearlyInformation__StudentBasicInfo__RegistrationNo')
 
 class AbhivyaktiVikasAdmin(admin.ModelAdmin):
-    list_display = ('StudentYearlyInformation', 'MediumOfExpression', 'Teacher', 'Participation', 'ReadinessToLearn', 'ContinuityInWork', 'SkillDevelopment', 'Creativity')
+    list_display = ('StudentYearlyInformation', 'MediumOfExpression', 'Teacher', 'Participation', 'ReadinessToLearn', 'ContinuityInWork', 'SkillDevelopment', 'Creativity', 'DescriptiveIndicator')
     search_fields = ('StudentYearlyInformation__StudentBasicInfo__FirstName', 'MediumOfExpression', 'Teacher__Name', 'StudentYearlyInformation__StudentBasicInfo__RegistrationNo')
 
 class ProjectAdmin(admin.ModelAdmin):
@@ -89,29 +89,29 @@ class ElocutionAdmin(admin.ModelAdmin):
 
 class LibraryAdmin(admin.ModelAdmin):
     list_display = ('StudentYearlyInformation', 'BooksRead', 'Grade', 'PublicComment', 'PrivateComment')
-    search_fields = ['StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName', 'PublicComment', 'PrivateComment']
+    search_fields = ['StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName', 'PublicComment', 'PrivateComment', 'StudentYearlyInformation__StudentBasicInfo__RegistrationNo']
 
 class WorkExperienceAdmin(admin.ModelAdmin):
-    list_display = ('StudentYearlyInformation', 'Teacher', 'Task', 'Communication', 'Confidence', 'Involvement')
-    search_fields = ['StudentYearlyInformation__StudentBasicInfo__RegistrationNo', 'StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName']
+    list_display = ('StudentYearlyInformation', 'Teacher', 'Task', 'Communication', 'Confidence', 'Involvement', 'DescriptiveIndicator')
+    search_fields = ['StudentYearlyInformation__StudentBasicInfo__RegistrationNo', 'StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName', 'DescriptiveIndicator']
 
 class PhysicalEducationAdmin(admin.ModelAdmin):
-    list_display = ('StudentYearlyInformation', 'Name', 'Pratod', 'AbilityToWorkInTeam', 'Cooperation', 'LeadershipSkill')
+    list_display = ('StudentYearlyInformation', 'Name', 'Pratod', 'AbilityToWorkInTeam', 'Cooperation', 'LeadershipSkill', 'DescriptiveIndicator')
     search_fields = ['StudentYearlyInformation__StudentBasicInfo__RegistrationNo', 'StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName']
 class ThinkingSkillAdmin(admin.ModelAdmin):   
-    list_display = ('StudentYearlyInformation', 'Teacher', 'Inquiry','LogicalThinking', 'Creativity', 'DecisionMakingAndProblemSolving')
-    search_fields = ['StudentYearlyInformation__StudentBasicInfo__RegistrationNo', 'StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName']
+    list_display = ('pk', 'StudentYearlyInformation', 'Teacher', 'Inquiry','LogicalThinking', 'Creativity', 'DecisionMakingAndProblemSolving', 'DescriptiveIndicator')
+    search_fields = ['id', 'StudentYearlyInformation__StudentBasicInfo__RegistrationNo', 'StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName']
 
 class SocialSkillAdmin(admin.ModelAdmin):
-    list_display = ('StudentYearlyInformation', 'Teacher', 'Communication', 'InterPersonal', 'TeamWork')
-    search_fields = ['StudentYearlyInformation__StudentBasicInfo__RegistrationNo', 'StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName']
+    list_display = ('StudentYearlyInformation', 'Teacher', 'Communication', 'InterPersonal', 'TeamWork', 'DescriptiveIndicator')
+    search_fields = ['StudentYearlyInformation__StudentBasicInfo__RegistrationNo', 'StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName', 'Teacher__Name']
 
 class EmotionalSkillAdmin(admin.ModelAdmin):
     list_display = ('StudentYearlyInformation', 'Teacher', 'Empathy', 'Expression', 'Management')
     search_fields = ['StudentYearlyInformation__StudentBasicInfo__RegistrationNo', 'StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName']
 
 class AttitudeTowardsSchoolAdmin(admin.ModelAdmin):
-    list_display = ('StudentYearlyInformation', 'Teacher', 'SchoolTeachers', 'SchoolMates', 'SchoolPrograms', 'SchoolEnvironment')    
+    list_display = ('StudentYearlyInformation', 'Teacher', 'SchoolTeachers', 'SchoolMates', 'SchoolPrograms', 'SchoolEnvironment', 'DescriptiveIndicator') 
     search_fields = ['StudentYearlyInformation__StudentBasicInfo__RegistrationNo', 'StudentYearlyInformation__StudentBasicInfo__FirstName', 'StudentYearlyInformation__StudentBasicInfo__LastName']
 
 class ValuesAdmin(admin.ModelAdmin):
